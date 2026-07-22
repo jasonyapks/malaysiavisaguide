@@ -1,0 +1,25 @@
+# Never commit — standing rule
+private/
+
+# Secrets
+.env
+.env.*
+!.env.example
+credentials.json
+*.pem
+*.key
+id_rsa*
+.dev.vars
+
+# Dependencies & build
+node_modules/
+.svelte-kit/
+build/
+dist/
+.wrangler/
+
+# OS / editor
+.DS_Store
+*.log
+.vscode/
+.idea/
