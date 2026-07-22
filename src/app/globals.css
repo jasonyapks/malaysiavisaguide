@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/**
+ * Design tokens — SPEC.md §4.3.
+ * Deep rainforest green, warm sand, one hibiscus accent. Editorial serif
+ * headlines over humanist sans body. 19px base, high contrast, generous line
+ * height: the reader is 45+, wealthy and scam-alert, so readability is a
+ * competitive differentiator here, not decoration.
+ *
+ * Light only. A reference site reads as a document, not an app, and dark mode
+ * is not worth the contrast risk on trust furniture before v1 ships.
+ */
+
+@theme {
+  /* Rainforest green — primary */
+  --color-forest-50: #f1f6f2;
+  --color-forest-100: #dbe8dd;
+  --color-forest-300: #8fb096;
+  --color-forest-600: #2f5d3f;
+  --color-forest-700: #234a31;
+  --color-forest-900: #12291b;
+
+  /* Warm sand — surfaces */
+  --color-sand-50: #faf7f1;
+  --color-sand-100: #f2ece0;
+  --color-sand-200: #e5dbc8;
+  --color-sand-400: #b8a887;
+
+  /* Hibiscus — the single accent. Use sparingly: CTAs and live flags only. */
+  --color-hibiscus-500: #c2364b;
+  --color-hibiscus-600: #a52a3d;
+
+  --color-ink: #1a1c1a;
+  --color-ink-muted: #4a504b;
+
+  --font-serif: var(--font-editorial-serif), Georgia, serif;
+  --font-sans: var(--font-body-sans), system-ui, sans-serif;
+
+  --text-base: 1.1875rem; /* 19px */
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-sand-50);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    color: var(--color-forest-900);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+}
