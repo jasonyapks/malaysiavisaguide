@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Premium Visa Programme (PVIP): costs and requirements",
   description:
     "What PVIP actually costs, who qualifies, and how it compares to MM2H. RM200,000 participation fee, RM1 million fixed deposit, RM40,000 monthly offshore income, 20-year residence.",
+  alternates: { canonical: "/visas/pvip/" },
 };
 
 export default function Page() {

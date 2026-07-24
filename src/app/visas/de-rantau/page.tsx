@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "DE Rantau Nomad Pass: income requirements and costs",
   description:
     "Malaysia's digital nomad pass. USD 24,000 a year for tech professions, USD 60,000 for everyone else, 3 to 12 months renewable once, RM1,080 processing fee.",
+  alternates: { canonical: "/visas/de-rantau/" },
 };
 
 export default function Page() {

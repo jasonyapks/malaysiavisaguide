@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "What each Malaysian visa really costs",
   description:
     "An itemised, honest cost estimate for every Malaysian long-stay programme and work/study pass — by family size, with refundable deposits kept strictly separate from the fees you never see again.",
+  alternates: { canonical: "/tools/cost-calculator/" },
 };
 
 export default function Page() {

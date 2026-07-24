@@ -68,6 +68,17 @@ export function GuideLayout({
 
   return (
     <article className="space-y-12">
+      {/* SPEC.md §4.4 — Article + BreadcrumbList per guide. FAQPage is emitted
+          by <Faq>; Organization is sitewide in the root layout. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
       <header className="space-y-6">
         <h1 className="text-4xl font-semibold sm:text-[2.75rem]">{title}</h1>
         {/* 1 — answer first. */}

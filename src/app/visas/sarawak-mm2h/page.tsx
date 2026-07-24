@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Sarawak MM2H (S-MM2H): requirements and costs",
   description:
     "Sarawak runs its own MM2H with its own rules: RM500,000 fixed deposit, RM10,000 monthly income or RM100,000 in savings, 10 years, 30 days a year in Sarawak, and no compulsory property purchase.",
+  alternates: { canonical: "/visas/sarawak-mm2h/" },
 };
 
 export default function Page() {

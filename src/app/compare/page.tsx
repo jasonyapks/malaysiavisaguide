@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Compare Malaysia's visa programmes side by side",
   description:
     "Every long-stay programme and work/study pass compared on the figures that decide it — deposit, property, term, fees, minimum stay and work rights.",
+  alternates: { canonical: "/compare/" },
 };
 
 const longStay = byCategory("long-stay");

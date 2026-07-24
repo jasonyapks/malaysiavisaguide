@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Malaysia Employment Pass: the 2026 salary thresholds",
   description:
     "Employment Pass Categories I, II and III under the policy effective 1 June 2026 — RM20,000, RM10,000 and RM5,000 monthly salary floors, duration limits, and the new replacement plan requirement.",
+  alternates: { canonical: "/visas/employment-pass/" },
 };
 
 export default function Page() {

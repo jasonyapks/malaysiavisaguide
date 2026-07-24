@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { navRoutes } from "@/lib/site";
 import { programmes } from "@/lib/data/programmes";
 import { reviewDate } from "@/lib/format";
+
+// Title and description come from the layout default (the home page is the one
+// page that should carry the full sitewide title). Canonical is set explicitly
+// so the apex has a self-reference like every other route.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 /** One-line descriptor per route, shown on the home cards. */
 const BLURB: Record<string, string> = {

@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Malaysia Student Pass: EMGS, fees and work rights",
   description:
     "How the Malaysian Student Pass works — EMGS screening, the RM60 pass fee, the 20-hour work limit, and which students may bring dependants.",
+  alternates: { canonical: "/visas/student-pass/" },
 };
 
 export default function Page() {

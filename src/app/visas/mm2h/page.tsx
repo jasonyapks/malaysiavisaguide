@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "MM2H 2026: Silver, Gold and Platinum requirements",
   description:
     "The three MM2H tiers compared against the official MOTAC criteria — fixed deposit, property minimum, term, fees, minimum stay and the age rules that most guides get wrong.",
+  alternates: { canonical: "/visas/mm2h/" },
 };
 
 export default function Page() {

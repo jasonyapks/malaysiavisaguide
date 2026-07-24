@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Which Malaysian visa do you qualify for?",
   description:
     "A short quiz that reads your age, means and plans and tells you which Malaysian long-stay programmes and work/study passes you actually qualify for — and which you just miss.",
+  alternates: { canonical: "/tools/eligibility/" },
 };
 
 export default function Page() {
