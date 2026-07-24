@@ -1,17 +1,27 @@
 import type { Metadata } from "next";
-import { Stub } from "@/components/Stub";
+import { EligibilityQuiz } from "./EligibilityQuiz";
 
 export const metadata: Metadata = {
-  title: "Eligibility checker",
-  description: "A short quiz that tells you which Malaysian long-stay programmes you actually qualify for.",
+  title: "Which Malaysian visa do you qualify for?",
+  description:
+    "A short quiz that reads your age, means and plans and tells you which Malaysian long-stay programmes and work/study passes you actually qualify for — and which you just miss.",
 };
 
 export default function Page() {
   return (
-    <Stub
-      title={"Eligibility checker"}
-      intent={"A short quiz that tells you which Malaysian long-stay programmes you actually qualify for."}
-      step={"5"}
-    />
+    <div className="space-y-10">
+      <header className="space-y-4">
+        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">
+          Which visa do you qualify for?
+        </h1>
+        <p className="text-[1.2rem] leading-relaxed text-ink-muted">
+          Six questions at most. No sign-up, nothing stored, no sales pitch —
+          just an honest read of which programmes fit your situation, checked
+          against the same official figures used across this site.
+        </p>
+      </header>
+
+      <EligibilityQuiz />
+    </div>
   );
 }

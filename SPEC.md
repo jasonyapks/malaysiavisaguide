@@ -1,14 +1,26 @@
-# malaysiavisaguide.com — Build Spec (v1)
+# malaysiavisaguide.com — Build Spec (v1.1)
 
-**Status:** approved, not yet started
-**Written:** 2026-07-22
+**Status:** in build — scaffold shipped, content in progress
+**Written:** 2026-07-22 · **Revised:** 2026-07-23
 **Audience:** Jason, and any future Claude session picking this up cold
 **Supersedes:** `WEBSITE-BLUEPRINT.md` (June 2026) *for the v1 build only*. That document
 remains the strategic north star for later phases — positioning, monetisation sequencing,
 the 9-pillar architecture, the 12-month roadmap. It is not edited or obsoleted. Where the two
 disagree on stack or v1 scope, **this file wins**, and the two disagreements are deliberate:
-the blueprint said WordPress (now SvelteKit) and specced a broad retiree/HNW authority site
-(v1 narrows to long-stay visas).
+the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW authority site
+(v1 narrows to long-stay visas plus the two work/study passes).
+
+### What changed in v1.1 (2026-07-23)
+
+1. **Stack is Next.js 16, not SvelteKit.** v1.0 §4.2 specced SvelteKit; the scaffold that
+   actually shipped is Next.js 16 static export. The shipped code wins. §4.2 is rewritten.
+2. **Two work/study passes added to scope** — Student Pass and Employment Pass / PVP.
+   Tourist / eVisa / visa-on-arrival remain explicitly out.
+3. **Domain cutover is in scope**, no longer deferred. Nameservers move to Cloudflare —
+   see §10. The whole point is publishing without WordPress in the path.
+4. **Personal branding:** neutral resource now, Jason visible as author and reviewer on
+   every page; a Jason-forward brand layer (newsletter, video, first-person commentary)
+   is a later phase.
 
 ---
 
@@ -39,10 +51,10 @@ Association. That is unfakeable E-E-A-T and it should be visible on every page.
 
 ### Definition of done for v1
 
-A content-complete visa site, publicly reachable on a Cloudflare `*.pages.dev` URL, with a
-working eligibility checker, cost calculator, comparison table, and enquiry form delivering to
-`admin@malaysiavisaguide.com`. The WordPress site stays untouched. Domain cutover is a separate
-decision, deliberately deferred.
+`https://malaysiavisaguide.com` serves this site over Cloudflare. Six researched guides, a
+working eligibility checker, cost calculator, comparison table, and an enquiry form
+delivering to `admin@malaysiavisaguide.com`. WordPress is dark and out of the publishing
+path. **Email still works** — see §10.
 
 ---
 
@@ -51,11 +63,12 @@ decision, deliberately deferred.
 | Decision | Choice | Why |
 |---|---|---|
 | Audience | Neutral public / SEO resource | Independence earns citations a branded site can't |
-| v1 scope | Long-stay visa programmes only | Where Jason has practitioner authority; where it converts |
+| v1 scope | Four long-stay programmes + Student Pass + Employment Pass/PVP | Where Jason has practitioner authority; where it converts |
 | Interactive | Eligibility checker, cost calculator, comparison table, enquiry form | All four; the quiz is the highest-value asset |
-| Stack | SvelteKit + Cloudflare + GitHub | Site is ~static; static HTML is the best possible substrate for SEO and AI crawlers |
-| Go-live | Cloudflare `*.pages.dev` today | Shareable tonight, zero DNS risk, WP untouched |
-| Domain cutover | Deferred | Nameserver move is a 5-minute change once Jason is happy |
+| Stack | Next.js 16 static export + Cloudflare Pages + GitHub | Site is ~static; static HTML is the best possible substrate for SEO and AI crawlers |
+| Go-live | Cloudflare `*.pages.dev` first | Shareable immediately, zero DNS risk, WP untouched |
+| Domain cutover | In scope — §10 | Nameservers move to Cloudflare; the domain carries live mail, so order matters |
+| Publishing | Manual `wrangler pages deploy` | Nothing goes live on its own; no git-triggered builds |
 | Form delivery | Web3Forms → `admin@malaysiavisaguide.com` | No API keys, no DNS records, no account — working in minutes |
 | Language | English only | Chinese first when localisation comes, per blueprint §3 |
 | Content | Researched, verified against official sources, reviewed by Jason | See §6 |
@@ -72,7 +85,9 @@ decision, deliberately deferred.
 | `/visas/mm2h/` | MM2H — Silver / Gold / Platinum tiers |
 | `/visas/sarawak-mm2h/` | S-MM2H — the cheapest serious long-stay route |
 | `/visas/de-rantau/` | DE Rantau Nomad Pass |
-| `/compare/` | Side-by-side: cost, tenure, deposit, property, stay requirement, dependants, work rights |
+| `/visas/student-pass/` | Student Pass — EMGS, institution sponsorship, duration, renewal |
+| `/visas/employment-pass/` | Employment Pass I/II/III + Professional Visit Pass, dependants |
+| `/compare/` | Side-by-side: cost, tenure, deposit, property, stay requirement, dependants, work rights. Long-stay and work/study tabbed separately — deposit-vs-salary comparison across the two is meaningless |
 | `/tools/eligibility/` | Quiz → qualifying programme(s) → soft CTA |
 | `/tools/cost-calculator/` | Itemised first-year and total cost by programme + family size |
 | `/contact/` | Enquiry form |
@@ -108,11 +123,20 @@ whole site updates consistently. The failure mode being designed out is hardcodi
 into four places, publishing contradictory numbers, and destroying the accuracy that is this
 site's only real asset. A wrong fee is worse than a missing page.
 
+The four long-stay programmes are deposit-gated; the Student and Employment passes are
+**sponsor-gated** — no fixed deposit, no property minimum, but an institution or employer
+must back the application. Rather than force them into deposit-shaped fields, the type
+carries a `category` discriminant plus `sponsor` and `salaryFloor`.
+
 ```ts
 export type Programme = {
-  slug: 'pvip' | 'mm2h-silver' | 'mm2h-gold' | 'mm2h-platinum' | 'smm2h' | 'de-rantau';
+  slug: 'pvip' | 'mm2h-silver' | 'mm2h-gold' | 'mm2h-platinum' | 'smm2h' | 'de-rantau'
+      | 'student-pass' | 'employment-pass';
   name: string;
-  authority: string;                    // MOTAC, Immigration, Sarawak Immigration, MDEC
+  category: 'long-stay' | 'work-study';
+  authority: string;                    // MOTAC, Immigration, Sarawak Immigration, MDEC, EMGS, ESD
+  sponsor: string | null;               // institution (EMGS) or employer (ESD) — work-study only
+  salaryFloor: Money | null;            // EP I/II/III thresholds
   tenureYears: number;
   renewable: boolean;
   minAge: number | null;
@@ -133,26 +157,23 @@ Rule: **nothing renders a number that didn't come from this file.** If a figure 
 
 ### 4.2 Stack
 
-- **SvelteKit 2 / Svelte 5** (runes), TypeScript
-- **`@sveltejs/adapter-cloudflare`** — requires `wrangler.jsonc`:
-  ```jsonc
-  {
-    "name": "malaysiavisaguide",
-    "main": ".svelte-kit/cloudflare/_worker.js",
-    "compatibility_flags": ["nodejs_als"],
-    "compatibility_date": "2026-07-22",
-    "assets": { "binding": "ASSETS", "directory": ".svelte-kit/cloudflare" }
-  }
-  ```
-- **Fully prerendered** — `export const prerender = true` in `src/routes/+layout.ts`.
-  Static HTML: best achievable Core Web Vitals, and AI crawlers hit real content rather than a
-  JS shell. Server routes stay available later without an adapter change.
-- **Tailwind v4**
-- Quiz, calculator and comparison table are **client-side Svelte components** — no backend
-- Contact form posts client-side to Web3Forms; key in `.env` as `PUBLIC_WEB3FORMS_KEY`
+- **Next.js 16 / React 19**, App Router, TypeScript
+- **Fully static export** — `output: "export"` in `next.config.ts`, with
+  `trailingSlash: true` (routes are written `/visas/pvip/`) and
+  `images: { unoptimized: true }` (no optimisation server exists in a static export).
+  Build output lands in `./out`.
+- Static HTML: best achievable Core Web Vitals, and AI crawlers hit real content rather
+  than a JS shell.
+- **Deploy:** `wrangler pages deploy out --project-name=malaysiavisaguide`. No adapter, no
+  Worker, no `wrangler.jsonc` — the Pages project serves `out/` as static assets.
+- **Tailwind v4** via `@tailwindcss/postcss`
+- Quiz, calculator and comparison table are **client components** (`"use client"`) — no backend
+- Contact form posts client-side to Web3Forms; key in `.env.local` as
+  `NEXT_PUBLIC_WEB3FORMS_KEY`
 
-**Before writing framework code, pull current docs via Context7** — SvelteKit
-(`/websites/svelte_dev_kit`) and Tailwind v4. Both move faster than training data.
+⚠️ **Next.js 16 has breaking changes versus training data** — see `AGENTS.md`. Read the
+relevant guide in `node_modules/next/dist/docs/` before writing framework code, and pull
+Tailwind v4 docs via Context7.
 
 ### 4.3 Design
 
@@ -188,15 +209,15 @@ the site real.
 
 0. **`SPEC.md`** — this file. Committed with the initial repo so it ships beside the code it
    describes. Pointer note added in the blueprint folder so those docs don't read as orphaned.
-1. **Scaffold** — `npx sv create`, adapter-cloudflare, Tailwind v4, prerender layout,
-   `git init`, first commit
+1. ~~**Scaffold**~~ — ✅ done 2026-07-22. Next.js 16, Tailwind v4, static export, all 11
+   routes stubbed, repo `jasonyapks/malaysiavisaguide`, live on `malaysiavisaguide.pages.dev`
 2. **Data layer** — research, verify against official sources, write `programmes.ts`
 3. **Design system** — layout, header/footer, type scale, palette, guide-template components
-4. **Guide pages** — home, four programme guides, about, editorial policy
+4. **Guide pages** — home, six programme guides, about, editorial policy
 5. **Interactive** — comparison table → cost calculator → eligibility quiz (all read `programmes.ts`)
 6. **Contact form** — Web3Forms, honeypot, success/error states
 7. **SEO** — sitemap, robots, JSON-LD, meta/OG
-8. **Deploy** — `gh repo create`, push, `wrangler deploy`, live on `*.pages.dev`
+8. **Domain cutover** — §10
 
 ---
 
@@ -213,10 +234,12 @@ Preliminary figures gathered 2026-07-22 from **secondary sources** — treat as 
 | **MM2H (all tiers)** | Min age 25 · licensed agent mandatory, no direct applications · up to 50% FD withdrawable from year 2 for property, medical, or education |
 | **S-MM2H** | RM500k FD in a Sarawak bank · RM10k/mo income or RM100k liquid (single) / RM150k (couple) · 10 years renewable · 15 days/yr minimum stay · no property purchase · no age limit |
 | **DE Rantau** | USD24k/yr foreign-sourced income · 12 months, renewable once |
+| **Student Pass** | EMGS-processed, institution-sponsored · no deposit · tied to course duration |
+| **Employment Pass** | EP I / II / III salary tiers · employer-sponsored via ESD · dependants vary by tier |
 
 **Every figure above must be verified against an official source before publishing** —
-`mm2h.motac.gov.my`, `imi.gov.my`, Sarawak Immigration, MDEC — with the official URL recorded
-in the `source` field. **Anything that cannot be confirmed officially is flagged for Jason
+`mm2h.motac.gov.my`, `imi.gov.my`, Sarawak Immigration, MDEC, `educationmalaysia.gov.my`
+(EMGS), `esd.imi.gov.my` — with the official URL recorded in the `source` field. **Anything that cannot be confirmed officially is flagged for Jason
 rather than published.**
 
 Jason is the domain authority; the research is a draft for him to correct. He reviews the
@@ -245,7 +268,8 @@ required.
 
 - **Web3Forms access key** — free, from web3forms.com using `admin@malaysiavisaguide.com`;
   arrives by email, no account needed
-- **Fact review** — the key-facts card on each of the four guides
+- **Fact review** — the key-facts card on each of the six guides
+- **Registrar access** — the nameserver change in §10c is Jason's click
 - **Repo visibility** — public or private (public suits a neutral resource; the content is the
   product, not the code)
 
@@ -270,9 +294,67 @@ required.
 
 ## 9. Explicitly not in v1
 
-Domain cutover and WordPress retirement · Chinese / Japanese / Korean localisation · the
-blueprint's healthcare, where-to-live, property, money and education pillars · country
-comparison pages (Malaysia vs Thailand et al.) · analytics and email capture · the Malaysia
-Retirement Index.
+Tourist / eVisa / visa-on-arrival / social-visit-pass content · the Jason-forward brand
+layer (newsletter, video, first-person commentary) · Chinese / Japanese / Korean
+localisation · the blueprint's healthcare, where-to-live, property, money and education
+pillars · country comparison pages (Malaysia vs Thailand et al.) · analytics and email
+capture · the Malaysia Retirement Index.
 
 All land on this same codebase later. Nothing in v1 forecloses any of them.
+
+---
+
+## 10. Domain cutover
+
+**The one step that can break something already working: the domain carries live mail.**
+`admin@malaysiavisaguide.com` and anything else on the domain routes through mschosting.
+Order matters, and two of the traps are silent.
+
+### 10a. Build the Cloudflare zone *before* switching anything
+
+Add the domain to Cloudflare and hand-enter every record below. Cloudflare's automatic
+scan misses records; do not trust it. Verify with `dig @<cloudflare-ns> …` while the
+domain is still resolving from mschosting.
+
+| Type | Name | Value | Proxy |
+|---|---|---|---|
+| MX 0 | `@` | `mx3.mschosting.online` | — |
+| MX 0 | `@` | `mx4.mschosting.online` | — |
+| MX 10 | `@` | `mail.malaysiavisaguide.com` | — |
+| A | `mail` | `103.6.196.47` | **DNS only** |
+| A | `webmail` | `103.6.196.47` | **DNS only** |
+| TXT | `@` | `v=spf1 ip4:103.6.196.47 include:se.mschosting.online -all` | — |
+| TXT | `default._domainkey` | existing DKIM `p=` value | — |
+| TXT | `_dmarc` | `v=DMARC1; p=quarantine; adkim=s; aspf=s` | — |
+
+Captured from the live zone 2026-07-23. The DKIM record is published as two quoted
+strings and must be re-entered as one concatenated value.
+
+**Trap 1 — `mail` and `webmail` must stay grey-cloud.** Proxying a mail host through
+Cloudflare breaks SMTP, and it fails silently: nothing errors until someone mentions a
+bounced email days later.
+
+**Trap 2 — drop `+a` from SPF.** The live record is
+`v=spf1 +a +mx ip4:103.6.196.47 include:se.mschosting.online -all`. `+a` authorises
+whatever the apex A record points at — which becomes Cloudflare's proxy IPs after cutover.
+The explicit `ip4:103.6.196.47` already covers the real mail server, so `+a` goes.
+
+### 10b–10f. Sequence
+
+- **10b** Attach apex and `www` to the Pages project:
+  `wrangler pages domain add`. Cloudflare writes the proxied records itself.
+- **10c** Switch nameservers at the registrar. Rollback is pointing NS back at
+  `ns1–4.mschosting.cloud`; the WordPress box stays up and untouched throughout.
+- **10d** Redirects via `public/_redirects`: `/pvip/` → `/visas/pvip/` (301, the one legacy
+  URL with any equity); `/sample-page/` → `/` .
+- **10e** Flip `site.url` in `src/lib/site.ts` from the `pages.dev` URL to
+  `https://malaysiavisaguide.com` — that single constant feeds canonicals, sitemap and OG
+  tags — then rebuild and redeploy.
+- **10f** Leave WordPress running but unreferenced for two weeks before asking the host to
+  decommission it. Cheap insurance.
+
+### Post-cutover checks (before calling it done)
+
+Send a test email **to and from** `admin@malaysiavisaguide.com`. Confirm MX, SPF, DKIM and
+DMARC all resolve from the Cloudflare nameservers. Confirm `/pvip/` 301s and that
+`/sitemap.xml` and `/robots.txt` serve on the real domain.

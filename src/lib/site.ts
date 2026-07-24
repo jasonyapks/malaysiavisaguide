@@ -16,7 +16,7 @@ export type Route = {
   path: string;
   title: string;
   /** Shown in the primary nav. */
-  nav?: "programmes" | "tools" | "site";
+  nav?: "programmes" | "work-study" | "tools" | "site";
 };
 
 export const routes: Route[] = [
@@ -25,7 +25,14 @@ export const routes: Route[] = [
   { path: "/visas/pvip/", title: "PVIP", nav: "programmes" },
   { path: "/visas/mm2h/", title: "MM2H", nav: "programmes" },
   { path: "/visas/sarawak-mm2h/", title: "Sarawak MM2H", nav: "programmes" },
-  { path: "/visas/de-rantau/", title: "DE Rantau", nav: "programmes" },
+
+  { path: "/visas/de-rantau/", title: "DE Rantau", nav: "work-study" },
+  {
+    path: "/visas/employment-pass/",
+    title: "Employment Pass",
+    nav: "work-study",
+  },
+  { path: "/visas/student-pass/", title: "Student Pass", nav: "work-study" },
 
   { path: "/compare/", title: "Compare", nav: "tools" },
   { path: "/tools/eligibility/", title: "Eligibility checker", nav: "tools" },
