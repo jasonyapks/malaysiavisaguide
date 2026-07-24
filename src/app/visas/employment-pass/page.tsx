@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GuideLayout, Section } from "@/components/GuideLayout";
+import { images } from "@/lib/images";
 import { getProgramme } from "@/lib/data/programmes";
 
 const p = getProgramme("employment-pass")!;
@@ -15,6 +16,7 @@ export default function Page() {
   return (
     <GuideLayout
       programme={p}
+      hero={images["employment-pass"]}
       title="Employment Pass"
       answer="The Employment Pass is Malaysia's route for working for a Malaysian employer. Under the policy effective 1 June 2026 there are three categories by monthly salary: Category I from RM20,000, Category II from RM10,000, and Category III from RM5,000. Your employer applies; you cannot apply yourself."
       suits={{

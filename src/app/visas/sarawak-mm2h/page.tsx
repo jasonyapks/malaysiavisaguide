@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GuideLayout, Section } from "@/components/GuideLayout";
+import { images } from "@/lib/images";
 import { getProgramme } from "@/lib/data/programmes";
 
 const p = getProgramme("smm2h")!;
@@ -15,6 +16,7 @@ export default function Page() {
   return (
     <GuideLayout
       programme={p}
+      hero={images["sarawak-mm2h"]}
       title="Sarawak MM2H (S-MM2H)"
       answer="Sarawak operates its own MM2H, separate from the federal programme. It needs a RM500,000 fixed deposit in a Sarawak bank and either RM10,000 a month in offshore income or RM100,000 in savings. The pass runs 10 years, requires 30 days a year in Sarawak, and — unlike federal MM2H — does not require you to buy property."
       suits={{

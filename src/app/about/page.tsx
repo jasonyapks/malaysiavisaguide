@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { images } from "@/lib/images";
+import { Figure } from "@/components/Figure";
 
 export const metadata: Metadata = {
   title: "About this guide",
@@ -43,13 +45,14 @@ export default function Page() {
         <h2 className="font-serif text-2xl font-semibold text-ink">
           Who writes this
         </h2>
-        <div className="flex items-start gap-4">
-          <span
-            aria-hidden
-            className="grid size-14 shrink-0 place-items-center rounded-full bg-forest-700 font-serif text-xl text-sand-50"
-          >
-            JY
-          </span>
+        <div className="grid gap-6 sm:grid-cols-[200px_1fr] sm:items-start">
+          <Figure
+            image={images.about}
+            aspect="aspect-[4/5]"
+            rounded="rounded-xl"
+            sizes="200px"
+            className="max-w-[200px]"
+          />
           <p>
             <strong>Jason Yap</strong> is Chairman of the{" "}
             <strong>PVIP Agent Association</strong>, the industry body for

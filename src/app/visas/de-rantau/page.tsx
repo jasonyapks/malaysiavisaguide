@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GuideLayout, Section } from "@/components/GuideLayout";
+import { images } from "@/lib/images";
 import { getProgramme } from "@/lib/data/programmes";
 
 const p = getProgramme("de-rantau")!;
@@ -15,6 +16,7 @@ export default function Page() {
   return (
     <GuideLayout
       programme={p}
+      hero={images["de-rantau"]}
       title="DE Rantau Nomad Pass"
       answer="DE Rantau is Malaysia's digital nomad pass, issued by MDEC as a professional visit pass. Tech professionals need USD 24,000 a year in foreign-sourced income; non-tech professions need USD 60,000. It is issued for 3 to 12 months and renewable once, for a maximum stay of 24 months."
       suits={{

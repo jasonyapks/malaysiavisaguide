@@ -3,6 +3,8 @@ import Link from "next/link";
 import { navRoutes } from "@/lib/site";
 import { programmes } from "@/lib/data/programmes";
 import { reviewDate } from "@/lib/format";
+import { images } from "@/lib/images";
+import { Figure } from "@/components/Figure";
 
 // Title and description come from the layout default (the home page is the one
 // page that should carry the full sitewide title). Canonical is set explicitly
@@ -61,16 +63,15 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Hero image. Placeholder gradient — SPEC.md §4.3 wants original
-              photography, so drop a real image into /public and swap this. */}
-          <div
-            aria-hidden
-            className="hidden aspect-[4/3] rounded-2xl bg-gradient-to-br from-forest-600 via-forest-700 to-forest-900 shadow-2xl ring-1 ring-sand-100/10 md:block"
-          >
-            <div className="grid h-full place-items-center text-sand-100/40">
-              <span className="text-sm font-medium">Original photography</span>
-            </div>
-          </div>
+          {/* Hero image — swapped in from the image registry (src/lib/images.ts). */}
+          <Figure
+            image={images.home}
+            aspect="aspect-[4/3]"
+            rounded="rounded-2xl"
+            priority
+            sizes="(min-width: 768px) 480px, 0px"
+            className="hidden shadow-2xl md:block"
+          />
         </div>
       </section>
 

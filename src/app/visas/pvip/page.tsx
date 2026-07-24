@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GuideLayout, Section } from "@/components/GuideLayout";
+import { images } from "@/lib/images";
 import { getProgramme } from "@/lib/data/programmes";
 
 const p = getProgramme("pvip")!;
@@ -15,6 +16,7 @@ export default function Page() {
   return (
     <GuideLayout
       programme={p}
+      hero={images.pvip}
       title="Premium Visa Programme (PVIP)"
       answer="PVIP grants residence in Malaysia for up to 20 years. You need offshore income of RM40,000 a month, a RM1 million fixed deposit with a Malaysian bank, and a participation fee of RM200,000 for the principal plus RM100,000 per dependant. There is no age limit and no minimum stay."
       suits={{

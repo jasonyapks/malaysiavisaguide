@@ -29,6 +29,20 @@ export const metadata: Metadata = {
     siteName: site.name,
     type: "website",
     locale: "en",
+    // Relative path resolves against metadataBase, so the absolute og:image URL
+    // follows site.url automatically at domain cutover. Per-page title and
+    // description flow into og:title/og:description; the image is sitewide.
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Malaysia Visa Guide — an independent guide to PVIP, MM2H, Sarawak MM2H, DE Rantau and the Student and Employment passes.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 

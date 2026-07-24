@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GuideLayout, Section } from "@/components/GuideLayout";
+import { images } from "@/lib/images";
 import { TierTable } from "@/components/TierTable";
 import { getProgramme } from "@/lib/data/programmes";
 
@@ -18,6 +19,7 @@ export default function Page() {
   return (
     <GuideLayout
       programme={silver}
+      hero={images.mm2h}
       title="Malaysia My Second Home (MM2H)"
       answer="MM2H comes in three tiers. Silver needs a USD 150,000 fixed deposit and a RM600,000 property; Gold needs USD 500,000 and RM1 million; Platinum needs USD 1 million and RM2 million. The minimum age is 25. Holders aged 25 to 49 must spend 90 days a year in Malaysia; from 50 there is no minimum stay."
       facts={

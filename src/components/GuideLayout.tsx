@@ -1,8 +1,10 @@
 import Link from "next/link";
 import type { Programme } from "@/lib/data/programmes";
+import type { SiteImage } from "@/lib/images";
 import { site } from "@/lib/site";
 import { Byline } from "@/components/Byline";
 import { Faq, type FaqItem } from "@/components/Faq";
+import { Figure } from "@/components/Figure";
 import { KeyFacts } from "@/components/KeyFacts";
 
 /**
@@ -21,6 +23,8 @@ export function GuideLayout({
   title,
   /** 40–60 words. AI Overviews and a skimming reader both get the answer without scrolling. */
   answer,
+  /** Optional hero photo, from the image registry (src/lib/images.ts). */
+  hero,
   suits,
   faq,
   cta,
@@ -30,6 +34,7 @@ export function GuideLayout({
   programme: Programme;
   title: string;
   answer: string;
+  hero?: SiteImage;
   /**
    * Replaces the single key-facts card. MM2H is one programme with three
    * tiers, so it needs a tier table where the others need a card; the
@@ -86,6 +91,9 @@ export function GuideLayout({
           {answer}
         </p>
       </header>
+
+      {/* Hero photo — after the answer so the text stays first in the DOM. */}
+      {hero && <Figure image={hero} aspect="aspect-[16/7]" priority />}
 
       {/* 2 */}
       {facts ?? <KeyFacts programme={programme} />}

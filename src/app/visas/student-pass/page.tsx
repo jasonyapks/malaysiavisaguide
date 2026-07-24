@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GuideLayout, Section } from "@/components/GuideLayout";
+import { images } from "@/lib/images";
 import { getProgramme } from "@/lib/data/programmes";
 
 const p = getProgramme("student-pass")!;
@@ -15,6 +16,7 @@ export default function Page() {
   return (
     <GuideLayout
       programme={p}
+      hero={images["student-pass"]}
       title="Student Pass"
       answer="A Student Pass covers non-citizens studying in Malaysia, from pre-school at age three through to postgraduate study. For higher education, EMGS screens the application and your institution submits it. The pass fee is RM60. Holders may work 20 hours a week in approved settings, and Master's and PhD students may bring dependants."
       suits={{
