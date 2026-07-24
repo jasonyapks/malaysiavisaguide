@@ -1,42 +1,52 @@
 @import "tailwindcss";
 
 /**
- * Design tokens — SPEC.md §4.3.
- * Deep rainforest green, warm sand, one hibiscus accent. Editorial serif
- * headlines over humanist sans body. 19px base, high contrast, generous line
- * height: the reader is 45+, wealthy and scam-alert, so readability is a
- * competitive differentiator here, not decoration.
+ * Design tokens — v2, 2026-07-24.
  *
- * Light only. A reference site reads as a document, not an app, and dark mode
- * is not worth the contrast risk on trust furniture before v1 ships.
+ * Restyled to echo the look of Malaysia's official eVISA portal
+ * (malaysiavisa.imi.gov.my): a deep navy hero, pale-cyan bands, white
+ * surfaces, bold geometric-sans headings. This is a deliberate departure from
+ * the rainforest-green direction in SPEC.md §4.3 — that section is now stale
+ * and should be rewritten to match.
+ *
+ * IMPORTANT: this site is an INDEPENDENT resource, not the government portal.
+ * It borrows the visual language only — never the Immigration Department crest,
+ * the MYVISA wordmark, or the word "official". See SPEC.md §1.
+ *
+ * The token NAMES are inherited from v1 (forest-*, sand-*) so the guide,
+ * compare, quiz and calculator components reskin without edits. Read them by
+ * role, not by hue: `forest-*` is now the navy/blue primary, `sand-*` the
+ * cyan/neutral surfaces.
  */
 
 @theme {
-  /* Rainforest green — primary */
-  --color-forest-50: #f1f6f2;
-  --color-forest-100: #dbe8dd;
-  --color-forest-300: #8fb096;
-  --color-forest-600: #2f5d3f;
-  --color-forest-700: #234a31;
-  --color-forest-900: #12291b;
+  /* Navy / blue — primary (hero, footer, headings, links) */
+  --color-forest-50: #eef4f9;
+  --color-forest-100: #d7e5f1;
+  --color-forest-300: #7ea6c7;
+  --color-forest-600: #2f6096;
+  --color-forest-700: #234c76;
+  --color-forest-900: #16283d;
 
-  /* Warm sand — surfaces */
-  --color-sand-50: #faf7f1;
-  --color-sand-100: #f2ece0;
-  --color-sand-200: #e5dbc8;
-  --color-sand-400: #b8a887;
+  /* Cyan / neutral — surfaces and bands */
+  --color-sand-50: #f6fbfd; /* near-white: page background, and light text on navy */
+  --color-sand-100: #e4f3f9; /* the pale-cyan nav and announcement bands */
+  --color-sand-200: #cbe4ee; /* borders */
+  --color-sand-400: #8bb2c4; /* muted lines */
 
-  /* Hibiscus — the single accent. Use sparingly: CTAs and live flags only. */
+  /* Hibiscus — the single warm accent. CTAs and live flags only. */
   --color-hibiscus-500: #c2364b;
   --color-hibiscus-600: #a52a3d;
 
-  --color-ink: #1a1c1a;
-  --color-ink-muted: #4a504b;
+  --color-ink: #14202b;
+  --color-ink-muted: #46586a;
 
-  --font-serif: var(--font-editorial-serif), Georgia, serif;
+  /* Headings now carry a bold geometric sans; body a humanist sans. The var
+     names are kept from v1 so components using `font-serif` need no change. */
+  --font-serif: var(--font-editorial-serif), "Poppins", system-ui, sans-serif;
   --font-sans: var(--font-body-sans), system-ui, sans-serif;
 
-  --text-base: 1.1875rem; /* 19px */
+  --text-base: 1.1875rem; /* 19px — readability is still a differentiator */
 }
 
 @layer base {
@@ -51,6 +61,8 @@
     font-size: var(--text-base);
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
+    /* Guard against the full-bleed hero producing a horizontal scrollbar. */
+    overflow-x: clip;
   }
 
   h1,
@@ -58,7 +70,16 @@
   h3 {
     font-family: var(--font-serif);
     color: var(--color-forest-900);
-    line-height: 1.2;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
+}
+
+/* Full-bleed helper — lets a section inside the centered <main> span the whole
+   viewport width (the navy hero, the cyan bands). */
+@utility full-bleed {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
 }
