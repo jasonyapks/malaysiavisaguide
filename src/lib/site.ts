@@ -1,8 +1,8 @@
 export const site = {
   name: "Malaysia Visa Guide",
-  // Update to https://malaysiavisaguide.com at domain cutover (SPEC.md §2 —
-  // deliberately deferred). Until then this is the *.pages.dev URL.
-  url: "https://malaysiavisaguide.pages.dev",
+  // Feeds canonicals, sitemap and OG tags. Switched to the real domain at the
+  // cutover (SPEC.md §10e, 2026-07-25).
+  url: "https://malaysiavisaguide.com",
   description:
     "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
   // Public read-only endpoint of the news Worker (worker/). Read at BUILD time —
