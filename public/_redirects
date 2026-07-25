@@ -1,0 +1,11 @@
+# Legacy WordPress URLs — SPEC.md §10d.
+# Only paths with real accumulated equity are kept; everything else 404s to the
+# styled 404 rather than being silently swallowed by a catch-all.
+#
+# Both slash forms are listed. Pages matches these paths literally — it does not
+# normalise the trailing slash first — so a rule for `/pvip/` alone leaves the
+# bare `/pvip` on a 404, and inbound links from elsewhere write it either way.
+/pvip           /visas/pvip/    301
+/pvip/          /visas/pvip/    301
+/sample-page    /               301
+/sample-page/   /               301

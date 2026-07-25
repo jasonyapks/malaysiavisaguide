@@ -50,6 +50,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# wrangler local state — the local D1 SQLite file and dev caches. Machine-local
+# scratch, and it holds whatever test rows were last seeded into it.
+.wrangler/
+**/.wrangler/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

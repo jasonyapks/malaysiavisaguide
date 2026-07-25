@@ -1,4 +1,4 @@
-# malaysiavisaguide.com — Build Spec (v1.2)
+# malaysiavisaguide.com — Build Spec (v1.3)
 
 **Status:** built and deployed to `malaysiavisaguide.pages.dev` — domain not yet cut over
 **Written:** 2026-07-22 · **Revised:** 2026-07-25
@@ -9,6 +9,21 @@ the 9-pillar architecture, the 12-month roadmap. It is not edited or obsoleted. 
 disagree on stack or v1 scope, **this file wins**, and the two disagreements are deliberate:
 the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW authority site
 (v1 narrows to long-stay visas plus the two work/study passes).
+
+### What changed in v1.3 (2026-07-25)
+
+1. **`/news/` is a blog, not a link list.** Each approved story now gets its own
+   prerendered page at `/news/<slug>/` carrying an original article written on this site,
+   so a reader stays here instead of bouncing to the publisher. §3 and §4.2 rewritten.
+   The client-hydrated feed it replaced could not rank — there was nothing in the response
+   to rank.
+2. **The news pipeline is two-stage.** A cheap model triages the sweep; a large one writes
+   the article, and only on approval. See §4.2.
+3. **A 404 page exists.** `src/app/not-found.tsx` — Next's default is black, which read as
+   a crash against the champagne palette, and 404s are now reachable by way of stale
+   `/news/` links.
+4. **`public/_redirects` shipped** — §10d's legacy `/pvip/` redirect, in both slash forms,
+   which is what Pages actually needs.
 
 ### What changed in v1.2 (2026-07-25)
 
@@ -95,7 +110,8 @@ path. **Email still works** — see §10.
 | Route | Content |
 |---|---|
 | `/` | Hero + promise card · "which route is yours?" router — three long-stay cards, three work/study cards · freshness band carrying the last-reviewed date · tools row · closing CTA |
-| `/news/` | Curated Malaysia visa news, hydrated client-side from the `worker/` backend's public `/api/news`. Every item is summarised, source-linked, and hand-approved before it appears |
+| `/news/` | Blog index — every published story as a card linking to its own page. Prerendered at build time from the `worker/` backend's `/api/news` |
+| `/news/<slug>/` | One page per story. An **original article written on this site** about the news — key points, 2–4 sections, "what it means for an applicant" — with one attributed quote and a followed link to the source. Prerendered; `NewsArticle` + `BreadcrumbList` schema |
 | `/visas/pvip/` | Premium Visa Programme — full guide |
 | `/visas/mm2h/` | MM2H — Silver / Gold / Platinum tiers |
 | `/visas/sarawak-mm2h/` | S-MM2H — the cheapest serious long-stay route |
@@ -193,9 +209,33 @@ Rule: **nothing renders a number that didn't come from this file.** If a figure 
 
 **There is a second deployable: `worker/`.** The Pages site is static, but it is not the
 whole system. The `mvg-news` Worker (`https://mvg-news.jason-6bf.workers.dev`) runs a daily
-cron that fetches Malaysia visa news, summarises each item with Workers AI, and queues it in
-D1; a Cloudflare Access–locked `/dashboard` where Jason approves the queue; and a public
-`/api/news` the site's `/news` page reads at runtime.
+cron that fetches Malaysia visa news, triages it with Workers AI and queues it in D1; a
+Cloudflare Access–locked `/dashboard` where Jason approves, edits and publishes; and a public
+`/api/news` (+ `/api/news/<slug>`) the site reads **at build time**.
+
+**Two models, two stages, and the split is the point.** `SUMMARY_MODEL`
+(`llama-3.2-3b`) triages ~20 candidates a sweep into a blurb and a category — cheap, because
+most of them are never published. `ARTICLE_MODEL` (`gpt-oss-120b`) writes the actual article,
+and runs **only on approval**: one large call per published page, not twenty a day for
+content nobody reads.
+
+⚠️ **The article is ours; the reporting is theirs.** The pipeline never stores or renders the
+publisher's article body — it reads the source, then writes something new about it. That is
+not squeamishness: reproduced text is both an infringement and a duplicate-content signal
+that hands the ranking back to the original publisher, so the page would not rank either.
+Full reasoning at the head of `worker/src/article.ts`. If the source cannot be read
+(paywall, bot block, JS-only page) **nothing is published** — it never writes from a headline
+alone.
+
+⚠️ **News goes live on a deploy, not on approval.** The pages are prerendered, so approving
+an article in the dashboard puts it in D1 and nowhere else until `npm run build` +
+`wrangler pages deploy`. A consequence worth knowing before it surprises you: **a static
+export cannot build a dynamic route with zero paths**, so once `/news/[slug]` exists the
+build requires at least one published article. `src/app/news/[slug]/page.tsx` throws a
+message saying so rather than letting Next report it as a missing `generateStaticParams`.
+
+To check the blog without deploying anything:
+`NEWS_API_URL=http://localhost:8787/api/news npm run build`.
 
 ⚠️ **It deploys separately.** `wrangler pages deploy out` does **not** touch it —
 `cd worker && npx wrangler deploy` does. IDs, bindings and the model live in

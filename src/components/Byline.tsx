@@ -7,7 +7,16 @@ import { reviewDate } from "@/lib/format";
  * the review date is functional rather than decorative: AI citation decays
  * sharply once a page looks stale.
  */
-export function Byline({ lastVerified }: { lastVerified: string }) {
+export function Byline({
+  /**
+   * Omitted only where no review date exists to state. Guides always have one;
+   * a news article written minutes ago briefly may not, and "Last reviewed
+   * Invalid Date" would undermine the exact thing this component is for.
+   */
+  lastVerified,
+}: {
+  lastVerified?: string | null;
+}) {
   return (
     <div className="flex items-start gap-4 border-y border-sand-200 py-5">
       <span
@@ -22,8 +31,12 @@ export function Byline({ lastVerified }: { lastVerified: string }) {
           Jason Yap
         </Link>
         , Chairman of the PVIP Agent Association.
-        <br />
-        Last reviewed {reviewDate(lastVerified)}.
+        {lastVerified && (
+          <>
+            <br />
+            Last reviewed {reviewDate(lastVerified)}.
+          </>
+        )}
       </p>
     </div>
   );

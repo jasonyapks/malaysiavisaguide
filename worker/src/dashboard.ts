@@ -4,7 +4,7 @@
  * routes, whose requests carry the Access cookie automatically. No framework,
  * no external requests, so it works under a strict CSP.
  */
-export function dashboardHtml(email: string): string {
+export function dashboardHtml(email: string, siteOrigin: string): string {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -63,6 +63,27 @@ export function dashboardHtml(email: string): string {
   select { padding:6px 10px; border:1px solid var(--sand-400); border-radius:8px; font:inherit; }
   .muted { color:var(--ink-muted); font-size:.85rem; }
   .empty { color:var(--ink-muted); padding:16px 0; }
+  /* Article review + edit. The generated draft is the thing Jason actually
+     signs off on, so it gets real room rather than a tooltip. */
+  .draft { margin-top:12px; border-top:1px dashed var(--sand-400); padding-top:12px; }
+  .draft h4 { margin:14px 0 6px; font-size:.78rem; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--ink-muted); }
+  .draft .dek { font-size:1rem; color:var(--forest-900); font-weight:600; }
+  .draft ul { margin:6px 0; padding-left:20px; }
+  .draft li { margin:3px 0; }
+  .draft .sec { margin:10px 0; }
+  .draft .sec strong { display:block; margin-bottom:2px; }
+  .draft blockquote { margin:8px 0; padding:8px 12px; border-left:3px solid var(--sand-400);
+    background:var(--sand-100); font-style:italic; color:var(--ink-muted); }
+  .draft label { display:block; font-size:.75rem; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--ink-muted); margin:12px 0 4px; }
+  .draft input[type=text], .draft textarea { width:100%; padding:8px 10px; font:inherit;
+    border:1px solid var(--sand-400); border-radius:8px; background:#fff; }
+  .draft textarea { resize:vertical; }
+  .warn { background:#fff7ed; border:1px solid #fdba74; color:#9a3412;
+    padding:10px 12px; border-radius:8px; font-size:.85rem; margin-top:10px; }
+  .live { font-size:.8rem; }
+  .spin { color:var(--ink-muted); font-size:.85rem; }
 </style>
 </head>
 <body>
@@ -93,8 +114,12 @@ export function dashboardHtml(email: string): string {
   <section id="news">
     <div class="row" style="justify-content:space-between">
       <h2>News queue</h2>
-      <button class="ghost" id="refresh">Fetch latest now</button>
+      <div class="row">
+        <button class="ghost" id="backfill">Write missing articles</button>
+        <button class="ghost" id="refresh">Fetch latest now</button>
+      </div>
     </div>
+    <div id="backfillMsg"></div>
     <div class="row" style="margin:8px 0 16px">
       <input type="url" id="submitUrl" placeholder="Paste an article URL to add it manually…">
       <button class="approve" id="submitBtn">Add</button>
@@ -110,7 +135,11 @@ export function dashboardHtml(email: string): string {
 </main>
 <script>
 const $ = (s) => document.querySelector(s);
+const SITE = ${JSON.stringify(siteOrigin)};
 let currentStatus = "pending";
+// Kept so "Edit" can build a form from the row already on screen rather than
+// re-fetching a single item.
+let currentItems = [];
 
 async function api(path, opts) {
   const r = await fetch(path, opts);
@@ -147,25 +176,128 @@ function stat(n, l){ return '<div class="stat"><div class="n">' + n + '</div><di
 // ---- News queue ----
 async function loadList() {
   const { items } = await api("/api/admin/items?status=" + currentStatus);
-  if (!items || !items.length) { $("#list").innerHTML = '<div class="empty">Nothing here.</div>'; return; }
-  $("#list").innerHTML = items.map(renderItem).join("");
+  currentItems = items || [];
+  if (!currentItems.length) { $("#list").innerHTML = '<div class="empty">Nothing here.</div>'; return; }
+  $("#list").innerHTML = currentItems.map(renderItem).join("");
 }
 function renderItem(it) {
   const date = it.published_at ? new Date(it.published_at).toLocaleDateString() : "";
-  const actions = currentStatus === "pending"
-    ? '<button class="approve" data-act="approve" data-id="' + it.id + '">Approve</button>' +
-      '<button class="reject" data-act="reject" data-id="' + it.id + '">Reject</button>'
-    : '<button class="delete" data-act="delete" data-id="' + it.id + '">Delete</button>' +
-      (currentStatus === "rejected"
-        ? '<button class="approve" data-act="approve" data-id="' + it.id + '">Approve</button>' : '');
-  return '<div class="item">' +
+  const id = it.id;
+  let actions;
+  if (currentStatus === "pending") {
+    // "Write & publish", not "Approve" — the button commissions a large-model
+    // article and takes the better part of a minute. Labelling it honestly is
+    // what stops it being clicked twice.
+    actions = '<button class="approve" data-act="approve" data-id="' + id + '">Write article &amp; publish</button>' +
+      '<button class="reject" data-act="reject" data-id="' + id + '">Reject</button>';
+  } else if (currentStatus === "approved") {
+    actions = '<button class="ghost" data-act="edit" data-id="' + id + '">Edit</button>' +
+      '<button class="ghost" data-act="regenerate" data-id="' + id + '">Rewrite</button>' +
+      '<button class="delete" data-act="delete" data-id="' + id + '">Delete</button>';
+  } else {
+    actions = '<button class="approve" data-act="approve" data-id="' + id + '">Write article &amp; publish</button>' +
+      '<button class="delete" data-act="delete" data-id="' + id + '">Delete</button>';
+  }
+
+  return '<div class="item" data-item="' + id + '">' +
     '<span class="cat">' + esc(it.category) + '</span>' +
-    '<h3>' + esc(it.title) + '</h3>' +
-    '<p>' + esc(it.summary) + '</p>' +
+    (it.slug ? ' <a class="live" href="' + SITE + '/news/' + esc(it.slug) + '/" target="_blank" rel="noopener">/news/' + esc(it.slug) + '/ ↗</a>' : '') +
+    '<h3>' + esc(it.headline || it.title) + '</h3>' +
+    (it.headline ? '<div class="meta">Publisher\\'s headline: ' + esc(it.title) + '</div>' : '') +
+    '<p>' + esc(it.dek || it.summary) + '</p>' +
     '<div class="meta">Source: <a href="' + esc(it.source_url) + '" target="_blank" rel="noopener">' +
-      esc(it.source_name) + '</a>' + (date ? ' · ' + date : '') + '</div>' +
+      esc(it.source_name) + '</a>' + (date ? ' · ' + date : '') +
+      (it.reading_minutes ? ' · ' + it.reading_minutes + ' min read' : '') +
+      (it.article_model ? ' · written by ' + esc(it.article_model) : '') + '</div>' +
+    renderDraft(it) +
     '<div class="row" style="margin-top:10px">' + actions + '</div>' +
+    '<div class="msg" data-msg="' + id + '"></div>' +
   '</div>';
+}
+
+/** Read-only view of the generated article, so approval is an informed decision. */
+function renderDraft(it) {
+  const body = parseBody(it.body);
+  if (!body) return "";
+  let h = '<div class="draft">';
+  if (body.keyPoints.length) {
+    h += '<h4>Key points</h4><ul>' + body.keyPoints.map(p => '<li>' + esc(p) + '</li>').join("") + '</ul>';
+  }
+  h += body.sections.map(s =>
+    '<div class="sec"><strong>' + esc(s.heading) + '</strong>' +
+    s.paragraphs.map(p => '<p>' + esc(p) + '</p>').join("") + '</div>').join("");
+  if (body.whatItMeans.length) {
+    h += '<h4>What it means</h4><ul>' + body.whatItMeans.map(p => '<li>' + esc(p) + '</li>').join("") + '</ul>';
+  }
+  if (it.source_excerpt) {
+    h += '<h4>Quoted from ' + esc(it.source_name) + '</h4><blockquote>' + esc(it.source_excerpt) + '</blockquote>';
+  }
+  return h + '</div>';
+}
+
+/**
+ * The editor. Every field is plain text — one bullet or paragraph per line —
+ * rather than the raw JSON the column stores. Jason is the editorial authority
+ * on this content, not a JSON author, and a stray comma should not be able to
+ * take a live page down.
+ */
+function renderEditor(it) {
+  const body = parseBody(it.body) || { keyPoints: [], sections: [], whatItMeans: [] };
+  const secs = body.sections.map((s, i) =>
+    '<label>Section ' + (i + 1) + ' heading</label>' +
+    '<input type="text" data-f="secHeading" value="' + esc(s.heading) + '">' +
+    '<label>Section ' + (i + 1) + ' paragraphs (one per line)</label>' +
+    '<textarea rows="6" data-f="secParas">' + esc(s.paragraphs.join("\\n")) + '</textarea>').join("");
+
+  return '<div class="draft" data-editor="' + it.id + '">' +
+    '<label>Headline</label>' +
+    '<input type="text" data-f="headline" value="' + esc(it.headline || it.title) + '">' +
+    '<label>Standfirst — also the meta description</label>' +
+    '<textarea rows="2" data-f="dek">' + esc(it.dek || "") + '</textarea>' +
+    '<label>Key points (one per line)</label>' +
+    '<textarea rows="5" data-f="keyPoints">' + esc(body.keyPoints.join("\\n")) + '</textarea>' +
+    secs +
+    '<label>What it means (one per line)</label>' +
+    '<textarea rows="4" data-f="whatItMeans">' + esc(body.whatItMeans.join("\\n")) + '</textarea>' +
+    '<label>Quote from the source — leave empty for none</label>' +
+    '<textarea rows="2" data-f="excerpt">' + esc(it.source_excerpt || "") + '</textarea>' +
+    '<div class="row" style="margin-top:14px">' +
+      '<button class="approve" data-act="save" data-id="' + it.id + '">Save</button>' +
+      '<button class="ghost" data-act="cancel" data-id="' + it.id + '">Cancel</button>' +
+    '</div>' +
+    '<div class="muted" style="margin-top:8px">Saved edits are live as soon as the site is rebuilt and deployed.</div>' +
+  '</div>';
+}
+
+function parseBody(raw) {
+  if (!raw) return null;
+  try {
+    const b = JSON.parse(raw);
+    return {
+      keyPoints: b.keyPoints || [],
+      sections: b.sections || [],
+      whatItMeans: b.whatItMeans || [],
+    };
+  } catch { return null; }
+}
+
+/** Read the editor's plain-text fields back into the stored JSON shape. */
+function collectEditor(el) {
+  const get = (f) => el.querySelector('[data-f="' + f + '"]');
+  const lines = (f) => get(f).value.split("\\n").map(s => s.trim()).filter(Boolean);
+  const headings = [...el.querySelectorAll('[data-f="secHeading"]')];
+  const paras = [...el.querySelectorAll('[data-f="secParas"]')];
+  const sections = headings.map((h, i) => ({
+    heading: h.value.trim(),
+    paragraphs: (paras[i] ? paras[i].value : "").split("\\n").map(s => s.trim()).filter(Boolean),
+  })).filter(s => s.heading && s.paragraphs.length);
+
+  return {
+    headline: get("headline").value.trim(),
+    dek: get("dek").value.trim(),
+    body: { keyPoints: lines("keyPoints"), sections: sections, whatItMeans: lines("whatItMeans") },
+    source_excerpt: get("excerpt").value.trim() || null,
+  };
 }
 
 // ---- events ----
@@ -175,8 +307,71 @@ document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () =>
 }));
 $("#list").addEventListener("click", async (e) => {
   const b = e.target.closest("button[data-act]"); if (!b) return;
+  const id = b.dataset.id, act = b.dataset.act;
+  const item = currentItems.find(i => i.id === id);
+  const msg = document.querySelector('[data-msg="' + id + '"]');
+
+  if (act === "edit") {
+    if (!item) return;
+    b.closest(".item").querySelector(".draft").outerHTML = renderEditor(item);
+    return;
+  }
+  if (act === "cancel") { loadList(); return; }
+
+  if (act === "save") {
+    const editor = document.querySelector('[data-editor="' + id + '"]');
+    const patch = collectEditor(editor);
+    if (!patch.body.sections.length) { alert("An article needs at least one section with a heading and a paragraph."); return; }
+    b.disabled = true; b.textContent = "Saving…";
+    const r = await api("/api/admin/items/" + id, {
+      method: "PATCH", headers: {"content-type":"application/json"}, body: JSON.stringify(patch),
+    });
+    if (r.ok) loadList();
+    else { b.disabled = false; b.textContent = "Save"; alert(r.error || "Could not save."); }
+    return;
+  }
+
+  // approve / regenerate both run the writer: a source fetch plus one
+  // large-model call. Tell the user it will be slow instead of looking hung.
+  const slow = act === "approve" || act === "regenerate";
   b.disabled = true;
-  await api("/api/admin/items/" + b.dataset.id + "/" + b.dataset.act, { method: "POST" });
+  const label = b.textContent;
+  if (slow) {
+    b.textContent = "Writing…";
+    if (msg) msg.innerHTML = '<div class="spin">Reading the source and writing the article — this takes 20–60 seconds. Leave the tab open.</div>';
+  }
+  const r = await api("/api/admin/items/" + id + "/" + act, { method: "POST" });
+  if (r && r.ok === false) {
+    b.disabled = false; b.textContent = label;
+    if (msg) msg.innerHTML = '<div class="warn">' + esc(r.error || "That did not work.") + '</div>';
+    return;
+  }
+  loadList();
+});
+// Backfill: approved items that predate the blog have no article, so they are
+// filtered out of the public feed. Walk them one at a time, reporting as it goes
+// — an item whose source has since gone behind a paywall is skipped and named,
+// not allowed to stall the rest.
+$("#backfill").addEventListener("click", async (e) => {
+  const btn = e.target, out = $("#backfillMsg");
+  btn.disabled = true;
+  const skip = []; let written = 0; const failed = [];
+  for (;;) {
+    out.innerHTML = '<div class="spin">Writing article ' + (written + skip.length + 1) +
+      '… 20–60 seconds each. Leave this tab open.</div>';
+    const r = await api("/api/admin/write-next", {
+      method: "POST", headers: {"content-type":"application/json"}, body: JSON.stringify({ skip }),
+    });
+    if (r.done) break;
+    if (r.ok) written++;
+    else { skip.push(r.id); failed.push(r.title); }
+  }
+  btn.disabled = false;
+  out.innerHTML = '<div class="' + (failed.length ? "warn" : "muted") + '">' +
+    'Wrote ' + written + ' article(s).' +
+    (failed.length ? ' Could not write ' + failed.length + ' — the source could not be read: ' +
+      failed.map(esc).join("; ") + '.' : '') +
+    ' Rebuild and deploy the site to publish.</div>';
   loadList();
 });
 $("#refresh").addEventListener("click", async (e) => {

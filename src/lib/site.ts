@@ -5,8 +5,9 @@ export const site = {
   url: "https://malaysiavisaguide.pages.dev",
   description:
     "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
-  // Public read-only endpoint of the news Worker (worker/). The /news page
-  // hydrates approved items from here at runtime.
+  // Public read-only endpoint of the news Worker (worker/). Read at BUILD time —
+  // /news and every /news/<slug>/ page are prerendered from it. The build points
+  // itself at a local Worker via NEWS_API_URL; see src/lib/news.ts.
   newsApi: "https://mvg-news.jason-6bf.workers.dev/api/news",
   // Cloudflare Web Analytics beacon token — cookieless, privacy-first. Public by
   // design (it ships in the page HTML). Same value as the Worker's
