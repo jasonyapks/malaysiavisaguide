@@ -1,7 +1,7 @@
-# malaysiavisaguide.com — Build Spec (v1.1)
+# malaysiavisaguide.com — Build Spec (v1.2)
 
-**Status:** in build — scaffold shipped, content in progress
-**Written:** 2026-07-22 · **Revised:** 2026-07-23
+**Status:** built and deployed to `malaysiavisaguide.pages.dev` — domain not yet cut over
+**Written:** 2026-07-22 · **Revised:** 2026-07-25
 **Audience:** Jason, and any future Claude session picking this up cold
 **Supersedes:** `WEBSITE-BLUEPRINT.md` (June 2026) *for the v1 build only*. That document
 remains the strategic north star for later phases — positioning, monetisation sequencing,
@@ -9,6 +9,20 @@ the 9-pillar architecture, the 12-month roadmap. It is not edited or obsoleted. 
 disagree on stack or v1 scope, **this file wins**, and the two disagreements are deliberate:
 the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW authority site
 (v1 narrows to long-stay visas plus the two work/study passes).
+
+### What changed in v1.2 (2026-07-25)
+
+1. **§4.3 Design is rewritten, and this is the third direction.** The site now wears the
+   champagne-and-gold visual language of `connectinasia.com`. The v1.0 rainforest-green
+   palette and the navy "eVISA portal" restyle that briefly replaced it are both dead —
+   do not resurrect either from this file's history.
+2. **`/news/` added to §3.** It was shipped and never specced. It is fed by a Cloudflare
+   **Worker backend in `worker/`** which §4.2 also failed to mention — a whole subsystem
+   that deploys separately from the Pages site.
+3. **Analytics moved out of §9.** Cloudflare Web Analytics is live, cookieless, and
+   deliberate; "no analytics in v1" is no longer true.
+4. **§8 Verification corrected** — it referenced 11 routes (there are 14) and an
+   `npm run preview` script that does not exist.
 
 ### What changed in v1.1 (2026-07-23)
 
@@ -68,7 +82,7 @@ path. **Email still works** — see §10.
 | Stack | Next.js 16 static export + Cloudflare Pages + GitHub | Site is ~static; static HTML is the best possible substrate for SEO and AI crawlers |
 | Go-live | Cloudflare `*.pages.dev` first | Shareable immediately, zero DNS risk, WP untouched |
 | Domain cutover | In scope — §10 | Nameservers move to Cloudflare; the domain carries live mail, so order matters |
-| Publishing | Manual `wrangler pages deploy` | Nothing goes live on its own; no git-triggered builds |
+| Publishing | Manual `wrangler pages deploy` — and `worker/` deploys separately | Nothing goes live on its own; no git-triggered builds. `git push` is **not** a deploy |
 | Form delivery | Web3Forms → `admin@malaysiavisaguide.com` | No API keys, no DNS records, no account — working in minutes |
 | Language | English only | Chinese first when localisation comes, per blueprint §3 |
 | Content | Researched, verified against official sources, reviewed by Jason | See §6 |
@@ -80,7 +94,8 @@ path. **Email still works** — see §10.
 
 | Route | Content |
 |---|---|
-| `/` | Hero + "which visa are you?" router · four programme cards · quick-compare strip · latest-changes box · CTA |
+| `/` | Hero + promise card · "which route is yours?" router — three long-stay cards, three work/study cards · freshness band carrying the last-reviewed date · tools row · closing CTA |
+| `/news/` | Curated Malaysia visa news, hydrated client-side from the `worker/` backend's public `/api/news`. Every item is summarised, source-linked, and hand-approved before it appears |
 | `/visas/pvip/` | Premium Visa Programme — full guide |
 | `/visas/mm2h/` | MM2H — Silver / Gold / Platinum tiers |
 | `/visas/sarawak-mm2h/` | S-MM2H — the cheapest serious long-stay route |
@@ -108,6 +123,11 @@ Every programme guide follows the same shape, and the order is deliberate:
 7. **FAQ** — phrased the way people actually ask, mirrored into FAQPage schema
 8. **Last reviewed** — "Reviewed [date] by Jason Yap, Chairman, PVIP Agent Association"
 9. **One contextual CTA** — exactly one, never a popup on first pageview
+
+This is the **information order**, and it is fixed. How it is *dressed* is §4.3's business
+and has changed twice; the order has not, and a restyle is not licence to reorder it. Items
+1–2 stay above the page's own sections so the answer and the figures are reachable without
+scrolling, and item 8 never ships absent.
 
 ---
 
@@ -167,9 +187,20 @@ Rule: **nothing renders a number that didn't come from this file.** If a figure 
 - **Deploy:** `wrangler pages deploy out --project-name=malaysiavisaguide`. No adapter, no
   Worker, no `wrangler.jsonc` — the Pages project serves `out/` as static assets.
 - **Tailwind v4** via `@tailwindcss/postcss`
-- Quiz, calculator and comparison table are **client components** (`"use client"`) — no backend
+- Quiz, calculator and comparison table are **client components** (`"use client"`)
 - Contact form posts client-side to Web3Forms; key in `.env.local` as
   `NEXT_PUBLIC_WEB3FORMS_KEY`
+
+**There is a second deployable: `worker/`.** The Pages site is static, but it is not the
+whole system. The `mvg-news` Worker (`https://mvg-news.jason-6bf.workers.dev`) runs a daily
+cron that fetches Malaysia visa news, summarises each item with Workers AI, and queues it in
+D1; a Cloudflare Access–locked `/dashboard` where Jason approves the queue; and a public
+`/api/news` the site's `/news` page reads at runtime.
+
+⚠️ **It deploys separately.** `wrangler pages deploy out` does **not** touch it —
+`cd worker && npx wrangler deploy` does. IDs, bindings and the model live in
+`worker/wrangler.jsonc`; the runbook is `worker/README.md`. Read those rather than
+reconstructing values from memory.
 
 ⚠️ **Next.js 16 has breaking changes versus training data** — see `AGENTS.md`. Read the
 relevant guide in `node_modules/next/dist/docs/` before writing framework code, and pull
@@ -177,17 +208,49 @@ Tailwind v4 docs via Context7.
 
 ### 4.3 Design
 
-Load the `frontend-design` skill before building UI. Identity carries over from the blueprint:
+**Third direction, and the two before it are dead.** v1.0 specced deep rainforest green +
+warm sand + hibiscus; that was replaced on 2026-07-24 by a navy/pale-cyan echo of the
+official eVISA portal; both were superseded on 2026-07-25. Neither should be resurrected
+from this file's history. The live tokens in `src/app/globals.css` are the truth — this
+section describes them, it does not compete with them.
 
-- **Palette:** deep rainforest green + warm sand + one hibiscus accent
-- **Type:** editorial serif headlines, humanist sans body
-- **18–19px base, high contrast, generous line height, no thin grey text.** The reader is 45+,
+**Reference:** `connectinasia.com`, the Korean-language MYPVIP partner site. The *look* is
+borrowed; the identity never is — no CONNECT IN ASIA or MYPVIP wordmark, no Immigration
+Department crest, never the word "official" (§1).
+
+- **Palette:** ivory and champagne surfaces, a metallic gold accent, espresso near-black
+  type. Warm throughout; there are no cool tones left on the site.
+- **Tokens are ROLE-named, not hue-named**, and the names are inherited from v1:
+  `forest-*` is the bronze→espresso primary, `sand-*` the ivory/champagne surfaces,
+  `hibiscus-*` the gold CTA. **Read them by role, never by hue.** This one convention is
+  why two complete restyles have landed without editing a single guide, table, quiz or
+  calculator — it is the design equivalent of §4.1 and worth defending just as hard.
+- **Two gold gradients, not one.** `--gradient-gold` lights a *fill* (pill, badge), where
+  dark text sits on the pale highlight. `--gradient-gold-text` runs darker at both ends,
+  because that same pale highlight is illegible as *type* on ivory. Reusing the fill ramp
+  on text is a mistake already made once.
+- **Type:** Plus Jakarta Sans throughout — body, UI, and headings at 800. Playfair Display
+  italic is reserved for the single gold accent word per card. The v1.0 "editorial serif
+  headlines" rule is dead: headings are the heavy sans, the serif is an accent only.
+- **19px base, high contrast, generous line height, no thin grey text.** The reader is 45+,
   wealthy, and scam-alert. Readability is a genuine competitive differentiator here —
-  competitors ignore it — not decoration.
-- **Reference feel:** Kiplinger or Monocle. Never an affiliate farm.
-- Original photography where possible. No stock skylines.
+  competitors ignore it — not decoration. **4.5:1 is a floor, and it is audited rather than
+  assumed** (§8) — the palette change put one element under it.
+- **Signature devices**, all `@utility` in `globals.css`: `gold-text`, `gold-fill`,
+  `eyebrow`, `card-lux`, `diamond-rule`, `ring-decor` — plus `full-bleed` (escape the
+  centred column) and `rise` (motion-safe entrance). Compose these before inventing more.
+- **Guide pages** follow `connectinasia.com/mm2h`: a full-bleed photo hero with the title
+  over it, centred section headings, and content cards staggered left/right. This is the
+  **only** place on the site where text sits over a photo — `<Figure>` refuses to do it
+  anywhere else, on purpose. The template's information *order* (§3) is unchanged.
+- **Original photography, no stock skylines.** Assets are WebP, sized per slot — see
+  `docs/IMAGES.md`. A static export emits **no `srcset`**, so the file you ship is the file
+  a phone downloads; size to how it actually renders.
 - Trust furniture (author credentials, review dates, sources, disclosure) is **conversion
   infrastructure** for this audience, not garnish.
+
+Load the `frontend-design` skill before inventing new UI — but match what already exists
+first; the system above is coherent and a one-off will read as a mistake.
 
 ### 4.4 SEO / GEO
 
@@ -278,14 +341,20 @@ required.
 ## 8. Verification
 
 1. `npm run build` — clean, every route prerenders without warnings
-2. `npm run preview` — walk all 11 routes
+2. `npm run dev` — walk all 14 routes (there is no `preview` script; the alternative is
+   `npx serve out` against the built export)
 3. **Drive it in Chrome via MCP.** Run the quiz through three profiles — a 30-year-old on
    USD100k, a 60-year-old retiree on USD40k, an HNW family — and confirm each recommendation
    matches what `programmes.ts` says. Run the calculator against PVIP and MM2H Gold and check
    the arithmetic by hand.
 4. Submit the contact form with test data — **confirm the email actually lands in
    `admin@malaysiavisaguide.com`.** Not "the form submitted successfully."
-5. Lighthouse via chrome-devtools MCP — performance and accessibility ≥ 95, contrast passes
+5. **Lighthouse via chrome-devtools MCP, against the deployed URL, on mobile.** Target
+   100 on SEO, accessibility and best practices; contrast passes. Audit the *deployed*
+   site, not localhost — the analytics beacon fails CORS on `localhost` and costs 4 points
+   of best practices there, which reads as a real defect and is not one. Accessibility is
+   the audit that earns its keep: it has already caught an invalid `<dl>` that broke the
+   FAQ for screen readers, and a contrast failure introduced by a palette change
 6. View source on a guide page — real content in the HTML, not a JS shell
 7. Fetch the deployed `*.pages.dev` URL; confirm `/sitemap.xml` and `/robots.txt` serve
 8. Cross-check every number on `/compare/` against its `source` URL
@@ -297,10 +366,14 @@ required.
 Tourist / eVisa / visa-on-arrival / social-visit-pass content · the Jason-forward brand
 layer (newsletter, video, first-person commentary) · Chinese / Japanese / Korean
 localisation · the blueprint's healthcare, where-to-live, property, money and education
-pillars · country comparison pages (Malaysia vs Thailand et al.) · analytics and email
-capture · the Malaysia Retirement Index.
+pillars · country comparison pages (Malaysia vs Thailand et al.) · email capture ·
+the Malaysia Retirement Index.
 
 All land on this same codebase later. Nothing in v1 forecloses any of them.
+
+**Analytics came in anyway, deliberately.** v1.0 excluded it; Cloudflare Web Analytics
+now ships in the root layout — cookieless, no cross-site tracking, token public by design.
+It is the exception, not a precedent for the rest of this list.
 
 ---
 
