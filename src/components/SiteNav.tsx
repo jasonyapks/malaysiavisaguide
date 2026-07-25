@@ -52,13 +52,13 @@ export function SiteNav() {
       {/* Desktop — labelled dropdowns */}
       <nav
         aria-label="Primary"
-        className="hidden flex-1 items-center gap-x-1 sm:flex"
+        className="hidden flex-1 items-center gap-x-1 lg:flex"
       >
         <Link
           href="/news/"
-          className={`rounded-md px-3 py-1.5 text-[0.95rem] font-medium transition-colors ${
+          className={`whitespace-nowrap rounded-md px-2.5 py-1.5 text-[0.9rem] font-semibold transition-colors ${
             pathname === "/news/"
-              ? "text-forest-900"
+              ? "relative text-forest-900 after:absolute after:inset-x-2.5 after:-bottom-2 after:h-0.5 after:rounded-full after:bg-forest-600"
               : "text-forest-700 hover:text-forest-900"
           }`}
         >
@@ -80,9 +80,9 @@ export function SiteNav() {
                 aria-haspopup="true"
                 aria-expanded={isOpen}
                 onClick={() => setOpenGroup(isOpen ? null : group.key)}
-                className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-[0.95rem] font-medium transition-colors ${
+                className={`flex items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-1.5 text-[0.9rem] font-semibold transition-colors ${
                   hasActive
-                    ? "text-forest-900"
+                    ? "relative text-forest-900 after:absolute after:inset-x-2.5 after:-bottom-2 after:h-0.5 after:rounded-full after:bg-forest-600"
                     : "text-forest-700 hover:text-forest-900"
                 }`}
               >
@@ -122,7 +122,7 @@ export function SiteNav() {
         aria-expanded={mobileOpen}
         aria-controls="mobile-menu"
         onClick={() => setMobileOpen((v) => !v)}
-        className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-forest-700 hover:text-forest-900 sm:hidden"
+        className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-forest-700 hover:text-forest-900 lg:hidden"
       >
         <span className="text-[0.9rem] font-medium">Menu</span>
         <Burger open={mobileOpen} />
@@ -132,7 +132,7 @@ export function SiteNav() {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="absolute inset-x-0 top-full z-30 border-b border-sand-200 bg-white shadow-lg shadow-forest-900/10 sm:hidden"
+          className="absolute inset-x-0 top-full z-30 border-b border-sand-200 bg-white shadow-lg shadow-forest-900/10 lg:hidden"
         >
           <div className="mx-auto max-w-6xl space-y-5 px-6 py-5">
             <Link

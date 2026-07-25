@@ -64,7 +64,8 @@ export default function Page() {
         },
       ]}
       cta={{
-        text: "Working remotely instead? Read the DE Rantau guide →",
+        text: "Working remotely instead?",
+        label: "Read the DE Rantau guide",
         href: "/visas/de-rantau/",
       }}
     >

@@ -32,50 +32,50 @@ export type SiteImage = {
 
 export const images: Record<string, SiteImage> = {
   home: {
-    src: "/images/home-hero.jpg",
+    src: "/images/home-hero.webp",
     alt: "A busy multicultural street in Kuala Lumpur's Chinatown, with Malay, Chinese and Indian Malaysians among the stalls.",
     brief:
       "Multicultural Malaysian life — Malay, Chinese and Indian together, real street/everyday scene.",
     ready: true,
   },
   pvip: {
-    src: "/images/pvip.jpg",
+    src: "/images/pvip.webp",
     alt: "Business professionals meeting in a high-rise office with a city skyline view.",
     brief: "Business / investment lifestyle — professionals, a meeting or the city, a sense of enterprise.",
     ready: true,
   },
   mm2h: {
-    src: "/images/mm2h.jpg",
+    src: "/images/mm2h.webp",
     alt: "A family with a young child enjoying a lush, green tree-lined path together.",
     brief: "Family life — parents and children, study or retirement lifestyle, warm and green.",
     ready: true,
   },
   "sarawak-mm2h": {
-    src: "/images/sarawak-mm2h.jpg",
+    src: "/images/sarawak-mm2h.webp",
     alt: "The Sarawak State Legislative Assembly and a river cruise boat on the Kuching waterfront.",
     brief: "Distinctly Sarawak — Kuching riverfront, Borneo rainforest or a longhouse. Not peninsular Malaysia.",
     ready: true,
   },
   "de-rantau": {
-    src: "/images/de-rantau.jpg",
+    src: "/images/de-rantau.webp",
     alt: "A laptop and backpack on a wooden table in a bright, plant-filled tropical café.",
     brief: "Digital-nomad scene — laptop, café or co-working space, tropical daylight.",
     ready: true,
   },
   "employment-pass": {
-    src: "/images/employment-pass.jpg",
+    src: "/images/employment-pass.webp",
     alt: "A diverse team collaborating over a laptop in a bright modern office.",
     brief: "Professional workplace — a small team in a bright modern office, mixed nationalities.",
     ready: true,
   },
   "student-pass": {
-    src: "/images/student-pass.jpg",
+    src: "/images/student-pass.webp",
     alt: "A diverse group of students walking and laughing together.",
     brief: "Campus life — international students on a green Malaysian university campus.",
     ready: true,
   },
   about: {
-    src: "/images/jason-yap.jpg",
+    src: "/images/jason-yap.webp",
     alt: "Jason Yap, Chairman of the PVIP Agent Association.",
     brief: "Jason's own portrait — a real headshot, not a stock person.",
     ready: true,

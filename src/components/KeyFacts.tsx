@@ -66,14 +66,17 @@ export function KeyFacts({ programme: p }: { programme: Programme }) {
   return (
     <aside
       aria-label={`Key facts: ${p.name}`}
-      className="rounded-xl border border-sand-200 bg-white p-6 shadow-[0_1px_2px_rgba(18,41,27,0.05)]"
+      className="card-lux mx-auto max-w-3xl p-7 sm:p-9"
     >
-      <h2 className="font-serif text-xl font-semibold">Key facts</h2>
-      <dl className="mt-4 divide-y divide-sand-200 text-[1.0625rem]">
+      <p className="eyebrow">At a glance</p>
+      <h2 className="mt-2 font-serif text-2xl font-extrabold">Key facts</h2>
+      <dl className="mt-5 divide-y divide-sand-200 text-[1.0625rem]">
         {rows.map(([label, value]) => (
-          <div key={label} className="grid gap-1 py-3 sm:grid-cols-[11rem_1fr] sm:gap-4">
-            <dt className="text-ink-muted">{label}</dt>
-            <dd className="font-medium">{value}</dd>
+          <div key={label} className="grid gap-1 py-3.5 sm:grid-cols-[12rem_1fr] sm:gap-4">
+            <dt className="text-[0.95rem] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+              {label}
+            </dt>
+            <dd className="font-semibold text-forest-900">{value}</dd>
           </div>
         ))}
       </dl>

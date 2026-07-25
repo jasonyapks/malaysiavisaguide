@@ -55,7 +55,8 @@ export default function Page() {
         },
       ]}
       cta={{
-        text: "Planning to stay on after graduating? Compare the long-stay routes →",
+        text: "Planning to stay on after graduating?",
+        label: "Compare the long-stay routes",
         href: "/compare/",
       }}
     >

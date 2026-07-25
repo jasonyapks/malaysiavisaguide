@@ -64,7 +64,8 @@ export default function Page() {
         },
       ]}
       cta={{
-        text: "Thinking beyond two years? Compare the long-stay routes →",
+        text: "Thinking beyond two years?",
+        label: "Compare the long-stay routes",
         href: "/compare/",
       }}
     >

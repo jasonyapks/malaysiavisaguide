@@ -1,3 +1,5 @@
+import { GuideHead } from "@/components/GuideHead";
+
 export type FaqItem = { q: string; a: string };
 
 /**
@@ -17,13 +19,36 @@ export function Faq({ items }: { items: FaqItem[] }) {
   };
 
   return (
-    <section className="space-y-6">
-      <h2 className="font-serif text-2xl font-semibold">Common questions</h2>
-      <dl className="space-y-6">
-        {items.map((i) => (
-          <div key={i.q} className="space-y-2">
-            <dt className="font-semibold text-forest-900">{i.q}</dt>
-            <dd className="text-ink-muted">{i.a}</dd>
+    <section className="space-y-8">
+      <GuideHead
+        eyebrow="FAQ"
+        title={
+          <>
+            Common{" "}
+            <span className="font-display gold-text font-medium italic">
+              questions
+            </span>
+          </>
+        }
+      />
+      <dl className="mx-auto max-w-3xl space-y-4">
+        {/* A <dl> may only hold <dt>/<dd>, or a <div> wrapping them directly.
+            Nesting them any deeper — e.g. inside a flex column beside the
+            number badge — is invalid and makes screen readers announce the
+            questions and answers as unrelated. The badge therefore lives
+            INSIDE the <dt>, and the <dd> is indented to match by padding. */}
+        {items.map((i, n) => (
+          <div key={i.q} className="card-lux p-6">
+            <dt className="flex items-center gap-5 font-serif font-extrabold text-forest-900">
+              <span
+                aria-hidden
+                className="gold-fill grid size-9 shrink-0 place-items-center rounded-full text-[0.72rem]"
+              >
+                {String(n + 1).padStart(2, "0")}
+              </span>
+              {i.q}
+            </dt>
+            <dd className="mt-2 pl-[3.5rem] text-ink-muted">{i.a}</dd>
           </div>
         ))}
       </dl>

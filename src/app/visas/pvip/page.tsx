@@ -60,7 +60,8 @@ export default function Page() {
         },
       ]}
       cta={{
-        text: "Not sure whether PVIP or MM2H fits you? Run the eligibility checker →",
+        text: "Not sure whether PVIP or MM2H fits you?",
+        label: "Run the eligibility checker",
         href: "/tools/eligibility/",
       }}
     >

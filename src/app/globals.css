@@ -1,55 +1,92 @@
 @import "tailwindcss";
 
 /**
- * Design tokens — v2, 2026-07-24.
+ * Design tokens — v3, 2026-07-25.
  *
- * Restyled to echo the look of Malaysia's official eVISA portal
- * (malaysiavisa.imi.gov.my): a deep navy hero, pale-cyan bands, white
- * surfaces, bold geometric-sans headings. This is a deliberate departure from
- * the rainforest-green direction in SPEC.md §4.3 — that section is now stale
- * and should be rewritten to match.
+ * Restyled to the visual language of connectinasia.com: a warm ivory /
+ * champagne page, metallic-gold accents, near-black heavy display type, and
+ * large soft-shadowed cards on a beige gradient. Replaces the v2 navy/cyan
+ * "eVISA portal" direction entirely. SPEC.md §4.3 is stale on both counts.
  *
- * IMPORTANT: this site is an INDEPENDENT resource, not the government portal.
- * It borrows the visual language only — never the Immigration Department crest,
- * the MYVISA wordmark, or the word "official". See SPEC.md §1.
+ * IMPORTANT: the look is borrowed, the identity is not. This site is an
+ * INDEPENDENT resource — never the Immigration Department crest, never the
+ * CONNECT IN ASIA or MYPVIP wordmark, never the word "official". See SPEC.md §1.
  *
- * The token NAMES are inherited from v1 (forest-*, sand-*) so the guide,
- * compare, quiz and calculator components reskin without edits. Read them by
- * role, not by hue: `forest-*` is now the navy/blue primary, `sand-*` the
- * cyan/neutral surfaces.
+ * The token NAMES are inherited from v1 (forest-*, sand-*, hibiscus-*) so every
+ * guide, table, quiz and calculator component reskins without edits. Read them
+ * by ROLE, not by hue:
+ *   forest-*   → bronze/gold primary, deepening to espresso for headings
+ *   sand-*     → ivory and champagne surfaces
+ *   hibiscus-* → the gold CTA
  */
 
 @theme {
-  /* Navy / blue — primary (hero, footer, headings, links) */
-  --color-forest-50: #eef4f9;
-  --color-forest-100: #d7e5f1;
-  --color-forest-300: #7ea6c7;
-  --color-forest-600: #2f6096;
-  --color-forest-700: #234c76;
-  --color-forest-900: #16283d;
+  /* Bronze → espresso — primary (headings, links, dark panels) */
+  --color-forest-50: #faf6ec; /* palest gold tint — inset panels */
+  --color-forest-100: #f1e7d2; /* gold-tinted band */
+  --color-forest-300: #d8c494; /* hover borders */
+  --color-forest-600: #b0913f; /* live gold — progress bars, active rules */
+  --color-forest-700: #8a6e33; /* bronze — links, secondary headings */
+  --color-forest-900: #241b0f; /* espresso — headings and the dark note panels */
 
-  /* Cyan / neutral — surfaces and bands */
-  --color-sand-50: #f6fbfd; /* near-white: page background, and light text on navy */
-  --color-sand-100: #e4f3f9; /* the pale-cyan nav and announcement bands */
-  --color-sand-200: #cbe4ee; /* borders */
-  --color-sand-400: #8bb2c4; /* muted lines */
+  /* Ivory / champagne — surfaces and bands */
+  --color-sand-50: #fcfaf4; /* ivory: page background, and light text on espresso */
+  --color-sand-100: #f4edde; /* champagne: bands, nav, muted fills */
+  --color-sand-200: #e8deca; /* hairline borders */
+  --color-sand-400: #bca87c; /* muted lines */
 
-  /* Hibiscus — the single warm accent. CTAs and live flags only. */
-  --color-hibiscus-500: #c2364b;
-  --color-hibiscus-600: #a52a3d;
+  /* Gold — the CTA. Flat token for fills that can't take a gradient. */
+  --color-hibiscus-500: #b08d3c;
+  --color-hibiscus-600: #93742d;
 
-  --color-ink: #14202b;
-  --color-ink-muted: #46586a;
+  /* Errors keep a true red — a gold "error" reads as decoration. */
+  --color-alert-600: #a5342c;
 
-  /* Headings now carry a bold geometric sans; body a humanist sans. The var
-     names are kept from v1 so components using `font-serif` need no change. */
-  --font-serif: var(--font-editorial-serif), "Poppins", system-ui, sans-serif;
+  --color-ink: #141210;
+  --color-ink-muted: #6b6154;
+
+  /* Display type is a heavy geometric sans (the reference's Pretendard 800);
+     `--font-display` is the high-contrast serif reserved for the single
+     gold accent word per card. The var NAMES are kept from v1, so components
+     using `font-serif` get the heading face with no change. */
+  --font-serif: var(--font-heading-sans), "Plus Jakarta Sans", system-ui, sans-serif;
   --font-sans: var(--font-body-sans), system-ui, sans-serif;
+  --font-display: var(--font-accent-serif), "Playfair Display", Georgia, serif;
 
   --text-base: 1.1875rem; /* 19px — readability is still a differentiator */
+
+  --radius-card: 1.5rem; /* 24px — the reference's card corner */
 }
 
 @layer base {
+  /* The metallic sweep, in two calibrations. Not @theme tokens — they are
+     gradients, not colours, so they generate no utilities.
+
+     `--gradient-gold` lights a FILL (pill, badge), where the pale band is the
+     highlight and the dark text sits on top of it. `--gradient-gold-text`
+     lights TEXT on ivory, where that same pale band would vanish — so its
+     highlight stops well short of cream and its ends run darker. Keep them
+     separate: reusing the fill ramp on type is what makes gold text illegible. */
+  :root {
+    --gradient-gold: linear-gradient(
+      100deg,
+      #8a6e33 0%,
+      #c9ac5e 32%,
+      #f0dfae 52%,
+      #b9954a 74%,
+      #8a6e33 100%
+    );
+
+    --gradient-gold-text: linear-gradient(
+      100deg,
+      #6b5220 0%,
+      #9d7c2f 26%,
+      #c9ad63 48%,
+      #93732a 72%,
+      #6b5220 100%
+    );
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -61,7 +98,7 @@
     font-size: var(--text-base);
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
-    /* Guard against the full-bleed hero producing a horizontal scrollbar. */
+    /* Guard against full-bleed sections producing a horizontal scrollbar. */
     overflow-x: clip;
   }
 
@@ -70,16 +107,111 @@
   h3 {
     font-family: var(--font-serif);
     color: var(--color-forest-900);
-    font-weight: 700;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
+    font-weight: 800;
+    line-height: 1.14;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
 }
 
 /* Full-bleed helper — lets a section inside the centered <main> span the whole
-   viewport width (the navy hero, the cyan bands). */
+   viewport width (the hero, the champagne bands). */
 @utility full-bleed {
   width: 100vw;
   margin-inline: calc(50% - 50vw);
+}
+
+/* The gold display word — "Settlement", "20 Years+". Serif, large, metallic. */
+@utility gold-text {
+  background-image: var(--gradient-gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* background-clip:text crops to the text BOX, so a tight line-height shears
+     the descenders off and an italic's final stroke overhangs the right edge.
+     Give every gold word room to hang on both axes. */
+  padding-bottom: 0.12em;
+  padding-right: 0.06em;
+  line-height: 1.14;
+}
+
+/* The gold pill — primary CTA. */
+@utility gold-fill {
+  background-image: var(--gradient-gold);
+  color: #2a2113;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.45) inset,
+    0 10px 24px -12px rgb(138 110 51 / 0.65);
+}
+
+/* Section eyebrow — "TRUST & AUTHORITY", "OFFICE INFORMATION". */
+@utility eyebrow {
+  font-family: var(--font-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-forest-700);
+}
+
+/* The signature card: generous radius, ivory face, hairline, soft lift. */
+@utility card-lux {
+  border-radius: var(--radius-card);
+  background: linear-gradient(
+    170deg,
+    #fffdf8 0%,
+    var(--color-sand-50) 55%,
+    #f7f1e4 100%
+  );
+  border: 1px solid var(--color-sand-200);
+  box-shadow:
+    0 1px 2px rgb(36 27 15 / 0.03),
+    0 18px 40px -24px rgb(36 27 15 / 0.22);
+}
+
+/* Hairline with a small gold lozenge at its centre — the divider under each
+   card's display word. */
+@utility diamond-rule {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-sand-400),
+      transparent
+    );
+  }
+}
+
+/* Faint concentric outlines drifting behind the hero and the closing CTA. */
+@utility ring-decor {
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px solid var(--color-sand-200);
+  pointer-events: none;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Entrance for the hero column. Motion-safe by construction. */
+@utility rise {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: rise 0.7s cubic-bezier(0.2, 0, 0, 1) both;
+  }
 }

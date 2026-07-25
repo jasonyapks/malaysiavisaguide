@@ -73,7 +73,8 @@ export default function Page() {
         },
       ]}
       cta={{
-        text: "Work out the full first-year cost of each tier → cost calculator",
+        text: "Work out the full first-year cost of each tier.",
+        label: "Open the cost calculator",
         href: "/tools/cost-calculator/",
       }}
     >

@@ -16,18 +16,48 @@ imagery is trust infrastructure — a generic stock look actively costs credibil
   (the brief is your shot list) already written.
 - `<Figure>` renders a **branded placeholder** carrying the brief until a real
   photo exists — the design never shows a broken image.
-- The guide heroes come in via the `hero` prop on `<GuideLayout>`; the home hero
-  and the About portrait use `<Figure>` directly.
+- The guide heroes come in via the `hero` prop on `<GuideLayout>` and render
+  **full-bleed at 100vw** behind the page title; the home hero and the About
+  portrait use `<Figure>` directly at a fixed, much smaller width.
 
 ### To add a photo
 
-1. Compress it first — static export serves images as-is. Target **~150–250 KB,
-   ~1600 px wide, JPEG or WebP**. (Squoosh.app is a quick free compressor.)
-2. Drop it at the slot's `src`, e.g. `public/images/pvip.jpg`.
-3. In `src/lib/images.ts`, set `ready: true` on that slot.
-4. If the licence requires attribution, fill `credit: { name, url }` — it renders
-   as a caption under the image.
-5. `npm run build` and check the page.
+1. Compress it first — static export serves images as-is (`next.config.ts` sets
+   `images: { unoptimized: true }`, because a static export has no optimiser).
+   There is **no `srcset`**: whatever you drop in is what a phone downloads.
+   Target **~150–250 KB**, WebP.
+2. Size it to how it actually renders, not to a fixed 1600 px:
+
+   | Slot | Renders at | Source width |
+   |---|---|---|
+   | The six guide heroes | full-bleed, 100vw | 1500–1600 px |
+   | `home` | ~460 px in the freshness band | 1100 px |
+   | `about` | 200 px portrait | 500 px |
+
+3. Drop it at the slot's `src`, e.g. `public/images/pvip.webp`.
+4. In `src/lib/images.ts`, set `ready: true` on that slot.
+5. If the licence requires attribution, fill `credit: { name, url }` — it renders
+   as a caption under the image. **Note:** `<Figure>` renders the caption, the
+   full-bleed guide hero does not — a credited photo does not belong in a hero
+   slot until that is handled.
+6. `npm run build` and check the page.
+
+### The WebP conversion (2026-07-25)
+
+All eight slots were JPEG and totalled 1.84 MB; several were well over the
+250 KB target, and the guide heroes had just become the LCP element on their
+pages. Converted with:
+
+```sh
+cwebp -q 78 -m 6 -sharp_yuv -metadata none in.jpg -o out.webp
+# home-hero and jason-yap were also oversized for their slot, so:
+cwebp -q 80 -m 6 -sharp_yuv -metadata none -resize 1100 0 home-hero.jpg -o home-hero.webp
+cwebp -q 82 -m 6 -sharp_yuv -metadata none -resize 500 0  jason-yap.jpg -o jason-yap.webp
+```
+
+1.84 MB → 887 KB (52%). The JPEG masters were deleted; recover any of them with
+`git show <commit-before-this>:public/images/pvip.jpg > pvip.jpg` — the masters
+were `.jpg`, so ask git for the old extension, not the new one.
 
 ---
 
@@ -35,14 +65,14 @@ imagery is trust infrastructure — a generic stock look actively costs credibil
 
 | Slot | File to add | Shot brief | Suggested source |
 |---|---|---|---|
-| `home` | `public/images/home-hero.jpg` | Warm expat-life scene — balcony, garden or café in KL at golden hour. Not a corporate skyline. | Unsplash → *Adobe Stock* if you want it premium |
-| `pvip` | `public/images/pvip.jpg` | Upscale modern condo interior with a city view — premium, calm, lived-in. | Unsplash / Adobe Stock |
-| `mm2h` | `public/images/mm2h.jpg` | Second-home retirement lifestyle — couple 55+, veranda or garden, tropical green. | Unsplash / Pexels |
-| `sarawak-mm2h` | `public/images/sarawak-mm2h.jpg` | Distinctly Sarawak — Kuching riverfront, Borneo rainforest or a longhouse. Not peninsular Malaysia. | **Wikimedia Commons** (best for local place) / Unsplash |
-| `de-rantau` | `public/images/de-rantau.jpg` | Digital-nomad scene — laptop, café or co-working space, tropical daylight. | Pexels / Unsplash |
-| `employment-pass` | `public/images/employment-pass.jpg` | Professional workplace — small team, bright modern office, mixed nationalities. | Pexels |
-| `student-pass` | `public/images/student-pass.jpg` | Campus life — international students on a green Malaysian university campus. | Unsplash / Wikimedia |
-| `about` | `public/images/jason-yap.jpg` | **Jason's own portrait — a real headshot, never stock.** | Local photographer / a clean phone headshot |
+| `home` | `public/images/home-hero.webp` | Warm expat-life scene — balcony, garden or café in KL at golden hour. Not a corporate skyline. | Unsplash → *Adobe Stock* if you want it premium |
+| `pvip` | `public/images/pvip.webp` | Upscale modern condo interior with a city view — premium, calm, lived-in. | Unsplash / Adobe Stock |
+| `mm2h` | `public/images/mm2h.webp` | Second-home retirement lifestyle — couple 55+, veranda or garden, tropical green. | Unsplash / Pexels |
+| `sarawak-mm2h` | `public/images/sarawak-mm2h.webp` | Distinctly Sarawak — Kuching riverfront, Borneo rainforest or a longhouse. Not peninsular Malaysia. | **Wikimedia Commons** (best for local place) / Unsplash |
+| `de-rantau` | `public/images/de-rantau.webp` | Digital-nomad scene — laptop, café or co-working space, tropical daylight. | Pexels / Unsplash |
+| `employment-pass` | `public/images/employment-pass.webp` | Professional workplace — small team, bright modern office, mixed nationalities. | Pexels |
+| `student-pass` | `public/images/student-pass.webp` | Campus life — international students on a green Malaysian university campus. | Unsplash / Wikimedia |
+| `about` | `public/images/jason-yap.webp` | **Jason's own portrait — a real headshot, never stock.** | Local photographer / a clean phone headshot |
 
 ---
 

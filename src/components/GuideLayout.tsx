@@ -1,10 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Programme } from "@/lib/data/programmes";
 import type { SiteImage } from "@/lib/images";
 import { site } from "@/lib/site";
 import { Byline } from "@/components/Byline";
 import { Faq, type FaqItem } from "@/components/Faq";
-import { Figure } from "@/components/Figure";
+import { GuideHead, Lozenge } from "@/components/GuideHead";
 import { KeyFacts } from "@/components/KeyFacts";
 
 /**
@@ -17,6 +18,15 @@ import { KeyFacts } from "@/components/KeyFacts";
  * Sections 3–5 are `children` because they differ per programme. Everything
  * else is fixed, so no guide can quietly ship without a review date, a
  * source, or the honest suitability section.
+ *
+ * PRESENTATION (v3, 2026-07-25) follows connectinasia.com/mm2h: a cinematic
+ * full-bleed photo hero with the title over it, centred section headings, and
+ * content in cards that stagger left/right down the page. The information
+ * ORDER above is unchanged — only its dressing is.
+ *
+ * The whole article is `full-bleed`, which escapes the 3xl column that <main>
+ * imposes, and re-centres its own 5xl container. That extra width is what makes
+ * the stagger legible; the cards keep the prose measure itself sane.
  */
 export function GuideLayout({
   programme,
@@ -43,8 +53,12 @@ export function GuideLayout({
   facts?: React.ReactNode;
   suits: { yes: string[]; no: string[] };
   faq: FaqItem[];
-  /** The single contextual CTA. Never a popup, never more than one. */
-  cta: { text: string; href: string };
+  /**
+   * The single contextual CTA. Never a popup, never more than one.
+   * `text` is the prompt, `label` the words on the pill — split because the
+   * band sets them as a sentence beside a button, not one long link.
+   */
+  cta: { text: string; href: string; label?: string };
   children: React.ReactNode;
 }) {
   const articleSchema = {
@@ -71,8 +85,13 @@ export function GuideLayout({
     ],
   };
 
+  // The hero's one-line standfirst. Taken as the first sentence of `answer`
+  // rather than authored separately, so there is no second place for a claim
+  // about the programme to live — and drift.
+  const lead = answer.split(/(?<=\.)\s+/)[0];
+
   return (
-    <article className="space-y-12">
+    <article className="full-bleed -mt-14 -mb-14">
       {/* SPEC.md §4.4 — Article + BreadcrumbList per guide. FAQPage is emitted
           by <Faq>; Organization is sitewide in the root layout. */}
       <script
@@ -84,55 +103,147 @@ export function GuideLayout({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
-      <header className="space-y-6">
-        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">{title}</h1>
-        {/* 1 — answer first. */}
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-[1.25rem] leading-relaxed text-forest-900">
-          {answer}
-        </p>
-      </header>
+      <GuideHero
+        title={title}
+        lead={lead}
+        authority={programme.authority}
+        image={hero}
+      />
 
-      {/* Hero photo — after the answer so the text stays first in the DOM. */}
-      {hero && <Figure image={hero} aspect="aspect-[16/7]" priority />}
+      <div className="relative overflow-hidden bg-linear-to-b from-sand-50 via-sand-50 to-sand-100">
+        <div
+          aria-hidden
+          className="ring-decor -right-64 top-40 size-[44rem] opacity-60"
+        />
 
-      {/* 2 */}
-      {facts ?? <KeyFacts programme={programme} />}
+        <div className="relative mx-auto max-w-5xl space-y-20 px-6 py-20">
+          {/* 1 — answer first, and visually the first thing under the hero. */}
+          <p className="card-lux mx-auto max-w-3xl border-l-4 border-l-forest-600 px-7 py-6 text-[1.2rem] leading-relaxed text-forest-900">
+            {answer}
+          </p>
 
-      {/* 3–5 */}
-      {children}
+          {/* 2 */}
+          {facts ?? <KeyFacts programme={programme} />}
 
-      {/* 6 — the honest section. This is what makes a page worth citing. */}
-      <section className="space-y-6">
-        <h2 className="font-serif text-2xl font-semibold">
-          Who it suits — and who it doesn&apos;t
-        </h2>
-        <div className="grid gap-6 sm:grid-cols-2">
-          <SuitList
-            heading="A good fit if"
-            tone="good"
-            items={suits.yes}
-          />
-          <SuitList
-            heading="Look elsewhere if"
-            tone="bad"
-            items={suits.no}
-          />
+          {/* 3–5 — the page's own sections, staggered down the page. Even
+              children sit right, odd sit left; the offset only appears once
+              there is width to spend on it. */}
+          <div className="space-y-10 lg:[&>section:nth-child(even)]:ml-auto lg:[&>section]:w-[88%]">
+            {children}
+          </div>
+
+          {/* 6 — the honest section. This is what makes a page worth citing. */}
+          <section className="space-y-8">
+            <GuideHead
+              eyebrow="Honest fit"
+              title={
+                <>
+                  Who it suits — and{" "}
+                  <span className="font-display gold-text font-medium italic">
+                    who it doesn&apos;t
+                  </span>
+                </>
+              }
+            />
+            <div className="grid gap-6 sm:grid-cols-2">
+              <SuitList heading="A good fit if" tone="good" items={suits.yes} />
+              <SuitList heading="Look elsewhere if" tone="bad" items={suits.no} />
+            </div>
+          </section>
+
+          {/* 7 */}
+          <Faq items={faq} />
+
+          {/* 8 */}
+          <Byline lastVerified={programme.lastVerified} />
+        </div>
+      </div>
+
+      {/* 9 — one CTA, in the closing champagne band the whole site ends on. */}
+      <section className="relative overflow-hidden border-t border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#e9dec5]">
+        <div
+          aria-hidden
+          className="ring-decor -left-40 -bottom-48 size-[34rem] opacity-70"
+        />
+        <div className="relative mx-auto flex max-w-5xl flex-col items-start gap-6 px-6 py-14 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-xl text-[1.15rem] font-semibold text-forest-900">
+            {cta.text.replace(/\s*→\s*$/, "")}
+          </p>
+          <Link
+            href={cta.href}
+            className="gold-fill shrink-0 rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
+          >
+            {cta.label ?? "Continue"}
+          </Link>
         </div>
       </section>
-
-      {/* 7 */}
-      <Faq items={faq} />
-
-      {/* 8 */}
-      <Byline lastVerified={programme.lastVerified} />
-
-      {/* 9 */}
-      <p className="rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
-        <Link href={cta.href} className="font-semibold underline">
-          {cta.text}
-        </Link>
-      </p>
     </article>
+  );
+}
+
+/**
+ * The cinematic hero. This is the one place on the site where text sits over a
+ * photo — <Figure> deliberately refuses to do that for readability, and the
+ * scrim below is what earns the exception: a near-opaque espresso wash at the
+ * bottom, so the title never depends on the photo's own tones for contrast.
+ */
+function GuideHero({
+  title,
+  lead,
+  authority,
+  image,
+}: {
+  title: string;
+  lead: string;
+  authority: string;
+  image?: SiteImage;
+}) {
+  return (
+    <header className="relative isolate flex min-h-[26rem] items-end overflow-hidden bg-forest-900 sm:min-h-[32rem]">
+      {image?.ready && (
+        // Descriptive alt, not alt="". These are content photographs with
+        // written alt in the registry — a Kuching riverfront, a family on a
+        // path — and they stay eligible for image search. The alt describes
+        // the photo; it does not repeat the <h1> sitting on top of it.
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+      )}
+
+      {/* Two washes: a vertical one to seat the text, a warm one to pull the
+          photo into the site's palette rather than leaving it cold.
+
+          The gradient is weighted to the BOTTOM, where the title sits — a wash
+          heavy enough to cover the whole frame reads as a flat brown block on
+          any photo whose subject isn't in the top third, which is most of
+          them. Keep the upper stops light. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-linear-to-t from-[#150f07]/92 via-[#150f07]/45 to-[#150f07]/15"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[#3a2b12] mix-blend-multiply opacity-15"
+      />
+
+      {/* The shadow is what lets the scrim stay light: it guarantees the type
+          separates from whatever happens to be behind it — bright foliage on
+          the DE Rantau shot, sky on Sarawak's — without darkening the photo. */}
+      <div className="relative mx-auto w-full max-w-5xl px-6 pb-14 pt-24 text-center [text-shadow:0_2px_16px_rgb(10_7_3/0.6)] sm:pb-20">
+        <p className="eyebrow !text-[#e2cd93]">{authority}</p>
+        <h1 className="mx-auto mt-4 max-w-3xl text-4xl !text-white sm:text-[3.25rem]">
+          {title}
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl text-[1.1rem] text-white/85 sm:text-[1.25rem]">
+          {lead}
+        </p>
+      </div>
+    </header>
   );
 }
 
@@ -147,20 +258,29 @@ function SuitList({
 }) {
   return (
     <div
-      className={`rounded-xl border p-5 ${
-        tone === "good"
-          ? "border-forest-300 bg-forest-50"
-          : "border-sand-400 bg-sand-100"
-      }`}
+      className={`card-lux p-6 ${tone === "good" ? "border-forest-300" : ""}`}
     >
-      <h3 className="font-serif text-lg font-semibold">{heading}</h3>
-      <ul className="mt-3 space-y-2 text-[1.0625rem]">
+      <div className="flex items-center gap-3">
+        <span
+          aria-hidden
+          className={`grid size-8 shrink-0 place-items-center rounded-full text-[0.9rem] font-bold ${
+            tone === "good"
+              ? "gold-fill"
+              : "bg-sand-100 text-ink-muted ring-1 ring-sand-200"
+          }`}
+        >
+          {tone === "good" ? "✓" : "✕"}
+        </span>
+        <h3 className="font-serif text-lg font-extrabold">{heading}</h3>
+      </div>
+      <ul className="mt-4 space-y-3 text-[1.0625rem]">
         {items.map((i) => (
-          <li key={i} className="flex gap-2">
-            <span aria-hidden className="text-ink-muted">
-              {tone === "good" ? "✓" : "✗"}
-            </span>
-            <span>{i}</span>
+          <li key={i} className="flex gap-3">
+            <span
+              aria-hidden
+              className="mt-2.5 size-1.5 shrink-0 rotate-45 rounded-[1px] bg-forest-600/60"
+            />
+            <span className={tone === "good" ? "" : "text-ink-muted"}>{i}</span>
           </li>
         ))}
       </ul>
@@ -168,7 +288,13 @@ function SuitList({
   );
 }
 
-/** A content section inside a guide — sections 3–5 of the template. */
+/**
+ * A content section inside a guide — sections 3–5 of the template.
+ *
+ * Rendered as a staggered card. The numbered gold disc is positional (it
+ * counts sections on the page), not a claim that the steps happen in that
+ * order — guides describe requirements, not a process.
+ */
 export function Section({
   title,
   children,
@@ -177,9 +303,14 @@ export function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="space-y-4">
-      <h2 className="font-serif text-2xl font-semibold">{title}</h2>
-      <div className="space-y-4 text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_li]:ml-5 [&_li]:list-disc [&_strong]:text-ink">
+    <section className="card-lux p-7 sm:p-9">
+      <h2 className="font-serif text-2xl font-extrabold sm:text-[1.75rem]">
+        {title}
+      </h2>
+      <div className="diamond-rule my-5 max-w-sm">
+        <Lozenge />
+      </div>
+      <div className="space-y-4 text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_li]:ml-5 [&_li]:list-disc [&_strong]:font-bold [&_strong]:text-forest-900">
         {children}
       </div>
     </section>

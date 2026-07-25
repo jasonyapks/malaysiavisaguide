@@ -23,6 +23,45 @@ const BLURB: Record<string, string> = {
   "/visas/student-pass/": "For enrolment at a Malaysian institution.",
 };
 
+/**
+ * The single serif word set in gold on each card — the reference's
+ * "Settlement / Family / Lifestyle" device. One word, no punctuation: it is a
+ * mood label for the route, not its name.
+ */
+const DISPLAY_WORD: Record<string, string> = {
+  "/visas/pvip/": "Premium",
+  "/visas/mm2h/": "Classic",
+  "/visas/sarawak-mm2h/": "Value",
+  "/visas/de-rantau/": "Remote",
+  "/visas/employment-pass/": "Work",
+  "/visas/student-pass/": "Study",
+};
+
+const ICON: Record<string, IconName> = {
+  "/visas/pvip/": "spark",
+  "/visas/mm2h/": "home",
+  "/visas/sarawak-mm2h/": "target",
+  "/visas/de-rantau/": "arrow",
+  "/visas/employment-pass/": "square",
+  "/visas/student-pass/": "swap",
+};
+
+/** The hero card's numbered rows — what this site does, in three lines. */
+const PROMISES = [
+  {
+    title: "Every figure checked against its official source",
+    body: "Fees, thresholds and tenures are traced to the government page that sets them, with the date we last looked.",
+  },
+  {
+    title: "PVIP and MM2H compared side by side",
+    body: "The same fields, the same units, one table — so the trade-offs are visible instead of buried in prose.",
+  },
+  {
+    title: "Written to inform, not to close a sale",
+    body: "Where a programme is the wrong fit, the guide says so. The commercial relationship is disclosed on every page.",
+  },
+];
+
 const lastReviewed = programmes
   .map((p) => p.lastVerified)
   .sort()
@@ -30,100 +69,219 @@ const lastReviewed = programmes
 
 export default function Home() {
   return (
-    <div className="space-y-16">
-      {/* Hero — full-bleed navy, echoing the official portal. */}
-      <section className="full-bleed -mt-14 overflow-hidden bg-forest-900 text-sand-50">
-        <Skyline />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-6 py-16 md:grid-cols-[1.1fr_0.9fr] md:py-20">
-          <div className="space-y-6">
-            <span className="inline-block rounded-full bg-sand-100/10 px-3 py-1 text-[0.8rem] font-semibold tracking-wide text-sand-100 ring-1 ring-sand-100/20">
+    <div className="space-y-24">
+      {/* Hero — ivory to champagne, drifting rings, one gold word. */}
+      <section className="full-bleed -mt-14 relative overflow-hidden bg-linear-to-br from-sand-50 via-sand-100 to-[#e9dec5]">
+        <div
+          aria-hidden
+          className="ring-decor -left-40 -top-32 size-[34rem] opacity-80"
+        />
+        <div
+          aria-hidden
+          className="ring-decor -right-56 top-10 size-[42rem] opacity-70"
+        />
+
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-[1.05fr_0.95fr] md:py-28">
+          <div className="rise space-y-7">
+            <p className="eyebrow flex items-center gap-2">
+              <span
+                aria-hidden
+                className="size-1.5 rounded-full bg-forest-600"
+              />
               Independent · verified against official sources
-            </span>
-            <h1 className="text-4xl font-bold leading-tight text-sand-50 sm:text-5xl">
-              Malaysia&apos;s long-stay visas, explained without the sales pitch
-            </h1>
-            <p className="max-w-xl text-lg text-sand-100/90">
-              PVIP, MM2H, Sarawak MM2H and DE Rantau let you live in Malaysia long
-              term — and they differ enormously in cost, tenure and who they suit.
-              Every figure here is checked against its official government source.
             </p>
-            <div className="flex flex-wrap items-center gap-4 pt-1">
+
+            <h1 className="text-[2.6rem] leading-[1.05] sm:text-6xl">
+              Malaysia&apos;s
+              <br />
+              long-stay visas,
+              <br />
+              <span className="font-display gold-text font-medium italic">
+                explained plainly
+              </span>
+            </h1>
+
+            <p className="max-w-xl text-ink-muted">
+              PVIP, MM2H, Sarawak MM2H and DE Rantau all let you live in Malaysia
+              long term — and they differ enormously in cost, tenure and who they
+              suit. Every figure here is checked against its official government
+              source.
+            </p>
+
+            <ul className="flex flex-wrap gap-2.5">
+              {[
+                "Six programmes covered",
+                "Costs in full",
+                "Reviewed monthly",
+              ].map((label) => (
+                <li
+                  key={label}
+                  className="rounded-full border border-sand-200 bg-white/70 px-4 py-1.5 text-[0.8rem] font-bold text-forest-700"
+                >
+                  {label}
+                </li>
+              ))}
+            </ul>
+
+            <div className="flex flex-wrap items-center gap-5 pt-1">
               <Link
                 href="/tools/eligibility/"
-                className="rounded-md bg-sand-50 px-6 py-3 font-semibold text-forest-900 transition-colors hover:bg-white"
+                className="gold-fill rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
               >
                 Check what you qualify for
               </Link>
               <Link
                 href="/compare/"
-                className="inline-flex items-center gap-1.5 px-2 py-3 font-semibold text-sand-50 hover:text-white"
+                className="inline-flex items-center gap-1.5 border-b-2 border-forest-600/40 pb-0.5 font-bold text-forest-900 transition-colors hover:border-forest-600"
               >
                 Compare programmes <span aria-hidden>↗</span>
               </Link>
             </div>
           </div>
 
-          {/* Hero image — swapped in from the image registry (src/lib/images.ts). */}
+          {/* The floating promise card — the reference's hero panel. */}
+          <div className="card-lux relative p-7 sm:p-9">
+            <p className="eyebrow">What this guide is</p>
+            <h2 className="mt-3 text-[1.55rem] leading-snug">
+              Not a brochure —{" "}
+              <span className="text-forest-700">a reference you can check</span>
+            </h2>
+
+            <ul className="mt-7 space-y-3">
+              {PROMISES.map((p, i) => (
+                <li
+                  key={p.title}
+                  className="flex gap-4 rounded-2xl border border-sand-200/70 bg-sand-50/80 px-4 py-4"
+                >
+                  <NumberBadge n={i + 1} />
+                  <div className="space-y-1">
+                    <p className="font-serif text-[0.98rem] font-bold leading-snug text-forest-900">
+                      {p.title}
+                    </p>
+                    <p className="text-[0.85rem] leading-relaxed text-ink-muted">
+                      {p.body}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Section heading + framing paragraph, split as the reference splits it. */}
+      <section className="space-y-10">
+        <SectionHead
+          eyebrow="Choose your route"
+          title={
+            <>
+              Which Malaysian visa
+              <br />
+              <span className="gold-text">actually fits you</span>
+            </>
+          }
+          body={
+            <>
+              The three long-stay programmes differ by an order of magnitude in
+              cost, and the work and study passes solve a different problem
+              entirely. Start with the one that matches{" "}
+              <strong className="font-bold text-forest-700">
+                why you are coming
+              </strong>
+              .
+            </>
+          }
+        />
+
+        <ul className="grid gap-6 sm:grid-cols-3">
+          {navRoutes("programmes").map((r, i) => (
+            <ProgrammeCard key={r.path} path={r.path} title={r.title} n={i + 1} />
+          ))}
+        </ul>
+      </section>
+
+      {/* Work & study — same card, smaller. */}
+      <section className="space-y-8">
+        <SectionHead
+          eyebrow="Work & study"
+          title={
+            <>
+              Coming for a job,
+              <br />
+              <span className="gold-text">a course, or remote work</span>
+            </>
+          }
+          body="These are not residence programmes — they are tied to an employer, an institution, or a foreign paycheque. Different rules, different timelines."
+        />
+
+        <ul className="grid gap-6 sm:grid-cols-3">
+          {navRoutes("work-study").map((r, i) => (
+            <ProgrammeCard key={r.path} path={r.path} title={r.title} n={i + 4} />
+          ))}
+        </ul>
+      </section>
+
+      {/* Freshness band — champagne, full-bleed, with the review photo. */}
+      <section className="full-bleed relative overflow-hidden border-y border-sand-200 bg-linear-to-b from-sand-100 to-[#ece1c9]">
+        <div
+          aria-hidden
+          className="ring-decor -right-32 -top-24 size-[30rem] opacity-70"
+        />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-6 py-16 md:grid-cols-[0.9fr_1.1fr]">
           <Figure
             image={images.home}
             aspect="aspect-[4/3]"
-            rounded="rounded-2xl"
+            rounded="rounded-card"
             priority
-            sizes="(min-width: 768px) 480px, 0px"
-            className="hidden shadow-2xl md:block"
+            sizes="(min-width: 768px) 460px, 100vw"
+            className="shadow-[0_24px_60px_-30px_rgb(36_27_15/0.5)]"
           />
+          <div className="space-y-4">
+            <p className="eyebrow">Trust &amp; authority</p>
+            <h2 className="text-3xl sm:text-4xl">
+              Every fee and threshold
+              <br />
+              <span className="font-display gold-text font-medium italic">
+                last checked {reviewDate(lastReviewed)}
+              </span>
+            </h2>
+            <p className="max-w-xl text-ink-muted">
+              Malaysian visa rules change often — and most sites quietly go stale.
+              When a figure here moves, it moves in one place, and the review date
+              tells you exactly how fresh what you are reading is.
+            </p>
+            <div className="diamond-rule max-w-md pt-2">
+              <Lozenge />
+            </div>
+          </div>
         </div>
-      </section>
-
-      {/* Latest-updates band — cyan, echoing the portal's announcement strip. */}
-      <section className="full-bleed bg-sand-100">
-        <div className="mx-auto max-w-3xl space-y-2 px-6 py-10 text-center">
-          <p className="text-[0.8rem] font-bold uppercase tracking-[0.2em] text-forest-700">
-            Latest review
-          </p>
-          <h2 className="text-2xl font-bold text-forest-900">
-            Every fee and threshold last checked {reviewDate(lastReviewed)}
-          </h2>
-          <p className="text-ink-muted">
-            Malaysian visa rules change often. When a figure on this site moves,
-            it moves in one place — and the review date tells you how fresh it is.
-          </p>
-        </div>
-      </section>
-
-      {/* Programme router */}
-      <section className="space-y-6">
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold">Which route is yours?</h2>
-          <p className="text-ink-muted">
-            Start with the long-stay programmes, or jump to the work and study
-            passes.
-          </p>
-        </div>
-
-        <ul className="grid gap-4 sm:grid-cols-3">
-          {navRoutes("programmes").map((r) => (
-            <ProgrammeCard key={r.path} path={r.path} title={r.title} primary />
-          ))}
-        </ul>
-        <ul className="grid gap-4 sm:grid-cols-3">
-          {navRoutes("work-study").map((r) => (
-            <ProgrammeCard key={r.path} path={r.path} title={r.title} />
-          ))}
-        </ul>
       </section>
 
       {/* Tools */}
-      <section className="space-y-5 rounded-2xl border border-sand-200 bg-white p-6 sm:p-8">
-        <h2 className="text-2xl font-bold">Work out where you stand</h2>
-        <ul className="grid gap-3 sm:grid-cols-3">
+      <section className="space-y-8">
+        <SectionHead
+          eyebrow="Tools"
+          title={
+            <>
+              Work out{" "}
+              <span className="font-display gold-text font-medium italic">
+                where you stand
+              </span>
+            </>
+          }
+          body="Three minutes with these beats an hour of reading — they run on the same verified figures as the guides."
+        />
+        <ul className="grid gap-4 sm:grid-cols-3">
           {navRoutes("tools").map((r) => (
             <li key={r.path}>
               <Link
                 href={r.path}
-                className="flex h-full items-center rounded-lg bg-sand-50 px-4 py-3 font-semibold text-forest-700 ring-1 ring-sand-200 transition-colors hover:text-forest-900 hover:ring-forest-300"
+                className="card-lux flex h-full items-center justify-between gap-3 px-5 py-5 font-serif font-bold text-forest-900 transition-transform hover:-translate-y-0.5"
               >
-                {r.title} →
+                {r.title}
+                <span aria-hidden className="text-forest-600">
+                  →
+                </span>
               </Link>
             </li>
           ))}
@@ -131,20 +289,31 @@ export default function Home() {
       </section>
 
       {/* Closing CTA */}
-      <section className="full-bleed bg-forest-900 text-sand-50">
-        <div className="mx-auto flex max-w-3xl flex-col items-start gap-4 px-6 py-12 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <h2 className="text-2xl font-bold text-sand-50">
-              Still not sure which visa fits?
+      {/* -mb-14 cancels main's bottom padding so the CTA runs straight into the
+          footer rather than leaving an ivory seam between two champagne bands. */}
+      <section className="full-bleed -mb-14 relative overflow-hidden border-t border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#e9dec5]">
+        <div
+          aria-hidden
+          className="ring-decor -left-40 -bottom-48 size-[36rem] opacity-70"
+        />
+        <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 py-16 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-3">
+            <p className="eyebrow">1:1 consultation</p>
+            <h2 className="text-3xl sm:text-4xl">
+              Still not sure
+              <br />
+              <span className="font-display gold-text font-medium italic">
+                which visa fits?
+              </span>
             </h2>
-            <p className="text-sand-100/85">
+            <p className="max-w-lg text-ink-muted">
               Jason has handled 1,000+ relocations. Ask a question — no
-              obligation.
+              obligation, and no obligation to use his agency either.
             </p>
           </div>
           <Link
             href="/contact/"
-            className="shrink-0 rounded-md bg-hibiscus-500 px-6 py-3 font-semibold text-sand-50 hover:bg-hibiscus-600"
+            className="gold-fill shrink-0 rounded-full px-9 py-4 font-bold transition-transform hover:-translate-y-px"
           >
             Ask a question
           </Link>
@@ -154,55 +323,130 @@ export default function Home() {
   );
 }
 
+/** Eyebrow + two-line display heading + framing paragraph, split left/right. */
+function SectionHead({
+  eyebrow,
+  title,
+  body,
+}: {
+  eyebrow: string;
+  title: React.ReactNode;
+  body: React.ReactNode;
+}) {
+  return (
+    <div className="grid gap-6 md:grid-cols-[1fr_1fr] md:items-start md:gap-10">
+      <div className="space-y-3">
+        <p className="eyebrow">{eyebrow}</p>
+        <h2 className="text-3xl leading-[1.1] sm:text-4xl">{title}</h2>
+      </div>
+      <p className="border-l-2 border-forest-600/40 pl-5 text-ink-muted md:mt-9">
+        {body}
+      </p>
+    </div>
+  );
+}
+
 function ProgrammeCard({
   path,
   title,
-  primary = false,
+  n,
 }: {
   path: string;
   title: string;
-  primary?: boolean;
+  n: number;
 }) {
   return (
     <li>
       <Link
         href={path}
-        className={`flex h-full flex-col gap-1 rounded-xl border px-5 py-4 transition-colors ${
-          primary
-            ? "border-sand-200 bg-white hover:border-forest-600"
-            : "border-transparent bg-sand-100 hover:bg-sand-200"
-        }`}
+        className="card-lux group flex h-full flex-col p-6 transition-transform hover:-translate-y-1"
       >
-        <span className="font-serif text-lg font-bold text-forest-900">
-          {title}
-        </span>
-        <span className="text-[0.9rem] text-ink-muted">{BLURB[path]}</span>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <NumberBadge n={n} />
+            <span className="font-serif text-[1.05rem] font-extrabold leading-tight text-forest-900">
+              {title}
+            </span>
+          </div>
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-sand-200 bg-white text-forest-700 shadow-sm transition-colors group-hover:border-forest-300">
+            <Icon name={ICON[path]} />
+          </span>
+        </div>
+
+        <p className="font-display gold-text mt-9 text-4xl font-medium">
+          {DISPLAY_WORD[path]}
+        </p>
+
+        <div className="diamond-rule my-5">
+          <Lozenge />
+        </div>
+
+        <p className="text-[0.9rem] leading-relaxed text-ink-muted">
+          {BLURB[path]}
+        </p>
       </Link>
     </li>
   );
 }
 
-/** A low-key KL skyline silhouette watermark for the hero. */
-function Skyline() {
+/** The gold 01 / 02 / 03 disc. */
+function NumberBadge({ n }: { n: number }) {
+  return (
+    <span
+      aria-hidden
+      className="gold-fill grid size-9 shrink-0 place-items-center rounded-full font-serif text-[0.72rem] font-extrabold tracking-wide"
+    >
+      {String(n).padStart(2, "0")}
+    </span>
+  );
+}
+
+/** The small gold diamond that sits at the centre of a hairline rule. */
+function Lozenge() {
+  return (
+    <span
+      aria-hidden
+      className="size-1.5 rotate-45 bg-forest-600/70"
+      style={{ borderRadius: "1px" }}
+    />
+  );
+}
+
+type IconName = "spark" | "home" | "target" | "arrow" | "square" | "swap";
+
+const ICON_PATHS: Record<IconName, React.ReactNode> = {
+  spark: <path d="M12 3v18M3 12h18M6 6l12 12M18 6 6 18" />,
+  home: (
+    <>
+      <path d="M3 10.5 12 3l9 7.5" />
+      <path d="M5 9.5V21h14V9.5" />
+    </>
+  ),
+  target: (
+    <>
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  arrow: <path d="M6 18 18 6M9 6h9v9" />,
+  square: <rect x="6" y="6" width="12" height="12" rx="1" />,
+  swap: <path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4" />,
+};
+
+function Icon({ name }: { name: IconName }) {
   return (
     <svg
+      width="19"
+      height="19"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden
-      viewBox="0 0 1440 320"
-      preserveAspectRatio="xMidYMax meet"
-      className="pointer-events-none absolute inset-x-0 bottom-0 h-40 w-full text-sand-50 opacity-[0.06]"
-      fill="currentColor"
     >
-      <rect x="80" y="180" width="60" height="140" />
-      <rect x="150" y="120" width="40" height="200" />
-      <rect x="360" y="200" width="70" height="120" />
-      <rect x="620" y="90" width="34" height="230" />
-      <rect x="660" y="60" width="20" height="260" />
-      <path d="M700 150 l24 -90 l24 90 z" />
-      <rect x="716" y="150" width="16" height="170" />
-      <rect x="820" y="170" width="90" height="150" />
-      <rect x="1040" y="130" width="46" height="190" />
-      <rect x="1200" y="200" width="80" height="120" />
-      <rect x="1300" y="160" width="40" height="160" />
+      {ICON_PATHS[name]}
     </svg>
   );
 }

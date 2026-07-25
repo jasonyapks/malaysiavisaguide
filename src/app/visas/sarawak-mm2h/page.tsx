@@ -60,7 +60,8 @@ export default function Page() {
         },
       ]}
       cta={{
-        text: "Compare S-MM2H against the federal tiers side by side →",
+        text: "Compare S-MM2H against the federal tiers, side by side.",
+        label: "Open the comparison",
         href: "/compare/",
       }}
     >

@@ -166,7 +166,7 @@ export function ContactForm() {
       </button>
 
       {status === "error" && (
-        <p role="alert" className="text-[1rem] font-medium text-hibiscus-600">
+        <p role="alert" className="text-[1rem] font-medium text-alert-600">
           {message}
         </p>
       )}
