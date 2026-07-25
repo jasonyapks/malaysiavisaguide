@@ -6,8 +6,9 @@ import { dashboardHtml } from "./dashboard";
 
 export default {
   // Daily news sweep — fills the pending queue only. Nothing goes public here.
-  async scheduled(_event: ScheduledController, env: Env, ctx: ExecutionContext) {
-    ctx.waitUntil(runNewsSweep(env));
+  // Await the sweep so the scheduled invocation stays alive until it finishes.
+  async scheduled(_event: ScheduledController, env: Env, _ctx: ExecutionContext) {
+    await runNewsSweep(env);
   },
 
   async fetch(request: Request, env: Env): Promise<Response> {

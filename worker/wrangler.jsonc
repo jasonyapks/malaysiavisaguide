@@ -18,7 +18,7 @@
     {
       "binding": "DB",
       "database_name": "mvg-news",
-      "database_id": "PLACEHOLDER_FILL_AFTER_D1_CREATE"
+      "database_id": "510b7c20-0616-495f-bd58-0c09a4be2244"
     }
   ],
 
@@ -29,13 +29,16 @@
   "vars": {
     // Site origin allowed to call the public /api/news (CORS).
     "SITE_ORIGIN": "https://malaysiavisaguide.pages.dev",
-    // Cloudflare Access — filled in after creating the Access application.
-    "TEAM_DOMAIN": "https://PLACEHOLDER.cloudflareaccess.com",
-    "POLICY_AUD": "PLACEHOLDER_ACCESS_APP_AUD_TAG",
+    // Cloudflare Access — app "MVG Dashboard" (self-hosted, whole host, Allow jason@mypvip.com).
+    "TEAM_DOMAIN": "https://square-darkness-5a07.cloudflareaccess.com",
+    "POLICY_AUD": "0d561ccc798791e812c9546bde8a775ce6015573527aa3d71ec444c96ebcafcd",
     // Web Analytics — account id + the site tag from the Web Analytics site.
-    "CF_ACCOUNT_ID": "PLACEHOLDER_ACCOUNT_ID",
+    "CF_ACCOUNT_ID": "d6bfff8a6a949401fc1ccb437e40a3ea",
     "WEB_ANALYTICS_SITE_TAG": "PLACEHOLDER_SITE_TAG",
-    // Workers AI model for summaries (swappable).
-    "SUMMARY_MODEL": "@cf/meta/llama-3.1-8b-instruct"
+    // Workers AI model for summaries (swappable). llama-3.2-3b is small, fast and
+    // non-reasoning — well suited to short JSON summaries. (The llama-3.1-8b line
+    // was deprecated 2026-05-30; reasoning models like glm are too slow per call
+    // for a batch.) For higher-quality summaries try @cf/meta/llama-3.1-8b-instruct-fp8.
+    "SUMMARY_MODEL": "@cf/meta/llama-3.2-3b-instruct"
   }
 }

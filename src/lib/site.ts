@@ -6,9 +6,8 @@ export const site = {
   description:
     "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
   // Public read-only endpoint of the news Worker (worker/). The /news page
-  // hydrates approved items from here at runtime. Set to the deployed Worker URL
-  // after provisioning — see worker/README.md.
-  newsApi: "https://mvg-news.PLACEHOLDER.workers.dev/api/news",
+  // hydrates approved items from here at runtime.
+  newsApi: "https://mvg-news.jason-6bf.workers.dev/api/news",
 } as const;
 
 /**

@@ -91,7 +91,7 @@ export async function submitUrl(env: Env, url: string): Promise<boolean> {
     .first();
   if (existing) return false;
 
-  const res = await fetch(url, { headers: { "user-agent": "mvg-news/1.0" } });
+  const res = await fetch(url, { headers: { "user-agent": BROWSER_UA } });
   const html = await res.text();
   const title = stripTags(match(html, /<title[^>]*>([\s\S]*?)<\/title>/i)) || url;
   const desc =
@@ -112,32 +112,39 @@ export async function submitUrl(env: Env, url: string): Promise<boolean> {
   return true;
 }
 
+const BROWSER_UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
+
 async function fetchFeed(query: string, fallbackCategory: string): Promise<RawItem[]> {
+  // Bing News RSS — query-based and reachable from Cloudflare Workers (Google
+  // News blocks Worker egress IPs). Each item carries a <News:Source> outlet
+  // name and a redirect link wrapping the real article URL.
   const url =
-    "https://news.google.com/rss/search?q=" +
+    "https://www.bing.com/news/search?q=" +
     encodeURIComponent(query) +
-    "&hl=en-MY&gl=MY&ceid=MY:en";
-  const res = await fetch(url, { headers: { "user-agent": "mvg-news/1.0" } });
+    "&format=rss&setmkt=en-MY";
+  const res = await fetch(url, { headers: { "user-agent": BROWSER_UA } });
   if (!res.ok) throw new Error(`status ${res.status}`);
   const xml = await res.text();
   return parseRss(xml, fallbackCategory);
 }
 
-/** Minimal RSS parser for Google News output (consistent, item-per-<item>). */
+/** Minimal RSS parser for Bing News output (item-per-<item>). */
 function parseRss(xml: string, fallbackCategory: string): RawItem[] {
   const out: RawItem[] = [];
   const items = xml.match(/<item>[\s\S]*?<\/item>/g) ?? [];
   for (const block of items) {
     const title = decode(stripCdata(match(block, /<title>([\s\S]*?)<\/title>/)));
-    const link = decode(stripCdata(match(block, /<link>([\s\S]*?)<\/link>/))).trim();
+    const rawLink = decode(stripCdata(match(block, /<link>([\s\S]*?)<\/link>/))).trim();
+    const link = realUrl(rawLink);
     const pubDate = match(block, /<pubDate>([\s\S]*?)<\/pubDate>/).trim();
     const description = stripTags(
       decode(stripCdata(match(block, /<description>([\s\S]*?)<\/description>/))),
     );
-    // Google News: <source url="...">The Star</source>
+    // Bing News: <News:Source>The Star</News:Source>
     const sourceName =
-      decode(stripCdata(match(block, /<source[^>]*>([\s\S]*?)<\/source>/))).trim() ||
-      "News source";
+      decode(stripCdata(match(block, /<News:Source>([\s\S]*?)<\/News:Source>/))).trim() ||
+      hostOf(link);
     if (!title || !link) continue;
     out.push({
       title: stripSourceSuffix(title, sourceName),
@@ -154,6 +161,18 @@ function parseRss(xml: string, fallbackCategory: string): RawItem[] {
 interface Enriched {
   summary: string;
   category: string;
+}
+
+/** Workers AI responses vary by model — chat models return `response`, some
+ *  return an OpenAI-style `choices[]`. Read whichever is present. */
+type AiResponse = {
+  response?: unknown;
+  choices?: { message?: { content?: string } }[];
+};
+function extractText(r: AiResponse): string {
+  if (typeof r?.response === "string") return r.response;
+  const c = r?.choices?.[0]?.message?.content;
+  return typeof c === "string" ? c : "";
 }
 
 /** Ask Workers AI for a neutral 2-sentence summary + a category. */
@@ -177,11 +196,10 @@ SOURCE: ${item.sourceName}`;
   try {
     const resp = (await env.AI.run(env.SUMMARY_MODEL as keyof AiModels, {
       messages: [{ role: "user", content: prompt }],
-      // Ask for compact, deterministic output.
-      max_tokens: 300,
-    } as never)) as { response?: string };
+      max_tokens: 512,
+    } as never)) as AiResponse;
 
-    const raw = typeof resp?.response === "string" ? resp.response : "";
+    const raw = extractText(resp);
     const parsed = extractJson(raw);
     if (!parsed || parsed.relevant !== true) return null;
 
@@ -221,6 +239,22 @@ async function insertPending(env: Env, item: RawItem, e: Enriched): Promise<void
 function match(s: string, re: RegExp): string {
   const m = s.match(re);
   return m ? m[1] : "";
+}
+/** Bing wraps links as .../apiclick.aspx?...&url=<real>. Unwrap to the source. */
+function realUrl(bingLink: string): string {
+  try {
+    const real = new URL(bingLink).searchParams.get("url");
+    return real ?? bingLink;
+  } catch {
+    return bingLink;
+  }
+}
+function hostOf(u: string): string {
+  try {
+    return new URL(u).hostname.replace(/^www\./, "");
+  } catch {
+    return "News source";
+  }
 }
 function stripCdata(s: string): string {
   return s.replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "");
