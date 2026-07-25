@@ -89,7 +89,9 @@ export default function Page() {
         <p>
           Two things follow from that, and both are deliberate. First, this site
           earns nothing from you reading it — there are no ads, no affiliate
-          links, and no tracking pixels selling your attention on. Second, it
+          links, and no cookies or cross-site trackers following you around the
+          web. The only measurement is a privacy-preserving, cookieless count of
+          page views, which sells nothing and identifies no one. Second, it
           covers the{" "}
           <Link href="/visas/sarawak-mm2h/">do-it-yourself routes</Link> and the
           cheaper programmes just as fully as the ones an agency is paid to

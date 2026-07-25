@@ -8,6 +8,10 @@ export const site = {
   // Public read-only endpoint of the news Worker (worker/). The /news page
   // hydrates approved items from here at runtime.
   newsApi: "https://mvg-news.jason-6bf.workers.dev/api/news",
+  // Cloudflare Web Analytics beacon token — cookieless, privacy-first. Public by
+  // design (it ships in the page HTML). Same value as the Worker's
+  // WEB_ANALYTICS_SITE_TAG, which the dashboard queries for visitor stats.
+  webAnalyticsToken: "1a342e6cdad047ccb88138e3b35a6ab0",
 } as const;
 
 /**

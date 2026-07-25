@@ -133,6 +133,15 @@ export default function RootLayout({
             </p>
           </div>
         </footer>
+
+        {/* Cloudflare Web Analytics — cookieless, privacy-first (SPEC §9 was
+            "no analytics in v1"; added deliberately, no cookies, no cross-site
+            tracking). Token is public by design. */}
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={`{"token":"${site.webAnalyticsToken}"}`}
+        />
       </body>
     </html>
   );
