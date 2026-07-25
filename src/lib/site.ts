@@ -5,6 +5,10 @@ export const site = {
   url: "https://malaysiavisaguide.pages.dev",
   description:
     "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
+  // Public read-only endpoint of the news Worker (worker/). The /news page
+  // hydrates approved items from here at runtime. Set to the deployed Worker URL
+  // after provisioning — see worker/README.md.
+  newsApi: "https://mvg-news.PLACEHOLDER.workers.dev/api/news",
 } as const;
 
 /**
@@ -21,6 +25,8 @@ export type Route = {
 
 export const routes: Route[] = [
   { path: "/", title: "Home" },
+
+  { path: "/news/", title: "News" },
 
   { path: "/visas/pvip/", title: "PVIP", nav: "programmes" },
   { path: "/visas/mm2h/", title: "MM2H", nav: "programmes" },
@@ -45,3 +51,16 @@ export const routes: Route[] = [
 
 export const navRoutes = (group: Route["nav"]) =>
   routes.filter((r) => r.nav === group);
+
+/**
+ * The categorised primary nav — SPEC.md §3. Each group is a labelled dropdown
+ * in the header instead of every programme sitting flat in one row. Order here
+ * is the order they appear left-to-right.
+ */
+export type NavGroupKey = "programmes" | "work-study" | "tools";
+
+export const navGroups: { key: NavGroupKey; label: string }[] = [
+  { key: "programmes", label: "Long-stay visas" },
+  { key: "work-study", label: "Work & study" },
+  { key: "tools", label: "Tools & compare" },
+];

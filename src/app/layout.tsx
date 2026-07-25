@@ -3,6 +3,7 @@ import { Poppins, Source_Sans_3 } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { navRoutes, site } from "@/lib/site";
+import { SiteNav } from "@/components/SiteNav";
 
 // Bold geometric sans for headings, echoing the official portal's display type.
 const heading = Poppins({
@@ -60,12 +61,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const navLinks = [
-    ...navRoutes("programmes"),
-    ...navRoutes("work-study"),
-    ...navRoutes("tools"),
-  ];
-
   return (
     <html lang="en" className={`${heading.variable} ${sans.variable} h-full`}>
       <body className="flex min-h-full flex-col">
@@ -106,20 +101,7 @@ export default function RootLayout({
             >
               <HomeIcon />
             </Link>
-            <nav
-              aria-label="Primary"
-              className="flex flex-1 flex-wrap gap-x-5 gap-y-1 text-[0.95rem] font-medium"
-            >
-              {navLinks.map((r) => (
-                <Link
-                  key={r.path}
-                  href={r.path}
-                  className="text-forest-700 hover:text-forest-900"
-                >
-                  {r.title}
-                </Link>
-              ))}
-            </nav>
+            <SiteNav />
             <LanguagePill />
           </div>
         </header>

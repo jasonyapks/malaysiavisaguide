@@ -1,0 +1,41 @@
+{
+  // Backend Worker for the news pipeline + private dashboard.
+  // The public marketing site stays a static export on Cloudflare Pages; this is
+  // a separate, self-contained Worker. See worker/README.md for provisioning.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mvg-news",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "observability": { "enabled": true },
+
+  // Daily news sweep at 01:00 UTC (09:00 MYT). Fills the pending queue only.
+  "triggers": { "crons": ["0 1 * * *"] },
+
+  // D1 — the news store. database_id is filled in after `wrangler d1 create`.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mvg-news",
+      "database_id": "PLACEHOLDER_FILL_AFTER_D1_CREATE"
+    }
+  ],
+
+  // Workers AI — used to summarise + classify each candidate item.
+  "ai": { "binding": "AI" },
+
+  // Non-secret config. Secrets (CF_ANALYTICS_TOKEN) are set with `wrangler secret put`.
+  "vars": {
+    // Site origin allowed to call the public /api/news (CORS).
+    "SITE_ORIGIN": "https://malaysiavisaguide.pages.dev",
+    // Cloudflare Access — filled in after creating the Access application.
+    "TEAM_DOMAIN": "https://PLACEHOLDER.cloudflareaccess.com",
+    "POLICY_AUD": "PLACEHOLDER_ACCESS_APP_AUD_TAG",
+    // Web Analytics — account id + the site tag from the Web Analytics site.
+    "CF_ACCOUNT_ID": "PLACEHOLDER_ACCOUNT_ID",
+    "WEB_ANALYTICS_SITE_TAG": "PLACEHOLDER_SITE_TAG",
+    // Workers AI model for summaries (swappable).
+    "SUMMARY_MODEL": "@cf/meta/llama-3.1-8b-instruct"
+  }
+}

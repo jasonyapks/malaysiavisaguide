@@ -78,6 +78,6 @@ export const images: Record<string, SiteImage> = {
     src: "/images/jason-yap.jpg",
     alt: "Jason Yap, Chairman of the PVIP Agent Association.",
     brief: "Jason's own portrait — a real headshot, not a stock person.",
-    // ready stays false — a real photo of Jason, never stock.
+    ready: true,
   },
 };
