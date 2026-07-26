@@ -55,7 +55,11 @@ export function ContactForm() {
       });
       const json = await res.json();
 
-      if (res.status === 200) {
+      // Web3Forms reports the outcome in `success`, and puts the human-readable
+      // reason at `body.message` — not at the top level. Testing res.status
+      // alone reports a rejected submission as sent, and `json.message` is
+      // always undefined, so every failure fell back to the generic string.
+      if (json?.success) {
         setStatus("success");
         setMessage(
           "Thanks — your message is on its way. You'll hear back at the email you gave.",
@@ -64,7 +68,8 @@ export function ContactForm() {
       } else {
         setStatus("error");
         setMessage(
-          json?.message ?? "Something went wrong. Please try again in a moment.",
+          json?.body?.message ??
+            "Something went wrong. Please try again in a moment.",
         );
       }
     } catch {
@@ -160,14 +165,21 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="rounded-lg bg-forest-900 px-6 py-3 font-semibold text-sand-50 transition hover:bg-forest-700 disabled:opacity-60"
+        aria-busy={status === "submitting"}
+        className="rounded-lg bg-forest-900 px-6 py-3 font-semibold text-sand-50 transition hover:bg-forest-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest-600/50 focus-visible:ring-offset-2 disabled:opacity-60"
       >
         {status === "submitting" ? "Sending…" : "Send enquiry"}
       </button>
 
       {status === "error" && (
-        <p role="alert" className="text-[1rem] font-medium text-alert-600">
-          {message}
+        <p
+          role="alert"
+          className="flex items-start gap-2 text-[1rem] font-medium text-alert-600"
+        >
+          {/* Icon, not colour alone — a red-only error is invisible to
+              colourblind users. */}
+          <span aria-hidden>⚠</span>
+          <span>{message}</span>
         </p>
       )}
 
