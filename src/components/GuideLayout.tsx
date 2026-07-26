@@ -70,7 +70,7 @@ export function GuideLayout({
     author: {
       "@type": "Person",
       name: "Jason Yap",
-      jobTitle: "Chairman, PVIP Agent Association",
+      jobTitle: "Managing Director, MYPVIP",
     },
     publisher: { "@type": "Organization", name: site.name, url: site.url },
     citation: programme.source,
@@ -139,7 +139,7 @@ export function GuideLayout({
               title={
                 <>
                   Who it suits — and{" "}
-                  <span className="font-display gold-text font-medium italic">
+                  <span className="font-display accent-text font-medium italic">
                     who it doesn&apos;t
                   </span>
                 </>
@@ -159,8 +159,8 @@ export function GuideLayout({
         </div>
       </div>
 
-      {/* 9 — one CTA, in the closing champagne band the whole site ends on. */}
-      <section className="relative overflow-hidden border-t border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#e9dec5]">
+      {/* 9 — one CTA, in the closing ice-blue band the whole site ends on. */}
+      <section className="relative overflow-hidden border-t border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#dce8f6]">
         <div
           aria-hidden
           className="ring-decor -left-40 -bottom-48 size-[34rem] opacity-70"
@@ -171,7 +171,7 @@ export function GuideLayout({
           </p>
           <Link
             href={cta.href}
-            className="gold-fill shrink-0 rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
+            className="accent-fill shrink-0 rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
           >
             {cta.label ?? "Continue"}
           </Link>
@@ -184,7 +184,7 @@ export function GuideLayout({
 /**
  * The cinematic hero. This is the one place on the site where text sits over a
  * photo — <Figure> deliberately refuses to do that for readability, and the
- * scrim below is what earns the exception: a near-opaque espresso wash at the
+ * scrim below is what earns the exception: a near-opaque navy wash at the
  * bottom, so the title never depends on the photo's own tones for contrast.
  */
 function GuideHero({
@@ -224,18 +224,18 @@ function GuideHero({
           them. Keep the upper stops light. */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-linear-to-t from-[#150f07]/92 via-[#150f07]/45 to-[#150f07]/15"
+        className="absolute inset-0 bg-linear-to-t from-[#000a2e]/92 via-[#000a2e]/45 to-[#000a2e]/15"
       />
       <div
         aria-hidden
-        className="absolute inset-0 bg-[#3a2b12] mix-blend-multiply opacity-15"
+        className="absolute inset-0 bg-[#16305c] mix-blend-multiply opacity-15"
       />
 
       {/* The shadow is what lets the scrim stay light: it guarantees the type
           separates from whatever happens to be behind it — bright foliage on
           the DE Rantau shot, sky on Sarawak's — without darkening the photo. */}
       <div className="relative mx-auto w-full max-w-5xl px-6 pb-14 pt-24 text-center [text-shadow:0_2px_16px_rgb(10_7_3/0.6)] sm:pb-20">
-        <p className="eyebrow !text-[#e2cd93]">{authority}</p>
+        <p className="eyebrow !text-[#a8d4ec]">{authority}</p>
         <h1 className="mx-auto mt-4 max-w-3xl text-4xl !text-white sm:text-[3.25rem]">
           {title}
         </h1>
@@ -265,7 +265,7 @@ function SuitList({
           aria-hidden
           className={`grid size-8 shrink-0 place-items-center rounded-full text-[0.9rem] font-bold ${
             tone === "good"
-              ? "gold-fill"
+              ? "accent-fill"
               : "bg-sand-100 text-ink-muted ring-1 ring-sand-200"
           }`}
         >
@@ -291,7 +291,7 @@ function SuitList({
 /**
  * A content section inside a guide — sections 3–5 of the template.
  *
- * Rendered as a staggered card. The numbered gold disc is positional (it
+ * Rendered as a staggered card. The numbered cobalt disc is positional (it
  * counts sections on the page), not a claim that the steps happen in that
  * order — guides describe requirements, not a process.
  */

@@ -30,7 +30,7 @@ export function Byline({
         <Link href="/about/" className="font-semibold text-forest-700 underline">
           Jason Yap
         </Link>
-        , Chairman of the PVIP Agent Association.
+        , Managing Director of MYPVIP.
         {lastVerified && (
           <>
             <br />

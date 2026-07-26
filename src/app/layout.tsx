@@ -22,7 +22,7 @@ const sans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-// High-contrast serif, used ONLY for the single gold accent word on a card.
+// High-contrast serif, used ONLY for the single cobalt accent word on a card.
 const accent = Playfair_Display({
   variable: "--font-accent-serif",
   subsets: ["latin"],
@@ -109,7 +109,7 @@ export default function RootLayout({
               <LanguagePill />
               <Link
                 href="/contact/"
-                className="gold-fill hidden rounded-full px-5 py-2 text-[0.85rem] font-bold transition-transform hover:-translate-y-px lg:inline-block"
+                className="accent-fill hidden rounded-full px-5 py-2 text-[0.85rem] font-bold transition-transform hover:-translate-y-px lg:inline-block"
               >
                 Ask a question
               </Link>
@@ -121,9 +121,9 @@ export default function RootLayout({
           {children}
         </main>
 
-        {/* Champagne footer with the entity card and a gold pill, mirroring the
+        {/* Ice-blue footer with the entity card and a cobalt pill, mirroring the
             reference's closing block. */}
-        <footer className="relative overflow-hidden border-t border-sand-200 bg-linear-to-b from-sand-100 to-[#eadfc6]">
+        <footer className="relative overflow-hidden border-t border-sand-200 bg-linear-to-b from-sand-100 to-[#dbe6f4]">
           <div
             aria-hidden
             className="ring-decor -right-24 -top-40 size-[26rem] opacity-70"
@@ -133,7 +133,7 @@ export default function RootLayout({
               <p className="eyebrow">Malaysia Visa Guide</p>
               <h2 className="max-w-2xl text-2xl font-extrabold sm:text-3xl">
                 The programmes, the real numbers, and{" "}
-                <span className="font-display gold-text font-medium italic">
+                <span className="font-display accent-text font-medium italic">
                   no sales pitch
                 </span>
               </h2>
@@ -157,9 +157,8 @@ export default function RootLayout({
               <p className="text-ink-muted">
                 An independent guide — not affiliated with the Immigration
                 Department of Malaysia or any government agency. Published by
-                Jason Yap, Chairman of the PVIP Agent Association and Managing
-                Director of MYPVIP, a licensed agency whose services are
-                described on{" "}
+                Jason Yap, Managing Director of MYPVIP, a licensed agency whose
+                services are described on{" "}
                 <Link
                   href="/about/"
                   className="font-semibold text-forest-700 underline underline-offset-2"
@@ -176,7 +175,7 @@ export default function RootLayout({
               </p>
               <Link
                 href="/contact/"
-                className="gold-fill rounded-full px-8 py-3 font-bold transition-transform hover:-translate-y-px"
+                className="accent-fill rounded-full px-8 py-3 font-bold transition-transform hover:-translate-y-px"
               >
                 Ask a question
               </Link>
@@ -197,12 +196,12 @@ export default function RootLayout({
   );
 }
 
-/** Our own mark — a gold-rimmed monogram, never the government crest. */
+/** Our own mark — a cobalt monogram, never the government crest. */
 function Mark() {
   return (
     <span
       aria-hidden
-      className="gold-fill grid size-11 shrink-0 place-items-center rounded-xl font-serif text-[0.95rem] font-extrabold tracking-tight"
+      className="accent-fill grid size-11 shrink-0 place-items-center rounded-xl font-serif text-[0.95rem] font-extrabold tracking-tight"
     >
       MVG
     </span>

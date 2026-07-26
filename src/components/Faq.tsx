@@ -25,7 +25,7 @@ export function Faq({ items }: { items: FaqItem[] }) {
         title={
           <>
             Common{" "}
-            <span className="font-display gold-text font-medium italic">
+            <span className="font-display accent-text font-medium italic">
               questions
             </span>
           </>
@@ -42,7 +42,7 @@ export function Faq({ items }: { items: FaqItem[] }) {
             <dt className="flex items-center gap-5 font-serif font-extrabold text-forest-900">
               <span
                 aria-hidden
-                className="gold-fill grid size-9 shrink-0 place-items-center rounded-full text-[0.72rem]"
+                className="accent-fill grid size-9 shrink-0 place-items-center rounded-full text-[0.72rem]"
               >
                 {String(n + 1).padStart(2, "0")}
               </span>

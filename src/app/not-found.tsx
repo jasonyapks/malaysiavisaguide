@@ -5,7 +5,7 @@ import { navGroups, navRoutes } from "@/lib/site";
 /**
  * The 404 page.
  *
- * Without this file Next serves its own, which is black — on a champagne-and-gold
+ * Without this file Next serves its own, which is black — on a cool cobalt
  * site that reads as a crash rather than a missing page. It also matters more
  * than it used to: /news/<slug> URLs are generated at build time, so an article
  * that has been written but not yet deployed lands here, as does any old link
@@ -23,7 +23,7 @@ export default function NotFound() {
         <p className="eyebrow">Error 404</p>
         <h1 className="text-4xl font-extrabold sm:text-[2.75rem]">
           That page isn&apos;t{" "}
-          <span className="font-display gold-text font-medium italic">here</span>
+          <span className="font-display accent-text font-medium italic">here</span>
         </h1>
         <div className="diamond-rule max-w-xs">
           <Lozenge />

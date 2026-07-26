@@ -24,7 +24,7 @@ const BLURB: Record<string, string> = {
 };
 
 /**
- * The single serif word set in gold on each card — the reference's
+ * The single serif word set in cobalt on each card — the reference's
  * "Settlement / Family / Lifestyle" device. One word, no punctuation: it is a
  * mood label for the route, not its name.
  */
@@ -70,8 +70,8 @@ const lastReviewed = programmes
 export default function Home() {
   return (
     <div className="space-y-24">
-      {/* Hero — ivory to champagne, drifting rings, one gold word. */}
-      <section className="full-bleed -mt-14 relative overflow-hidden bg-linear-to-br from-sand-50 via-sand-100 to-[#e9dec5]">
+      {/* Hero — white to ice blue, drifting rings, one cobalt word. */}
+      <section className="full-bleed -mt-14 relative overflow-hidden bg-linear-to-br from-sand-50 via-sand-100 to-[#dce8f6]">
         <div
           aria-hidden
           className="ring-decor -left-40 -top-32 size-[34rem] opacity-80"
@@ -96,7 +96,7 @@ export default function Home() {
               <br />
               long-stay visas,
               <br />
-              <span className="font-display gold-text font-medium italic">
+              <span className="font-display accent-text font-medium italic">
                 explained plainly
               </span>
             </h1>
@@ -126,7 +126,7 @@ export default function Home() {
             <div className="flex flex-wrap items-center gap-5 pt-1">
               <Link
                 href="/tools/eligibility/"
-                className="gold-fill rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
+                className="accent-fill rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
               >
                 Check what you qualify for
               </Link>
@@ -177,7 +177,7 @@ export default function Home() {
             <>
               Which Malaysian visa
               <br />
-              <span className="gold-text">actually fits you</span>
+              <span className="accent-text">actually fits you</span>
             </>
           }
           body={
@@ -208,7 +208,7 @@ export default function Home() {
             <>
               Coming for a job,
               <br />
-              <span className="gold-text">a course, or remote work</span>
+              <span className="accent-text">a course, or remote work</span>
             </>
           }
           body="These are not residence programmes — they are tied to an employer, an institution, or a foreign paycheque. Different rules, different timelines."
@@ -221,8 +221,8 @@ export default function Home() {
         </ul>
       </section>
 
-      {/* Freshness band — champagne, full-bleed, with the review photo. */}
-      <section className="full-bleed relative overflow-hidden border-y border-sand-200 bg-linear-to-b from-sand-100 to-[#ece1c9]">
+      {/* Freshness band — ice blue, full-bleed, with the review photo. */}
+      <section className="full-bleed relative overflow-hidden border-y border-sand-200 bg-linear-to-b from-sand-100 to-[#e0eaf7]">
         <div
           aria-hidden
           className="ring-decor -right-32 -top-24 size-[30rem] opacity-70"
@@ -241,7 +241,7 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl">
               Every fee and threshold
               <br />
-              <span className="font-display gold-text font-medium italic">
+              <span className="font-display accent-text font-medium italic">
                 last checked {reviewDate(lastReviewed)}
               </span>
             </h2>
@@ -264,7 +264,7 @@ export default function Home() {
           title={
             <>
               Work out{" "}
-              <span className="font-display gold-text font-medium italic">
+              <span className="font-display accent-text font-medium italic">
                 where you stand
               </span>
             </>
@@ -290,8 +290,8 @@ export default function Home() {
 
       {/* Closing CTA */}
       {/* -mb-14 cancels main's bottom padding so the CTA runs straight into the
-          footer rather than leaving an ivory seam between two champagne bands. */}
-      <section className="full-bleed -mb-14 relative overflow-hidden border-t border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#e9dec5]">
+          footer rather than leaving a white seam between two ice-blue bands. */}
+      <section className="full-bleed -mb-14 relative overflow-hidden border-t border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#dce8f6]">
         <div
           aria-hidden
           className="ring-decor -left-40 -bottom-48 size-[36rem] opacity-70"
@@ -302,18 +302,18 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl">
               Still not sure
               <br />
-              <span className="font-display gold-text font-medium italic">
+              <span className="font-display accent-text font-medium italic">
                 which visa fits?
               </span>
             </h2>
             <p className="max-w-lg text-ink-muted">
-              Jason has handled 1,000+ relocations. Ask a question — no
+              Jason has handled 500+ relocations. Ask a question — no
               obligation, and no obligation to use his agency either.
             </p>
           </div>
           <Link
             href="/contact/"
-            className="gold-fill shrink-0 rounded-full px-9 py-4 font-bold transition-transform hover:-translate-y-px"
+            className="accent-fill shrink-0 rounded-full px-9 py-4 font-bold transition-transform hover:-translate-y-px"
           >
             Ask a question
           </Link>
@@ -373,7 +373,7 @@ function ProgrammeCard({
           </span>
         </div>
 
-        <p className="font-display gold-text mt-9 text-4xl font-medium">
+        <p className="font-display accent-text mt-9 text-4xl font-medium">
           {DISPLAY_WORD[path]}
         </p>
 
@@ -389,19 +389,19 @@ function ProgrammeCard({
   );
 }
 
-/** The gold 01 / 02 / 03 disc. */
+/** The cobalt 01 / 02 / 03 disc. */
 function NumberBadge({ n }: { n: number }) {
   return (
     <span
       aria-hidden
-      className="gold-fill grid size-9 shrink-0 place-items-center rounded-full font-serif text-[0.72rem] font-extrabold tracking-wide"
+      className="accent-fill grid size-9 shrink-0 place-items-center rounded-full font-serif text-[0.72rem] font-extrabold tracking-wide"
     >
       {String(n).padStart(2, "0")}
     </span>
   );
 }
 
-/** The small gold diamond that sits at the centre of a hairline rule. */
+/** The small sky-blue diamond that sits at the centre of a hairline rule. */
 function Lozenge() {
   return (
     <span

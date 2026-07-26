@@ -76,7 +76,7 @@ export const images: Record<string, SiteImage> = {
   },
   about: {
     src: "/images/jason-yap.webp",
-    alt: "Jason Yap, Chairman of the PVIP Agent Association.",
+    alt: "Jason Yap, Managing Director of MYPVIP.",
     brief: "Jason's own portrait — a real headshot, not a stock person.",
     ready: true,
   },

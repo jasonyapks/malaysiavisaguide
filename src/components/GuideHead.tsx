@@ -1,5 +1,5 @@
 /**
- * Centred eyebrow + display heading + gold lozenge rule — the section rhythm
+ * Centred eyebrow + display heading + slate lozenge rule — the section rhythm
  * the guide pages borrow from connectinasia.com/mm2h.
  *
  * Lives in its own file rather than in GuideLayout because <Faq> uses it too,
@@ -27,7 +27,7 @@ export function GuideHead({
   );
 }
 
-/** The small gold diamond that sits at the centre of a hairline rule. */
+/** The small sky-blue diamond that sits at the centre of a hairline rule. */
 export function Lozenge() {
   return (
     <span

@@ -62,7 +62,7 @@ export default async function Page() {
                 title={
                   <>
                     Everything else{" "}
-                    <span className="font-display gold-text font-medium italic">
+                    <span className="font-display accent-text font-medium italic">
                       worth knowing
                     </span>
                   </>

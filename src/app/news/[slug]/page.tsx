@@ -189,13 +189,13 @@ export default async function Page({
       {/* Jason's read. Wire copy does not have this, which is exactly why the
           page is worth landing on rather than the publisher's. */}
       {article.body.whatItMeans.length > 0 && (
-        <section className="space-y-6 rounded-2xl bg-forest-900 px-7 py-8 text-sand-50">
+        <section className="on-navy space-y-6 rounded-2xl bg-forest-900 px-7 py-8 text-sand-50">
           <GuideHead
             eyebrow="What it means"
             title={
               <span className="!text-white">
                 What this changes{" "}
-                <span className="font-display gold-text font-medium italic">
+                <span className="font-display accent-text font-medium italic">
                   for an applicant
                 </span>
               </span>
@@ -206,7 +206,7 @@ export default async function Page({
               <li key={p} className="flex gap-3">
                 <span
                   aria-hidden
-                  className="mt-2.5 size-1.5 shrink-0 rotate-45 rounded-[1px] bg-[#d8c494]"
+                  className="mt-2.5 size-1.5 shrink-0 rotate-45 rounded-[1px] bg-[#82c8e5]"
                 />
                 <span className="text-sand-50/90">{p}</span>
               </li>
@@ -248,7 +248,7 @@ export default async function Page({
       {/* One CTA, pointing at the guide that actually answers the question the
           news raised. Also the internal link that keeps the blog from being a
           crawl dead end. */}
-      <section className="relative overflow-hidden rounded-2xl border border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#e9dec5] px-7 py-7">
+      <section className="relative overflow-hidden rounded-2xl border border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#dce8f6] px-7 py-7">
         <div aria-hidden className="ring-decor -right-24 -bottom-32 size-[22rem] opacity-70" />
         <div className="relative space-y-4">
           <div className="diamond-rule max-w-xs">
@@ -311,7 +311,7 @@ function Schemas({ article }: { article: FullNewsArticle }) {
     author: {
       "@type": "Person",
       name: "Jason Yap",
-      jobTitle: "Chairman, PVIP Agent Association",
+      jobTitle: "Managing Director, MYPVIP",
       url: `${site.url}/about/`,
     },
     publisher: {

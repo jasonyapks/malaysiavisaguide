@@ -290,7 +290,7 @@ function Results({
 
       <div className="space-y-3 rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
         <p className="font-serif text-xl font-semibold text-sand-50">
-          Want a second opinion from someone who&apos;s done this 1,000+ times?
+          Want a second opinion from someone who&apos;s done this 500+ times?
         </p>
         <p className="text-sand-100">
           Jason reviews cases personally — no obligation, and he&apos;ll tell you

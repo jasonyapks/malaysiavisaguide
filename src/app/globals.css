@@ -1,53 +1,59 @@
 @import "tailwindcss";
 
 /**
- * Design tokens — v3, 2026-07-25.
+ * Design tokens — v4 "Cobalt sky", 2026-07-26.
  *
- * Restyled to the visual language of connectinasia.com: a warm ivory /
- * champagne page, metallic-gold accents, near-black heavy display type, and
- * large soft-shadowed cards on a beige gradient. Replaces the v2 navy/cyan
- * "eVISA portal" direction entirely. SPEC.md §4.3 is stale on both counts.
+ * Restyled from the v3 champagne-and-gold direction to a cool cobalt palette:
+ * a near-white page, cobalt accents, navy display type, sky blue for the light
+ * touches and slate for the neutral lines. SPEC.md §4.3 is stale.
  *
- * IMPORTANT: the look is borrowed, the identity is not. This site is an
- * INDEPENDENT resource — never the Immigration Department crest, never the
- * CONNECT IN ASIA or MYPVIP wordmark, never the word "official". See SPEC.md §1.
+ * The four brand colours, used at their strongest roles:
+ *   #0047AB cobalt → forest-700, links and the CTA
+ *   #000080 navy   → forest-900, headings and the dark panels
+ *   #82C8E5 sky    → forest-300, hover borders and accents on photography
+ *   #6D8196 slate  → sand-400, muted lines and form borders
+ *
+ * IMPORTANT: cobalt-and-navy must not be mistaken for a government skin. This
+ * site is an INDEPENDENT resource — never the Immigration Department crest,
+ * never the CONNECT IN ASIA or MYPVIP wordmark, never the word "official".
+ * See SPEC.md §1.
  *
  * The token NAMES are inherited from v1 (forest-*, sand-*, hibiscus-*) so every
  * guide, table, quiz and calculator component reskins without edits. Read them
  * by ROLE, not by hue:
- *   forest-*   → bronze/gold primary, deepening to espresso for headings
- *   sand-*     → ivory and champagne surfaces
- *   hibiscus-* → the gold CTA
+ *   forest-*   → cobalt primary, deepening to navy for headings
+ *   sand-*     → cool white and ice surfaces
+ *   hibiscus-* → the cobalt CTA
  */
 
 @theme {
-  /* Bronze → espresso — primary (headings, links, dark panels) */
-  --color-forest-50: #faf6ec; /* palest gold tint — inset panels */
-  --color-forest-100: #f1e7d2; /* gold-tinted band */
-  --color-forest-300: #d8c494; /* hover borders */
-  --color-forest-600: #b0913f; /* live gold — progress bars, active rules */
-  --color-forest-700: #8a6e33; /* bronze — links, secondary headings */
-  --color-forest-900: #241b0f; /* espresso — headings and the dark note panels */
+  /* Sky → cobalt → navy — primary (headings, links, dark panels) */
+  --color-forest-50: #eef4fd; /* palest cobalt tint — inset panels */
+  --color-forest-100: #dce9f9; /* cobalt-tinted band */
+  --color-forest-300: #82c8e5; /* sky — hover borders */
+  --color-forest-600: #1a63c9; /* live cobalt — progress bars, active rules */
+  --color-forest-700: #0047ab; /* cobalt — links, secondary headings (8.4:1) */
+  --color-forest-900: #000080; /* navy — headings and the dark note panels */
 
-  /* Ivory / champagne — surfaces and bands */
-  --color-sand-50: #fcfaf4; /* ivory: page background, and light text on espresso */
-  --color-sand-100: #f4edde; /* champagne: bands, nav, muted fills */
-  --color-sand-200: #e8deca; /* hairline borders */
-  --color-sand-400: #bca87c; /* muted lines */
+  /* Cool white / ice — surfaces and bands */
+  --color-sand-50: #fbfcfe; /* page background, and light text on navy */
+  --color-sand-100: #edf3fa; /* ice: bands, nav, muted fills */
+  --color-sand-200: #d9e4f0; /* hairline borders */
+  --color-sand-400: #6d8196; /* slate — muted lines, form borders */
 
-  /* Gold — the CTA. Flat token for fills that can't take a gradient. */
-  --color-hibiscus-500: #b08d3c;
-  --color-hibiscus-600: #93742d;
+  /* Cobalt — the CTA. Flat token for fills that can't take a gradient. */
+  --color-hibiscus-500: #0047ab;
+  --color-hibiscus-600: #003a8c;
 
-  /* Errors keep a true red — a gold "error" reads as decoration. */
-  --color-alert-600: #a5342c;
+  /* Errors keep a true red — it has to read as alarm, not as brand. */
+  --color-alert-600: #b3261e;
 
-  --color-ink: #141210;
-  --color-ink-muted: #6b6154;
+  --color-ink: #0e1622;
+  --color-ink-muted: #57697d;
 
   /* Display type is a heavy geometric sans (the reference's Pretendard 800);
      `--font-display` is the high-contrast serif reserved for the single
-     gold accent word per card. The var NAMES are kept from v1, so components
+     cobalt accent word per card. The var NAMES are kept from v1, so components
      using `font-serif` get the heading face with no change. */
   --font-serif: var(--font-heading-sans), "Plus Jakarta Sans", system-ui, sans-serif;
   --font-sans: var(--font-body-sans), system-ui, sans-serif;
@@ -59,31 +65,31 @@
 }
 
 @layer base {
-  /* The metallic sweep, in two calibrations. Not @theme tokens — they are
+  /* The cobalt sweep, in two calibrations. Not @theme tokens — they are
      gradients, not colours, so they generate no utilities.
 
-     `--gradient-gold` lights a FILL (pill, badge), where the pale band is the
-     highlight and the dark text sits on top of it. `--gradient-gold-text`
-     lights TEXT on ivory, where that same pale band would vanish — so its
-     highlight stops well short of cream and its ends run darker. Keep them
-     separate: reusing the fill ramp on type is what makes gold text illegible. */
+     `--gradient-accent` lights a FILL (pill, badge) that carries WHITE text, so
+     its brightest stop is capped at #1f6ac4 — 5.4:1 against white, safe right
+     across the sweep. `--gradient-accent-text` lights TEXT on the near-white
+     page, where the ends have to run dark instead; its lightest stop is 4.7:1.
+     Keep them separate — swapping them is what makes either one illegible. */
   :root {
-    --gradient-gold: linear-gradient(
+    --gradient-accent: linear-gradient(
       100deg,
-      #8a6e33 0%,
-      #c9ac5e 32%,
-      #f0dfae 52%,
-      #b9954a 74%,
-      #8a6e33 100%
+      #002a73 0%,
+      #0b4fae 32%,
+      #1f6ac4 52%,
+      #0a4aa3 74%,
+      #002a73 100%
     );
 
-    --gradient-gold-text: linear-gradient(
+    --gradient-accent-text: linear-gradient(
       100deg,
-      #6b5220 0%,
-      #9d7c2f 26%,
-      #c9ad63 48%,
-      #93732a 72%,
-      #6b5220 100%
+      #001a5c 0%,
+      #0047ab 26%,
+      #2b74c9 48%,
+      #0043a2 72%,
+      #001a5c 100%
     );
   }
 
@@ -121,27 +127,48 @@
   margin-inline: calc(50% - 50vw);
 }
 
-/* The gold display word — "Settlement", "20 Years+". Serif, large, metallic. */
-@utility gold-text {
-  background-image: var(--gradient-gold-text);
+/* The accent display word — "Settlement", "20 Years+". Serif, large, cobalt.
+   Named by ROLE, not hue: v3 called these "gold-*", which is exactly what made
+   this restyle touch more files than the token block. */
+@utility accent-text {
+  background-image: var(--gradient-accent-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   /* background-clip:text crops to the text BOX, so a tight line-height shears
      the descenders off and an italic's final stroke overhangs the right edge.
-     Give every gold word room to hang on both axes. */
+     Give every accent word room to hang on both axes. */
   padding-bottom: 0.12em;
   padding-right: 0.06em;
   line-height: 1.14;
 }
 
-/* The gold pill — primary CTA. */
-@utility gold-fill {
-  background-image: var(--gradient-gold);
-  color: #2a2113;
+/* The cobalt pill — primary CTA. White text; the inset highlight is what keeps
+   it from reading as a flat rectangle. */
+@utility accent-fill {
+  background-image: var(--gradient-accent);
+  color: #ffffff;
   box-shadow:
-    0 1px 0 rgb(255 255 255 / 0.45) inset,
-    0 10px 24px -12px rgb(138 110 51 / 0.65);
+    0 1px 0 rgb(255 255 255 / 0.28) inset,
+    0 10px 24px -12px rgb(0 71 171 / 0.7);
+}
+
+/* Put this on a navy (forest-900) panel. Both the accent gradient and the
+   eyebrow are calibrated dark-on-light, so on navy they all but disappear —
+   this re-points them at the sky end of the palette for the whole subtree. */
+@utility on-navy {
+  --gradient-accent-text: linear-gradient(
+    100deg,
+    #a8d4ec 0%,
+    #ffffff 30%,
+    #82c8e5 55%,
+    #ffffff 78%,
+    #a8d4ec 100%
+  );
+
+  & .eyebrow {
+    color: var(--color-forest-300);
+  }
 }
 
 /* Section eyebrow — "TRUST & AUTHORITY", "OFFICE INFORMATION". */
@@ -154,22 +181,22 @@
   color: var(--color-forest-700);
 }
 
-/* The signature card: generous radius, ivory face, hairline, soft lift. */
+/* The signature card: generous radius, cool white face, hairline, soft lift. */
 @utility card-lux {
   border-radius: var(--radius-card);
   background: linear-gradient(
     170deg,
-    #fffdf8 0%,
+    #ffffff 0%,
     var(--color-sand-50) 55%,
-    #f7f1e4 100%
+    #eef4fb 100%
   );
   border: 1px solid var(--color-sand-200);
   box-shadow:
-    0 1px 2px rgb(36 27 15 / 0.03),
-    0 18px 40px -24px rgb(36 27 15 / 0.22);
+    0 1px 2px rgb(0 20 60 / 0.04),
+    0 18px 40px -24px rgb(0 20 60 / 0.26);
 }
 
-/* Hairline with a small gold lozenge at its centre — the divider under each
+/* Hairline with a small slate lozenge at its centre — the divider under each
    card's display word. */
 @utility diamond-rule {
   display: flex;

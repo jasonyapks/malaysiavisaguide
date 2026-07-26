@@ -1,7 +1,7 @@
-# malaysiavisaguide.com — Build Spec (v1.3)
+# malaysiavisaguide.com — Build Spec (v1.4)
 
-**Status:** built and deployed to `malaysiavisaguide.pages.dev` — domain not yet cut over
-**Written:** 2026-07-22 · **Revised:** 2026-07-25
+**Status:** live on `https://malaysiavisaguide.com` (cut over 2026-07-25)
+**Written:** 2026-07-22 · **Revised:** 2026-07-26
 **Audience:** Jason, and any future Claude session picking this up cold
 **Supersedes:** `WEBSITE-BLUEPRINT.md` (June 2026) *for the v1 build only*. That document
 remains the strategic north star for later phases — positioning, monetisation sequencing,
@@ -9,6 +9,25 @@ the 9-pillar architecture, the 12-month roadmap. It is not edited or obsoleted. 
 disagree on stack or v1 scope, **this file wins**, and the two disagreements are deliberate:
 the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW authority site
 (v1 narrows to long-stay visas plus the two work/study passes).
+
+### What changed in v1.4 (2026-07-26)
+
+1. **§4.3 Design is on its FOURTH direction — "Cobalt sky".** Champagne-and-gold is dead;
+   the site is now cobalt, navy, sky blue and slate on a cool near-white page. Jason chose
+   the palette from a four-swatch board. Do not resurrect gold from this file's history.
+2. **The signature utilities were renamed `gold-*` → `accent-*`.** Hue-named utilities were
+   the one part of the token system that did *not* survive a restyle for free, and they are
+   the reason this change touched eight component files rather than one. Fixed at the root.
+3. **`on-navy` added.** The accent gradient and the eyebrow are calibrated dark-on-light and
+   vanish on a `forest-900` panel; this utility re-points them at the sky end for a subtree.
+4. **`public/og.png` regenerated** in the new palette. It was still the *v1* card (dark
+   navy + hibiscus red, "MV" monogram) and had been stale through two restyles.
+5. **Status corrected** — the domain cutover completed on 2026-07-25; §10 is history, not a
+   plan. §10f (decommission WordPress after ~2026-08-08) is the only step outstanding.
+6. **Jason's credential changed sitewide.** The PVIP Agent Association chairmanship is gone
+   from every byline, `Person`/`Article` schema block and disclosure; the credential is now
+   Managing Director of two licensed agencies. The case count drops from 1,000+ to **500+**.
+   Both were his call. See §2 — do not reintroduce either.
 
 ### What changed in v1.3 (2026-07-25)
 
@@ -75,8 +94,11 @@ cover DIY application honestly and be candid about downsides. Keep `mypvip.com` 
 and brand keywords; keep this site on informational keywords. Separate lanes, minimal
 cross-linking.
 
-Editorial authority comes from Jason: 1,000+ relocation cases, Chairman of the PVIP Agent
-Association. That is unfakeable E-E-A-T and it should be visible on every page.
+Editorial authority comes from Jason: 500+ relocation cases, Managing Director of two
+licensed Malaysian long-stay visa agencies. That is unfakeable E-E-A-T and it should be
+visible on every page. **The PVIP Agent Association chairmanship is not used on this site**
+— Jason removed it from every byline, schema block and disclosure on 2026-07-26. Do not
+reintroduce it, and do not restore the "1,000+" figure it used to sit beside.
 
 ### Definition of done for v1
 
@@ -137,7 +159,7 @@ Every programme guide follows the same shape, and the order is deliberate:
 5. **Process & timeline** — realistic, not brochure timelines
 6. **Who it suits / who it doesn't** — the honest section; this is what makes the page citable
 7. **FAQ** — phrased the way people actually ask, mirrored into FAQPage schema
-8. **Last reviewed** — "Reviewed [date] by Jason Yap, Chairman, PVIP Agent Association"
+8. **Last reviewed** — "Reviewed [date] by Jason Yap, Managing Director of MYPVIP"
 9. **One contextual CTA** — exactly one, never a popup on first pageview
 
 This is the **information order**, and it is fixed. How it is *dressed* is §4.3's business
@@ -248,37 +270,55 @@ Tailwind v4 docs via Context7.
 
 ### 4.3 Design
 
-**Third direction, and the two before it are dead.** v1.0 specced deep rainforest green +
-warm sand + hibiscus; that was replaced on 2026-07-24 by a navy/pale-cyan echo of the
-official eVISA portal; both were superseded on 2026-07-25. Neither should be resurrected
-from this file's history. The live tokens in `src/app/globals.css` are the truth — this
-section describes them, it does not compete with them.
+**Fourth direction — "Cobalt sky" — and the three before it are dead.** v1.0 specced deep
+rainforest green + warm sand + hibiscus; 2026-07-24 replaced it with a navy/pale-cyan echo
+of the official eVISA portal; 2026-07-25 replaced *that* with champagne-and-gold after
+`connectinasia.com`; 2026-07-26 replaced that in turn with the cobalt palette Jason picked
+from a four-swatch board. None should be resurrected from this file's history. The live
+tokens in `src/app/globals.css` are the truth — this section describes them, it does not
+compete with them.
 
-**Reference:** `connectinasia.com`, the Korean-language MYPVIP partner site. The *look* is
-borrowed; the identity never is — no CONNECT IN ASIA or MYPVIP wordmark, no Immigration
-Department crest, never the word "official" (§1).
+**Structure** still follows `connectinasia.com` (the Korean-language MYPVIP partner site):
+the photo hero, the centred section headings, the staggered cards. Only the *colour* left.
+The identity is never borrowed — no CONNECT IN ASIA or MYPVIP wordmark, no Immigration
+Department crest, never the word "official" (§1). Cobalt-and-navy is close enough to a
+government skin that the "not a government body" line under the wordmark is now doing real
+work; keep it.
 
-- **Palette:** ivory and champagne surfaces, a metallic gold accent, espresso near-black
-  type. Warm throughout; there are no cool tones left on the site.
+- **Palette — four colours, each at its strongest role:** `#0047AB` cobalt (links, CTA),
+  `#000080` navy (headings, dark panels), `#82C8E5` sky (hover borders, accents on
+  photography, and everything on a navy ground), `#6D8196` slate (muted lines, form
+  borders). Surfaces are a cool near-white through ice blue. Cool throughout; there is no
+  warm tone left on the site.
 - **Tokens are ROLE-named, not hue-named**, and the names are inherited from v1:
-  `forest-*` is the bronze→espresso primary, `sand-*` the ivory/champagne surfaces,
-  `hibiscus-*` the gold CTA. **Read them by role, never by hue.** This one convention is
-  why two complete restyles have landed without editing a single guide, table, quiz or
-  calculator — it is the design equivalent of §4.1 and worth defending just as hard.
-- **Two gold gradients, not one.** `--gradient-gold` lights a *fill* (pill, badge), where
-  dark text sits on the pale highlight. `--gradient-gold-text` runs darker at both ends,
-  because that same pale highlight is illegible as *type* on ivory. Reusing the fill ramp
-  on text is a mistake already made once.
+  `forest-*` is the cobalt→navy primary, `sand-*` the white/ice surfaces, `hibiscus-*` the
+  cobalt CTA. **Read them by role, never by hue.** This one convention is why three complete
+  restyles have landed without editing a single guide, table, quiz or calculator — it is the
+  design equivalent of §4.1 and worth defending just as hard. **The corollary was learned
+  the hard way:** the two utilities that *were* hue-named, `gold-text`/`gold-fill`, are the
+  only reason this restyle touched component files at all. They are now `accent-text` /
+  `accent-fill`. Never name a new one after a colour.
+- **Two accent gradients, not one.** `--gradient-accent` lights a *fill* (pill, badge) that
+  carries white text, so its brightest stop is capped at 5.4:1 against white.
+  `--gradient-accent-text` lights *type* on the near-white page, so its ends run dark
+  instead. Reusing the fill ramp on text is a mistake already made once.
+- **`on-navy` for dark panels.** Both of the above, and `eyebrow`, are calibrated
+  dark-on-light and all but vanish on a `forest-900` panel. `on-navy` re-points them at the
+  sky end of the palette for the whole subtree — put it on any `bg-forest-900` block that
+  contains an eyebrow or an accent word.
 - **Type:** Plus Jakarta Sans throughout — body, UI, and headings at 800. Playfair Display
-  italic is reserved for the single gold accent word per card. The v1.0 "editorial serif
+  italic is reserved for the single accent word per card. The v1.0 "editorial serif
   headlines" rule is dead: headings are the heavy sans, the serif is an accent only.
 - **19px base, high contrast, generous line height, no thin grey text.** The reader is 45+,
   wealthy, and scam-alert. Readability is a genuine competitive differentiator here —
   competitors ignore it — not decoration. **4.5:1 is a floor, and it is audited rather than
-  assumed** (§8) — the palette change put one element under it.
-- **Signature devices**, all `@utility` in `globals.css`: `gold-text`, `gold-fill`,
-  `eyebrow`, `card-lux`, `diamond-rule`, `ring-decor` — plus `full-bleed` (escape the
-  centred column) and `rise` (motion-safe entrance). Compose these before inventing more.
+  assumed** (§8) — every restyle so far has put at least one element under it.
+- **Signature devices**, all `@utility` in `globals.css`: `accent-text`, `accent-fill`,
+  `on-navy`, `eyebrow`, `card-lux`, `diamond-rule`, `ring-decor` — plus `full-bleed` (escape
+  the centred column) and `rise` (motion-safe entrance). Compose these before inventing more.
+- **`public/og.png` is hand-built, not generated at build time.** It carries the palette into
+  every share, and it is easy to forget on a restyle — it survived two of them stale. Rebuild
+  it from an HTML card screenshotted at 1200×630 whenever §4.3 changes.
 - **Guide pages** follow `connectinasia.com/mm2h`: a full-bleed photo hero with the title
   over it, centred section headings, and content cards staggered left/right. This is the
   **only** place on the site where text sits over a photo — `<Figure>` refuses to do it

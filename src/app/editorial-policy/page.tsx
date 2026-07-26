@@ -97,7 +97,7 @@ export default function Page() {
         <p>
           Every guide carries a{" "}
           <strong>&ldquo;last reviewed&rdquo; date and a named reviewer</strong>{" "}
-          — Jason Yap, Chairman of the PVIP Agent Association — at the foot of
+          — Jason Yap, Managing Director of MYPVIP — at the foot of
           the page. That date is functional, not decorative: a visa figure from
           two years ago may simply be wrong, and both readers and AI assistants
           are right to trust a recently-checked page more than an undated one. If

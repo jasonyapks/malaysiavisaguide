@@ -17,13 +17,13 @@ const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Jason Yap",
-  jobTitle: "Chairman, PVIP Agent Association",
+  jobTitle: "Managing Director, MYPVIP",
   worksFor: [
     { "@type": "Organization", name: "MYPVIP (MY PR Program Sdn Bhd)" },
     { "@type": "Organization", name: "MY Premium MM2H (My Premium (MM2H) Sdn Bhd)" },
   ],
   description:
-    "Chairman of the PVIP Agent Association and Managing Director of two licensed Malaysian long-stay visa agencies, with 1,000+ relocation cases handled.",
+    "Managing Director of two licensed Malaysian long-stay visa agencies, with 500+ relocation cases handled.",
 };
 
 export default function Page() {
@@ -54,11 +54,10 @@ export default function Page() {
             className="max-w-[200px]"
           />
           <p>
-            <strong>Jason Yap</strong> is Chairman of the{" "}
-            <strong>PVIP Agent Association</strong>, the industry body for
-            Malaysia&apos;s Premium Visa Programme agents, and Managing Director
-            of two licensed agencies handling long-stay visa applications. Over
-            1,000 relocation cases have passed across his desk. He researches,
+            <strong>Jason Yap</strong> is Managing Director of two licensed
+            Malaysian agencies handling long-stay visa applications — one for
+            the Premium Visa Programme, one for Malaysia My Second Home. Over
+            500 relocation cases have passed across his desk. He researches,
             writes and reviews every page on this site, and his name and the
             date of review sit at the foot of each guide.
           </p>
@@ -99,12 +98,6 @@ export default function Page() {
           reference at all. The{" "}
           <Link href="/editorial-policy/">editorial policy</Link> sets out
           exactly how that independence is kept.
-        </p>
-        <p>
-          The <strong>PVIP Agent Association</strong> chairmanship is an
-          industry-body role — advocacy, policy and agent coordination — and not
-          a revenue line. It is mentioned because it is the source of the
-          expertise, not because it sells anything.
         </p>
       </section>
 
