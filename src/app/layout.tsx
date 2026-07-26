@@ -33,7 +33,10 @@ const accent = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — PVIP, MM2H, S-MM2H and DE Rantau explained`,
+    // Kept under ~580px rendered, which is where Google truncates a title in
+    // the SERP. The previous version ran to 654px, so "explained" — the one
+    // word nobody searches for — was the part being cut off.
+    default: `${site.name} — PVIP, MM2H, S-MM2H, DE Rantau`,
     template: `%s — ${site.name}`,
   },
   description: site.description,

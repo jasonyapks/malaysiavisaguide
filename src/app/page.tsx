@@ -67,6 +67,19 @@ const lastReviewed = programmes
   .sort()
   .at(-1)!;
 
+/**
+ * The official pages behind the figures, one row per issuing authority.
+ *
+ * Derived from the programme data rather than written out again here, so a
+ * source that is corrected in one place cannot leave a stale duplicate on the
+ * home page. Deduped by URL because several programmes share one document.
+ */
+const officialSources = [
+  ...new Map(
+    programmes.map((p) => [p.source, { authority: p.authority, url: p.source }]),
+  ).values(),
+].sort((a, b) => a.authority.localeCompare(b.authority));
+
 export default function Home() {
   return (
     <div className="space-y-24">
@@ -257,6 +270,103 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Where the figures come from. This section is the page's substance as
+          well as its outbound linking: the claim "verified against official
+          sources" is made in the hero, and this is where it is actually
+          evidenced, with the documents named and linked. */}
+      <section className="space-y-8">
+        <SectionHead
+          eyebrow="Sources"
+          title={
+            <>
+              Where these figures
+              <br />
+              <span className="accent-text">actually come from</span>
+            </>
+          }
+          body="Every number on this site is traceable to a government document. Below are the ones it is traced to — read them yourself if a figure matters to your decision."
+        />
+
+        <div className="grid gap-10 md:grid-cols-[1.05fr_0.95fr]">
+          <div className="space-y-4 text-ink-muted">
+            <p>
+              Malaysia&apos;s long-stay visas are governed by several different
+              bodies, and that is the root of most of the confusion around them.
+              PVIP and MM2H are administered through the Ministry of Tourism,
+              Arts and Culture and its One Stop Centre. Sarawak MM2H is a state
+              programme with its own ministry, its own deposit and its own
+              approvals — which is why an S-MM2H figure quoted from a federal
+              page is usually wrong. DE Rantau sits with MDEC, the Employment
+              Pass with the Expatriate Services Division, and the Student Pass
+              with Immigration and EMGS.
+            </p>
+            <p>
+              When a figure is checked here, it means someone opened the
+              document in the list beside this paragraph, found the fee,
+              threshold or tenure stated in it, and recorded the date. That date
+              is published on the programme guide. Where a rule was announced by
+              press release but never written into the official document, the
+              guide says exactly that instead of quietly picking whichever
+              number reads better.
+            </p>
+            <p>
+              This matters more than it should, because these programmes are
+              revised often and the internet does not keep up. MM2H alone has
+              been restructured twice in recent years; deposit tiers, minimum
+              stay and the agent requirement all moved. Pages that were accurate
+              in 2023 still rank today, and agents restate old thresholds
+              because the old thresholds were easier to sell against. A figure
+              without a date and a source is not information you can plan around
+              — it is a claim.
+            </p>
+            <p>
+              So: read the documents. If one of them contradicts something
+              written here, that is a bug in this site, and the{" "}
+              <Link href="/contact/" className="font-semibold text-forest-700 underline">
+                contact page
+              </Link>{" "}
+              exists partly so you can say so. The{" "}
+              <Link
+                href="/editorial-policy/"
+                className="font-semibold text-forest-700 underline"
+              >
+                editorial policy
+              </Link>{" "}
+              sets out how corrections are handled and what the commercial
+              relationship behind this site is.
+            </p>
+          </div>
+
+          {/* Sticky so the documents stay beside the prose that describes them
+              — the list is much shorter than the text, and pinned to the top it
+              would leave a tall empty column next to the closing paragraphs. */}
+          <ul className="space-y-3 self-start md:sticky md:top-24">
+            {officialSources.map((s) => (
+              <li key={s.url}>
+                <a
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="card-lux flex items-start justify-between gap-4 px-5 py-4 transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700"
+                >
+                  <span>
+                    <span className="block font-serif text-[0.98rem] font-bold leading-snug text-forest-900">
+                      {s.authority}
+                    </span>
+                    <span className="mt-1 block break-all text-[0.78rem] leading-relaxed text-ink-muted">
+                      {sourceHost(s.url)}
+                    </span>
+                  </span>
+                  <span aria-hidden className="mt-0.5 shrink-0 text-forest-600">
+                    ↗
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* Tools */}
       <section className="space-y-8">
         <SectionHead
@@ -387,6 +497,24 @@ function ProgrammeCard({
       </Link>
     </li>
   );
+}
+
+/**
+ * Host plus a hint of the path, for the source links.
+ *
+ * The full URLs are long PDF paths that would wrap to four lines and tell the
+ * reader nothing; the host is the part that carries the authority — seeing
+ * `imi.gov.my` is the whole point of showing the URL at all.
+ */
+function sourceHost(url: string): string {
+  try {
+    const u = new URL(url);
+    const file = u.pathname.split("/").filter(Boolean).at(-1) ?? "";
+    const label = file.length > 0 && file.length <= 44 ? ` / ${file}` : "";
+    return u.hostname.replace(/^www\./, "") + label;
+  } catch {
+    return url;
+  }
 }
 
 /** The cobalt 01 / 02 / 03 disc. */
