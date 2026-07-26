@@ -61,13 +61,21 @@ const VALID_CATEGORIES = new Set([
 const PER_RUN_LIMIT: Record<Sector, number> = { malaysia: 20, world: 8 };
 
 /**
- * Nothing older than three months enters the queue. A January 2022 article once
- * reached approval looking identical to current news, and its figures
- * contradicted the site's own PVIP guide — the queue shows no publication date,
- * so age is invisible at review time. Filtering at ingest is the only reliable
- * place to catch it.
+ * Nothing published before the current calendar year enters the queue, in
+ * either sector.
+ *
+ * A January 2022 article once reached approval looking identical to current
+ * news, and its figures contradicted the site's own PVIP guide — the queue
+ * shows no publication date, so age is invisible at review time. Filtering at
+ * ingest is the only reliable place to catch it.
+ *
+ * The year, rather than a tighter rolling window, because visa news ages by
+ * policy rather than by clock: a fee or salary threshold announced in January
+ * is still that programme's live state in July. Measured against the live
+ * feeds on 2026-07-26, the year rule admits 4 more Malaysia items and 8 more
+ * world items than a 92-day window, while still excluding 26 pre-2026 Malaysia
+ * items — including the 2022 articles that caused the original problem.
  */
-const MAX_AGE_DAYS = 92;
 
 interface RawItem {
   title: string;
@@ -90,7 +98,8 @@ function isRecent(pubDate: string | null): boolean {
   if (!pubDate) return false;
   const t = Date.parse(pubDate);
   if (Number.isNaN(t)) return false;
-  return Date.now() - t <= MAX_AGE_DAYS * 86_400_000;
+  if (t > Date.now()) return false; // a future date is a bad date, not fresh news
+  return new Date(t).getUTCFullYear() === new Date().getUTCFullYear();
 }
 
 /** Fetch every feed, summarise new items, insert as pending. Returns count added. */
@@ -139,8 +148,9 @@ export async function runNewsSweep(env: Env): Promise<number> {
     used[c.sector]++;
   }
   console.log(
-    `[news] ${candidates.length} in window, ${stale} older than ${MAX_AGE_DAYS}d, ` +
-      `${undated} undated; taking ${used.malaysia} malaysia + ${used.world} world`,
+    `[news] ${candidates.length} published in ${new Date().getUTCFullYear()}, ` +
+      `${stale} older, ${undated} undated; ` +
+      `taking ${used.malaysia} malaysia + ${used.world} world`,
   );
 
   let added = 0;
