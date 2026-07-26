@@ -234,7 +234,7 @@ function GuideHero({
       {/* The shadow is what lets the scrim stay light: it guarantees the type
           separates from whatever happens to be behind it — bright foliage on
           the DE Rantau shot, sky on Sarawak's — without darkening the photo. */}
-      <div className="relative mx-auto w-full max-w-5xl px-6 pb-14 pt-24 text-center [text-shadow:0_2px_16px_rgb(10_7_3/0.6)] sm:pb-20">
+      <div className="relative mx-auto w-full max-w-5xl px-6 pb-14 pt-24 text-center [text-shadow:0_2px_16px_rgb(0_6_26/0.6)] sm:pb-20">
         <p className="eyebrow !text-[#a8d4ec]">{authority}</p>
         <h1 className="mx-auto mt-4 max-w-3xl text-4xl !text-white sm:text-[3.25rem]">
           {title}

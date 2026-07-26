@@ -234,7 +234,7 @@ export default function Home() {
             rounded="rounded-card"
             priority
             sizes="(min-width: 768px) 460px, 100vw"
-            className="shadow-[0_24px_60px_-30px_rgb(36_27_15/0.5)]"
+            className="shadow-[0_24px_60px_-30px_rgb(0_20_60/0.5)]"
           />
           <div className="space-y-4">
             <p className="eyebrow">Trust &amp; authority</p>
