@@ -164,6 +164,106 @@ export async function runNewsSweep(env: Env): Promise<number> {
   return added;
 }
 
+/**
+ * Hosts that can never be read, whatever we do. MSN and Yahoo syndicate other
+ * outlets' stories into a client-rendered shell — the fetched HTML carries
+ * about three characters of body text, so extraction cannot work and never
+ * will. They are excluded from *alternates* only, never from ingest: an MSN
+ * item is a perfectly good pointer to a story some readable outlet also ran,
+ * and findAlternateSources is what turns it into one.
+ */
+const UNREADABLE_HOSTS = ["msn.com", "news.yahoo.com", "flipboard.com"];
+
+function isUnreadableHost(url: string): boolean {
+  const h = hostOf(url);
+  return UNREADABLE_HOSTS.some((bad) => h === bad || h.endsWith(`.${bad}`));
+}
+
+/** Words too common to prove two headlines describe the same story. */
+const STOPWORDS = new Set([
+  "the", "a", "an", "and", "or", "but", "of", "to", "in", "on", "for", "with",
+  "as", "at", "by", "from", "is", "are", "was", "were", "be", "been", "it",
+  "its", "this", "that", "these", "those", "will", "new", "says", "said",
+  "after", "over", "more", "amid", "how", "what", "why",
+]);
+
+function keyWords(s: string): Set<string> {
+  return new Set(
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .split(/\s+/)
+      .filter((w) => w.length > 2 && !STOPWORDS.has(w)),
+  );
+}
+
+/**
+ * How much two headlines overlap, as a fraction of the shorter one's
+ * significant words. Measured against the shorter side deliberately: outlets
+ * pad headlines with their own framing, and a story is still the same story
+ * when one paper adds four words of editorialising.
+ */
+function headlineOverlap(a: string, b: string): number {
+  const x = keyWords(a);
+  const y = keyWords(b);
+  if (x.size === 0 || y.size === 0) return 0;
+  let hits = 0;
+  for (const w of x) if (y.has(w)) hits++;
+  return hits / Math.min(x.size, y.size);
+}
+
+/**
+ * The same story, somewhere readable.
+ *
+ * When a source is paywalled, bot-blocked or client-rendered, the story itself
+ * is usually not exclusive — wire copy and government announcements get run by
+ * several outlets. This searches the headline and returns other outlets
+ * carrying what looks like the same story, best match first.
+ *
+ * The overlap threshold is the whole safety mechanism. Writing an article about
+ * a *different* story than the one approved would be worse than publishing
+ * nothing, so this is deliberately strict and returns few or no candidates
+ * rather than a loose match.
+ */
+export async function findAlternateSources(
+  headline: string,
+  originalUrl: string,
+): Promise<{ url: string; sourceName: string }[]> {
+  const originalHost = hostOf(originalUrl);
+  let items: RawItem[];
+  try {
+    items = await fetchFeed(headline, "general", "malaysia");
+  } catch (err) {
+    console.log(`[alt] search failed for "${headline}" — ${String(err)}`);
+    return [];
+  }
+
+  const scored = items
+    .filter((i) => hostOf(i.link) !== originalHost)
+    .filter((i) => !isUnreadableHost(i.link))
+    .map((i) => ({ item: i, score: headlineOverlap(headline, i.title) }))
+    .filter((s) => s.score >= MIN_HEADLINE_OVERLAP)
+    .sort((a, b) => b.score - a.score);
+
+  // Dedupe by host — three URLs from one paper is one chance, not three.
+  const seenHosts = new Set<string>();
+  const out: { url: string; sourceName: string }[] = [];
+  for (const { item } of scored) {
+    const h = hostOf(item.link);
+    if (seenHosts.has(h)) continue;
+    seenHosts.add(h);
+    out.push({ url: item.link, sourceName: item.sourceName });
+    if (out.length >= MAX_ALTERNATES) break;
+  }
+  return out;
+}
+
+/** Fraction of significant words two headlines must share to count as one story. */
+const MIN_HEADLINE_OVERLAP = 0.55;
+
+/** How many alternates to try. Each one is a fetch; the tail rarely pays. */
+const MAX_ALTERNATES = 3;
+
 /** Fetch and summarise a single pasted URL (dashboard manual submit). */
 export async function submitUrl(env: Env, url: string): Promise<boolean> {
   const existing = await env.DB.prepare(

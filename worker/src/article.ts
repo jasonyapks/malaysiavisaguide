@@ -1,5 +1,6 @@
 import type { Env, NewsItem } from "./types";
 import { extractArticle } from "./extract";
+import { findAlternateSources } from "./news";
 
 /**
  * Article writing — the step that turns a link into a page on this site.
@@ -43,6 +44,14 @@ export interface WrittenArticle {
   sourceExcerpt: string | null;
   /** Publisher's own date, if the page stated one more precisely than the feed. */
   publishedAt: string | null;
+  /**
+   * The source actually read. Normally the item's own source_url, but when that
+   * was unreadable and an alternate outlet carried the same story, this is the
+   * alternate — and the row must be updated to match, so the page cites what
+   * was really read.
+   */
+  sourceUrl: string;
+  sourceName: string;
   readingMinutes: number;
   model: string;
 }
@@ -68,11 +77,36 @@ export async function writeArticle(
   env: Env,
   item: Pick<NewsItem, "title" | "summary" | "category" | "source_name" | "source_url">,
 ): Promise<WrittenArticle | null> {
-  const source = await extractArticle(item.source_url);
+  let source = await extractArticle(item.source_url);
+  let usedUrl = item.source_url;
+  let usedName = item.source_name;
+
+  // The approved source could not be read. The story usually is not exclusive,
+  // so look for an outlet that ran it and can be read. Whatever we end up
+  // reading is what the page must cite — see the return value.
+  if (!source) {
+    const alternates = await findAlternateSources(item.title, item.source_url);
+    console.log(
+      `[article] ${item.source_url} unreadable — ${alternates.length} alternate(s) to try`,
+    );
+    for (const alt of alternates) {
+      const attempt = await extractArticle(alt.url);
+      if (attempt) {
+        source = attempt;
+        usedUrl = alt.url;
+        usedName = alt.sourceName;
+        console.log(`[article] using alternate source ${alt.sourceName} — ${alt.url}`);
+        break;
+      }
+    }
+  }
   if (!source) return null;
 
   const model = env.ARTICLE_MODEL;
-  const prompt = buildPrompt(item, source.text);
+  // Prompt with the publication actually read, not the one originally filed:
+  // the model attributes the quote it picks, and attributing it to a paper we
+  // never opened would be a fabricated citation.
+  const prompt = buildPrompt({ ...item, source_name: usedName }, source.text);
 
   let raw: string;
   try {
@@ -112,7 +146,12 @@ export async function writeArticle(
     return null;
   }
 
-  return { ...written, publishedAt: source.publishedAt };
+  return {
+    ...written,
+    publishedAt: source.publishedAt,
+    sourceUrl: usedUrl,
+    sourceName: usedName,
+  };
 }
 
 function buildPrompt(
@@ -170,7 +209,10 @@ function validate(
   o: Record<string, unknown>,
   item: Pick<NewsItem, "title">,
   model: string,
-): Omit<WrittenArticle, "publishedAt"> | null {
+  // Validation judges the model's output only. publishedAt comes from the page
+  // metadata, and the source fields from whichever page was actually read —
+  // neither is the model's to decide.
+): Omit<WrittenArticle, "publishedAt" | "sourceUrl" | "sourceName"> | null {
   const headline = str(o.headline).slice(0, 200) || item.title;
   const dek = str(o.dek).slice(0, 400);
   if (dek.length < 40) return null;
@@ -272,9 +314,11 @@ export async function generateAndStore(
     return {
       ok: false,
       error:
-        "Could not write an article: the source page could not be read (paywall, " +
-        "bot block, or a JavaScript-only page), or the model returned unusable output. " +
-        "Nothing was published.",
+        "Could not write an article. The source page could not be read (paywall, " +
+        "bot block, or a JavaScript-only page) and no other outlet carrying the " +
+        "same story could be read either — or the model returned unusable output. " +
+        "Nothing was published. Paste a readable version of the story into the " +
+        "manual-add box to write it anyway.",
     };
   }
 
@@ -282,10 +326,21 @@ export async function generateAndStore(
   // throws away the ranking it earned and orphans any inbound link.
   const slug = row.slug ?? (await uniqueSlug(env, written.headline, id));
 
+  // source_url/source_name move with the article. When the original was
+  // unreadable and an alternate outlet supplied the text, the citation on the
+  // page has to name the outlet actually read — anything else is a false
+  // attribution, and this site's only asset is being trustworthy about figures.
+  if (written.sourceUrl !== row.source_url) {
+    console.log(
+      `[article] citation reassigned: ${row.source_name} → ${written.sourceName}`,
+    );
+  }
+
   await env.DB.prepare(
     `UPDATE news_items
         SET slug = ?, headline = ?, dek = ?, body = ?, source_excerpt = ?,
             reading_minutes = ?, article_model = ?,
+            source_url = ?, source_name = ?,
             published_at = COALESCE(published_at, ?),
             updated_at = datetime('now')
       WHERE id = ?`,
@@ -298,6 +353,8 @@ export async function generateAndStore(
       written.sourceExcerpt,
       written.readingMinutes,
       written.model,
+      written.sourceUrl,
+      written.sourceName,
       written.publishedAt,
       id,
     )
