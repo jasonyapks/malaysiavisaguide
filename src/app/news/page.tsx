@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CategoryStrip } from "@/components/CategoryStrip";
 import { GuideHead } from "@/components/GuideHead";
-import {
-  CATEGORY_LABEL,
-  getNewsIndex,
-  newsDate,
-  type NewsArticle,
-} from "@/lib/news";
+import { NewsCard, NewsLeadCard } from "@/components/NewsCard";
+import { getCategoryIndex, getNewsIndex, type NewsArticle } from "@/lib/news";
 import { site } from "@/lib/site";
 
 /**
@@ -28,6 +25,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const items = await getNewsIndex();
+  const categories = await getCategoryIndex();
   const [lead, ...rest] = items;
 
   return (
@@ -46,6 +44,8 @@ export default async function Page() {
         </p>
       </header>
 
+      <CategoryStrip categories={categories} />
+
       {items.length === 0 ? (
         <p className="rounded-xl border border-sand-200 bg-sand-50 px-5 py-6 text-ink-muted">
           No stories published yet — the programme guides carry the current
@@ -53,7 +53,7 @@ export default async function Page() {
         </p>
       ) : (
         <>
-          <LeadCard article={lead} />
+          <NewsLeadCard article={lead} />
 
           {rest.length > 0 && (
             <section className="space-y-8">
@@ -71,7 +71,7 @@ export default async function Page() {
               <ul className="space-y-6">
                 {rest.map((a) => (
                   <li key={a.slug}>
-                    <Card article={a} />
+                    <NewsCard article={a} />
                   </li>
                 ))}
               </ul>
@@ -93,71 +93,6 @@ export default async function Page() {
         .
       </p>
     </div>
-  );
-}
-
-/** The most recent story, given the room it deserves. */
-function LeadCard({ article }: { article: NewsArticle }) {
-  return (
-    <article className="card-lux px-7 py-7 sm:px-9 sm:py-8">
-      <Meta article={article} />
-      <h2 className="mt-3 text-[1.7rem] font-extrabold leading-tight sm:text-[2rem]">
-        <Link href={`/news/${article.slug}/`} className="hover:text-forest-700">
-          {article.headline}
-        </Link>
-      </h2>
-      <p className="mt-3 text-[1.1rem] leading-relaxed text-ink-muted">
-        {article.dek}
-      </p>
-      <ReadLink slug={article.slug} />
-    </article>
-  );
-}
-
-function Card({ article }: { article: NewsArticle }) {
-  return (
-    <article className="border-b border-sand-200 pb-6">
-      <Meta article={article} />
-      <h2 className="mt-2 font-serif text-xl font-bold text-ink">
-        <Link href={`/news/${article.slug}/`} className="hover:text-forest-700">
-          {article.headline}
-        </Link>
-      </h2>
-      <p className="mt-1.5 text-[1.0625rem] leading-relaxed text-ink-muted">
-        {article.dek}
-      </p>
-      <ReadLink slug={article.slug} />
-    </article>
-  );
-}
-
-function Meta({ article }: { article: NewsArticle }) {
-  const date = newsDate(article.publishedAt);
-  return (
-    <div className="flex flex-wrap items-center gap-3 text-[0.8rem]">
-      <span className="rounded-full bg-forest-50 px-2.5 py-0.5 font-semibold uppercase tracking-wide text-forest-700">
-        {CATEGORY_LABEL[article.category]}
-      </span>
-      {article.publishedAt && date && (
-        <time className="text-ink-muted" dateTime={article.publishedAt}>
-          {date}
-        </time>
-      )}
-      <span className="text-ink-muted">{article.readingMinutes} min read</span>
-      <span className="text-ink-muted">via {article.sourceName}</span>
-    </div>
-  );
-}
-
-function ReadLink({ slug }: { slug: string }) {
-  return (
-    <Link
-      href={`/news/${slug}/`}
-      className="mt-3 inline-flex items-center gap-1.5 text-[0.9rem] font-semibold text-forest-700 underline"
-    >
-      Read the full story
-      <span aria-hidden>→</span>
-    </Link>
   );
 }
 

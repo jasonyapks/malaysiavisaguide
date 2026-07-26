@@ -120,6 +120,52 @@ export const CATEGORY_LABEL: Record<NewsCategory, string> = {
 };
 
 /**
+ * Standfirst for each category's own index page, and its meta description.
+ *
+ * Written per category rather than generated from the label, because a category
+ * page whose description is "News about MM2H" is thin content by any measure —
+ * it competes with /news and the guide for the same terms and deserves to lose
+ * to both. Each of these says what the category actually covers.
+ */
+export const CATEGORY_BLURB: Record<NewsCategory, string> = {
+  pvip: "Changes to the Premium Visitor Pass — the participation fee, the fixed deposit, and how the 20-year term is being applied in practice.",
+  mm2h: "Malaysia My Second Home news — the Silver, Gold and Platinum tiers, deposit and property thresholds, and the agent requirement.",
+  "sarawak-mm2h":
+    "Sarawak's own MM2H — the state programme with its own deposit, its own approvals and its own rules, reported separately because it moves separately.",
+  "de-rantau":
+    "DE Rantau, Malaysia's digital nomad pass — income thresholds, eligible professions and how the twelve-month pass is renewed.",
+  "employment-pass":
+    "Employment Pass news — the EP I, II and III salary tiers, ESD processing, and the rules employers and holders both have to meet.",
+  "student-pass":
+    "Student Pass news — EMGS processing, institution sponsorship, and the conditions attached to studying in Malaysia.",
+  general:
+    "Malaysian immigration policy that affects foreign nationals across the programmes rather than any single one of them.",
+  world:
+    "Long-stay, retirement and investor visas in other countries — the alternatives a reader is weighing Malaysia against, reported for comparison rather than recommendation.",
+};
+
+/**
+ * What a category's own index page is called.
+ *
+ * Usually "<label> news", which reads correctly for a programme name — "MM2H
+ * news", "Student Pass news". It does not read correctly for every label:
+ * "Other countries news" is not English. Only the exceptions are listed.
+ */
+const CATEGORY_PAGE_TITLE: Partial<Record<NewsCategory, string>> = {
+  world: "Visa news from other countries",
+  general: "Malaysian immigration news",
+};
+
+export function categoryTitle(category: NewsCategory): string {
+  return CATEGORY_PAGE_TITLE[category] ?? `${CATEGORY_LABEL[category]} news`;
+}
+
+/** The browse-by-category index for a category. Trailing slash, like every route here. */
+export function categoryPath(category: NewsCategory): string {
+  return `/news/category/${category}/`;
+}
+
+/**
  * The guide each category belongs to. An article's job is to answer the news
  * question and then hand the reader to the page that answers the real one, so
  * every article carries this link — it is the site's internal linking, and it is
@@ -196,6 +242,39 @@ async function fetchIndex(): Promise<NewsArticle[]> {
   const data = await getJson<{ items: ApiItem[] }>(NEWS_API, "the news index");
   if (!data) return [];
   return (data.items ?? []).filter((it) => it.slug).map(toArticle);
+}
+
+/**
+ * The categories that actually have something in them, most-populated first,
+ * each with its articles in index order (newest first).
+ *
+ * Only non-empty categories. A page per key of CATEGORY_LABEL would be simpler,
+ * but it would publish up to eight URLs carrying a heading and no stories, and
+ * an empty index is the definition of the thin content Search Console flags.
+ * The categories are a fixed set that only ever fills up, so a category page,
+ * once it exists, does not later vanish and 404.
+ */
+export async function getCategoryIndex(): Promise<
+  { category: NewsCategory; articles: NewsArticle[] }[]
+> {
+  const items = await getNewsIndex();
+
+  const byCategory = new Map<NewsCategory, NewsArticle[]>();
+  for (const a of items) {
+    const bucket = byCategory.get(a.category);
+    if (bucket) bucket.push(a);
+    else byCategory.set(a.category, [a]);
+  }
+
+  return [...byCategory.entries()]
+    .map(([category, articles]) => ({ category, articles }))
+    .sort(
+      (a, b) =>
+        b.articles.length - a.articles.length ||
+        // Ties broken by label so the browse strip does not reshuffle itself
+        // between builds for no reason a reader could perceive.
+        CATEGORY_LABEL[a.category].localeCompare(CATEGORY_LABEL[b.category]),
+    );
 }
 
 const articleCache = new Map<string, Promise<FullNewsArticle | null>>();

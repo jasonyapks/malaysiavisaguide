@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getNewsIndex } from "@/lib/news";
+import { categoryPath, getCategoryIndex, getNewsIndex } from "@/lib/news";
 import { routes, site } from "@/lib/site";
 
 /** Generated from the route table in src/lib/site.ts — SPEC.md §4.4. */
@@ -25,5 +25,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...pages, ...news];
+  // Category indexes. Each one's lastModified is its newest story's, so the
+  // date says something true — a category only changes when a story lands in
+  // it, and stamping the build time here would teach a crawler to ignore the
+  // date on every page in the sitemap, articles included.
+  const categories = await getCategoryIndex();
+  const categoryPages: MetadataRoute.Sitemap = categories.map(
+    ({ category, articles }) => ({
+      url: `${site.url}${categoryPath(category)}`,
+      lastModified: new Date(
+        Math.max(
+          ...articles.map((a) =>
+            new Date(a.updatedAt ?? a.publishedAt ?? 0).getTime(),
+          ),
+          0,
+        ),
+      ),
+      changeFrequency: "weekly",
+      // Above an article, below the guides: it is an index, and it is the page
+      // that should rank for "<programme> news".
+      priority: 0.7,
+    }),
+  );
+
+  return [...pages, ...categoryPages, ...news];
 }

@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Byline } from "@/components/Byline";
 import { GuideHead, Lozenge } from "@/components/GuideHead";
+import { CategoryChip } from "@/components/NewsCard";
 import {
   CATEGORY_GUIDE,
   CATEGORY_LABEL,
+  categoryPath,
   getArticle,
   getNewsIndex,
   newsDate,
@@ -102,14 +104,14 @@ export default async function Page({
           News
         </Link>
         <span aria-hidden> › </span>
-        <span>{CATEGORY_LABEL[article.category]}</span>
+        <Link href={categoryPath(article.category)} className="text-forest-700 underline">
+          {CATEGORY_LABEL[article.category]}
+        </Link>
       </nav>
 
       <header className="space-y-5">
         <div className="flex flex-wrap items-center gap-3 text-[0.8rem]">
-          <span className="rounded-full bg-forest-50 px-2.5 py-0.5 font-semibold uppercase tracking-wide text-forest-700">
-            {CATEGORY_LABEL[article.category]}
-          </span>
+          <CategoryChip category={article.category} />
           {article.publishedAt && published && (
             <time className="text-ink-muted" dateTime={article.publishedAt}>
               {published}
