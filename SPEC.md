@@ -134,6 +134,9 @@ path. **Email still works** — see §10.
 | `/` | Hero + promise card · "which route is yours?" router — three long-stay cards, three work/study cards · freshness band carrying the last-reviewed date · tools row · closing CTA |
 | `/news/` | Blog index — every published story as a card linking to its own page. Prerendered at build time from the `worker/` backend's `/api/news` |
 | `/news/<slug>/` | One page per story. An **original article written on this site** about the news — key points, 2–4 sections, "what it means for an applicant" — with one attributed quote and a followed link to the source. Prerendered; `NewsArticle` + `BreadcrumbList` schema |
+| `/insights/` | Index of Jason's own authored articles — evergreen, first-person, separate from `/news/` because news is perishable and these are the pages meant to be cited. **Built 2026-07-27, not launched** — see the launch checklist in `src/lib/data/insights.ts` |
+| `/insights/<category>/` | Category index. Four categories: `comparisons`, `by-nationality`, `expat-living`, `perspective`. A category page is created when its first article lands, never in advance |
+| `/insights/<category>/<slug>/` | One authored article. Category is in the URL by Jason's decision (2026-07-27) — keyword-bearing path and a free breadcrumb, at the cost of the URL changing if an article is recategorised. All literal folders, no dynamic segments; `Article` + breadcrumb schema |
 | `/visas/pvip/` | Premium Visa Programme — full guide |
 | `/visas/mm2h/` | MM2H — Silver / Gold / Platinum tiers |
 | `/visas/sarawak-mm2h/` | S-MM2H — the cheapest serious long-stay route |
@@ -180,6 +183,22 @@ When a rule changes — and Malaysian visa rules change often — Jason edits on
 whole site updates consistently. The failure mode being designed out is hardcoding RM figures
 into four places, publishing contradictory numbers, and destroying the accuracy that is this
 site's only real asset. A wrong fee is worse than a missing page.
+
+**Amendment, 2026-07-27 — attributed sources.** The rule was "no figure ships without an
+official source", and PVIP broke it: the terms changed on 16 March 2026 and Immigration has
+not republished its FAQ, so for four months the site served figures it knew were superseded
+because the only alternative the rule allowed was silence. A government PDF is the best way
+to let a reader check us, not the only honest one. So `Programme` now carries an optional
+`superseded` block — what changed, **who is asserting it** (`attribution.by`, normally
+"MYPVIP practice"), the date it was current, and a `figuresPending` flag while the numeric
+fields are still the old ones. `components/SupersededNotice.tsx` renders it above the figures
+on every page that shows them, names whose word they rest on, and links the stale official
+document so the gap is explicit rather than hidden.
+
+Two limits keep this from becoming a loophole. An attributed figure is a **weaker declared
+source, never a substitute for knowing** — if we do not actually know a number, the field
+stays `null` and the question goes to `UNVERIFIED` exactly as before. And attribution is
+always **visible**: an unmarked number on the page still means an official source says so.
 
 The four long-stay programmes are deposit-gated; the Student and Employment passes are
 **sponsor-gated** — no fixed deposit, no property minimum, but an institution or employer

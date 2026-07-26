@@ -31,6 +31,7 @@ export const routes: Route[] = [
   { path: "/", title: "Home" },
 
   { path: "/news/", title: "News" },
+  { path: "/insights/", title: "Insights", nav: "site" },
 
   { path: "/visas/pvip/", title: "PVIP", nav: "programmes" },
   { path: "/visas/mm2h/", title: "MM2H", nav: "programmes" },

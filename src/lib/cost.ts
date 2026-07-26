@@ -18,6 +18,7 @@ import {
   type Programme,
   type ProgrammeSlug,
 } from "@/lib/data/programmes";
+import { money } from "@/lib/format";
 
 export type Kind = "fee" | "capital";
 
@@ -80,7 +81,12 @@ export function estimate(
 
 function addFee(
   items: LineItem[],
-  fee: { principal: number; dependant: number; currency: Currency } | null,
+  fee: {
+    principal: number;
+    dependant: number;
+    currency: Currency;
+    dependantTerms?: { years: number; amount: number }[];
+  } | null,
   label: string,
   deps: number,
 ) {
@@ -94,11 +100,22 @@ function addFee(
     });
   }
   if (deps > 0 && fee.dependant > 0) {
+    // Where a dependant may elect a shorter term, the estimate prices the
+    // longest one — `fee.dependant` is defined as that by the data layer. The
+    // cheaper option is a real saving on a six-figure line, so it is stated
+    // rather than left for the reader to discover on the guide page.
+    const cheaper = fee.dependantTerms
+      ?.filter((t) => t.amount < fee.dependant)
+      .sort((a, b) => a.amount - b.amount)[0];
+
     items.push({
       label: `${label} — ${deps} dependant${deps > 1 ? "s" : ""}`,
       amount: fee.dependant * deps,
       currency: fee.currency,
       kind: "fee",
+      note: cheaper
+        ? `Priced at the full term. A dependant taking the ${cheaper.years}-year option instead pays ${money({ amount: cheaper.amount, currency: fee.currency })} each.`
+        : undefined,
     });
   }
 }

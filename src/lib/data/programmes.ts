@@ -40,6 +40,51 @@ export type Money = {
  */
 export type ProgrammeCategory = "long-stay" | "work-study";
 
+/**
+ * A figure's authority when no official document states it yet.
+ *
+ * §4.1 says nothing renders a number without a source, and the intent behind
+ * that rule is that a reader can check us. A government PDF is the best way to
+ * satisfy it but not the only honest one: when a programme's terms change and
+ * the published FAQ lags by months, the choice is between serving figures we
+ * know are superseded and attributing the current ones to the practice that is
+ * filing applications under them every week.
+ *
+ * So attribution is a *named, dated* assertion, rendered on the page — never an
+ * unmarked number. The reader is told exactly whose word a figure rests on and
+ * what the official source still says, and can weigh that themselves. An
+ * attributed figure is not a guess and must never be used to launder one; if we
+ * do not actually know it, the field stays null and the question goes to
+ * UNVERIFIED as before.
+ */
+export type Attribution = {
+  /** Rendered verbatim. Who is asserting this. */
+  by: string;
+  /** ISO date the assertion was made and was current. */
+  asAt: string;
+};
+
+/**
+ * Set when a programme's official source is known to be out of date.
+ *
+ * This is what makes the lag visible instead of invisible. `whatChanged` may
+ * only contain things we can actually stand behind; anything still unknown
+ * belongs in UNVERIFIED, not here, and `figuresPending` says out loud that the
+ * numbers rendered on the page are still the superseded ones.
+ */
+export type Superseded = {
+  /** When the change took effect, in prose — "16 March 2026". */
+  changedOn: string;
+  attribution: Attribution;
+  /** Publishable, confirmed changes. Qualitative where a figure is not yet known. */
+  whatChanged: string[];
+  /**
+   * True while the numeric fields on this Programme are still the superseded
+   * ones. Drives the warning; set false only once every field is corrected.
+   */
+  figuresPending: boolean;
+};
+
 export type Programme = {
   slug: ProgrammeSlug;
   name: string;
@@ -53,7 +98,23 @@ export type Programme = {
   incomeRequirement: (Money & { period: "month" | "year" }) | null;
   propertyPurchaseMin: Money | null;
   participationFee:
-    | { principal: number; dependant: number; currency: Currency }
+    | {
+        principal: number;
+        /**
+         * The dependant fee at the principal's own term. Where a dependant may
+         * elect a shorter term for less, `dependantTerms` carries the full set
+         * and this is the longest of them — so a consumer that ignores the
+         * options quotes the higher number rather than the cheaper one.
+         */
+        dependant: number;
+        currency: Currency;
+        /**
+         * Set only where a dependant's term is a choice rather than inherited
+         * from the principal. PVIP is the sole case: the principal is fixed at
+         * 20 years, a dependant may take 20 or 10.
+         */
+        dependantTerms?: { years: number; amount: number }[];
+      }
     | null;
   /** Government processing fee, separate from any participation fee. */
   processingFee:
@@ -70,6 +131,11 @@ export type Programme = {
   source: string;
   /** ISO date. */
   lastVerified: string;
+  /**
+   * Present only when `source` is known to be superseded. Absent on a programme
+   * whose official source is current, which is the normal case.
+   */
+  superseded?: Superseded;
 };
 
 /**
@@ -78,6 +144,11 @@ export type Programme = {
  * secondary reporting: the minimum age is 25 (not 30), the minimum stay is
  * 90 days for ages 25–49 with no requirement at all from 50, and the
  * participation fee varies enormously by tier.
+ *
+ * The participation fee is **per application, not per person** — confirmed by
+ * Jason 2026-07-27. A dependant adds the RM2,500 processing fee below, plus
+ * medical insurance and a medical examination, neither of which has a published
+ * government figure (they are priced by the insurer and the clinic).
  */
 const MM2H_SOURCE =
   "https://www.motac.gov.my/wp-content/uploads/2025/12/Insights-on-The-Categories.pdf";
@@ -123,13 +194,28 @@ export const programmes: Programme[] = [
     fixedDeposit: {
       amount: 1_000_000,
       currency: "MYR",
+      withdrawable:
+        "Up to 50% may be withdrawn after six months in the programme — reduced from one year under the 2026 terms.",
     },
+    // RM480,000 a year, and broader on both axes than most write-ups suggest.
+    // Not restricted to salary: realised investment gains, rental income and
+    // pension drawdown all count. Not restricted to offshore either — onshore
+    // income qualifies with proof of Malaysian income tax paid on it, which
+    // reverses what the 2022 FAQ says and what this page used to say.
     incomeRequirement: { amount: 40_000, currency: "MYR", period: "month" },
     propertyPurchaseMin: null,
     participationFee: {
       principal: 200_000,
+      // The principal's term is fixed at 20 years, so the principal has no fee
+      // choice. A dependant does — see dependantTerms.
       dependant: 100_000,
       currency: "MYR",
+      // The 20-year dependant fee is unchanged from the 2022 terms. What 2026
+      // added is the 10-year option beneath it, at half the price.
+      dependantTerms: [
+        { years: 20, amount: 100_000 },
+        { years: 10, amount: 50_000 },
+      ],
     },
     processingFee: null,
     // "Exemption of minimum staying requirement" — official FAQ, benefit (iii).
@@ -145,6 +231,20 @@ export const programmes: Programme[] = [
     salaryFloor: null,
     source: "https://imigresen-online.imi.gov.my/eservices/doc/FAQ_PVIP.pdf",
     lastVerified: "2026-07-23",
+    // The fields above are now the 2026 terms, supplied by Jason on 2026-07-27.
+    // Immigration's FAQ still shows the 2022 launch terms, so they rest on
+    // attribution rather than on `source` — which is exactly what the notice
+    // above the figures tells the reader. See §4.1 of SPEC.md.
+    superseded: {
+      changedOn: "16 March 2026",
+      attribution: { by: "MYPVIP practice", asAt: "2026-07-27" },
+      whatChanged: [
+        "The fixed deposit becomes withdrawable after six months rather than one year. The ceiling is unchanged at 50% of the amount pledged.",
+        "A dependant may now elect a 10-year term at RM50,000, half the price of the unchanged 20-year term at RM100,000. The principal's term is fixed at 20 years and has no such option.",
+        "The RM40,000 monthly income requirement is unchanged, but what counts towards it is broader than the 2022 FAQ states. Salary is not required — realised investment gains, rental income and pension drawdown all qualify. Nor must the income be offshore: Malaysian-sourced income now counts, with proof of Malaysian income tax paid on it.",
+      ],
+      figuresPending: false,
+    },
   },
 
   {
@@ -326,12 +426,12 @@ export const UNVERIFIED: { slug: ProgrammeSlug; question: string }[] = [
   {
     slug: "pvip",
     question:
-      "The only official PVIP document found is the Immigration FAQ, which still reflects the 2022 launch terms. It does not mention the changes reported for 16 March 2026 — a RM50,000 dependant fee on a 10-year option, fixed deposit withdrawable after 6 months, and qualification by net worth or onshore income. Is there a published circular, and are those terms in force?",
+      "Is qualification by NET WORTH actually available, and at what threshold? Reported for 16 March 2026; Jason set it aside on 2026-07-27 as not yet confirmed. Nothing about net worth is published anywhere on the site — keep it that way until there is a figure and a basis for it.",
   },
   {
-    slug: "mm2h-silver",
+    slug: "pvip",
     question:
-      "The MOTAC category table gives a participation fee per tier but no dependant participation fee. Is the fee per application or per person?",
+      "Is there any citable document for the 2026 terms — circular, gazette, or an updated Immigration FAQ? Everything above currently rests on attribution to MYPVIP practice, which is declared on the page but is a weaker source than a government PDF. Swap it the moment one exists.",
   },
   {
     slug: "student-pass",

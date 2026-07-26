@@ -1,4 +1,10 @@
 import type { MetadataRoute } from "next";
+import {
+  categoryPath as insightCategoryPath,
+  insightPath,
+  liveCategories,
+  published,
+} from "@/lib/data/insights";
 import { categoryPath, getCategoryIndex, getNewsIndex } from "@/lib/news";
 import { routes, site } from "@/lib/site";
 
@@ -48,5 +54,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  return [...pages, ...categoryPages, ...news];
+  // Authored articles. Priority above a news story and below a programme guide:
+  // evergreen and meant to be cited, but the guides are still the reference.
+  // Drafts are excluded by `published()`, which is the whole point of the flag.
+  const articles2 = published();
+  const insightPages: MetadataRoute.Sitemap = articles2.map((a) => ({
+    url: `${site.url}${insightPath(a)}`,
+    lastModified: new Date(a.reviewed),
+    changeFrequency: "yearly",
+    priority: 0.7,
+  }));
+
+  const insightCategories: MetadataRoute.Sitemap = liveCategories().map(
+    ({ category, articles }) => ({
+      url: `${site.url}${insightCategoryPath(category)}`,
+      // The newest article's review date, for the same reason the news category
+      // pages use theirs: a date that moves on every deploy teaches a crawler
+      // to ignore every date in the sitemap.
+      lastModified: new Date(
+        Math.max(...articles.map((a) => new Date(a.reviewed).getTime()), 0),
+      ),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }),
+  );
+
+  return [
+    ...pages,
+    ...categoryPages,
+    ...news,
+    ...insightCategories,
+    ...insightPages,
+  ];
 }

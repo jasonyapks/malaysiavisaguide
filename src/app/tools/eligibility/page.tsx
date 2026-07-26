@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { SupersededNotices } from "@/components/SupersededNotice";
+import { programmes } from "@/lib/data/programmes";
 import { EligibilityQuiz } from "./EligibilityQuiz";
 
 export const metadata: Metadata = {
@@ -21,6 +23,10 @@ export default function Page() {
           against the same official figures used across this site.
         </p>
       </header>
+
+      {/* The quiz tells a reader they qualify. It must not do that against a
+          threshold we know has moved without saying so first. */}
+      <SupersededNotices programmes={programmes} />
 
       <EligibilityQuiz />
     </div>

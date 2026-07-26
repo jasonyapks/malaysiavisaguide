@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { SupersededNotices } from "@/components/SupersededNotice";
+import { programmes } from "@/lib/data/programmes";
 import { CostCalculator } from "./CostCalculator";
 
 export const metadata: Metadata = {
@@ -21,6 +23,10 @@ export default function Page() {
           fixed deposit) is kept well apart from the money you don&apos;t.
         </p>
       </header>
+
+      {/* Before the calculator, not after: a total built on a superseded fee is
+          exactly the output a reader would act on. */}
+      <SupersededNotices programmes={programmes} />
 
       <CostCalculator />
     </div>

@@ -7,6 +7,7 @@ import { Byline } from "@/components/Byline";
 import { Faq, type FaqItem } from "@/components/Faq";
 import { GuideHead, Lozenge } from "@/components/GuideHead";
 import { KeyFacts } from "@/components/KeyFacts";
+import { SupersededNotice } from "@/components/SupersededNotice";
 
 /**
  * The guide template — SPEC.md §3. The order is deliberate and every guide
@@ -121,6 +122,14 @@ export function GuideLayout({
           <p className="card-lux mx-auto max-w-3xl border-l-4 border-l-forest-600 px-7 py-6 text-[1.2rem] leading-relaxed text-forest-900">
             {answer}
           </p>
+
+          {/* Between the answer and the figures on purpose: a reader who is
+              going to act on a superseded fee has to pass the warning to reach
+              it. Renders nothing unless the programme's source has fallen
+              behind — see components/SupersededNotice.tsx. */}
+          <div className="mx-auto max-w-3xl">
+            <SupersededNotice programme={programme} />
+          </div>
 
           {/* 2 */}
           {facts ?? <KeyFacts programme={programme} />}

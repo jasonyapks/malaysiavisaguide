@@ -30,16 +30,23 @@ export function KeyFacts({ programme: p }: { programme: Programme }) {
   if (p.sponsor) rows.push(["Sponsor required", p.sponsor]);
   if (p.propertyPurchaseMin)
     rows.push(["Property purchase", `From ${money(p.propertyPurchaseMin)}`]);
-  if (p.participationFee)
+  if (p.participationFee) {
+    const f = p.participationFee;
+    const fee = (amount: number) => money({ amount, currency: f.currency });
     rows.push([
       "Participation fee",
-      p.participationFee.dependant > 0
-        ? `${money({ amount: p.participationFee.principal, currency: p.participationFee.currency })} principal, ${money({ amount: p.participationFee.dependant, currency: p.participationFee.currency })} per dependant`
-        : money({
-            amount: p.participationFee.principal,
-            currency: p.participationFee.currency,
-          }),
+      // Where a dependant's term is a choice, both prices are stated. Quoting
+      // one of them would understate or overstate a six-figure decision, and
+      // which way it errs would depend on which we happened to pick.
+      f.dependantTerms
+        ? `${fee(f.principal)} principal. Per dependant: ${f.dependantTerms
+            .map((t) => `${fee(t.amount)} for ${years(t.years)}`)
+            .join(", or ")}`
+        : f.dependant > 0
+          ? `${fee(f.principal)} principal, ${fee(f.dependant)} per dependant`
+          : fee(f.principal),
     ]);
+  }
   if (p.processingFee)
     rows.push([
       "Processing fee",

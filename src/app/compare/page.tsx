@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Byline } from "@/components/Byline";
+import { SupersededNotices } from "@/components/SupersededNotice";
 import { TierTable } from "@/components/TierTable";
 import { byCategory, programmes } from "@/lib/data/programmes";
 import { reviewDate } from "@/lib/format";
@@ -36,6 +37,11 @@ export default function Page() {
           are not the same kind of number.
         </p>
       </header>
+
+      {/* Above the tables, not below them: this page's whole job is letting a
+          reader compare figures, so a superseded one has to be flagged before
+          they read it. Renders nothing when every source is current. */}
+      <SupersededNotices programmes={programmes} />
 
       <section className="space-y-5">
         <h2 className="font-serif text-2xl font-semibold">

@@ -8,7 +8,7 @@ const p = getProgramme("pvip")!;
 export const metadata: Metadata = {
   title: "Premium Visa Programme (PVIP): costs and requirements",
   description:
-    "What PVIP actually costs, who qualifies, and how it compares to MM2H. RM200,000 participation fee, RM1 million fixed deposit, RM40,000 monthly offshore income, 20-year residence.",
+    "What PVIP actually costs, who qualifies, and how it compares to MM2H. RM200,000 participation fee, RM1 million fixed deposit, RM40,000 monthly income offshore or onshore, 20-year residence.",
   alternates: { canonical: "/visas/pvip/" },
 };
 
@@ -18,7 +18,7 @@ export default function Page() {
       programme={p}
       hero={images.pvip}
       title="Premium Visa Programme (PVIP)"
-      answer="PVIP grants residence in Malaysia for up to 20 years. You need offshore income of RM40,000 a month, a RM1 million fixed deposit with a Malaysian bank, and a participation fee of RM200,000 for the principal plus RM100,000 per dependant. There is no age limit and no minimum stay."
+      answer="PVIP grants residence in Malaysia for 20 years. You need income of RM40,000 a month — offshore, or Malaysian-sourced with proof of Malaysian income tax paid on it — a RM1 million fixed deposit with a Malaysian bank, and a participation fee of RM200,000 for the principal. A dependant pays RM100,000 for the same 20 years, or RM50,000 for 10. There is no age limit and no minimum stay."
       suits={{
         yes: [
           "You want to work or run a business in Malaysia — PVIP permits both, MM2H does not",
@@ -28,7 +28,7 @@ export default function Page() {
         ],
         no: [
           "You are optimising for cost — MM2H Silver costs a fraction of this",
-          "Your income is Malaysian-sourced; the RM40,000 must be offshore",
+          "You cannot document RM40,000 a month — the source is flexible, the paper trail is not",
           "You cannot leave RM1 million on deposit indefinitely",
           "You want to apply directly — PVIP requires an Immigration-authorised agent",
         ],
@@ -36,7 +36,7 @@ export default function Page() {
       faq={[
         {
           q: "How much does PVIP actually cost in the first year?",
-          a: "The participation fee is RM200,000 for the principal and RM100,000 for each dependant. That is a fee, not a deposit — it is not returned. Separately, RM1,000,000 is placed on fixed deposit, which remains yours. Agent fees are additional and are not set by the government.",
+          a: "RM200,000 for the principal, whose term is fixed at 20 years. Each dependant chooses their own term: RM100,000 for 20 years, or RM50,000 for 10. That is a fee, not a deposit — it is not returned. Separately, RM1,000,000 is placed on fixed deposit, which remains yours and is half withdrawable after six months. Agent fees are additional and are not set by the government.",
         },
         {
           q: "Is the RM1 million fixed deposit refundable?",
@@ -72,17 +72,23 @@ export default function Page() {
         </p>
         <ul>
           <li>
-            <strong>Offshore income of RM40,000 a month</strong> — RM480,000 a
-            year. The word offshore matters: income earned in Malaysia does not
-            count towards this threshold.
+            <strong>Income of RM40,000 a month</strong> — RM480,000 a year. Two
+            things about this are more generous than most write-ups suggest.
+            First, it does not have to be a salary: realised gains on
+            investments, rental income and pension drawdown all count, which is
+            what puts the threshold within reach of a retiree with no employer.
+            Second, it does not have to be offshore. Malaysian-sourced income
+            qualifies too, provided you can show proof of Malaysian income tax
+            paid on it.
           </li>
           <li>
             <strong>A RM1,000,000 fixed deposit</strong> opened with a licensed
-            bank in Malaysia.
+            bank in Malaysia. Up to half of it may be withdrawn after six months.
           </li>
           <li>
-            <strong>Participation fees</strong> of RM200,000 for the principal
-            and RM100,000 for each dependant.
+            <strong>Participation fees</strong> of RM200,000 for the principal,
+            whose term is fixed at 20 years. A dependant chooses: RM100,000 for
+            the same 20 years, or RM50,000 for 10.
           </li>
           <li>
             <strong>An authorised agency</strong> — applications cannot be made
@@ -103,7 +109,8 @@ export default function Page() {
         <ul>
           <li>
             <strong>Money you do not get back:</strong> the RM200,000
-            participation fee, plus RM100,000 per dependant.
+            participation fee, plus RM100,000 for each dependant on the 20-year
+            term or RM50,000 each on the 10-year one.
           </li>
           <li>
             <strong>Money that stays yours:</strong> the RM1,000,000 fixed
