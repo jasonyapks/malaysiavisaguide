@@ -56,6 +56,8 @@ const PROGRAMME_CONTEXT: Record<string, string> = {
   "employment-pass": "Employment Pass — employer-sponsored via ESD, EP I/II/III salary tiers",
   "student-pass": "Student Pass — EMGS-processed, institution-sponsored",
   general: "Malaysian immigration policy for foreign nationals",
+  world:
+    "another country's long-stay, retirement, investor or nomad visa — context for a reader comparing it against Malaysia's programmes, not a recommendation of it",
 };
 
 /**

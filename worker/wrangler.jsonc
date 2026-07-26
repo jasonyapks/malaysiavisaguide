@@ -10,6 +10,33 @@
 
   "observability": { "enabled": true },
 
+  // The dashboard is served from the main site's domain at /dashboard, so Jason
+  // has one address to remember. These are ROUTES, not a Custom Domain: a Custom
+  // Domain claims every path on the hostname, which would take the Pages site
+  // down. Routes claim only these paths and run in front of Pages — Pages itself
+  // cannot serve non-root routes, which is why the Worker has to sit in front.
+  //
+  // Cloudflare Access gates both patterns (app "MVG Dashboard", same AUD as the
+  // workers.dev host, so POLICY_AUD is unchanged). Access is scoped to these
+  // exact paths — never to the bare apex, which would put the public site
+  // behind a login. The workers.dev URL keeps working as a fallback.
+  // MUST stay explicit. Adding `routes` makes wrangler default workers_dev to
+  // false, which silently kills mvg-news.jason-6bf.workers.dev — and that host
+  // is still what `site.newsApi` fetches at build time, so the site build would
+  // start failing with no obvious cause.
+  "workers_dev": true,
+
+  "routes": [
+    {
+      "pattern": "malaysiavisaguide.com/dashboard*",
+      "zone_name": "malaysiavisaguide.com"
+    },
+    {
+      "pattern": "malaysiavisaguide.com/api/admin/*",
+      "zone_name": "malaysiavisaguide.com"
+    }
+  ],
+
   // Daily news sweep at 01:00 UTC (09:00 MYT). Fills the pending queue only.
   "triggers": { "crons": ["0 1 * * *"] },
 

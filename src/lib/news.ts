@@ -21,7 +21,8 @@ export type NewsCategory =
   | "de-rantau"
   | "employment-pass"
   | "student-pass"
-  | "general";
+  | "general"
+  | "world";
 
 /** The article body as the Worker stores it — see worker/src/article.ts. */
 export interface ArticleBody {
@@ -115,6 +116,7 @@ export const CATEGORY_LABEL: Record<NewsCategory, string> = {
   "employment-pass": "Employment Pass",
   "student-pass": "Student Pass",
   general: "Immigration",
+  world: "Other countries",
 };
 
 /**
@@ -131,6 +133,9 @@ export const CATEGORY_GUIDE: Record<NewsCategory, { path: string; title: string 
   "employment-pass": { path: "/visas/employment-pass/", title: "the Employment Pass guide" },
   "student-pass": { path: "/visas/student-pass/", title: "the Student Pass guide" },
   general: null,
+  // Other countries' news has no Malaysian guide to hand off to, so it points at
+  // the comparison table — which is exactly the question it raises in a reader.
+  world: { path: "/compare/", title: "how Malaysia compares" },
 };
 
 function asCategory(v: string): NewsCategory {

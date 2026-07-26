@@ -11,13 +11,38 @@ import type { Env } from "./types";
  * keep a summary + link, and the public page cites and links out.
  */
 
+/**
+ * Two sectors. `malaysia` is the site's own subject; `world` is other countries'
+ * long-stay visa news, which readers weigh Malaysia against. They are summarised
+ * under different editorial briefs and hold separate per-run budgets, so a busy
+ * week in one cannot crowd the other out of the queue.
+ */
+type Sector = "malaysia" | "world";
+
 // Each query maps to the programme it most likely concerns; the AI can override.
-const FEEDS: { query: string; category: string }[] = [
-  { query: "Malaysia MM2H visa", category: "mm2h" },
-  { query: "Malaysia Premium Visa Programme PVIP", category: "pvip" },
-  { query: "Sarawak MM2H visa", category: "sarawak-mm2h" },
-  { query: "Malaysia DE Rantau nomad pass", category: "de-rantau" },
-  { query: "Malaysia expatriate employment pass immigration", category: "general" },
+const FEEDS: { query: string; category: string; sector: Sector }[] = [
+  { query: "Malaysia MM2H visa", category: "mm2h", sector: "malaysia" },
+  { query: "Malaysia Premium Visa Programme PVIP", category: "pvip", sector: "malaysia" },
+  { query: "Sarawak MM2H visa", category: "sarawak-mm2h", sector: "malaysia" },
+  { query: "Malaysia DE Rantau nomad pass", category: "de-rantau", sector: "malaysia" },
+  {
+    query: "Malaysia expatriate employment pass immigration",
+    category: "general",
+    sector: "malaysia",
+  },
+
+  // Other countries. Chosen as the programmes this audience actually compares
+  // Malaysia against — regional long-stay routes first, then the investor and
+  // retirement visas an HNW reader shortlists alongside PVIP and MM2H.
+  { query: "Thailand long term resident visa policy", category: "world", sector: "world" },
+  { query: "Indonesia KITAS visa foreigners rules", category: "world", sector: "world" },
+  { query: "Philippines SRRV retirement visa change", category: "world", sector: "world" },
+  { query: "Vietnam Cambodia long stay visa rules foreigners", category: "world", sector: "world" },
+  { query: "Singapore employment pass ONE pass criteria", category: "world", sector: "world" },
+  { query: "UAE golden visa residency rule change", category: "world", sector: "world" },
+  { query: "Portugal Spain Greece golden visa programme change", category: "world", sector: "world" },
+  { query: "Japan Korea Taiwan digital nomad visa", category: "world", sector: "world" },
+  { query: "digital nomad visa launched country requirements", category: "world", sector: "world" },
 ];
 
 const VALID_CATEGORIES = new Set([
@@ -28,9 +53,21 @@ const VALID_CATEGORIES = new Set([
   "employment-pass",
   "student-pass",
   "general",
+  "world",
 ]);
 
-const PER_RUN_LIMIT = 20; // cap AI calls + inserts per sweep
+// Cap AI calls + inserts per sweep, per sector. Malaysia keeps the larger share:
+// it is the site's subject, and world items are context, not the main event.
+const PER_RUN_LIMIT: Record<Sector, number> = { malaysia: 20, world: 8 };
+
+/**
+ * Nothing older than three months enters the queue. A January 2022 article once
+ * reached approval looking identical to current news, and its figures
+ * contradicted the site's own PVIP guide — the queue shows no publication date,
+ * so age is invisible at review time. Filtering at ingest is the only reliable
+ * place to catch it.
+ */
+const MAX_AGE_DAYS = 92;
 
 interface RawItem {
   title: string;
@@ -39,19 +76,46 @@ interface RawItem {
   pubDate: string | null;
   description: string;
   fallbackCategory: string;
+  sector: Sector;
+}
+
+/**
+ * True only for a parseable date inside the window. An item with no usable date
+ * is treated as failing: unknown age is exactly the case that caused the
+ * problem, and Bing supplies a pubDate on effectively every item, so dropping
+ * the undated ones costs almost nothing. Counted separately in the log so a
+ * feed that silently stops sending dates is visible rather than just quiet.
+ */
+function isRecent(pubDate: string | null): boolean {
+  if (!pubDate) return false;
+  const t = Date.parse(pubDate);
+  if (Number.isNaN(t)) return false;
+  return Date.now() - t <= MAX_AGE_DAYS * 86_400_000;
 }
 
 /** Fetch every feed, summarise new items, insert as pending. Returns count added. */
 export async function runNewsSweep(env: Env): Promise<number> {
   const seen = new Set<string>();
   const candidates: RawItem[] = [];
+  let stale = 0;
+  let undated = 0;
 
   for (const feed of FEEDS) {
     try {
-      const items = await fetchFeed(feed.query, feed.category);
+      const items = await fetchFeed(feed.query, feed.category, feed.sector);
       for (const it of items) {
         if (seen.has(it.link)) continue;
         seen.add(it.link);
+        // Age gate, before any AI spend — a stale item costs nothing to drop
+        // here and costs a wrong published figure if it reaches approval.
+        if (!it.pubDate) {
+          undated++;
+          continue;
+        }
+        if (!isRecent(it.pubDate)) {
+          stale++;
+          continue;
+        }
         candidates.push(it);
       }
     } catch (err) {
@@ -59,17 +123,25 @@ export async function runNewsSweep(env: Env): Promise<number> {
     }
   }
 
-  // Skip anything already stored (by source_url).
+  // Skip anything already stored (by source_url), and spend each sector's
+  // budget separately so the world feed always gets a look in.
+  const used: Record<Sector, number> = { malaysia: 0, world: 0 };
   const fresh: RawItem[] = [];
   for (const c of candidates) {
+    if (used[c.sector] >= PER_RUN_LIMIT[c.sector]) continue;
     const existing = await env.DB.prepare(
       "SELECT 1 FROM news_items WHERE source_url = ?",
     )
       .bind(c.link)
       .first();
-    if (!existing) fresh.push(c);
-    if (fresh.length >= PER_RUN_LIMIT) break;
+    if (existing) continue;
+    fresh.push(c);
+    used[c.sector]++;
   }
+  console.log(
+    `[news] ${candidates.length} in window, ${stale} older than ${MAX_AGE_DAYS}d, ` +
+      `${undated} undated; taking ${used.malaysia} malaysia + ${used.world} world`,
+  );
 
   let added = 0;
   for (const item of fresh) {
@@ -105,6 +177,9 @@ export async function submitUrl(env: Env, url: string): Promise<boolean> {
     pubDate: new Date().toISOString(),
     description: desc,
     fallbackCategory: "general",
+    // Manual paste is deliberate, so it bypasses both the age gate and the
+    // per-sector budget — this path never runs through the sweep.
+    sector: "malaysia",
   };
   const enriched = await summarise(env, item);
   if (!enriched) return false;
@@ -115,22 +190,31 @@ export async function submitUrl(env: Env, url: string): Promise<boolean> {
 const BROWSER_UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
 
-async function fetchFeed(query: string, fallbackCategory: string): Promise<RawItem[]> {
+async function fetchFeed(
+  query: string,
+  fallbackCategory: string,
+  sector: Sector,
+): Promise<RawItem[]> {
   // Bing News RSS — query-based and reachable from Cloudflare Workers (Google
   // News blocks Worker egress IPs). Each item carries a <News:Source> outlet
   // name and a redirect link wrapping the real article URL.
+  //
+  // Market matters: en-MY surfaces Malaysian outlets, which is right for the
+  // malaysia sector and actively wrong for the world one, where it would bias
+  // results back towards Malaysian coverage of other countries.
+  const market = sector === "world" ? "en-US" : "en-MY";
   const url =
     "https://www.bing.com/news/search?q=" +
     encodeURIComponent(query) +
-    "&format=rss&setmkt=en-MY";
+    `&format=rss&setmkt=${market}`;
   const res = await fetch(url, { headers: { "user-agent": BROWSER_UA } });
   if (!res.ok) throw new Error(`status ${res.status}`);
   const xml = await res.text();
-  return parseRss(xml, fallbackCategory);
+  return parseRss(xml, fallbackCategory, sector);
 }
 
 /** Minimal RSS parser for Bing News output (item-per-<item>). */
-function parseRss(xml: string, fallbackCategory: string): RawItem[] {
+function parseRss(xml: string, fallbackCategory: string, sector: Sector): RawItem[] {
   const out: RawItem[] = [];
   const items = xml.match(/<item>[\s\S]*?<\/item>/g) ?? [];
   for (const block of items) {
@@ -153,6 +237,7 @@ function parseRss(xml: string, fallbackCategory: string): RawItem[] {
       pubDate: pubDate ? new Date(pubDate).toISOString() : null,
       description,
       fallbackCategory,
+      sector,
     });
   }
   return out;
@@ -175,18 +260,42 @@ function extractText(r: AiResponse): string {
   return typeof c === "string" ? c : "";
 }
 
+/**
+ * The two sectors need different relevance tests. The Malaysia brief asks
+ * "is this about our programmes"; the world brief has to be much stricter,
+ * because international visa search results are dominated by "best places to
+ * retire" listicles and relocation-agency marketing. Only an actual policy
+ * change is worth a reader's time here.
+ */
+const SECTOR_BRIEF: Record<Sector, string> = {
+  malaysia: `Decide if it is genuinely relevant to Malaysia's long-stay visa or
+immigration programmes (PVIP, MM2H, Sarawak MM2H, DE Rantau, Employment Pass,
+Student Pass, or Malaysian immigration policy for foreigners).
+
+- category: one of pvip, mm2h, sarawak-mm2h, de-rantau, employment-pass, student-pass, general.`,
+
+  world: `This item is about a country OTHER than Malaysia. Your readers are
+weighing Malaysia against other long-stay options, so they want real programme
+news: a launch, closure, suspension, fee or threshold change, eligibility or
+quota shift, or a firm government announcement.
+
+Set relevant=false for: "best places to retire" roundups, listicles, rankings,
+relocation-agency or law-firm marketing, opinion pieces, and anything with no
+identifiable policy change. Being merely interesting is not enough.
+
+- Name the country in the first sentence of the summary.
+- category: always "world".`,
+};
+
 /** Ask Workers AI for a neutral 2-sentence summary + a category. */
 async function summarise(env: Env, item: RawItem): Promise<Enriched | null> {
   const prompt = `You are the editor of an independent Malaysia long-stay visa guide.
-Given a news headline and snippet, decide if it is genuinely relevant to Malaysia's
-long-stay visa or immigration programmes (PVIP, MM2H, Sarawak MM2H, DE Rantau,
-Employment Pass, Student Pass, or Malaysian immigration policy for foreigners).
+Given a news headline and snippet, ${SECTOR_BRIEF[item.sector]}
 
 Respond with ONLY a JSON object, no prose:
 {"relevant": boolean, "summary": string, "category": string}
 
 - summary: your own neutral 2-sentence summary. Do NOT copy the snippet verbatim.
-- category: one of pvip, mm2h, sarawak-mm2h, de-rantau, employment-pass, student-pass, general.
 - If not relevant, set relevant=false and leave summary/category empty.
 
 HEADLINE: ${item.title}
@@ -208,6 +317,9 @@ SOURCE: ${item.sourceName}`;
 
     let category = String(parsed.category ?? "").trim();
     if (!VALID_CATEGORIES.has(category)) category = item.fallbackCategory;
+    // A world item is never a Malaysia programme, whatever the model returns —
+    // misfiling one under `mm2h` would link it to the wrong guide.
+    if (item.sector === "world") category = "world";
 
     return { summary, category };
   } catch (err) {
