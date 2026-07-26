@@ -358,14 +358,39 @@ interface Enriched {
   category: string;
 }
 
-/** Workers AI responses vary by model — chat models return `response`, some
- *  return an OpenAI-style `choices[]`. Read whichever is present. */
-type AiResponse = {
+/**
+ * The three shapes Workers AI answers in, depending on the model.
+ *
+ * `output` is the Responses API, which is what the gpt-oss line returns through
+ * the binding; `response` is Workers AI's own older shape; `choices` is Chat
+ * Completions. A model swap can change which one arrives, so read all three —
+ * both the summary path and the article path go through here.
+ */
+export type AiResponse = {
+  output?: { type?: string; content?: { type?: string; text?: string }[] }[];
   response?: unknown;
   choices?: { message?: { content?: string } }[];
 };
-function extractText(r: AiResponse): string {
-  if (typeof r?.response === "string") return r.response;
+
+/**
+ * Pull the assistant's text out, whichever shape it came in.
+ *
+ * Every candidate is checked for actual content, not merely for existing: a
+ * reasoning model returns an EMPTY `response` alongside a populated `output`,
+ * so taking the first field that is present silently yields "".
+ */
+export function extractText(r: AiResponse): string {
+  // Responses API — drop the reasoning items, keep the message text.
+  const fromOutput = (r?.output ?? [])
+    .filter((o) => o.type !== "reasoning")
+    .flatMap((o) => o.content ?? [])
+    .filter((c) => c.type !== "reasoning_text")
+    .map((c) => c.text ?? "")
+    .join("");
+  if (fromOutput.trim()) return fromOutput;
+
+  if (typeof r?.response === "string" && r.response.trim()) return r.response;
+
   const c = r?.choices?.[0]?.message?.content;
   return typeof c === "string" ? c : "";
 }

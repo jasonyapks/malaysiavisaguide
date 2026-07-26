@@ -18,6 +18,8 @@
  * throwing.
  */
 
+import type { Env } from "./types";
+
 const BROWSER_UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
 
@@ -44,9 +46,54 @@ export interface Extracted {
  * "cannot write an article about this", never as "write from the headline
  * alone": invention is the one failure mode that would actually damage the
  * site's credibility.
+ *
+ * Two attempts, cheap first. A plain fetch reads most of the web. When it comes
+ * back blocked, non-HTML or too short, the page is re-fetched through a real
+ * headless browser — which is what gets past the publishers that refuse Worker
+ * egress outright, The Star being the one that forced this. The browser is not
+ * tried first because it is metered and roughly a thousand times slower.
  */
-export async function extractArticle(url: string): Promise<Extracted | null> {
-  let html: string;
+export async function extractArticle(url: string, env: Env): Promise<Extracted | null> {
+  let read = usableProse(url, await fetchDirect(url));
+
+  if (!read) {
+    // Only keep the rendered copy if it actually beat the plain fetch — a
+    // browser that lands on the same consent wall gains us nothing.
+    read = usableProse(url, await fetchRendered(url, env));
+    if (read) console.log(`[extract] ${url} — read via browser`);
+  }
+  if (!read) return null;
+
+  const { html, text } = read;
+  return {
+    text: text.slice(0, MAX_CHARS),
+    author: meta(html, "author") ?? meta(html, "article:author"),
+    publishedAt: isoDate(
+      meta(html, "article:published_time") ??
+        meta(html, "publish-date") ??
+        meta(html, "date") ??
+        jsonLdDate(html),
+    ),
+    siteName: meta(html, "og:site_name"),
+  };
+}
+
+/** Strip to prose and keep the pair only if there is enough of it to write from. */
+function usableProse(
+  url: string,
+  html: string | null,
+): { html: string; text: string } | null {
+  if (html === null) return null;
+  const text = readableText(html);
+  if (text.length < MIN_USABLE_CHARS) {
+    console.log(`[extract] ${url} — only ${text.length} chars, unusable`);
+    return null;
+  }
+  return { html, text };
+}
+
+/** The cheap read: one fetch, no browser. */
+async function fetchDirect(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, {
       headers: {
@@ -65,29 +112,43 @@ export async function extractArticle(url: string): Promise<Extracted | null> {
       console.log(`[extract] ${url} — not html (${type})`);
       return null;
     }
-    html = await res.text();
+    return await res.text();
   } catch (err) {
     console.log(`[extract] ${url} — fetch failed: ${String(err)}`);
     return null;
   }
+}
 
-  const text = readableText(html);
-  if (text.length < MIN_USABLE_CHARS) {
-    console.log(`[extract] ${url} — only ${text.length} chars, unusable`);
+/**
+ * The expensive read: headless Chrome, via the Browser Run binding.
+ *
+ * Images, media, fonts and stylesheets are blocked — none of them carry prose,
+ * and every one of them is browser-time we are billed for. Scripts are NOT
+ * blocked: the whole point of reaching for a browser is the pages that build
+ * their body copy in JavaScript.
+ */
+async function fetchRendered(url: string, env: Env): Promise<string | null> {
+  try {
+    const res = await env.BROWSER.quickAction("content", {
+      url,
+      userAgent: BROWSER_UA,
+      rejectResourceTypes: ["image", "media", "font", "stylesheet"],
+      gotoOptions: { waitUntil: "load", timeout: 20000 },
+    });
+    if (!res.ok) {
+      console.log(`[extract] ${url} — browser status ${res.status}`);
+      return null;
+    }
+    const body = (await res.json()) as { success?: boolean; result?: string };
+    if (!body.success || typeof body.result !== "string") {
+      console.log(`[extract] ${url} — browser returned no content`);
+      return null;
+    }
+    return body.result;
+  } catch (err) {
+    console.log(`[extract] ${url} — browser failed: ${String(err)}`);
     return null;
   }
-
-  return {
-    text: text.slice(0, MAX_CHARS),
-    author: meta(html, "author") ?? meta(html, "article:author"),
-    publishedAt: isoDate(
-      meta(html, "article:published_time") ??
-        meta(html, "publish-date") ??
-        meta(html, "date") ??
-        jsonLdDate(html),
-    ),
-    siteName: meta(html, "og:site_name"),
-  };
 }
 
 /**

@@ -1,6 +1,8 @@
 export interface Env {
   DB: D1Database;
   AI: Ai;
+  /** Headless Chrome — the fallback reader in extract.ts. Metered; see wrangler.jsonc. */
+  BROWSER: BrowserRun;
   SITE_ORIGIN: string;
   TEAM_DOMAIN: string;
   POLICY_AUD: string;

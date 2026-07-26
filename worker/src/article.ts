@@ -1,6 +1,6 @@
 import type { Env, NewsItem } from "./types";
 import { extractArticle } from "./extract";
-import { findAlternateSources } from "./news";
+import { findAlternateSources, extractText, type AiResponse } from "./news";
 
 /**
  * Article writing — the step that turns a link into a page on this site.
@@ -77,7 +77,7 @@ export async function writeArticle(
   env: Env,
   item: Pick<NewsItem, "title" | "summary" | "category" | "source_name" | "source_url">,
 ): Promise<WrittenArticle | null> {
-  let source = await extractArticle(item.source_url);
+  let source = await extractArticle(item.source_url, env);
   let usedUrl = item.source_url;
   let usedName = item.source_name;
 
@@ -90,7 +90,7 @@ export async function writeArticle(
       `[article] ${item.source_url} unreadable — ${alternates.length} alternate(s) to try`,
     );
     for (const alt of alternates) {
-      const attempt = await extractArticle(alt.url);
+      const attempt = await extractArticle(alt.url, env);
       if (attempt) {
         source = attempt;
         usedUrl = alt.url;
@@ -122,13 +122,14 @@ export async function writeArticle(
         },
         { role: "user", content: prompt },
       ],
-      max_tokens: 3000,
-    } as never)) as { response?: unknown; choices?: { message?: { content?: string } }[] };
+      // Generous on purpose. ARTICLE_MODEL is a reasoning model, and its
+      // thinking is billed against the same budget as its answer — too small a
+      // cap and it spends the lot reasoning and returns an empty message, which
+      // is what an "unparseable model output — 0 chars" log line actually means.
+      max_tokens: 8000,
+    } as never)) as AiResponse;
 
-    raw =
-      typeof resp?.response === "string"
-        ? resp.response
-        : (resp?.choices?.[0]?.message?.content ?? "");
+    raw = extractText(resp);
   } catch (err) {
     console.log(`[article] model call failed — ${String(err)}`);
     return null;
@@ -136,7 +137,14 @@ export async function writeArticle(
 
   const parsed = parseJson(raw);
   if (!parsed) {
-    console.log(`[article] unparseable model output for ${item.source_url}`);
+    // The ends, not the middle: truncation at max_tokens and a preamble before
+    // the JSON are the two ways this fails, and they are only distinguishable
+    // from the tail and the head respectively.
+    console.log(
+      `[article] unparseable model output for ${item.source_url} — ${raw.length} chars` +
+        ` | head: ${JSON.stringify(raw.slice(0, 200))}` +
+        ` | tail: ${JSON.stringify(raw.slice(-200))}`,
+    );
     return null;
   }
 
@@ -172,6 +180,15 @@ THE RULES THAT MATTER MOST:
    practical implications neutrally.
 4. British English. Malaysian currency as RM1,000,000. Foreign currency as
    USD 150,000. Dates as 16 March 2026.
+5. Headlines and section headings are sentence case: they read like an ordinary
+   sentence, with normal capitalisation. Do NOT capitalise every word, and do
+   NOT lower-case words that are already capitalised for a reason — acronyms
+   (MM2H, PVIP, URA, S-MM2H), place names, ministries and people keep their
+   capitals exactly as written. Never insert a space inside an acronym.
+     good: "Higher financial thresholds"
+     good: "How the URA affects Sarawak owners"
+     bad:  "Higher Financial Thresholds"   (every word capitalised)
+     bad:  "how the ur a works"            (acronym broken, no initial capital)
 
 Respond with ONLY a JSON object in exactly this shape, no prose around it:
 
@@ -213,7 +230,7 @@ function validate(
   // metadata, and the source fields from whichever page was actually read —
   // neither is the model's to decide.
 ): Omit<WrittenArticle, "publishedAt" | "sourceUrl" | "sourceName"> | null {
-  const headline = str(o.headline).slice(0, 200) || item.title;
+  const headline = initialCap(str(o.headline).slice(0, 200)) || item.title;
   const dek = str(o.dek).slice(0, 400);
   if (dek.length < 40) return null;
 
@@ -225,7 +242,7 @@ function validate(
   for (const s of rawSections) {
     if (!s || typeof s !== "object") continue;
     const sec = s as Record<string, unknown>;
-    const heading = str(sec.heading).slice(0, 160);
+    const heading = initialCap(str(sec.heading).slice(0, 160));
     const paragraphs = strArray(sec.paragraphs, 8).map((p) => p.slice(0, 2000));
     if (!heading || paragraphs.length === 0) continue;
     sections.push({ heading, paragraphs });
@@ -273,6 +290,19 @@ function strArray(v: unknown, max: number): string[] {
  * answer with commentary and sometimes wrap it in a fence, so we take the
  * outermost brace pair rather than expecting clean JSON.
  */
+/**
+ * Force an initial capital, and nothing else.
+ *
+ * Casing is asked for in the prompt, but a model told to use sentence case will
+ * sometimes lower-case the first letter along with everything else. That much
+ * is safe to repair here because it needs no judgement — unlike the rest of a
+ * heading, where "correcting" the case would as easily flatten an acronym or a
+ * place name as fix a mistake. So: first letter only, leave the rest alone.
+ */
+function initialCap(s: string): string {
+  return s ? s[0].toUpperCase() + s.slice(1) : s;
+}
+
 function parseJson(s: string): Record<string, unknown> | null {
   const fenced = s.match(/```(?:json)?\s*([\s\S]*?)```/);
   const candidate = fenced ? fenced[1] : s;

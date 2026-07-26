@@ -1,93 +1,100 @@
 # Handoff
 
 ## What & Why
+Work on malaysiavisaguide.com — the contact form, the Access-gated news dashboard, and the
+news sweep behind it. Goal: get enquiries actually arriving, move the dashboard onto the real
+domain, and stop the news pipeline surfacing stale or unwritable stories.
 
-The **domain cutover** for malaysiavisaguide.com (SPEC.md §10) is **done**. The Next.js site
-now serves on the real domain; the old WordPress box is still running but unreferenced.
-
-Read `SPEC.md` §10 (v1.3) for the runbook and the reasoning behind each record.
+(Supersedes the previous handoff, which covered the completed domain cutover — see SPEC.md §10.)
 
 ## Done
-
-**Domain cutover — complete 2026-07-25:**
-
-- Cloudflare zone `7afcc60082075738aabceb9ae2c9dfd0`, Free plan, active.
-  Nameservers `jose.ns.cloudflare.com` / `sharon.ns.cloudflare.com`, confirmed at the
-  registry (whois shows Cloudflare only, all mschosting entries gone).
-- All 12 DNS records created via API and verified against the pre-cutover live zone.
-  DKIM verified byte-for-byte (404 chars, re-entered as one concatenated string).
-- **§10b — apex + `www` attached to the Pages project** via the Pages API.
-  *`wrangler pages domain add` no longer exists in wrangler 4.113* — there is no domain
-  subcommand at all. Use `POST /accounts/{account}/pages/projects/{project}/domains`.
-- **Cloudflare did NOT rewrite the apex itself.** Attaching the custom domain left the old
-  `A → 103.6.196.47` in place and the domain sat at `initializing`. The flip only happened
-  once the apex A was deleted and replaced with a **proxied CNAME → `malaysiavisaguide.pages.dev`**
-  (CNAME flattening serves the apex). `www` was repointed the same way.
-- **§10e — `site.url` flipped** to `https://malaysiavisaguide.com`, rebuilt, deployed.
-  Commit `5a58913` on `main`, pushed.
-- Post-cutover checks all pass against the Cloudflare origin (`server: cloudflare`):
-  `/`, `/robots.txt`, `/sitemap.xml`, `/visas/pvip/`, `/news/` all 200; `/pvip` and `/pvip/`
-  both 301 → `/visas/pvip/`; `/sample-page/` 301 → `/`; `www` 301s to apex.
-  Sitemap has 16 URLs and zero stale `pages.dev` references.
-- **Mail path untouched and verified after the flip:** 3× MX, `mail`, `webmail`, `ftp` all
-  still DNS-only on `103.6.196.47`; SPF still omits `+a`.
-
-**News blog (same day):** `/news/` is a blog with a prerendered page per story, 2 articles
-live. Worker `mvg-news` redeployed, migration 002 applied to remote D1.
-
-## The mail question — resolved, but not the way SPEC assumed
-
-SPEC §10 gates the cutover on a test mail to/from `admin@malaysiavisaguide.com`. That test
-**fails**, and it is *not* a cutover fault:
-
-> `550 no mailbox by that name is currently available`
-
-A 550 is a hard rejection **from mschosting's mail server** — the sender resolved the domain,
-found the MX, connected, and spoke SMTP before being refused. A broken cutover looks nothing
-like this (timeout / connection refused / no MX found, plus hours of deferred retries).
-
-**`admin@` appears never to have existed.** The domain was registered 2026-07-03 and hosting
-provisioned 2026-07-04 — it is weeks old. There is zero inbound or outbound history for
-`admin@malaysiavisaguide.com` anywhere in Jason's Gmail. The only mail this domain has ever
-produced is outbound WordPress notifications (`wordpress@`, `jason@`) to jason@mypvip.com.
-SPEC's premise that "the domain carries live email" overstated the risk.
-
-**Outstanding:** if `admin@` is wanted, create it in the mschosting/cPanel control panel.
-This is a mailbox-provisioning task, not a DNS one. Nothing about the site depends on it.
+- **Contact form is live and verified.** `NEXT_PUBLIC_WEB3FORMS_KEY` set in `.env.local`;
+  test submission delivered (SPEC §8.4 — real delivery, not just "form submitted").
+- Fixed a real bug: handler tested `res.status === 200` and read `json.message`. Web3Forms
+  reports outcome in `json.success`, reason in `json.body.message` — so every failure showed
+  the generic fallback, and a `success:false` 200 would have read as sent.
+- Submit button had no visible focus state; added `focus-visible` ring + `aria-busy`.
+  Error text was colour-only; added a `⚠` glyph.
+- **Dashboard now at `https://malaysiavisaguide.com/dashboard`** (was workers.dev only).
+  Zone *routes*, not a Custom Domain. Cloudflare Access extended to
+  `malaysiavisaguide.com/dashboard` + `/api/admin/*` on the existing app, so the AUD is
+  unchanged and `POLICY_AUD` needed no edit. Verified logged in: both admin API calls 200,
+  no console errors. Public site confirmed unaffected.
+- **News age gate**: nothing published before the current calendar year enters the queue.
+  Both sectors. Also rejects future-dated items.
+- **New "world" sector** — 9 feeds for other countries' long-stay/retirement/investor visas.
+  Per-sector budgets (malaysia 20, world 8). Stricter editorial brief. `en-US` market for
+  world feeds. Renders as "Other countries", links to `/compare/`. Live and verified.
+- **Alternate-source fallback**: when a source can't be read (paywall / bot block / JS shell),
+  the headline is searched and other outlets carrying the same story are tried. Citation
+  follows the source actually read. Verified live: zawya.com 400 → found Sin Chew → article
+  written → `[article] citation reassigned: Zawya → sinchew`.
+- All committed and pushed (`9a4d00c`). Worker `25fabe31`; Pages deployed; site verified live.
 
 ## Remaining
+- **The Star (`thestar.com.my`) blocks Worker egress** — 403 from the Worker, 200 with
+  6,081 chars from a residential IP. Two items still unwritten. Needs Cloudflare Browser
+  Rendering (Workers Paid; plan unconfirmed) or a fetch proxy such as `r.jina.ai`. Its
+  opinion columns have no alternate by definition, so the fallback cannot help them.
+- **World relevance filter too soft** — ~4 of 8 queued items are rankings, SEO guides or
+  law-firm advisories the brief was written to reject. Likely the model
+  (`SUMMARY_MODEL` = `llama-3.2-3b`) rather than the wording. Sharpen the prompt first;
+  routing world items to a larger model is the fallback.
+- **Two articles over a year old are live** — Jason's call whether to retire them:
+  - `/news/sarawak-mm2h-records-over-800-approvals-education-drives-growth` (415 days)
+  - `/news/xpats-gateway-adds-myfuturejobs-eppax-to-speed-employment-pass` (384 days)
+- **2022 PVIP item deliberately held back** (id `ebd2ace9-2bb3-4372-8237-e30938ba7874`),
+  approved but unwritten. Its Bernama alternate scores 0.86 so it would now write cleanly.
+- **Contact form inbox unresolved.** Enquiries land in `jason@mypvip.com` (the address the
+  Web3Forms key is registered to). `SPEC.md:123`, `:412` and the form's fallback text all say
+  `admin@malaysiavisaguide.com`. Switching means a new key, not a text edit.
+- **`SITE_ORIGIN` is stale** in `worker/wrangler.jsonc` — `https://malaysiavisaguide.pages.dev`.
+  Harmless (news API is read at build time, server-side) but wrong, and it is passed into the
+  dashboard HTML.
+- `CF_ANALYTICS_TOKEN` still unset, so the dashboard traffic panel is dark. Jason's to do
+  (a credential).
 
-- **§10f — leave WordPress running, unreferenced, until ~2026-08-08** (two weeks), then ask
-  the host to decommission. Rollback insurance.
-- Create the `admin@` mailbox in cPanel if it is actually wanted (see above).
-- **Unrelated, still open:** Web3Forms key (contact form is in email-fallback mode); 4 news
-  items approved-but-unwritten (sources paywalled/bot-blocked); no recency filter on the
-  news sweep.
+## Files & Folders Touched
+- `src/components/ContactForm.tsx` — Web3Forms response handling, focus state, error icon.
+- `.env.local` — created, gitignored, holds the Web3Forms key. Machine-local only: a fresh
+  clone builds the dead-fallback page with no error.
+- `worker/wrangler.jsonc` — zone routes + `workers_dev: true`. Stale `SITE_ORIGIN` lives here.
+- `worker/src/news.ts` — sectors, per-sector budgets, `isRecent`, `findAlternateSources`,
+  headline-overlap matching, `UNREADABLE_HOSTS`.
+- `worker/src/article.ts` — alternate-source fallback in `writeArticle`; `WrittenArticle`
+  gained `sourceUrl`/`sourceName`; `generateAndStore` persists the reassigned citation.
+- `worker/src/extract.ts` — read only. `MIN_USABLE_CHARS = 400` is what flags a JS shell.
+- `src/lib/news.ts` — `NewsCategory`, `CATEGORY_LABEL`, `CATEGORY_GUIDE` gained `world`.
+- `SPEC.md` — read only; §7 "Still needs Jason", §8 verification steps.
 
-## Traps worth knowing
-
-- **DNS caching will lie to you.** For hours after the flip, the local resolver and even
-  `1.1.1.1` still returned `103.6.196.47`, so plain `curl` hit **WordPress** (`server: LiteSpeed`,
-  `wp-content` in the body) and `/pvip/` appeared to 200 instead of 301. Always verify with
-  `dig @jose.ns.cloudflare.com` and
-  `curl --resolve malaysiavisaguide.com:443:104.21.28.166`. Check the `server:` header —
-  `cloudflare` means you reached the new site, `LiteSpeed` means you reached the old one.
-- **Port 25 is blocked from this machine.** SMTP cannot be probed locally; `nc` connects but
-  no banner ever arrives. Mail delivery has to be tested by actually sending.
-- **`mail`, `webmail`, `ftp` must stay grey-cloud forever.** Proxying a mail host breaks SMTP
-  and fails silently.
-- **`ftp` is an A record, not the CNAME-to-apex it originally was.** Now that the apex is a
-  proxied CNAME, a CNAME-to-apex would resolve `ftp` to Cloudflare IPs and break FTP.
-- **SPF drops `+a +mx`.** `+a` would authorise Cloudflare's proxy IPs now that the apex is
-  proxied. Dropping `+mx` was verified safe: `mx3`/`mx4` → `103.7.9.50` + `103.26.41.96`,
-  both covered by `se6.mschosting.online` in the include chain (7 lookups, under 10).
-- **Rollback** is repointing nameservers at `ns1`, `ns2`, `ns4.mschosting.cloud` at Exabytes.
-  The WordPress box is untouched and still serving on `103.6.196.47`.
-- News blog: never reproduce publisher text (infringement *and* duplicate content); write an
-  original article instead. Expensive model runs on approval only. Articles publish on
-  deploy, not approval.
+## Decisions Made
+- **Routes, not a Custom Domain**, for `/dashboard`. A Custom Domain claims every path on the
+  hostname and would take the Pages site down. Pages cannot serve non-root routes at all.
+- **Access scoped to exact paths**, never the bare apex — that would put the public site
+  behind a login. Added to the existing app to keep the AUD stable.
+- **`workers_dev: true` must stay explicit.** Adding `routes` makes wrangler default it to
+  `false`, which silently killed the workers.dev host that `site.newsApi` still fetches at
+  build time. Caught on the deploy warning; commented in the config.
+- **Calendar year, not a rolling window**, at Jason's request. Known cliff: on 1 Jan the queue
+  goes silent. A rolling 365-day window is equivalent for the rest of 2026 with no cliff —
+  offered twice, not taken. Recorded in the commit body.
+- **Citation follows the source actually read.** Non-negotiable: attributing a quote to a
+  publication we never opened is a fabricated citation.
+- **Headline overlap ≥ 0.55** gates alternates, measured against the shorter headline. Strict
+  on purpose — writing about a different story than the one approved is worse than publishing
+  nothing. Verified it correctly *refuses* on one of three test cases.
+- **MSN/Yahoo/Flipboard excluded as alternates but kept at ingest** — JS shells (~3 chars) so
+  unreadable, but fine pointers to a readable outlet.
+- **Age gate is not retroactive** — guards ingest only; already-published stale articles are
+  untouched by design.
+- Observability MCP tool cannot deserialize this Worker's logs (its own schema bug). Query
+  `POST /accounts/{id}/workers/observability/telemetry/query` via the Cloudflare API tool
+  instead — that works.
 
 ## Next Step
-
-Nothing is blocking. The site is live on the real domain. Pick up either the Web3Forms key,
-the 4 unwritten news items, or the news-sweep recency filter — and diary §10f for ~2026-08-08.
+Decide The Star fix: check whether the Cloudflare account has Workers Paid / Browser
+Rendering (`/accounts/{id}/browser-rendering/limits` and `/workers/subscription` were not
+routable with the MCP token). If yes, add a Browser Rendering fallback in
+`worker/src/extract.ts` for the 403 and JS-shell cases; if no, trial `r.jina.ai` as a free
+text-extraction proxy. Then re-run `POST /api/admin/write-next` for the two unwritten Star
+items.

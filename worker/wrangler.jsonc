@@ -52,10 +52,17 @@
   // Workers AI — used to summarise + classify each candidate item.
   "ai": { "binding": "AI" },
 
+  // Browser Run — the fallback reader in extract.ts, for sources that refuse a
+  // plain Worker fetch (The Star 403s it) or ship a JS shell. Used only after a
+  // direct fetch has already failed: a real browser costs browser-seconds and
+  // the free plan allows 10 minutes a day. No API token — the binding is
+  // authenticated. `quickAction()` needs compatibility_date >= 2026-03-24.
+  "browser": { "binding": "BROWSER" },
+
   // Non-secret config. Secrets (CF_ANALYTICS_TOKEN) are set with `wrangler secret put`.
   "vars": {
     // Site origin allowed to call the public /api/news (CORS).
-    "SITE_ORIGIN": "https://malaysiavisaguide.pages.dev",
+    "SITE_ORIGIN": "https://malaysiavisaguide.com",
     // Cloudflare Access — app "MVG Dashboard" (self-hosted, whole host, Allow jason@mypvip.com).
     "TEAM_DOMAIN": "https://square-darkness-5a07.cloudflareaccess.com",
     "POLICY_AUD": "0d561ccc798791e812c9546bde8a775ce6015573527aa3d71ec444c96ebcafcd",
