@@ -43,4 +43,16 @@ export interface NewsItem {
   reading_minutes: number | null;
   article_model: string | null;
   updated_at: string | null;
+
+  // --- Added by migration 003. Manual intake and the humanizer queue. ---
+  /**
+   * Pasted publisher text for a manually keyed-in story. Model input only —
+   * never rendered, never in the public API. See schema-003-manual.sql.
+   */
+  source_text: string | null;
+  /** 'sweep' (the daily cron) or 'manual' (keyed in via the dashboard). */
+  origin: "sweep" | "manual";
+  /** NULL | 'needs-claude' | 'claude-polished' — the /humanizer handover. */
+  polish_state: string | null;
+  polished_at: string | null;
 }

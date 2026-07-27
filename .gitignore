@@ -55,6 +55,11 @@ yarn-error.log*
 .wrangler/
 **/.wrangler/
 
+# Articles pulled out of D1 for the /humanizer pass. Working copies of live rows,
+# and they carry the pasted source text of manually keyed-in stories — publisher
+# wording that is model input and belongs nowhere near a repo.
+worker/.drafts/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

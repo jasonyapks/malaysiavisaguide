@@ -45,7 +45,7 @@ const FEEDS: { query: string; category: string; sector: Sector }[] = [
   { query: "digital nomad visa launched country requirements", category: "world", sector: "world" },
 ];
 
-const VALID_CATEGORIES = new Set([
+export const VALID_CATEGORIES = new Set([
   "pvip",
   "mm2h",
   "sarawak-mm2h",
@@ -295,6 +295,118 @@ export async function submitUrl(env: Env, url: string): Promise<boolean> {
   if (!enriched) return false;
   await insertPending(env, item, enriched);
   return true;
+}
+
+/** Below this the paste is a headline and a sentence, not a story to write from. */
+const MIN_PASTED_CHARS = 400;
+
+/**
+ * Manual intake — Jason has pasted the story's text in himself.
+ *
+ * This exists because submitUrl above cannot always do its job: The Star 403s
+ * Worker egress, some pages are paywalled, some are JavaScript shells. Those
+ * stories are often the most worth having. Pasting the text is the escape hatch,
+ * and it is a better one than it sounds — a human has read the source, which is
+ * a stronger guarantee than any extractor gives.
+ *
+ * It only inserts. The article is written by the ordinary approve path, so there
+ * is exactly one route from a row to a page and no manual-only publish logic to
+ * drift out of step.
+ */
+export async function submitManual(
+  env: Env,
+  input: {
+    url?: string;
+    sourceName?: string;
+    title?: string;
+    category?: string;
+    text?: string;
+    publishedAt?: string;
+  },
+): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+  const text = (input.text ?? "").trim();
+  const title = (input.title ?? "").trim();
+  if (!title) return { ok: false, error: "Give the story a headline." };
+  if (text.length < MIN_PASTED_CHARS) {
+    return {
+      ok: false,
+      error: `That is ${text.length} characters. Paste at least ${MIN_PASTED_CHARS} — below that there is not enough story to write from.`,
+    };
+  }
+
+  let url: URL;
+  try {
+    url = new URL((input.url ?? "").trim());
+  } catch {
+    return { ok: false, error: "A valid source URL is required — the page has to cite it." };
+  }
+
+  const category =
+    input.category && VALID_CATEGORIES.has(input.category) ? input.category : "general";
+
+  const existing = await env.DB.prepare(
+    "SELECT id, status, slug FROM news_items WHERE source_url = ?",
+  )
+    .bind(url.href)
+    .first<{ id: string; status: string; slug: string | null }>();
+
+  if (existing) {
+    // The common case, and the one worth handling properly: the sweep already
+    // filed this story but could not read the page, so it is sitting in the
+    // queue with no article. That is precisely when Jason pastes the text — so
+    // attach it to the row he already has instead of making him delete it and
+    // key everything in again. The caller then approves that id as usual.
+    if (!existing.slug) {
+      await env.DB.prepare(
+        `UPDATE news_items
+            SET source_text = ?, origin = 'manual',
+                title = COALESCE(NULLIF(?, ''), title),
+                updated_at = datetime('now')
+          WHERE id = ?`,
+      )
+        .bind(text.slice(0, 12000), title.slice(0, 300), existing.id)
+        .run();
+      return { ok: true, id: existing.id };
+    }
+    return {
+      ok: false,
+      error:
+        `Already have that URL and it is already written — /news/${existing.slug}/. ` +
+        "Use Rewrite on it in the Approved tab, or delete it there first if you want to start over.",
+    };
+  }
+
+  const id = crypto.randomUUID();
+  await env.DB.prepare(
+    `INSERT INTO news_items
+       (id, title, summary, category, source_name, source_url, published_at,
+        status, origin, source_text)
+     VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', 'manual', ?)`,
+  )
+    .bind(
+      id,
+      title.slice(0, 300),
+      firstSentences(text),
+      category,
+      (input.sourceName?.trim() || url.hostname.replace(/^www\./, "")).slice(0, 120),
+      url.href,
+      // The publisher's date if Jason gave one. Falling back to now is right:
+      // he is pasting it because he just read it.
+      input.publishedAt?.trim() || new Date().toISOString(),
+      // Capped at the same 12k the extractor hands the model. Anything past that
+      // would be truncated in the prompt anyway.
+      text.slice(0, 12000),
+    )
+    .run();
+
+  return { ok: true, id };
+}
+
+/** A holding blurb for the queue card. The written dek replaces it on approval. */
+function firstSentences(text: string): string {
+  const sentences = text.replace(/\s+/g, " ").match(/[^.!?]+[.!?]+/g);
+  const blurb = sentences ? sentences.slice(0, 2).join(" ").trim() : text.slice(0, 300);
+  return blurb.slice(0, 800);
 }
 
 const BROWSER_UA =

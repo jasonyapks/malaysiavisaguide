@@ -1,7 +1,8 @@
 import type { Env, NewsItem } from "./types";
 import { requireAccess } from "./access";
-import { runNewsSweep, submitUrl } from "./news";
+import { runNewsSweep, submitUrl, submitManual, VALID_CATEGORIES } from "./news";
 import { generateAndStore } from "./article";
+import { humanizeStored } from "./humanize";
 import { getAnalytics } from "./analytics";
 import { dashboardHtml } from "./dashboard";
 
@@ -12,6 +13,19 @@ import { dashboardHtml } from "./dashboard";
  */
 const INDEX_COLUMNS = `id, slug, headline, title, dek, summary, category,
    source_name, source_url, published_at, reading_minutes, updated_at`;
+
+/**
+ * Columns the dashboard's queue lists need — everything except `source_text`.
+ *
+ * Excluded on size and on principle. On size: a pasted story is up to 12,000
+ * characters and a list returns 200 rows. On principle: the pasted text is model
+ * input, and the fewer places it travels to the easier that stays true. The
+ * editor doesn't show it and nothing in the dashboard renders it.
+ */
+const ADMIN_COLUMNS = `id, title, summary, category, source_name, source_url,
+   published_at, status, created_at, decided_at, slug, headline, dek, body,
+   source_excerpt, reading_minutes, article_model, updated_at, origin,
+   polish_state, polished_at`;
 
 export default {
   // Daily news sweep — fills the pending queue only. Nothing goes public here.
@@ -72,10 +86,19 @@ export default {
     }
 
     // GET /api/admin/items?status=pending|approved|rejected
+    // GET /api/admin/items?polish=needed — the /humanizer queue, cutting across
+    // status: an item needing the real skill is usually already approved.
     if (pathname === "/api/admin/items" && request.method === "GET") {
+      if (url.searchParams.get("polish") === "needed") {
+        const { results } = await env.DB.prepare(
+          `SELECT ${ADMIN_COLUMNS} FROM news_items WHERE polish_state = 'needs-claude'
+            ORDER BY COALESCE(updated_at, created_at) DESC LIMIT 200`,
+        ).all<NewsItem>();
+        return json({ items: results ?? [] });
+      }
       const status = url.searchParams.get("status") ?? "pending";
       const { results } = await env.DB.prepare(
-        `SELECT * FROM news_items WHERE status = ? ORDER BY created_at DESC LIMIT 200`,
+        `SELECT ${ADMIN_COLUMNS} FROM news_items WHERE status = ? ORDER BY created_at DESC LIMIT 200`,
       )
         .bind(status)
         .all<NewsItem>();
@@ -84,7 +107,7 @@ export default {
 
     // POST /api/admin/items/:id/(approve|reject|delete|regenerate)
     const decide = pathname.match(
-      /^\/api\/admin\/items\/([^/]+)\/(approve|reject|delete|regenerate)$/,
+      /^\/api\/admin\/items\/([^/]+)\/(approve|reject|delete|regenerate|humanize)$/,
     );
     if (decide && request.method === "POST") {
       const [, id, action] = decide;
@@ -106,6 +129,14 @@ export default {
       // Approving is what commissions the article — see article.ts for why the
       // expensive write happens here and not during the sweep. Slow by nature:
       // a source fetch plus one large-model call, so expect 20–60 seconds.
+      // Prose only — no source fetch, no rewrite of the reporting. This is for
+      // an article that is already right and already live, and just reads like a
+      // machine wrote it.
+      if (action === "humanize") {
+        const result = await humanizeStored(env, id);
+        return json(result, result.ok ? 200 : 422);
+      }
+
       if (action === "regenerate") {
         const result = await generateAndStore(env, id);
         return json(result, result.ok ? 200 : 422);
@@ -138,8 +169,17 @@ export default {
         dek?: string;
         body?: unknown;
         source_excerpt?: string | null;
+        polish_state?: string | null;
       } | null;
       if (!patch) return json({ ok: false, error: "Bad JSON" }, 400);
+
+      if (
+        patch.polish_state !== undefined &&
+        patch.polish_state !== null &&
+        !["needs-claude", "claude-polished"].includes(patch.polish_state)
+      ) {
+        return json({ ok: false, error: "polish_state must be needs-claude, claude-polished or null" }, 400);
+      }
 
       // Validate the body shape here rather than at render time — a bad edit
       // must fail in the dashboard, where it can be fixed, not on a live page.
@@ -151,15 +191,19 @@ export default {
         bodyJson = JSON.stringify(patch.body);
       }
 
-      // COALESCE leaves an omitted field alone. source_excerpt needs the flag
-      // instead, because null is a legitimate value for it — "drop the quote"
-      // and "don't touch the quote" are different edits.
+      // COALESCE leaves an omitted field alone. source_excerpt and polish_state
+      // need the flag instead, because null is a legitimate value for both —
+      // "drop the quote" and "don't touch the quote" are different edits, and so
+      // are "clear the polish flag" and "leave it be".
+      const polishing = patch.polish_state !== undefined;
       await env.DB.prepare(
         `UPDATE news_items
             SET headline       = COALESCE(?, headline),
                 dek            = COALESCE(?, dek),
                 body           = COALESCE(?, body),
                 source_excerpt = CASE WHEN ? = 1 THEN ? ELSE source_excerpt END,
+                polish_state   = CASE WHEN ? = 1 THEN ? ELSE polish_state END,
+                polished_at    = CASE WHEN ? = 1 THEN datetime('now') ELSE polished_at END,
                 updated_at     = datetime('now')
           WHERE id = ?`,
       )
@@ -169,6 +213,11 @@ export default {
           bodyJson,
           patch.source_excerpt !== undefined ? 1 : 0,
           patch.source_excerpt ?? null,
+          polishing ? 1 : 0,
+          patch.polish_state ?? null,
+          // Stamp the polish time only when the skill says it has run, not when
+          // the flag is merely being cleared.
+          patch.polish_state === "claude-polished" ? 1 : 0,
           id,
         )
         .run();
@@ -185,6 +234,31 @@ export default {
       } catch (err) {
         return json({ ok: false, error: String(err) }, 500);
       }
+    }
+
+    // POST /api/admin/manual — Jason keys the story in himself.
+    //
+    // Insert only; it does NOT write the article. The dashboard chains this into
+    // the ordinary approve call, so a manual story travels the same road to a
+    // page as a swept one, and two short requests replace one that would sit
+    // open for ninety seconds at the mercy of every proxy in between.
+    if (pathname === "/api/admin/manual" && request.method === "POST") {
+      const body = (await request.json().catch(() => null)) as Parameters<
+        typeof submitManual
+      >[1] | null;
+      if (!body) return json({ ok: false, error: "Bad JSON" }, 400);
+      try {
+        const result = await submitManual(env, body);
+        return json(result, result.ok ? 200 : 400);
+      } catch (err) {
+        return json({ ok: false, error: String(err) }, 500);
+      }
+    }
+
+    // GET /api/admin/categories — the category list, so the dashboard's select
+    // cannot drift out of step with what the writer will actually accept.
+    if (pathname === "/api/admin/categories" && request.method === "GET") {
+      return json({ categories: [...VALID_CATEGORIES] });
     }
 
     // POST /api/admin/write-next  { skip: string[] } — backfill one article.

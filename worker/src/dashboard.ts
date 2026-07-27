@@ -61,6 +61,29 @@ export function dashboardHtml(email: string, siteOrigin: string): string {
   input[type=url]{ flex:1; min-width:200px; padding:8px 10px; border:1px solid var(--sand-400);
     border-radius:8px; font:inherit; }
   select { padding:6px 10px; border:1px solid var(--sand-400); border-radius:8px; font:inherit; }
+  /* Manual intake. Folded away by default — it is the exception, used when the
+     pipeline could not read a source, not the everyday path. */
+  details.manual { border:1px solid var(--sand-200); border-radius:12px;
+    padding:0 14px; margin:0 0 16px; background:var(--sand-50); }
+  details.manual > summary { cursor:pointer; padding:12px 0; font-size:.9rem;
+    color:var(--forest-700); font-weight:600; list-style:none; }
+  details.manual > summary::-webkit-details-marker { display:none; }
+  details.manual > summary::before { content:"＋ "; }
+  details.manual[open] > summary::before { content:"− "; }
+  details.manual .fields { display:grid; grid-template-columns:1fr 1fr; gap:12px 14px;
+    padding-bottom:16px; }
+  details.manual .wide { grid-column:1 / -1; }
+  @media (max-width:640px){ details.manual .fields{ grid-template-columns:1fr; } }
+  details.manual label { display:block; font-size:.75rem; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--ink-muted); margin-bottom:4px; }
+  details.manual input, details.manual textarea, details.manual select {
+    width:100%; padding:8px 10px; font:inherit; border:1px solid var(--sand-400);
+    border-radius:8px; background:#fff; }
+  details.manual textarea { resize:vertical; }
+  .chip { display:inline-block; font-size:.7rem; text-transform:uppercase; letter-spacing:.05em;
+    padding:2px 8px; border-radius:999px; margin-left:6px; }
+  .chip.manual { background:#eef2ff; color:#3730a3; }
+  .chip.polish { background:#fff7ed; color:#9a3412; }
   .muted { color:var(--ink-muted); font-size:.85rem; }
   .empty { color:var(--ink-muted); padding:16px 0; }
   /* Article review + edit. The generated draft is the thing Jason actually
@@ -120,14 +143,51 @@ export function dashboardHtml(email: string, siteOrigin: string): string {
       </div>
     </div>
     <div id="backfillMsg"></div>
-    <div class="row" style="margin:8px 0 16px">
+    <div class="row" style="margin:8px 0 12px">
       <input type="url" id="submitUrl" placeholder="Paste an article URL to add it manually…">
       <button class="approve" id="submitBtn">Add</button>
     </div>
+
+    <details class="manual" id="manual">
+      <summary>Key the article in yourself — for a source we cannot read</summary>
+      <div class="fields">
+        <div>
+          <label for="mUrl">Source URL</label>
+          <input type="url" id="mUrl" placeholder="https://www.thestar.com.my/…">
+        </div>
+        <div>
+          <label for="mSource">Publication</label>
+          <input type="text" id="mSource" placeholder="Defaults to the URL's domain">
+        </div>
+        <div class="wide">
+          <label for="mTitle">Publisher's headline</label>
+          <input type="text" id="mTitle" placeholder="Exactly as they ran it — we write our own on top">
+        </div>
+        <div>
+          <label for="mCategory">Category</label>
+          <select id="mCategory"></select>
+        </div>
+        <div>
+          <label for="mDate">Published</label>
+          <input type="date" id="mDate">
+        </div>
+        <div class="wide">
+          <label for="mText">Article text</label>
+          <textarea id="mText" rows="14" placeholder="Paste the body of the story. Model input only — none of it is published, and the page still cites and links the source."></textarea>
+          <div class="muted" id="mCount" style="margin-top:4px">0 characters — 400 minimum.</div>
+        </div>
+        <div class="wide row">
+          <button class="approve" id="mSubmit">Write article &amp; publish</button>
+          <div id="mMsg" style="flex:1; min-width:220px"></div>
+        </div>
+      </div>
+    </details>
+
     <div class="tabs">
-      <button class="tab active" data-status="pending">Pending</button>
-      <button class="tab" data-status="approved">Approved (live)</button>
-      <button class="tab" data-status="rejected">Rejected</button>
+      <button class="tab active" data-view="pending">Pending</button>
+      <button class="tab" data-view="approved">Approved (live)</button>
+      <button class="tab" data-view="rejected">Rejected</button>
+      <button class="tab" data-view="polish">Needs polish</button>
     </div>
     <div id="list"><div class="empty">Loading…</div></div>
   </section>
@@ -136,7 +196,10 @@ export function dashboardHtml(email: string, siteOrigin: string): string {
 <script>
 const $ = (s) => document.querySelector(s);
 const SITE = ${JSON.stringify(siteOrigin)};
-let currentStatus = "pending";
+// "pending" | "approved" | "rejected" are status filters; "polish" is the
+// /humanizer queue, which cuts across status — an item waiting on the real skill
+// is normally already approved and live.
+let currentView = "pending";
 // Kept so "Edit" can build a form from the row already on screen rather than
 // re-fetching a single item.
 let currentItems = [];
@@ -175,25 +238,39 @@ function stat(n, l){ return '<div class="stat"><div class="n">' + n + '</div><di
 
 // ---- News queue ----
 async function loadList() {
-  const { items } = await api("/api/admin/items?status=" + currentStatus);
+  const query = currentView === "polish" ? "polish=needed" : "status=" + currentView;
+  const { items } = await api("/api/admin/items?" + query);
   currentItems = items || [];
-  if (!currentItems.length) { $("#list").innerHTML = '<div class="empty">Nothing here.</div>'; return; }
+  if (!currentItems.length) {
+    $("#list").innerHTML = '<div class="empty">' + (currentView === "polish"
+      ? "Nothing waiting on the humanizer. Articles land here after the Worker's own pass has run over them."
+      : "Nothing here.") + '</div>';
+    return;
+  }
   $("#list").innerHTML = currentItems.map(renderItem).join("");
 }
 function renderItem(it) {
   const date = it.published_at ? new Date(it.published_at).toLocaleDateString() : "";
   const id = it.id;
+  const edit = '<button class="ghost" data-act="edit" data-id="' + id + '">Edit</button>';
+  const humanise = '<button class="ghost" data-act="humanize" data-id="' + id + '">Humanise</button>';
   let actions;
-  if (currentStatus === "pending") {
+  if (currentView === "pending") {
     // "Write & publish", not "Approve" — the button commissions a large-model
     // article and takes the better part of a minute. Labelling it honestly is
     // what stops it being clicked twice.
     actions = '<button class="approve" data-act="approve" data-id="' + id + '">Write article &amp; publish</button>' +
       '<button class="reject" data-act="reject" data-id="' + id + '">Reject</button>';
-  } else if (currentStatus === "approved") {
-    actions = '<button class="ghost" data-act="edit" data-id="' + id + '">Edit</button>' +
+  } else if (currentView === "approved") {
+    actions = edit +
       '<button class="ghost" data-act="regenerate" data-id="' + id + '">Rewrite</button>' +
+      humanise +
       '<button class="delete" data-act="delete" data-id="' + id + '">Delete</button>';
+  } else if (currentView === "polish") {
+    // No Rewrite here on purpose: regenerating would throw away whatever the
+    // humanizer already improved and start the article over from the source.
+    actions = edit + humanise +
+      '<button class="ghost" data-act="polished" data-id="' + id + '">Mark polished</button>';
   } else {
     actions = '<button class="approve" data-act="approve" data-id="' + id + '">Write article &amp; publish</button>' +
       '<button class="delete" data-act="delete" data-id="' + id + '">Delete</button>';
@@ -201,6 +278,8 @@ function renderItem(it) {
 
   return '<div class="item" data-item="' + id + '">' +
     '<span class="cat">' + esc(it.category) + '</span>' +
+    (it.origin === "manual" ? '<span class="chip manual">keyed in</span>' : '') +
+    (it.polish_state === "needs-claude" ? '<span class="chip polish">needs /humanizer</span>' : '') +
     (it.slug ? ' <a class="live" href="' + SITE + '/news/' + esc(it.slug) + '/" target="_blank" rel="noopener">/news/' + esc(it.slug) + '/ ↗</a>' : '') +
     '<h3>' + esc(it.headline || it.title) + '</h3>' +
     (it.headline ? '<div class="meta">Publisher\\'s headline: ' + esc(it.title) + '</div>' : '') +
@@ -302,9 +381,13 @@ function collectEditor(el) {
 
 // ---- events ----
 document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
-  document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
-  t.classList.add("active"); currentStatus = t.dataset.status; loadList();
+  showTab(t.dataset.view);
 }));
+function showTab(view) {
+  currentView = view;
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x.dataset.view === view));
+  loadList();
+}
 $("#list").addEventListener("click", async (e) => {
   const b = e.target.closest("button[data-act]"); if (!b) return;
   const id = b.dataset.id, act = b.dataset.act;
@@ -331,14 +414,29 @@ $("#list").addEventListener("click", async (e) => {
     return;
   }
 
-  // approve / regenerate both run the writer: a source fetch plus one
-  // large-model call. Tell the user it will be slow instead of looking hung.
-  const slow = act === "approve" || act === "regenerate";
+  // Clearing the flag is a PATCH, not an action — the article is untouched and
+  // only the queue changes.
+  if (act === "polished") {
+    b.disabled = true; b.textContent = "Clearing…";
+    const r = await api("/api/admin/items/" + id, {
+      method: "PATCH", headers: {"content-type":"application/json"},
+      body: JSON.stringify({ polish_state: "claude-polished" }),
+    });
+    if (r.ok) loadList();
+    else { b.disabled = false; b.textContent = "Mark polished"; alert(r.error || "Could not update."); }
+    return;
+  }
+
+  // approve / regenerate / humanize all make a large-model call — the first two
+  // read the source first. Tell the user it will be slow instead of looking hung.
+  const slow = act === "approve" || act === "regenerate" || act === "humanize";
   b.disabled = true;
   const label = b.textContent;
   if (slow) {
-    b.textContent = "Writing…";
-    if (msg) msg.innerHTML = '<div class="spin">Reading the source and writing the article — this takes 20–60 seconds. Leave the tab open.</div>';
+    b.textContent = act === "humanize" ? "Humanising…" : "Writing…";
+    if (msg) msg.innerHTML = '<div class="spin">' + (act === "humanize"
+      ? "Rewriting the prose — 20–40 seconds. The facts and figures are checked against the original before anything is saved."
+      : "Reading the source and writing the article — this takes 20–60 seconds. Leave the tab open.") + '</div>';
   }
   const r = await api("/api/admin/items/" + id + "/" + act, { method: "POST" });
   if (r && r.ok === false) {
@@ -378,9 +476,7 @@ $("#refresh").addEventListener("click", async (e) => {
   e.target.disabled = true; e.target.textContent = "Fetching…";
   const r = await api("/api/admin/refresh", { method: "POST" });
   e.target.disabled = false; e.target.textContent = "Fetch latest now";
-  currentStatus = "pending";
-  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x.dataset.status === "pending"));
-  loadList();
+  showTab("pending");
   alert("Added " + (r.added ?? 0) + " new item(s) to the pending queue.");
 });
 $("#submitBtn").addEventListener("click", async () => {
@@ -388,14 +484,79 @@ $("#submitBtn").addEventListener("click", async () => {
   $("#submitBtn").disabled = true;
   const r = await api("/api/admin/submit", { method: "POST", headers: {"content-type":"application/json"}, body: JSON.stringify({ url }) });
   $("#submitBtn").disabled = false;
-  if (r.ok) { $("#submitUrl").value = ""; currentStatus = "pending"; loadList(); }
+  if (r.ok) { $("#submitUrl").value = ""; showTab("pending"); }
   else alert(r.error || "Could not add that URL.");
 });
 $("#range").addEventListener("change", loadStats);
 
+// ---- Manual intake ----
+// Two requests, not one: insert, then the ordinary approve call that every other
+// item goes through. A manual story reaches a page by exactly the same route as
+// a swept one, and neither request is left open long enough for a proxy to give
+// up on it.
+$("#mText").addEventListener("input", () => {
+  const n = $("#mText").value.trim().length;
+  $("#mCount").textContent = n < 400
+    ? n + " characters — 400 minimum."
+    : n + " characters.";
+});
+$("#mSubmit").addEventListener("click", async () => {
+  const btn = $("#mSubmit"), out = $("#mMsg");
+  const payload = {
+    url: $("#mUrl").value.trim(),
+    sourceName: $("#mSource").value.trim(),
+    title: $("#mTitle").value.trim(),
+    category: $("#mCategory").value,
+    text: $("#mText").value.trim(),
+    // A date input gives YYYY-MM-DD; the column wants ISO, and midday UTC keeps
+    // the displayed date the same on either side of the timezone Jason is in.
+    publishedAt: $("#mDate").value ? $("#mDate").value + "T12:00:00.000Z" : "",
+  };
+
+  btn.disabled = true;
+  out.innerHTML = '<span class="spin">Saving…</span>';
+  const added = await api("/api/admin/manual", {
+    method: "POST", headers: {"content-type":"application/json"}, body: JSON.stringify(payload),
+  });
+  if (!added.ok) {
+    btn.disabled = false;
+    out.innerHTML = '<div class="warn">' + esc(added.error || "Could not save that.") + '</div>';
+    return;
+  }
+
+  out.innerHTML = '<span class="spin">Saved. Writing the article, then humanising it — 30–90 seconds. Leave this tab open.</span>';
+  const written = await api("/api/admin/items/" + added.id + "/approve", { method: "POST" });
+  btn.disabled = false;
+
+  if (!written.ok) {
+    // The row survives, with the pasted text on it. Say so — otherwise a long
+    // paste looks lost and gets retyped.
+    out.innerHTML = '<div class="warn">' + esc(written.error || "Could not write it.") +
+      ' It is saved in the Pending queue with your text — try Write article &amp; publish there.</div>';
+    showTab("pending");
+    return;
+  }
+
+  // Only clear on success, so a failure never costs a long paste.
+  ["#mUrl", "#mSource", "#mTitle", "#mText", "#mDate"].forEach(s => { $(s).value = ""; });
+  $("#mCount").textContent = "0 characters — 400 minimum.";
+  out.innerHTML = '<span class="muted">Written: <a href="' + SITE + '/news/' + esc(written.slug) +
+    '/" target="_blank" rel="noopener">/news/' + esc(written.slug) + '/ ↗</a>' +
+    ' — live once the site is rebuilt and deployed.</span>';
+  showTab("polish");
+});
+
+// The category list comes from the Worker so the select cannot drift out of step
+// with what the writer will actually accept.
+async function loadCategories() {
+  const { categories } = await api("/api/admin/categories");
+  $("#mCategory").innerHTML = (categories || ["general"]).map(c =>
+    '<option value="' + esc(c) + '"' + (c === "general" ? " selected" : "") + '>' + esc(c) + '</option>').join("");
+}
+
 function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-loadStats(); loadList();
+loadStats(); loadList(); loadCategories();
 </script>
 </body>
 </html>`;

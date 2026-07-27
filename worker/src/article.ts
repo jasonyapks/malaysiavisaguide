@@ -1,6 +1,7 @@
 import type { Env, NewsItem } from "./types";
 import { extractArticle } from "./extract";
 import { findAlternateSources, extractText, type AiResponse } from "./news";
+import { humanizeArticle } from "./humanize";
 
 /**
  * Article writing — the step that turns a link into a page on this site.
@@ -72,12 +73,21 @@ const PROGRAMME_CONTEXT: Record<string, string> = {
 /**
  * Write the article for a stored item. Returns null when the source cannot be
  * read or the model's output fails validation.
+ *
+ * `override` is the manual-intake path: Jason has pasted the story's text into
+ * the dashboard because the page could not be fetched. Given that text there is
+ * nothing to fetch and nothing to search for, so both the extractor and the
+ * alternate-source hunt are skipped entirely — the source has already been read,
+ * by a human.
  */
 export async function writeArticle(
   env: Env,
   item: Pick<NewsItem, "title" | "summary" | "category" | "source_name" | "source_url">,
+  override?: { text: string },
 ): Promise<WrittenArticle | null> {
-  let source = await extractArticle(item.source_url, env);
+  let source = override
+    ? { text: override.text, author: null, publishedAt: null, siteName: null }
+    : await extractArticle(item.source_url, env);
   let usedUrl = item.source_url;
   let usedName = item.source_name;
 
@@ -327,33 +337,66 @@ function parseJson(s: string): Record<string, unknown> | null {
 export async function generateAndStore(
   env: Env,
   id: string,
+  opts: { humanize?: boolean } = {},
 ): Promise<{ ok: true; slug: string } | { ok: false; error: string }> {
   const row = await env.DB.prepare(
-    `SELECT id, title, summary, category, source_name, source_url, slug
+    `SELECT id, title, summary, category, source_name, source_url, slug,
+            source_text, origin
        FROM news_items WHERE id = ?`,
   )
     .bind(id)
     .first<Pick<
       NewsItem,
-      "id" | "title" | "summary" | "category" | "source_name" | "source_url" | "slug"
+      | "id"
+      | "title"
+      | "summary"
+      | "category"
+      | "source_name"
+      | "source_url"
+      | "slug"
+      | "source_text"
+      | "origin"
     >>();
   if (!row) return { ok: false, error: "No such item." };
 
-  const written = await writeArticle(env, row);
+  // A row carrying pasted text never goes near the network. This is what makes
+  // approve / regenerate / write-next work on manual items with no second
+  // publish path to keep in step.
+  const written = await writeArticle(
+    env,
+    row,
+    row.source_text ? { text: row.source_text } : undefined,
+  );
   if (!written) {
     return {
       ok: false,
-      error:
-        "Could not write an article. The source page could not be read (paywall, " +
-        "bot block, or a JavaScript-only page) and no other outlet carrying the " +
-        "same story could be read either — or the model returned unusable output. " +
-        "Nothing was published. Paste a readable version of the story into the " +
-        "manual-add box to write it anyway.",
+      // Two different failures, and telling them apart matters: with pasted text
+      // there is no source to blame, so pointing at the manual-add box would
+      // send Jason back to the box he just used.
+      error: row.source_text
+        ? "Could not write an article from the text you pasted. The model returned " +
+          "unusable output, or the text was too thin to write from. Nothing was " +
+          "published and your text is still on the item — try Rewrite, or paste a " +
+          "fuller version of the story."
+        : "Could not write an article. The source page could not be read (paywall, " +
+          "bot block, or a JavaScript-only page) and no other outlet carrying the " +
+          "same story could be read either — or the model returned unusable output. " +
+          "Nothing was published. Paste a readable version of the story into the " +
+          "manual-add box to write it anyway.",
     };
   }
 
+  // The Worker's humanize pass. Automatic on manual items — Jason keyed those in
+  // himself and expects them to read like a person wrote them — and on request
+  // for anything else. Null means the pass produced nothing usable, in which
+  // case the unpolished draft stands: this step can never lose an article.
+  const humanizing = opts.humanize || row.origin === "manual";
+  const polished = humanizing ? ((await humanizeArticle(env, written)) ?? written) : written;
+
   // Keep an existing slug. Once a URL is indexed, changing it on a rewrite
-  // throws away the ranking it earned and orphans any inbound link.
+  // throws away the ranking it earned and orphans any inbound link. Note the
+  // slug comes from the ORIGINAL headline, not the humanized one: a rewrite that
+  // sharpens the headline must not move the URL underneath it.
   const slug = row.slug ?? (await uniqueSlug(env, written.headline, id));
 
   // source_url/source_name move with the article. When the original was
@@ -366,26 +409,37 @@ export async function generateAndStore(
     );
   }
 
+  // polish_state queues the row for the real /humanizer skill in a Claude
+  // session — set whenever the condensed pass was attempted, including when it
+  // failed. A draft the Worker could not clean up needs the real skill more, not
+  // less. CASE rather than a plain assignment so a rewrite of an
+  // already-polished article does not silently un-flag it.
+  const queuePolish = humanizing;
+
   await env.DB.prepare(
     `UPDATE news_items
         SET slug = ?, headline = ?, dek = ?, body = ?, source_excerpt = ?,
             reading_minutes = ?, article_model = ?,
             source_url = ?, source_name = ?,
             published_at = COALESCE(published_at, ?),
+            polish_state = CASE WHEN ? = 1 THEN 'needs-claude' ELSE polish_state END,
             updated_at = datetime('now')
       WHERE id = ?`,
   )
     .bind(
       slug,
-      written.headline,
-      written.dek,
-      JSON.stringify(written.body),
+      polished.headline,
+      polished.dek,
+      JSON.stringify(polished.body),
+      // Never the humanized one. sourceExcerpt is a real quotation from the
+      // publisher; rewriting it would put words in their mouth.
       written.sourceExcerpt,
-      written.readingMinutes,
+      polished.readingMinutes,
       written.model,
       written.sourceUrl,
       written.sourceName,
       written.publishedAt,
+      queuePolish ? 1 : 0,
       id,
     )
     .run();

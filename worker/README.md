@@ -108,6 +108,57 @@ the Pages site (the usual `wrangler pages deploy out`). Also set the Worker's
    Paste any article URL into the box to add it manually.
 3. **Site traffic**: visits, page views, top pages and countries for 7/30/90 days.
 
+Nothing on `/news` changes until the site is rebuilt and deployed. Approving
+writes to D1; `npm run build && wrangler pages deploy out --project-name=malaysiavisaguide`
+is what publishes.
+
+---
+
+## Keying an article in yourself
+
+For a source the pipeline cannot read — The Star 403s Worker egress, some pages
+are paywalled, some are JavaScript shells. Open **Key the article in yourself**
+under the URL box, fill in the source URL, publication, the publisher's headline
+and a category, and paste the body of the story.
+
+The pasted text is model input and nothing else. It is never published, never
+served by the public API, and the page still cites and links the real source. Our
+own article is written from it exactly as it would be from a page we fetched
+ourselves, then the humanize pass runs over it automatically and the item lands
+in the **Needs polish** tab.
+
+If the sweep already filed that URL but never managed to write it, pasting
+attaches your text to the row you already have rather than refusing — no delete
+and re-key. If it filed it *and* wrote it, you get told where it lives; use
+**Rewrite** on it instead.
+
+If the write fails, the row survives in *Pending* with your text on it — hit
+**Write article & publish** there to retry. You never have to paste it twice.
+
+## The /humanizer loop
+
+The Worker runs a condensed version of the `/humanizer` skill (`src/humanize.ts`)
+on every manually keyed-in article, and on anything you press **Humanise** on. It
+is deliberately the weaker of the two passes, so it flags what it touched
+`polish_state = 'needs-claude'` and hands over to the real 412-line skill in a
+Claude session:
+
+```bash
+node worker/scripts/pull-drafts.mjs          # → worker/.drafts/<id>.json
+# run /humanizer:humanizer over the prose in each file
+node worker/scripts/push-polish.mjs <id>     # or --all
+npm run build && npx wrangler pages deploy out --project-name=malaysiavisaguide
+```
+
+Both passes refuse a rewrite that lost or altered a figure — every number in the
+draft has to survive into the edit, unchanged. `push-polish.mjs` checks the same
+thing against the untouched copy `pull-drafts.mjs` kept, and writes nothing if a
+number went missing. `source_excerpt` is never shown to either pass: it is a real
+quotation from a publisher and rewriting it would put words in their mouth.
+
+`Mark polished` in the dashboard clears the flag by hand, for an article that
+needs no further work.
+
 ## Config reference (`wrangler.jsonc` vars / secrets)
 | Key | What |
 |---|---|
@@ -117,6 +168,7 @@ the Pages site (the usual `wrangler pages deploy out`). Also set the Worker's
 | `CF_ACCOUNT_ID` | Cloudflare account id |
 | `WEB_ANALYTICS_SITE_TAG` | Web Analytics site tag |
 | `SUMMARY_MODEL` | Workers AI model for summaries |
+| `ARTICLE_MODEL` | Workers AI model that writes the article, and runs the humanize pass |
 | `CF_ANALYTICS_TOKEN` | **secret** — API token, Account Analytics: Read |
 
 ## Tuning
