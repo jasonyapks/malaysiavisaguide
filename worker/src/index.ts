@@ -12,7 +12,9 @@ import { dashboardHtml } from "./dashboard";
  * which would multiply the payload by an order of magnitude.
  */
 const INDEX_COLUMNS = `id, slug, headline, title, dek, summary, category,
-   source_name, source_url, published_at, reading_minutes, updated_at`;
+   source_name, source_url, published_at, reading_minutes, updated_at,
+   image_alt, image_credit, image_updated_at,
+   CASE WHEN image_data IS NOT NULL THEN 1 ELSE 0 END AS has_image`;
 
 /**
  * Columns the dashboard's queue lists need — everything except `source_text`.
@@ -25,7 +27,9 @@ const INDEX_COLUMNS = `id, slug, headline, title, dek, summary, category,
 const ADMIN_COLUMNS = `id, title, summary, category, source_name, source_url,
    published_at, status, created_at, decided_at, slug, headline, dek, body,
    source_excerpt, reading_minutes, article_model, updated_at, origin,
-   polish_state, polished_at`;
+   polish_state, polished_at, image_alt, image_credit, image_source,
+   image_updated_at,
+   CASE WHEN image_data IS NOT NULL THEN 1 ELSE 0 END AS has_image`;
 
 export default {
   // Daily news sweep — fills the pending queue only. Nothing goes public here.
@@ -51,6 +55,30 @@ export default {
           ORDER BY COALESCE(published_at, created_at) DESC LIMIT 200`,
       ).all<NewsItem>();
       return cors(env, json({ items: results ?? [] }));
+    }
+
+    // --- Public: an article's attached image, as bytes ---
+    //
+    // Public because the build machine reads it, and it has no browser to log in
+    // with; /api/news is the one Access bypass on this host. Nothing is exposed
+    // that is not about to be published on the site anyway. Cached hard: the
+    // bytes for a given slug only change when Jason replaces the picture, and
+    // the build asks for each one exactly once.
+    const imageBytes = pathname.match(/^\/api\/news\/([a-z0-9-]+)\/image$/);
+    if (imageBytes) {
+      const row = await env.DB.prepare(
+        `SELECT image_data, image_mime FROM news_items
+          WHERE slug = ? AND status = 'approved' AND image_data IS NOT NULL`,
+      )
+        .bind(imageBytes[1])
+        .first<{ image_data: string; image_mime: string }>();
+      if (!row) return new Response("No image", { status: 404 });
+      return new Response(base64ToBytes(row.image_data), {
+        headers: {
+          "content-type": row.image_mime || "image/jpeg",
+          "cache-control": "public, max-age=300",
+        },
+      });
     }
 
     // --- Public: one full article by slug ---
@@ -82,7 +110,7 @@ export default {
     }
 
     if (pathname === "/" || pathname === "/dashboard") {
-      return html(dashboardHtml(email, env.SITE_ORIGIN));
+      return html(dashboardHtml(email, env.SITE_ORIGIN, env.NEWS_API_ORIGIN));
     }
 
     // GET /api/admin/items?status=pending|approved|rejected
@@ -224,6 +252,84 @@ export default {
       return json({ ok: true });
     }
 
+    // PUT /api/admin/items/:id/image — attach the hero image.
+    //
+    // Two ways in, because the picture is sometimes already on the web and
+    // sometimes on Jason's desk: `{ url }` has the Worker fetch it, `{ data }`
+    // carries a base64 file the dashboard has already downscaled in the browser.
+    // Either way it lands in the same three columns, and the build machine reads
+    // it back through the public /image route.
+    //
+    // Alt text is required. A hero image with no alt fails WCAG 1.1.1 on every
+    // article page it appears on, and this is the only moment anybody knows what
+    // the picture shows — asking later means never.
+    const image = pathname.match(/^\/api\/admin\/items\/([^/]+)\/image$/);
+    if (image && (request.method === "PUT" || request.method === "DELETE")) {
+      const [, id] = image;
+
+      if (request.method === "DELETE") {
+        await env.DB.prepare(
+          `UPDATE news_items
+              SET image_data = NULL, image_mime = NULL, image_alt = NULL,
+                  image_credit = NULL, image_source = NULL,
+                  image_updated_at = datetime('now')
+            WHERE id = ?`,
+        )
+          .bind(id)
+          .run();
+        return json({ ok: true });
+      }
+
+      const patch = (await request.json().catch(() => null)) as {
+        url?: string;
+        data?: string;
+        mime?: string;
+        alt?: string;
+        credit?: string | null;
+        source?: string;
+      } | null;
+      if (!patch) return json({ ok: false, error: "Bad JSON" }, 400);
+
+      const alt = (patch.alt ?? "").trim();
+      if (alt.length < 5) {
+        return json({ ok: false, error: "Alt text is required — describe what the picture shows." }, 400);
+      }
+
+      let data = patch.data ?? null;
+      let mime = patch.mime ?? null;
+      let source = patch.source ?? null;
+
+      if (!data && patch.url) {
+        const fetched = await fetchImage(patch.url);
+        if (!fetched.ok) return json({ ok: false, error: fetched.error }, 422);
+        data = fetched.data;
+        mime = fetched.mime;
+        source = patch.url;
+      }
+      if (!data) return json({ ok: false, error: "Need a file or a URL." }, 400);
+      if (data.length > MAX_IMAGE_B64) {
+        return json(
+          {
+            ok: false,
+            error:
+              "That image is too big to store. Save it and use the file picker — " +
+              "the dashboard shrinks an upload before sending it.",
+          },
+          413,
+        );
+      }
+
+      await env.DB.prepare(
+        `UPDATE news_items
+            SET image_data = ?, image_mime = ?, image_alt = ?, image_credit = ?,
+                image_source = ?, image_updated_at = datetime('now')
+          WHERE id = ?`,
+      )
+        .bind(data, mime ?? "image/jpeg", alt, patch.credit?.trim() || null, source, id)
+        .run();
+      return json({ ok: true });
+    }
+
     // POST /api/admin/submit  { url }  — manual add of a pasted article
     if (pathname === "/api/admin/submit" && request.method === "POST") {
       const body = (await request.json().catch(() => ({}))) as { url?: string };
@@ -323,6 +429,85 @@ export default {
     return new Response("Not found", { status: 404 });
   },
 } satisfies ExportedHandler<Env>;
+
+/**
+ * The cap on a stored image, in base64 characters — about 900 KB of file.
+ *
+ * Set by D1, not by taste: the limit is 2,000,000 bytes for a string AND for the
+ * whole row, and this row also holds the article body and up to 12,000
+ * characters of pasted source text. 1.2 MB of base64 leaves that comfortably
+ * clear. The dashboard downscales an upload to 1800px wide before sending, which
+ * lands a normal press photo at a third of this; the cap is really for the URL
+ * path, where nothing has resized anything.
+ *
+ * Note the separate 100 KB limit on SQL *statement text* — irrelevant here
+ * because the image travels as a bound parameter, but it is what makes
+ * `wrangler d1 execute` refuse the same insert from the command line.
+ */
+const MAX_IMAGE_B64 = 1_200_000;
+
+/**
+ * Fetch an image someone pasted the URL of.
+ *
+ * Deliberately strict about what comes back. A URL that 404s to an HTML error
+ * page, or points at a page rather than a file, would otherwise be stored as a
+ * perfectly valid row whose bytes are not an image — and the failure would
+ * surface days later as a broken picture on a live article.
+ */
+async function fetchImage(
+  url: string,
+): Promise<{ ok: true; data: string; mime: string } | { ok: false; error: string }> {
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      headers: {
+        // Some publishers refuse a bare fetch. This is the same courtesy
+        // extract.ts extends when reading a source page.
+        "user-agent":
+          "Mozilla/5.0 (compatible; MalaysiaVisaGuide/1.0; +https://malaysiavisaguide.com)",
+        accept: "image/*",
+      },
+      redirect: "follow",
+    });
+  } catch (err) {
+    return { ok: false, error: `Could not reach that URL — ${String(err)}` };
+  }
+  if (!res.ok) return { ok: false, error: `That URL returned ${res.status}.` };
+
+  const mime = (res.headers.get("content-type") ?? "").split(";")[0].trim();
+  if (!mime.startsWith("image/")) {
+    return {
+      ok: false,
+      error: `That URL is ${mime || "not an image"} — link straight to the image file, not the page it sits on.`,
+    };
+  }
+
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  if (bytes.byteLength === 0) return { ok: false, error: "That URL returned an empty file." };
+  return { ok: true, data: bytesToBase64(bytes), mime };
+}
+
+/**
+ * Base64 in a Worker, in chunks.
+ *
+ * `String.fromCharCode(...bytes)` on a megabyte of image blows the call stack —
+ * the spread becomes a million arguments. 8KB at a time is well inside every
+ * engine's limit and costs nothing measurable.
+ */
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 8192) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
+  }
+  return btoa(binary);
+}
+
+function base64ToBytes(b64: string): Uint8Array {
+  const binary = atob(b64);
+  const out = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i);
+  return out;
+}
 
 function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {

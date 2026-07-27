@@ -49,7 +49,7 @@ export function Figure({
       </div>
       {image.ready && image.credit && (
         <figcaption className="mt-2 text-eyebrow text-ink-muted">
-          Photo:{" "}
+          {image.credit.prefix ?? "Photo"}:{" "}
           {image.credit.url ? (
             <a
               href={image.credit.url}

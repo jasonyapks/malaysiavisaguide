@@ -24,8 +24,13 @@ export type SiteImage = {
   alt: string;
   /** Short subject label shown on the placeholder; the brief when sourcing. */
   brief: string;
-  /** Attribution line, when the licence requires one (Unsplash does not). */
-  credit?: { name: string; url?: string };
+  /**
+   * Attribution line, when the licence requires one (Unsplash does not) or when
+   * the provenance has to be disclosed (a generated image always does).
+   * `prefix` overrides the default "Photo:" label — "Image: Illustration
+   * generated with AI" is accurate where "Photo:" would be a false claim.
+   */
+  credit?: { name: string; url?: string; prefix?: string };
   /** True once a real photo sits at `src`. */
   ready?: boolean;
 };

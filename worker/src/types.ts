@@ -4,6 +4,8 @@ export interface Env {
   /** Headless Chrome — the fallback reader in extract.ts. Metered; see wrangler.jsonc. */
   BROWSER: BrowserRun;
   SITE_ORIGIN: string;
+  /** This Worker's own workers.dev origin — see SITE_API in dashboard.ts. */
+  NEWS_API_ORIGIN: string;
   TEAM_DOMAIN: string;
   POLICY_AUD: string;
   CF_ACCOUNT_ID: string;
@@ -55,4 +57,20 @@ export interface NewsItem {
   /** NULL | 'needs-claude' | 'claude-polished' — the /humanizer handover. */
   polish_state: string | null;
   polished_at: string | null;
+
+  // --- Added by migration 004. The hero image Jason attaches by hand. ---
+  /**
+   * The image, base64. Never in INDEX_COLUMNS or ADMIN_COLUMNS — a list query
+   * returning 200 of these would be hundreds of megabytes. Read one at a time
+   * through GET /api/news/<slug>/image.
+   */
+  image_data: string | null;
+  image_mime: string | null;
+  /** Required whenever image_data is set. See schema-004-images.sql. */
+  image_alt: string | null;
+  /** Caption under the photo — a photographer or agency. NULL renders none. */
+  image_credit: string | null;
+  /** The URL it was fetched from, or the filename it was uploaded as. */
+  image_source: string | null;
+  image_updated_at: string | null;
 }

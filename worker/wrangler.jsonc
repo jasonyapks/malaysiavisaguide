@@ -79,6 +79,10 @@
     // per-call cost that rules it out of the sweep is affordable here — and this
     // is the output a reader actually sees. Verified present in
     // `wrangler ai models` on 2026-07-25.
-    "ARTICLE_MODEL": "@cf/openai/gpt-oss-120b"
+    "ARTICLE_MODEL": "@cf/openai/gpt-oss-120b",
+    // This Worker's own workers.dev origin. The dashboard needs it to preview an
+    // attached image: on the custom domain only /dashboard* and /api/admin/* are
+    // routed here, so /api/news/<slug>/image would fall through to Pages.
+    "NEWS_API_ORIGIN": "https://mvg-news.jason-6bf.workers.dev"
   }
 }

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Figure } from "@/components/Figure";
+import { articleImage, newsImageKey } from "@/lib/articleImages";
 import {
   CATEGORY_LABEL,
   categoryPath,
@@ -23,8 +25,24 @@ export function NewsLeadCard({
   article: NewsArticle;
   showCategory?: boolean;
 }) {
+  const image = articleImage(newsImageKey(article.slug));
+
   return (
     <article className="card-outline px-7 py-7 sm:px-9 sm:py-8">
+      {/* Only the lead card carries a picture. Every card having one turns the
+          index into a grid of thumbnails competing with each other; one does the
+          job a lead is for, which is to say where the eye starts. The alt is
+          empty because the headline immediately below is the link — a screen
+          reader hearing the scene described first would be hearing furniture. */}
+      {image && (
+        <Link href={`/news/${article.slug}/`} className="mb-5 block" tabIndex={-1} aria-hidden>
+          <Figure
+            image={{ ...image, alt: "", credit: undefined }}
+            aspect="aspect-[16/9]"
+            sizes="(min-width: 1024px) 680px, 100vw"
+          />
+        </Link>
+      )}
       <NewsMeta article={article} showCategory={showCategory} />
       <h2 className="mt-3 text-h2 font-extrabold leading-tight">
         <Link href={`/news/${article.slug}/`} className="hover:text-forest-700">

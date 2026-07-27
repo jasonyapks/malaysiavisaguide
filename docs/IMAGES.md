@@ -123,3 +123,76 @@ For every paid or attribution-required image, record source + licence in the
 `credit` field so the provenance travels with the code. Keep receipts/licence
 PDFs out of this repo — file them in your `private/` folder per the knowledge-system
 convention.
+
+---
+
+## Article hero images (attached by hand)
+
+The seven scene photos above are sourced once and live in `images.ts`. **Article
+heroes are attached per article** — Jason picks the picture in the dashboard, by
+file or by URL. Set up 2026-07-27.
+
+An AI-generation pipeline (Workers AI, FLUX.1 [schnell]) was built first and
+removed the same day: the pictures were plausible and consistent and still did
+not fit the site. Do not rebuild it. The reason it failed is not the model —
+it is that a hero image on a reference site makes a claim about a real place, and
+a synthesised one cannot back it.
+
+### Attaching one
+
+In the dashboard, open an approved article and press **Edit**. The hero image
+panel takes either an upload or the address of an image already on the web, plus
+alt text (required) and a credit (optional). Its **Save image** button is
+separate from the article's Save on purpose: a file transfer fails on its own
+terms — too big, a URL that is really a web page, a publisher's 403 — and a
+rejected picture should not look like lost edits to the prose.
+
+An upload is downscaled to 1800px wide in the browser before it is sent. A
+four-thousand-pixel phone photo is bytes nobody will ever see: the site renders a
+hero at 1440 at most.
+
+### Getting it onto the site
+
+```
+npm run images:pull      # bring across everything attached since the last deploy
+npm run publish:site     # runs the pull, then builds and deploys
+```
+
+The pull is idempotent and it also **removes**: take a picture off an article in
+the dashboard, run the pull, and the files and the registry entry go with it.
+
+For `/insights/` articles, which live in this repo rather than in D1 and so have
+no dashboard:
+
+```
+node scripts/article-image.mjs insights comparisons/<slug> \
+  --file ~/Desktop/photo.jpg --alt "what the picture shows" --credit "Name"
+```
+
+### What lands where
+
+| Path | What |
+|---|---|
+| `public/images/news/<slug>.webp` | 1440×810, the page hero |
+| `public/images/news/<slug>-og.jpg` | 1200×630, the social card and the `image` in JSON-LD |
+| `src/lib/data/article-images.json` | alt, credit and the sync stamp |
+
+**Do not hand-edit the registry** — the next pull overwrites it. Alt text and
+credit are edited in the dashboard, which is also the only place that knows what
+the picture shows.
+
+No entry means no image slot renders. An article published before anyone has
+chosen a picture looks like an article without one, not like a broken page.
+
+### Two limits worth knowing
+
+- **D1 holds at most 2 MB per row**, and that row also carries the article body
+  and up to 12,000 characters of pasted source text. The upload cap is 1.2 MB of
+  base64, about a 900 KB file, which leaves that clear.
+- **A SQL statement is capped at 100 KB**, separately. It does not affect the
+  dashboard, where the image travels as a bound parameter, but it is why
+  `wrangler d1 execute` refuses to insert the same image from the command line.
+  Do not conclude from that failure that the image is too big.
+
+The image is deleted from D1's holding pen only by removing it from the article;
+the durable copy is the file committed here.

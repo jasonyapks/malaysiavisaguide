@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Byline } from "@/components/Byline";
+import { Figure } from "@/components/Figure";
 import { GuideHead, Lozenge } from "@/components/GuideHead";
 import { CategoryChip } from "@/components/NewsCard";
+import { articleImage, articleOgImage, newsImageKey } from "@/lib/articleImages";
 import {
   CATEGORY_GUIDE,
   CATEGORY_LABEL,
@@ -65,6 +67,12 @@ export async function generateMetadata({
   if (!article) return {};
 
   const url = `/news/${article.slug}/`;
+
+  // The article's own social card when it has one, otherwise the site card from
+  // the root layout — an article-specific image is most of the click-through on
+  // a shared link, and the fallback keeps a card on every story regardless.
+  const og = articleOgImage(newsImageKey(article.slug));
+
   return {
     title: article.headline,
     description: article.dek.slice(0, 300),
@@ -78,6 +86,9 @@ export async function generateMetadata({
       modifiedTime: article.updatedAt ?? undefined,
       authors: ["Jason Yap"],
       section: CATEGORY_LABEL[article.category],
+      ...(og && {
+        images: [{ url: og, width: 1200, height: 630, alt: article.headline }],
+      }),
     },
   };
 }
@@ -94,6 +105,7 @@ export default async function Page({
   const guide = CATEGORY_GUIDE[article.category];
   const published = newsDate(article.publishedAt);
   const updated = newsDate(article.updatedAt);
+  const hero = articleImage(newsImageKey(article.slug));
 
   return (
     <article className="space-y-10">
@@ -126,6 +138,12 @@ export default async function Page({
 
         <p className="text-lead leading-relaxed text-ink-muted">{article.dek}</p>
       </header>
+
+      {/* The hero, when one has been generated. It sits under the standfirst
+          rather than above the h1 so the headline is still the first thing on
+          screen — this reader arrived from a search result and is checking they
+          landed on the right story. `priority` because it is then the LCP. */}
+      {hero && <Figure image={hero} aspect="aspect-[16/9]" priority />}
 
       {/* The takeaways, first and scannable. This is the block a reader in a
           hurry reads, and the block AI Overviews lift when they cite a page. */}
@@ -295,6 +313,10 @@ export default async function Page({
  */
 function Schemas({ article }: { article: FullNewsArticle }) {
   const url = `${site.url}/news/${article.slug}/`;
+  // Google's article rich result wants an image, and the 1200×630 card is the
+  // one that meets its minimum width. Absolute — a relative path in JSON-LD is
+  // ignored rather than resolved.
+  const og = articleOgImage(newsImageKey(article.slug));
 
   const newsArticle = {
     "@context": "https://schema.org",
@@ -302,6 +324,7 @@ function Schemas({ article }: { article: FullNewsArticle }) {
     headline: article.headline,
     description: article.dek,
     url,
+    ...(og && { image: [`${site.url}${og}`] }),
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     datePublished: article.publishedAt ?? undefined,
     dateModified: article.updatedAt ?? article.publishedAt ?? undefined,

@@ -4,7 +4,11 @@
  * routes, whose requests carry the Access cookie automatically. No framework,
  * no external requests, so it works under a strict CSP.
  */
-export function dashboardHtml(email: string, siteOrigin: string): string {
+export function dashboardHtml(
+  email: string,
+  siteOrigin: string,
+  newsApiOrigin: string,
+): string {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -103,6 +107,15 @@ export function dashboardHtml(email: string, siteOrigin: string): string {
   .draft input[type=text], .draft textarea { width:100%; padding:8px 10px; font:inherit;
     border:1px solid var(--sand-400); border-radius:8px; background:#fff; }
   .draft textarea { resize:vertical; }
+  .draft input[type=url], .draft input[type=file] { width:100%; padding:8px 10px; font:inherit;
+    border:1px solid var(--sand-400); border-radius:8px; background:#fff; }
+  .imgbox { margin-top:14px; padding:12px; border:1px solid var(--sand-400);
+    border-radius:10px; background:var(--sand-100); }
+  .imgbox h4 { margin:0; font-size:.8rem; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--ink-muted); }
+  .imgbox img { display:block; width:100%; max-width:420px; aspect-ratio:16/9;
+    object-fit:cover; border-radius:8px; margin:10px 0; background:var(--sand-400); }
+  .imgbox .or { font-size:.75rem; color:var(--ink-muted); margin:8px 0 4px; }
   .warn { background:#fff7ed; border:1px solid #fdba74; color:#9a3412;
     padding:10px 12px; border-radius:8px; font-size:.85rem; margin-top:10px; }
   .live { font-size:.8rem; }
@@ -196,6 +209,16 @@ export function dashboardHtml(email: string, siteOrigin: string): string {
 <script>
 const $ = (s) => document.querySelector(s);
 const SITE = ${JSON.stringify(siteOrigin)};
+/**
+ * Where to load an attached image preview from.
+ *
+ * NOT a relative path, and not SITE. The dashboard is served on
+ * malaysiavisaguide.com as well as on workers.dev, and the routes claimed on the
+ * custom domain are only /dashboard* and /api/admin/* — /api/news/… there falls
+ * through to the Pages site, which has never heard of it. The workers.dev host
+ * answers on every path this Worker serves, so previews use it explicitly.
+ */
+const SITE_API = ${JSON.stringify(newsApiOrigin)};
 // "pending" | "approved" | "rejected" are status filters; "polish" is the
 // /humanizer queue, which cuts across status — an item waiting on the real skill
 // is normally already approved and live.
@@ -340,12 +363,72 @@ function renderEditor(it) {
     '<textarea rows="4" data-f="whatItMeans">' + esc(body.whatItMeans.join("\\n")) + '</textarea>' +
     '<label>Quote from the source — leave empty for none</label>' +
     '<textarea rows="2" data-f="excerpt">' + esc(it.source_excerpt || "") + '</textarea>' +
+    renderImageBox(it) +
     '<div class="row" style="margin-top:14px">' +
       '<button class="approve" data-act="save" data-id="' + it.id + '">Save</button>' +
       '<button class="ghost" data-act="cancel" data-id="' + it.id + '">Cancel</button>' +
     '</div>' +
     '<div class="muted" style="margin-top:8px">Saved edits are live as soon as the site is rebuilt and deployed.</div>' +
   '</div>';
+}
+
+/**
+ * The hero image panel.
+ *
+ * Its Save is separate from the article's Save, and that is on purpose: an image
+ * is a file transfer that can fail on its own terms — too big, a URL that is
+ * really a web page, a 403 from a publisher — and folding it into the article
+ * save would make a rejected picture look like lost edits to the prose.
+ *
+ * The preview is cache-busted on image_updated_at. Without it, replacing a
+ * picture appears to do nothing: the URL has not changed, so the browser shows
+ * the copy it already has and the obvious conclusion is that the upload failed.
+ */
+function renderImageBox(it) {
+  const src = SITE_API + "/api/news/" + esc(it.slug || "") + "/image?v=" +
+    encodeURIComponent(it.image_updated_at || "");
+  return '<div class="imgbox" data-img="' + it.id + '">' +
+    '<h4>Hero image</h4>' +
+    (it.has_image
+      ? '<img src="' + src + '" alt="">'
+      : '<div class="muted" style="margin:8px 0">No image — the article publishes without one.</div>') +
+    (it.image_source ? '<div class="muted" style="font-size:.75rem">From: ' + esc(it.image_source) + '</div>' : '') +
+    '<label>Upload a file</label>' +
+    '<input type="file" accept="image/*" data-f="imgFile">' +
+    '<div class="or">or paste the address of an image already on the web</div>' +
+    '<input type="url" data-f="imgUrl" placeholder="https://…/photo.jpg">' +
+    '<label>Alt text — what the picture shows (required)</label>' +
+    '<input type="text" data-f="imgAlt" value="' + esc(it.image_alt || "") + '">' +
+    '<label>Credit — photographer or agency, blank for none</label>' +
+    '<input type="text" data-f="imgCredit" value="' + esc(it.image_credit || "") + '">' +
+    '<div class="row" style="margin-top:10px">' +
+      '<button class="approve" data-act="saveimg" data-id="' + it.id + '">Save image</button>' +
+      (it.has_image ? '<button class="delete" data-act="delimg" data-id="' + it.id + '">Remove image</button>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+/**
+ * Shrink an upload in the browser before it is sent.
+ *
+ * A photo off a phone is four thousand pixels wide and several megabytes, and
+ * base64 adds a third on top of that. The site never renders a hero above
+ * 1440px, so anything past 1800 is bytes nobody will ever see — carried through
+ * a Worker, into a D1 row, back out to the build machine, and thrown away by the
+ * resize there. Doing it here is one canvas call and removes the whole problem.
+ */
+async function shrink(file) {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, 1800 / bitmap.width);
+  const w = Math.round(bitmap.width * scale), h = Math.round(bitmap.height * scale);
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  canvas.getContext("2d").drawImage(bitmap, 0, 0, w, h);
+  const blob = await new Promise(res => canvas.toBlob(res, "image/jpeg", 0.85));
+  const buf = new Uint8Array(await blob.arrayBuffer());
+  let binary = "";
+  for (let i = 0; i < buf.length; i += 8192) binary += String.fromCharCode(...buf.subarray(i, i + 8192));
+  return { data: btoa(binary), mime: "image/jpeg", source: file.name };
 }
 
 function parseBody(raw) {
@@ -411,6 +494,46 @@ $("#list").addEventListener("click", async (e) => {
     });
     if (r.ok) loadList();
     else { b.disabled = false; b.textContent = "Save"; alert(r.error || "Could not save."); }
+    return;
+  }
+
+  // The image saves on its own, separately from the prose. See renderImageBox.
+  if (act === "saveimg") {
+    const box = document.querySelector('[data-img="' + id + '"]');
+    const get = (f) => box.querySelector('[data-f="' + f + '"]');
+    const file = get("imgFile").files[0];
+    const url = get("imgUrl").value.trim();
+    const alt = get("imgAlt").value.trim();
+    const credit = get("imgCredit").value.trim();
+
+    if (alt.length < 5) { alert("Alt text is required — one line describing what the picture shows."); return; }
+    // Alt or credit alone is a legitimate edit of an image already attached.
+    const item = currentItems.find(i => i.id === id);
+    if (!file && !url && !(item && item.has_image)) { alert("Pick a file or paste an image URL."); return; }
+
+    b.disabled = true; b.textContent = "Saving…";
+    try {
+      const payload = { alt: alt, credit: credit || null };
+      if (file) Object.assign(payload, await shrink(file));
+      else if (url) payload.url = url;
+      const r = await api("/api/admin/items/" + id + "/image", {
+        method: "PUT", headers: {"content-type":"application/json"}, body: JSON.stringify(payload),
+      });
+      if (r.ok) loadList();
+      else { b.disabled = false; b.textContent = "Save image"; alert(r.error || "Could not save the image."); }
+    } catch (err) {
+      b.disabled = false; b.textContent = "Save image";
+      alert("Could not read that file — " + err);
+    }
+    return;
+  }
+
+  if (act === "delimg") {
+    if (!confirm("Remove the image from this article?")) return;
+    b.disabled = true; b.textContent = "Removing…";
+    const r = await api("/api/admin/items/" + id + "/image", { method: "DELETE" });
+    if (r.ok) loadList();
+    else { b.disabled = false; b.textContent = "Remove image"; alert(r.error || "Could not remove it."); }
     return;
   }
 

@@ -35,6 +35,19 @@ const TRANSIENT = [
 ];
 
 export function deploySite({ log = console.log } = {}) {
+  // Bring across any image attached in the dashboard since the last deploy.
+  // This is the last moment it can happen: the build that follows reads the
+  // registry, so an article whose picture has not been pulled ships without one.
+  // Deliberately NOT fatal — a hiccup fetching an image is not a reason to hold
+  // a corrected figure off the live site.
+  log("Pulling attached article images…");
+  try {
+    run("npm", ["run", "images:pull"]);
+  } catch {
+    log("Could not pull the images — deploying with the ones already here. Retry later:");
+    log("  npm run images:pull");
+  }
+
   log("Building the site…");
   run("npm", ["run", "build"]);
 

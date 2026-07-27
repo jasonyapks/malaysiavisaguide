@@ -4,6 +4,7 @@ import {
   H2,
   H3,
   InsightLayout,
+  insightOpenGraphImages,
   Pullquote,
 } from "@/components/InsightLayout";
 import { DataTable } from "@/components/DataTable";
@@ -50,6 +51,7 @@ export const metadata: Metadata = {
     title: `${article.title} — ${site.name}`,
     description: article.dek,
     url: insightPath(article),
+    ...insightOpenGraphImages(article),
   },
 };
 
