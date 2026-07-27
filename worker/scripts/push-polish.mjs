@@ -4,6 +4,13 @@
  *
  *   node worker/scripts/push-polish.mjs <id>
  *   node worker/scripts/push-polish.mjs --all
+ *   node worker/scripts/push-polish.mjs --all --no-deploy
+ *
+ * A successful run ends by building and deploying the site, because writing the
+ * row is not publishing — the static export reads D1 at build time, so a polish
+ * that stops at the database is a polish nobody can read. Anything held back by
+ * the checks below stops the deploy: half a queue is not a state worth shipping,
+ * and the fix is usually one edit away.
  *
  * Only the prose moves: headline, dek, body. Not the slug (an indexed URL must
  * not shift under a rewrite), not source_url or source_name (the citation
@@ -25,9 +32,11 @@ import { fileURLToPath } from "node:url";
 const WORKER_DIR = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DRAFTS_DIR = join(WORKER_DIR, ".drafts");
 
-const arg = process.argv[2];
+const args = process.argv.slice(2);
+const noDeploy = args.includes("--no-deploy");
+const arg = args.find((a) => !a.startsWith("--")) ?? args.find((a) => a === "--all");
 if (!arg) {
-  console.error("Usage: node worker/scripts/push-polish.mjs <id> | --all");
+  console.error("Usage: node worker/scripts/push-polish.mjs <id> | --all  [--no-deploy]");
   process.exit(1);
 }
 
@@ -38,8 +47,38 @@ const ids =
         .map((f) => f.slice(0, -5))
     : [arg];
 
-for (const id of ids) push(id);
+let pushed = 0;
+for (const id of ids) if (push(id)) pushed++;
 
+if (!pushed) {
+  console.error("\nNothing was pushed, so nothing to deploy.");
+  process.exit(1);
+}
+
+if (process.exitCode === 1) {
+  // Some drafts failed their checks. Publishing now would put half the queue
+  // live and leave the rest looking done — fix them and re-run.
+  console.error(`\nPushed ${pushed}, but others were rejected. Not deploying.`);
+  console.error("Fix the drafts above and run this again to publish everything together.");
+  process.exit(1);
+}
+
+if (noDeploy) {
+  console.log(`\nPushed ${pushed}. Not deploying (--no-deploy) — the articles are staged,`);
+  console.log("not live. Run `npm run publish:site` when you want them out.");
+  process.exit(0);
+}
+
+console.log(`\nPushed ${pushed}. Publishing…`);
+const { deploySite } = await import(join(WORKER_DIR, "..", "scripts", "deploy-site.mjs"));
+const result = deploySite();
+if (!result.ok) {
+  console.error("The polish is saved in D1 — only the deploy failed. Re-run `npm run publish:site`.");
+  process.exit(1);
+}
+console.log("Live.");
+
+/** Returns true when the row was written, false when the draft was rejected. */
 function push(id) {
   const path = join(DRAFTS_DIR, `${id}.json`);
   const draft = JSON.parse(readFileSync(path, "utf8"));
@@ -49,7 +88,7 @@ function push(id) {
     console.error(`✗ ${id}: ${problem}`);
     console.error("  Nothing written. Fix the draft and run this again.");
     process.exitCode = 1;
-    return;
+    return false;
   }
 
   const words = draft.body.sections
@@ -83,6 +122,7 @@ function push(id) {
   rmSync(path, { force: true });
   rmSync(join(DRAFTS_DIR, `${id}.baseline.json`), { force: true });
   console.log(`✓ ${id}  ${draft.slug ?? "(no slug)"}  ${draft.headline}`);
+  return true;
 }
 
 /**

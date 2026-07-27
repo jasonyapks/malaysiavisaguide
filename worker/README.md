@@ -146,9 +146,18 @@ Claude session:
 ```bash
 node worker/scripts/pull-drafts.mjs          # → worker/.drafts/<id>.json
 # run /humanizer:humanizer over the prose in each file
-node worker/scripts/push-polish.mjs <id>     # or --all
-npm run build && npx wrangler pages deploy out --project-name=malaysiavisaguide
+node worker/scripts/push-polish.mjs --all    # writes to D1, then builds and deploys
 ```
+
+**Polishing publishes.** `push-polish.mjs` ends by building the site and
+deploying it, because writing the row is not publishing — the static export
+reads D1 at build time, so a polish that stops at the database is a polish
+nobody can read. Pass `--no-deploy` to stage without going live, and
+`npm run publish:site` to deploy later.
+
+If any draft fails its checks the deploy is skipped entirely, even for the ones
+that passed: half a queue live and half staged is not a state worth shipping.
+Fix the draft it named and run the command again.
 
 Both passes refuse a rewrite that lost or altered a figure — every number in the
 draft has to survive into the edit, unchanged. `push-polish.mjs` checks the same
@@ -157,7 +166,8 @@ number went missing. `source_excerpt` is never shown to either pass: it is a rea
 quotation from a publisher and rewriting it would put words in their mouth.
 
 `Mark polished` in the dashboard clears the flag by hand, for an article that
-needs no further work.
+needs no further work. It does **not** deploy — a Worker cannot run a Next.js
+build, so the button stages and `npm run publish:site` publishes.
 
 ## Config reference (`wrangler.jsonc` vars / secrets)
 | Key | What |
