@@ -105,7 +105,7 @@ export default async function Page({
     <div className="space-y-12">
       <ListSchema category={found.category} articles={found.articles} />
 
-      <nav aria-label="Breadcrumb" className="text-[0.85rem] text-ink-muted">
+      <nav aria-label="Breadcrumb" className="text-caption text-ink-muted">
         <Link href="/news/" className="text-forest-700 underline">
           News
         </Link>
@@ -114,11 +114,11 @@ export default async function Page({
       </nav>
 
       <header className="space-y-6">
-        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">{heading}</h1>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-[1.25rem] leading-relaxed text-forest-900">
+        <h1 className="text-h1 font-semibold">{heading}</h1>
+        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
           {CATEGORY_BLURB[found.category]}
         </p>
-        <p className="text-[0.95rem] text-ink-muted">
+        <p className="text-body-sm text-ink-muted">
           {found.articles.length === 1
             ? "One story so far."
             : `${found.articles.length} stories, newest first.`}{" "}

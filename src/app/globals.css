@@ -59,7 +59,37 @@
   --font-sans: var(--font-body-sans), system-ui, sans-serif;
   --font-display: var(--font-accent-serif), "Playfair Display", Georgia, serif;
 
-  --text-base: 1.1875rem; /* 19px — readability is still a differentiator */
+  /**
+   * TYPE SCALE — nine role-named steps, 2026-07-27.
+   *
+   * What this replaces: 27 distinct hardcoded sizes (`text-[1.0625rem]`,
+   * `text-[0.98rem]`, `text-[0.95rem]`…) spread across 29 files, with only 17
+   * responsive variants in the whole codebase. That was not a scale, it was 27
+   * separate decisions — and because almost none of them changed at a
+   * breakpoint, a 390px phone rendered sizes picked for a 1440px laptop.
+   *
+   * Named by ROLE, never by size, for the same reason the colours are
+   * (`forest-*`, `sand-*`): `--text-lead` can be recalibrated for mobile without
+   * renaming anything, whereas `--text-20` would be a lie the moment it moved.
+   *
+   * Every step is a clamp() between a 390px phone and a ~1280px laptop, so
+   * there is no breakpoint variant to forget. The rule from here on: if a size
+   * is not one of these nine, it does not ship.
+   */
+  --text-eyebrow: clamp(0.7rem, 0.66rem + 0.17vw, 0.8rem);
+  --text-caption: clamp(0.8125rem, 0.79rem + 0.11vw, 0.9rem);
+  --text-body-sm: clamp(1rem, 0.98rem + 0.09vw, 1.0625rem);
+  --text-body: clamp(1.0625rem, 1.03rem + 0.14vw, 1.1875rem);
+  --text-lead: clamp(1.15rem, 1.04rem + 0.47vw, 1.35rem);
+  --text-h3: clamp(1.3rem, 1.14rem + 0.68vw, 1.6rem);
+  --text-h2: clamp(1.6rem, 1.36rem + 1.02vw, 2.05rem);
+  --text-h1: clamp(2rem, 1.5rem + 2.13vw, 2.75rem);
+  /* Hero only. The one step above page titles, so it stays exceptional. */
+  --text-display: clamp(2.4rem, 1.75rem + 2.77vw, 3.25rem);
+
+  /* Body default. Was a flat 19px at every width — a comfortable laptop
+     setting and too heavy at 390px, where it now resolves to 17px. */
+  --text-base: var(--text-body);
 
   --radius-card: 1.5rem; /* 24px — the reference's card corner */
 }
@@ -179,6 +209,31 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--color-forest-700);
+}
+
+/**
+ * THREE CARD WEIGHTS, 2026-07-27.
+ *
+ * `card-lux` was the only card treatment on the site, used 15 times across 10
+ * files — so every block on a guide page was an elevated white card on tint,
+ * and none of them signalled anything. Elevation only means "look here" if most
+ * things are not elevated.
+ *
+ * Pick by job, not by looks:
+ *   card-flat    most content. A tinted panel, no border, no shadow.
+ *   card-outline grouped data that needs an edge but not attention.
+ *   card-lux     the one thing on the screen that should be picked up first —
+ *                the Key Facts card, the primary CTA. Raised, and rationed.
+ */
+@utility card-flat {
+  border-radius: var(--radius-card);
+  background: var(--color-forest-50);
+}
+
+@utility card-outline {
+  border-radius: var(--radius-card);
+  background: var(--color-sand-50);
+  border: 1px solid var(--color-sand-200);
 }
 
 /* The signature card: generous radius, cool white face, hairline, soft lift. */

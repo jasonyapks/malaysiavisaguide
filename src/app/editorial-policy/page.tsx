@@ -12,10 +12,10 @@ export default function Page() {
   return (
     <article className="space-y-12">
       <header className="space-y-6">
-        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">
+        <h1 className="text-h1 font-semibold">
           Editorial policy
         </h1>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-[1.25rem] leading-relaxed text-forest-900">
+        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
           Every figure on this site is traced to an official source, reviewed by
           a named person, and stamped with the date it was last checked. This
           page explains how that works, and what happens when the rules change —
@@ -23,8 +23,8 @@ export default function Page() {
         </p>
       </header>
 
-      <section className="space-y-4 text-[1.0625rem] leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
-        <h2 className="font-serif text-2xl font-semibold text-ink">
+      <section className="space-y-4 text-body-sm leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
+        <h2 className="font-serif text-h3 font-semibold text-ink">
           One source of truth for every number
         </h2>
         <p>
@@ -49,8 +49,8 @@ export default function Page() {
         </p>
       </section>
 
-      <section className="space-y-4 text-[1.0625rem] leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
-        <h2 className="font-serif text-2xl font-semibold text-ink">
+      <section className="space-y-4 text-body-sm leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
+        <h2 className="font-serif text-h3 font-semibold text-ink">
           Where the figures come from
         </h2>
         <p>Each number is checked against the authority that owns it:</p>
@@ -90,8 +90,8 @@ export default function Page() {
         </p>
       </section>
 
-      <section className="space-y-4 text-[1.0625rem] leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
-        <h2 className="font-serif text-2xl font-semibold text-ink">
+      <section className="space-y-4 text-body-sm leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
+        <h2 className="font-serif text-h3 font-semibold text-ink">
           Review and dating
         </h2>
         <p>
@@ -106,8 +106,8 @@ export default function Page() {
         </p>
       </section>
 
-      <section className="space-y-4 text-[1.0625rem] leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
-        <h2 className="font-serif text-2xl font-semibold text-ink">
+      <section className="space-y-4 text-body-sm leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
+        <h2 className="font-serif text-h3 font-semibold text-ink">
           When a rule changes
         </h2>
         <p>
@@ -121,8 +121,8 @@ export default function Page() {
         </p>
       </section>
 
-      <section className="space-y-4 text-[1.0625rem] leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
-        <h2 className="font-serif text-2xl font-semibold text-ink">
+      <section className="space-y-4 text-body-sm leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
+        <h2 className="font-serif text-h3 font-semibold text-ink">
           Independence and corrections
         </h2>
         <p>

@@ -14,21 +14,23 @@ export default function Page() {
   return (
     <div className="space-y-10">
       <header className="space-y-4">
-        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">
+        <h1 className="text-h1 font-semibold">
           Which visa do you qualify for?
         </h1>
-        <p className="text-[1.2rem] leading-relaxed text-ink-muted">
+        <p className="text-lead leading-relaxed text-ink-muted">
           Six questions at most. No sign-up, nothing stored, no sales pitch —
           just an honest read of which programmes fit your situation, checked
           against the same official figures used across this site.
         </p>
       </header>
 
-      {/* The quiz tells a reader they qualify. It must not do that against a
-          threshold we know has moved without saying so first. */}
-      <SupersededNotices programmes={programmes} />
-
       <EligibilityQuiz />
+
+      {/* Below the quiz, not above it. The warning still precedes every figure
+          a reader could act on, because the quiz's own verdict renders above
+          this point — and putting it first meant a page whose single job is to
+          run a quiz opened with two screens of caveat and no quiz. */}
+      <SupersededNotices programmes={programmes} />
     </div>
   );
 }

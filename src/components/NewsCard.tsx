@@ -24,14 +24,14 @@ export function NewsLeadCard({
   showCategory?: boolean;
 }) {
   return (
-    <article className="card-lux px-7 py-7 sm:px-9 sm:py-8">
+    <article className="card-outline px-7 py-7 sm:px-9 sm:py-8">
       <NewsMeta article={article} showCategory={showCategory} />
-      <h2 className="mt-3 text-[1.7rem] font-extrabold leading-tight sm:text-[2rem]">
+      <h2 className="mt-3 text-h2 font-extrabold leading-tight">
         <Link href={`/news/${article.slug}/`} className="hover:text-forest-700">
           {article.headline}
         </Link>
       </h2>
-      <p className="mt-3 text-[1.1rem] leading-relaxed text-ink-muted">
+      <p className="mt-3 text-lead leading-relaxed text-ink-muted">
         {article.dek}
       </p>
       <ReadLink slug={article.slug} />
@@ -50,12 +50,12 @@ export function NewsCard({
   return (
     <article className="border-b border-sand-200 pb-6">
       <NewsMeta article={article} showCategory={showCategory} />
-      <h2 className="mt-2 font-serif text-xl font-bold text-ink">
+      <h2 className="mt-2 font-serif text-lead font-bold text-ink">
         <Link href={`/news/${article.slug}/`} className="hover:text-forest-700">
           {article.headline}
         </Link>
       </h2>
-      <p className="mt-1.5 text-[1.0625rem] leading-relaxed text-ink-muted">
+      <p className="mt-1.5 text-body-sm leading-relaxed text-ink-muted">
         {article.dek}
       </p>
       <ReadLink slug={article.slug} />
@@ -79,7 +79,7 @@ export function NewsMeta({
 }) {
   const date = newsDate(article.publishedAt);
   return (
-    <div className="flex flex-wrap items-center gap-3 text-[0.8rem]">
+    <div className="flex flex-wrap items-center gap-3 text-eyebrow">
       {showCategory && <CategoryChip category={article.category} />}
       {article.publishedAt && date && (
         <time className="text-ink-muted" dateTime={article.publishedAt}>
@@ -125,7 +125,7 @@ function ReadLink({ slug }: { slug: string }) {
   return (
     <Link
       href={`/news/${slug}/`}
-      className="mt-3 inline-flex items-center gap-1.5 text-[0.9rem] font-semibold text-forest-700 underline"
+      className="mt-3 inline-flex items-center gap-1.5 text-caption font-semibold text-forest-700 underline"
     >
       Read the full story
       <span aria-hidden>→</span>

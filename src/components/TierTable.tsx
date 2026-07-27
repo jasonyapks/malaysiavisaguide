@@ -1,12 +1,24 @@
+import { DataTable, noteCollector } from "@/components/DataTable";
 import type { Programme } from "@/lib/data/programmes";
 import { money, years } from "@/lib/format";
 
+type Row = {
+  label: string;
+  cell: (p: Programme) => string;
+  /**
+   * The long form, when the cell is a shortened version of it. Collected under
+   * the table as a numbered footnote and referenced from the cell, so the full
+   * condition is still published without a sentence sitting inside a column.
+   */
+  note?: (p: Programme) => string | null;
+};
+
 /**
- * Side-by-side facts for programmes that come in tiers — MM2H, and the
- * comparison page. Every cell reads from `programmes.ts`.
+ * Which programme facts to compare, and how to word each cell. All presentation
+ * — sticky columns, footnote rendering, the scroll container — lives in
+ * <DataTable>; this file is only the row definitions and where they read from.
  *
- * Wide tables are the one thing on this site that may scroll horizontally,
- * and only inside their own container: the page body never does.
+ * Every cell reads from `programmes.ts`. Nothing here invents a figure.
  */
 export function TierTable({
   tiers,
@@ -22,7 +34,7 @@ export function TierTable({
    */
   variant?: "long-stay" | "work-study";
 }) {
-  const longStayRows: { label: string; cell: (p: Programme) => string }[] = [
+  const longStayRows: Row[] = [
     {
       label: "Fixed deposit",
       cell: (p) => (p.fixedDeposit ? money(p.fixedDeposit) : "—"),
@@ -53,12 +65,17 @@ export function TierTable({
     { label: "Minimum age", cell: (p) => (p.minAge ? `${p.minAge}` : "None") },
     {
       label: "Minimum stay",
-      cell: (p) => p.minStayPerYear ?? "None",
+      cell: (p) => p.minStayShort ?? "None",
+      note: (p) => (p.minStayShort ? p.minStayPerYear : null),
     },
   ];
 
-  const workStudyRows: { label: string; cell: (p: Programme) => string }[] = [
-    { label: "Sponsor", cell: (p) => p.sponsor ?? "—" },
+  const workStudyRows: Row[] = [
+    {
+      label: "Sponsor",
+      cell: (p) => p.sponsorShort ?? p.sponsor ?? "—",
+      note: (p) => (p.sponsorShort ? p.sponsor : null),
+    },
     {
       label: "Income floor",
       cell: (p) => {
@@ -90,48 +107,19 @@ export function TierTable({
 
   const rows = variant === "work-study" ? workStudyRows : longStayRows;
 
+  const { notes, ref } = noteCollector();
+  const body = rows.map((r) => ({
+    label: r.label,
+    cells: tiers.map((t) => ({ value: r.cell(t), note: ref(r.note?.(t)) })),
+  }));
+
   return (
-    <figure className="overflow-x-auto rounded-xl border border-sand-200 bg-white">
-      <table className="w-full min-w-[34rem] border-collapse text-[1.0625rem]">
-        {caption && (
-          <caption className="px-6 pt-5 text-left font-serif text-xl font-semibold text-forest-900">
-            {caption}
-          </caption>
-        )}
-        <thead>
-          <tr className="border-b border-sand-200">
-            <th scope="col" className="px-6 py-3 text-left font-medium text-ink-muted">
-              &nbsp;
-            </th>
-            {tiers.map((t) => (
-              <th
-                key={t.slug}
-                scope="col"
-                className="px-6 py-3 text-left font-serif text-lg font-semibold text-forest-900"
-              >
-                {t.name}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.label} className="border-b border-sand-200 last:border-0">
-              <th
-                scope="row"
-                className="px-6 py-3 text-left font-normal text-ink-muted"
-              >
-                {r.label}
-              </th>
-              {tiers.map((t) => (
-                <td key={t.slug} className="px-6 py-3 font-medium">
-                  {r.cell(t)}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </figure>
+    <DataTable
+      caption={caption}
+      head={["", ...tiers.map((t) => t.name)]}
+      rows={body}
+      notes={notes}
+      idPrefix={`tt-${variant}`}
+    />
   );
 }

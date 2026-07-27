@@ -8,7 +8,14 @@ import { navGroups, navRoutes } from "@/lib/site";
 /**
  * Primary navigation — SPEC.md §3. The programmes were previously listed flat
  * (nine links in one row); here they are grouped into labelled dropdowns so the
- * header reads as tidy categories: long-stay visas, work & study, tools.
+ * header reads as tidy categories: long-stay visas, work & study, tools,
+ * insights & news.
+ *
+ * Entirely data-driven: every group and every link comes from `navGroups` and
+ * `routes` in lib/site.ts, and this component names no route. News used to be
+ * the exception — a hardcoded link written twice, desktop and mobile — which is
+ * why /insights/ could launch without anyone noticing it had no header slot.
+ * Adding a section should mean editing the route table and nothing else.
  *
  * Client component because dropdowns need hover, keyboard (Escape), outside-click
  * and a mobile toggle. Desktop shows dropdowns; below `sm` it collapses to a
@@ -47,6 +54,19 @@ export function SiteNav() {
     };
   }, []);
 
+  /**
+   * Prefix match, not equality. A reader on /insights/comparisons/<slug>/ or
+   * /news/<slug>/ is inside that section and the header should say so; exact
+   * matching left every article page with nothing highlighted at all.
+   *
+   * No false positives against the current route table: there is no /visas/ or
+   * /tools/ index route to over-match, and /insights/comparisons/ does not
+   * begin with /compare/. The `path !== "/"` guard is what keeps home from
+   * matching everything.
+   */
+  const isActive = (path: string) =>
+    pathname === path || (path !== "/" && pathname.startsWith(path));
+
   return (
     <div ref={ref} className="flex flex-1 items-center justify-end gap-2">
       {/* Desktop — labelled dropdowns */}
@@ -54,20 +74,10 @@ export function SiteNav() {
         aria-label="Primary"
         className="hidden flex-1 items-center gap-x-1 lg:flex"
       >
-        <Link
-          href="/news/"
-          className={`whitespace-nowrap rounded-md px-2.5 py-1.5 text-[0.9rem] font-semibold transition-colors ${
-            pathname === "/news/"
-              ? "relative text-forest-900 after:absolute after:inset-x-2.5 after:-bottom-2 after:h-0.5 after:rounded-full after:bg-forest-600"
-              : "text-forest-700 hover:text-forest-900"
-          }`}
-        >
-          News
-        </Link>
         {navGroups.map((group) => {
           const items = navRoutes(group.key);
           const isOpen = openGroup === group.key;
-          const hasActive = items.some((r) => pathname === r.path);
+          const hasActive = items.some((r) => isActive(r.path));
           return (
             <div
               key={group.key}
@@ -80,7 +90,7 @@ export function SiteNav() {
                 aria-haspopup="true"
                 aria-expanded={isOpen}
                 onClick={() => setOpenGroup(isOpen ? null : group.key)}
-                className={`flex items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-1.5 text-[0.9rem] font-semibold transition-colors ${
+                className={`flex items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-1.5 text-caption font-semibold transition-colors ${
                   hasActive
                     ? "relative text-forest-900 after:absolute after:inset-x-2.5 after:-bottom-2 after:h-0.5 after:rounded-full after:bg-forest-600"
                     : "text-forest-700 hover:text-forest-900"
@@ -97,8 +107,8 @@ export function SiteNav() {
                       <li key={r.path}>
                         <Link
                           href={r.path}
-                          className={`block px-4 py-2 text-[0.95rem] transition-colors hover:bg-sand-100 ${
-                            pathname === r.path
+                          className={`block px-4 py-2 text-body-sm transition-colors hover:bg-sand-100 ${
+                            isActive(r.path)
                               ? "font-semibold text-forest-900"
                               : "text-forest-700"
                           }`}
@@ -124,7 +134,7 @@ export function SiteNav() {
         onClick={() => setMobileOpen((v) => !v)}
         className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-forest-700 hover:text-forest-900 lg:hidden"
       >
-        <span className="text-[0.9rem] font-medium">Menu</span>
+        <span className="text-caption font-medium">Menu</span>
         <Burger open={mobileOpen} />
       </button>
 
@@ -135,19 +145,9 @@ export function SiteNav() {
           className="absolute inset-x-0 top-full z-30 border-b border-sand-200 bg-white shadow-lg shadow-forest-900/10 lg:hidden"
         >
           <div className="mx-auto max-w-6xl space-y-5 px-6 py-5">
-            <Link
-              href="/news/"
-              className={`block rounded-md px-2 py-1.5 text-[1rem] ${
-                pathname === "/news/"
-                  ? "font-semibold text-forest-900"
-                  : "text-forest-700"
-              }`}
-            >
-              News
-            </Link>
             {navGroups.map((group) => (
               <div key={group.key}>
-                <p className="mb-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-ink-muted">
+                <p className="mb-1.5 text-eyebrow font-semibold uppercase tracking-[0.16em] text-ink-muted">
                   {group.label}
                 </p>
                 <ul className="space-y-0.5">
@@ -155,8 +155,8 @@ export function SiteNav() {
                     <li key={r.path}>
                       <Link
                         href={r.path}
-                        className={`block rounded-md px-2 py-1.5 text-[1rem] ${
-                          pathname === r.path
+                        className={`block rounded-md px-2 py-1.5 text-body-sm ${
+                          isActive(r.path)
                             ? "font-semibold text-forest-900"
                             : "text-forest-700"
                         }`}

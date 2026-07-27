@@ -99,7 +99,7 @@ export default async function Page({
     <article className="space-y-10">
       <Schemas article={article} />
 
-      <nav aria-label="Breadcrumb" className="text-[0.85rem] text-ink-muted">
+      <nav aria-label="Breadcrumb" className="text-caption text-ink-muted">
         <Link href="/news/" className="text-forest-700 underline">
           News
         </Link>
@@ -110,7 +110,7 @@ export default async function Page({
       </nav>
 
       <header className="space-y-5">
-        <div className="flex flex-wrap items-center gap-3 text-[0.8rem]">
+        <div className="flex flex-wrap items-center gap-3 text-eyebrow">
           <CategoryChip category={article.category} />
           {article.publishedAt && published && (
             <time className="text-ink-muted" dateTime={article.publishedAt}>
@@ -120,11 +120,11 @@ export default async function Page({
           <span className="text-ink-muted">{article.readingMinutes} min read</span>
         </div>
 
-        <h1 className="text-[2.1rem] font-extrabold leading-tight sm:text-[2.6rem]">
+        <h1 className="text-h1 font-extrabold leading-tight">
           {article.headline}
         </h1>
 
-        <p className="text-[1.2rem] leading-relaxed text-ink-muted">{article.dek}</p>
+        <p className="text-lead leading-relaxed text-ink-muted">{article.dek}</p>
       </header>
 
       {/* The takeaways, first and scannable. This is the block a reader in a
@@ -132,15 +132,15 @@ export default async function Page({
       {article.body.keyPoints.length > 0 && (
         <section
           aria-labelledby="key-points"
-          className="card-lux border-l-4 border-l-forest-600 px-7 py-6"
+          className="card-flat border-l-4 border-l-forest-600 px-7 py-6"
         >
           <h2
             id="key-points"
-            className="font-serif text-[0.75rem] font-bold uppercase tracking-[0.22em] text-forest-700"
+            className="font-serif text-eyebrow font-bold uppercase tracking-[0.22em] text-forest-700"
           >
             The short version
           </h2>
-          <ul className="mt-4 space-y-3 text-[1.0625rem] text-forest-900">
+          <ul className="mt-4 space-y-3 text-body-sm text-forest-900">
             {article.body.keyPoints.map((p) => (
               <li key={p} className="flex gap-3">
                 <span
@@ -157,9 +157,9 @@ export default async function Page({
       <div className="space-y-9">
         {article.body.sections.map((s) => (
           <section key={s.heading} className="space-y-4">
-            <h2 className="font-serif text-2xl font-extrabold">{s.heading}</h2>
+            <h2 className="font-serif text-h3 font-extrabold">{s.heading}</h2>
             {s.paragraphs.map((p) => (
-              <p key={p} className="text-[1.0625rem] leading-relaxed text-ink-muted">
+              <p key={p} className="text-body-sm leading-relaxed text-ink-muted">
                 {p}
               </p>
             ))}
@@ -171,10 +171,10 @@ export default async function Page({
           apart typographically, and followed by a link to the original. */}
       {article.sourceExcerpt && (
         <figure className="border-l-4 border-sand-400 bg-sand-100 py-5 pl-6 pr-5">
-          <blockquote className="font-serif text-[1.15rem] italic leading-relaxed text-forest-900">
+          <blockquote className="font-serif text-lead italic leading-relaxed text-forest-900">
             {`“${article.sourceExcerpt}”`}
           </blockquote>
-          <figcaption className="mt-3 text-[0.85rem] text-ink-muted">
+          <figcaption className="mt-3 text-caption text-ink-muted">
             Quoted from{" "}
             <a
               href={article.sourceUrl}
@@ -203,7 +203,7 @@ export default async function Page({
               </span>
             }
           />
-          <ul className="space-y-4 text-[1.0625rem] leading-relaxed">
+          <ul className="space-y-4 text-body-sm leading-relaxed">
             {article.body.whatItMeans.map((p) => (
               <li key={p} className="flex gap-3">
                 <span
@@ -220,8 +220,8 @@ export default async function Page({
       {/* Provenance, stated plainly. The independence claim on every other page
           is only credible if the news pages are equally explicit about what is
           ours and what is the publisher's. */}
-      <section className="rounded-xl border border-sand-200 bg-sand-50 px-6 py-5 text-[0.95rem] leading-relaxed text-ink-muted">
-        <h2 className="font-serif text-[0.75rem] font-bold uppercase tracking-[0.22em] text-forest-700">
+      <section className="rounded-xl border border-sand-200 bg-sand-50 px-6 py-5 text-body-sm leading-relaxed text-ink-muted">
+        <h2 className="font-serif text-eyebrow font-bold uppercase tracking-[0.22em] text-forest-700">
           Source
         </h2>
         <p className="mt-3">
@@ -256,7 +256,7 @@ export default async function Page({
           <div className="diamond-rule max-w-xs">
             <Lozenge />
           </div>
-          <p className="text-[1.1rem] font-semibold text-forest-900">
+          <p className="text-lead font-semibold text-forest-900">
             News is a starting point, not advice.
           </p>
           <p className="text-ink-muted">

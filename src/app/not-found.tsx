@@ -21,14 +21,14 @@ export default function NotFound() {
     <div className="space-y-10 py-6">
       <header className="space-y-4">
         <p className="eyebrow">Error 404</p>
-        <h1 className="text-4xl font-extrabold sm:text-[2.75rem]">
+        <h1 className="text-h1 font-extrabold">
           That page isn&apos;t{" "}
           <span className="font-display accent-text font-medium italic">here</span>
         </h1>
         <div className="diamond-rule max-w-xs">
           <Lozenge />
         </div>
-        <p className="max-w-xl text-[1.1rem] leading-relaxed text-ink-muted">
+        <p className="max-w-xl text-lead leading-relaxed text-ink-muted">
           The link may be out of date, or the page may have moved. Everything the
           guide covers is below.
         </p>
@@ -36,11 +36,11 @@ export default function NotFound() {
 
       <div className="grid gap-6 sm:grid-cols-3">
         {groups.map((g) => (
-          <nav key={g.key} className="card-lux p-6" aria-label={g.label}>
-            <h2 className="font-serif text-[0.75rem] font-bold uppercase tracking-[0.18em] text-forest-700">
+          <nav key={g.key} className="card-outline p-6" aria-label={g.label}>
+            <h2 className="font-serif text-eyebrow font-bold uppercase tracking-[0.18em] text-forest-700">
               {g.label}
             </h2>
-            <ul className="mt-4 space-y-2.5 text-[1.0625rem]">
+            <ul className="mt-4 space-y-2.5 text-body-sm">
               {g.routes.map((r) => (
                 <li key={r.path}>
                   <Link href={r.path} className="text-forest-900 hover:text-forest-700">

@@ -39,13 +39,13 @@ export default function Page() {
 
       <header className="space-y-6">
         <p className="eyebrow">Insights</p>
-        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">
+        <h1 className="text-h1 font-semibold">
           Which programme is{" "}
           <span className="font-display accent-text font-medium italic">
             actually yours
           </span>
         </h1>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-[1.25rem] leading-relaxed text-forest-900">
+        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
           {DESCRIPTION}
         </p>
       </header>

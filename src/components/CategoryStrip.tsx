@@ -78,7 +78,7 @@ function Item({
   // focus-visible, and a border-weight change on hover so the state does not
   // rest on colour alone.
   const shape =
-    "inline-flex min-h-11 items-center rounded-full px-4 text-[0.85rem] font-semibold transition-colors duration-150";
+    "inline-flex min-h-11 items-center rounded-full px-4 text-caption font-semibold transition-colors duration-150";
   const focus =
     "focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700";
 

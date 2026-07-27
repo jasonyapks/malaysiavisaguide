@@ -24,51 +24,74 @@ const lastVerified = programmes
 
 export default function Page() {
   return (
-    <div className="space-y-12">
-      <header className="space-y-6">
-        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">
+    /* The whole page escapes the 3xl reading column, not just the tables.
+       Widening the tables alone gave the page two competing left edges — the
+       h1 in one place, the section headings and their tables in another. This
+       is a data page rather than a reading page, so everything shares the wide
+       column and the prose blocks are held to a sane measure with max-w-3xl
+       INSIDE it, keeping one left edge all the way down. */
+    <div className="full-bleed px-6">
+      <div className="mx-auto max-w-6xl space-y-12">
+      <header className="max-w-3xl space-y-6">
+        <h1 className="text-h1 font-semibold">
           Compare the programmes
         </h1>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-[1.25rem] leading-relaxed text-forest-900">
+        {/* Split deliberately. The first half is the idea a reader needs before
+            any table; the second half explains why there are TWO tables, and it
+            now sits above the second one, where it is actually load-bearing.
+            Keeping it all here cost most of a phone screen ahead of the data. */}
+        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
           Malaysia&apos;s long-stay programmes are deposit-gated: you qualify by
           placing capital. The work and study passes are sponsor-gated: an
-          employer or institution backs you and no deposit exists. They are
-          compared separately below, because a fixed deposit and a salary floor
-          are not the same kind of number.
+          employer or institution backs you, and no deposit exists.
         </p>
       </header>
 
       {/* Above the tables, not below them: this page's whole job is letting a
           reader compare figures, so a superseded one has to be flagged before
           they read it. Renders nothing when every source is current. */}
-      <SupersededNotices programmes={programmes} />
+      <div className="max-w-3xl">
+        <SupersededNotices programmes={programmes} />
+      </div>
 
+      {/* Both table sections escape the 3xl reading column entirely — heading,
+          intro, table and caveat together, so they share one left edge. Widening
+          only the table left its own h2 indented away from it, which read as two
+          unrelated blocks. Four programmes plus a label column genuinely need
+          the width: at 3xl the last column was clipped mid-value at 1440px, and
+          Sarawak MM2H was off-screen altogether. */}
       <section className="space-y-5">
-        <h2 className="font-serif text-2xl font-semibold">
-          Long-stay programmes
-        </h2>
-        <TierTable tiers={longStay} />
-        <p className="text-[0.95rem] text-ink-muted">
-          Deposits are shown in the currency the programme is denominated in.
-          MM2H is quoted in US dollars; PVIP and S-MM2H in ringgit — so the
-          exchange rate you get is itself part of the cost.
-        </p>
+          <h2 className="font-serif text-h3 font-semibold">
+            Long-stay programmes
+          </h2>
+          <TierTable tiers={longStay} />
+          <p className="max-w-3xl text-body-sm text-ink-muted">
+            Deposits are shown in the currency the programme is denominated in.
+            MM2H is quoted in US dollars; PVIP and S-MM2H in ringgit — so the
+            exchange rate you get is itself part of the cost.
+          </p>
       </section>
 
       <section className="space-y-5">
-        <h2 className="font-serif text-2xl font-semibold">
-          Work and study passes
-        </h2>
-        <TierTable tiers={workStudy} variant="work-study" />
-        <p className="text-[0.95rem] text-ink-muted">
-          The Employment Pass floor shown is Category III. Category II starts at
-          RM10,000 a month and Category I at RM20,000. DE Rantau&apos;s figure
-          is the tech threshold; non-tech professions need USD 60,000 a year.
-        </p>
+          <h2 className="font-serif text-h3 font-semibold">
+            Work and study passes
+          </h2>
+          <p className="max-w-3xl text-ink-muted">
+            These are compared separately because a fixed deposit and a salary
+            floor are not the same kind of number, and putting them in one table
+            would imply they are.
+          </p>
+          <TierTable tiers={workStudy} variant="work-study" />
+          <p className="max-w-3xl text-body-sm text-ink-muted">
+            The Employment Pass floor shown is Category III. Category II starts
+            at RM10,000 a month and Category I at RM20,000. DE Rantau&apos;s
+            figure is the tech threshold; non-tech professions need USD 60,000 a
+            year.
+          </p>
       </section>
 
-      <section className="space-y-4">
-        <h2 className="font-serif text-2xl font-semibold">
+      <section className="max-w-3xl space-y-4">
+        <h2 className="font-serif text-h3 font-semibold">
           What the table can&apos;t show you
         </h2>
         <div className="space-y-4 text-ink-muted">
@@ -97,18 +120,21 @@ export default function Page() {
         </div>
       </section>
 
-      <Byline lastVerified={lastVerified} />
+      <div className="max-w-3xl space-y-12">
+        <Byline lastVerified={lastVerified} />
 
-      <p className="rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
-        <Link href="/tools/eligibility/" className="font-semibold underline">
-          Not sure which you qualify for? Run the eligibility checker →
-        </Link>
-      </p>
+        <p className="rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
+          <Link href="/tools/eligibility/" className="font-semibold underline">
+            Not sure which you qualify for? Run the eligibility checker →
+          </Link>
+        </p>
 
-      <p className="text-[0.9rem] text-ink-muted">
-        Every figure above is drawn from the official source cited on each
-        programme&apos;s guide page. Last reviewed {reviewDate(lastVerified)}.
-      </p>
+        <p className="text-caption text-ink-muted">
+          Every figure above is drawn from the official source cited on each
+          programme&apos;s guide page. Last reviewed {reviewDate(lastVerified)}.
+        </p>
+      </div>
+      </div>
     </div>
   );
 }

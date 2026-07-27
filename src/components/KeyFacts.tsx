@@ -76,18 +76,18 @@ export function KeyFacts({ programme: p }: { programme: Programme }) {
       className="card-lux mx-auto max-w-3xl p-7 sm:p-9"
     >
       <p className="eyebrow">At a glance</p>
-      <h2 className="mt-2 font-serif text-2xl font-extrabold">Key facts</h2>
-      <dl className="mt-5 divide-y divide-sand-200 text-[1.0625rem]">
+      <h2 className="mt-2 font-serif text-h3 font-extrabold">Key facts</h2>
+      <dl className="mt-5 divide-y divide-sand-200 text-body-sm">
         {rows.map(([label, value]) => (
           <div key={label} className="grid gap-1 py-3.5 sm:grid-cols-[12rem_1fr] sm:gap-4">
-            <dt className="text-[0.95rem] font-semibold uppercase tracking-[0.08em] text-ink-muted">
+            <dt className="text-body-sm font-semibold uppercase tracking-[0.08em] text-ink-muted">
               {label}
             </dt>
             <dd className="font-semibold text-forest-900">{value}</dd>
           </div>
         ))}
       </dl>
-      <p className="mt-4 border-t border-sand-200 pt-4 text-[0.9rem] text-ink-muted">
+      <p className="mt-4 border-t border-sand-200 pt-4 text-caption text-ink-muted">
         Source:{" "}
         <a
           href={p.source}

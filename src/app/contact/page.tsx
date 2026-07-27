@@ -12,8 +12,8 @@ export default function Page() {
   return (
     <article className="space-y-10">
       <header className="space-y-6">
-        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">Contact</h1>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-[1.25rem] leading-relaxed text-forest-900">
+        <h1 className="text-h1 font-semibold">Contact</h1>
+        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
           A question about any of the programmes, or a figure that looks out of
           date? Send it here. Replies come from the same person who researches
           and reviews these guides.

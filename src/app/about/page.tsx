@@ -30,10 +30,10 @@ export default function Page() {
   return (
     <article className="space-y-12">
       <header className="space-y-6">
-        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">
+        <h1 className="text-h1 font-semibold">
           About this guide
         </h1>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-[1.25rem] leading-relaxed text-forest-900">
+        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
           This is an independent reference on Malaysia&apos;s long-stay visas,
           written by someone who files these applications for a living. It is
           not a government site, and it is candid about its commercial
@@ -41,8 +41,8 @@ export default function Page() {
         </p>
       </header>
 
-      <section className="space-y-4 text-[1.0625rem] leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
-        <h2 className="font-serif text-2xl font-semibold text-ink">
+      <section className="space-y-4 text-body-sm leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
+        <h2 className="font-serif text-h3 font-semibold text-ink">
           Who writes this
         </h2>
         <div className="grid gap-6 sm:grid-cols-[200px_1fr] sm:items-start">
@@ -72,8 +72,8 @@ export default function Page() {
         </p>
       </section>
 
-      <section className="space-y-4 text-[1.0625rem] leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
-        <h2 className="font-serif text-2xl font-semibold text-ink">
+      <section className="space-y-4 text-body-sm leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
+        <h2 className="font-serif text-h3 font-semibold text-ink">
           The commercial relationship — disclosed
         </h2>
         <p>
@@ -101,8 +101,8 @@ export default function Page() {
         </p>
       </section>
 
-      <section className="space-y-4 text-[1.0625rem] leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
-        <h2 className="font-serif text-2xl font-semibold text-ink">
+      <section className="space-y-4 text-body-sm leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink">
+        <h2 className="font-serif text-h3 font-semibold text-ink">
           Not a government body
         </h2>
         <p>

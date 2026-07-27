@@ -33,10 +33,10 @@ export default async function Page() {
       {items.length > 0 && <ListSchema items={items} />}
 
       <header className="space-y-6">
-        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">
+        <h1 className="text-h1 font-semibold">
           Malaysia visa news
         </h1>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-[1.25rem] leading-relaxed text-forest-900">
+        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
           What changes in Malaysia&apos;s long-stay visa programmes, written up in
           full — the figures, and what each change actually means if you are
           applying. Every story is hand-reviewed before it appears, and every

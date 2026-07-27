@@ -121,10 +121,21 @@ export type Programme = {
     | { principal: number; dependant: number; currency: Currency }
     | null;
   minStayPerYear: string | null;
+  /**
+   * Table-cell form of `minStayPerYear` — a few words, not a sentence.
+   *
+   * A comparison table is scanned, not read: one full sentence in one cell made
+   * the Minimum stay row five times the height of its neighbours and pushed the
+   * last programme column off the screen. The long form is still authoritative
+   * and still published — the table renders this and footnotes that.
+   */
+  minStayShort: string | null;
   workRights: "full" | "restricted" | "none";
   dependants: string[];
   /** Work/study only: who must sponsor the application. */
   sponsor: string | null;
+  /** Table-cell form of `sponsor`, for the same reason as `minStayShort`. */
+  sponsorShort: string | null;
   /** Work/study only: minimum monthly salary the role must pay. */
   salaryFloor: Money | null;
   /** Official URL — every claim traceable. */
@@ -166,6 +177,7 @@ const MM2H_COMMON = {
   },
   minStayPerYear:
     "90 days per year for ages 25–49, met between the main applicant and/or spouse and dependants. No minimum stay from age 50.",
+  minStayShort: "90 days, ages 25–49",
   workRights: "restricted" as const,
   dependants: [
     "Spouse",
@@ -173,6 +185,7 @@ const MM2H_COMMON = {
     "Parents and parents-in-law",
   ],
   sponsor: null,
+  sponsorShort: null,
   salaryFloor: null,
   source: MM2H_SOURCE,
   lastVerified: "2026-07-23",
@@ -220,6 +233,7 @@ export const programmes: Programme[] = [
     processingFee: null,
     // "Exemption of minimum staying requirement" — official FAQ, benefit (iii).
     minStayPerYear: null,
+    minStayShort: null,
     workRights: "full",
     dependants: [
       "Spouse",
@@ -228,6 +242,7 @@ export const programmes: Programme[] = [
       "Foreign domestic helpers",
     ],
     sponsor: null,
+    sponsorShort: null,
     salaryFloor: null,
     source: "https://imigresen-online.imi.gov.my/eservices/doc/FAQ_PVIP.pdf",
     lastVerified: "2026-07-23",
@@ -314,9 +329,11 @@ export const programmes: Programme[] = [
     processingFee: { principal: 5_000, dependant: 0, currency: "MYR" },
     minStayPerYear:
       "30 cumulative days per year in Sarawak, main applicant only.",
+    minStayShort: "30 days in Sarawak",
     workRights: "restricted",
     dependants: ["Spouse", "Children", "Parents"],
     sponsor: null,
+    sponsorShort: null,
     salaryFloor: null,
     source: "https://mtcp.sarawak.gov.my/admin/file_manager/download/?id=2319",
     lastVerified: "2026-07-23",
@@ -341,6 +358,7 @@ export const programmes: Programme[] = [
     // on top.
     processingFee: { principal: 1_080, dependant: 540, currency: "MYR" },
     minStayPerYear: null,
+    minStayShort: null,
     workRights: "restricted",
     dependants: [
       "Spouse",
@@ -348,6 +366,7 @@ export const programmes: Programme[] = [
       "Parents (main pass holder only)",
     ],
     sponsor: "Foreign-registered employer or foreign-based clients",
+    sponsorShort: "Foreign employer or clients",
     salaryFloor: null,
     source:
       "https://www.mdec.my/static/pdf/derantau/251105_DE%20Rantau_Pass_FAQ_V8.pdf",
@@ -369,6 +388,7 @@ export const programmes: Programme[] = [
     participationFee: null,
     processingFee: null,
     minStayPerYear: null,
+    minStayShort: null,
     workRights: "restricted",
     dependants: [
       "Spouse (salary above RM5,000 required)",
@@ -377,6 +397,7 @@ export const programmes: Programme[] = [
       "Parents and parents-in-law",
     ],
     sponsor: "A Malaysian employer, approved by the Expatriate Committee",
+    sponsorShort: "A Malaysian employer",
     // Category III floor under the policy effective 1 June 2026. Category II
     // starts at RM10,000 and Category I at RM20,000.
     salaryFloor: { amount: 5_000, currency: "MYR" },
@@ -400,6 +421,7 @@ export const programmes: Programme[] = [
     participationFee: null,
     processingFee: { principal: 60, dependant: 90, currency: "MYR" },
     minStayPerYear: null,
+    minStayShort: null,
     workRights: "restricted",
     dependants: [
       "Spouse (Master's and PhD students only)",
@@ -408,6 +430,7 @@ export const programmes: Programme[] = [
       "Parents",
     ],
     sponsor: "The education institution, screened by EMGS",
+    sponsorShort: "Your institution",
     salaryFloor: null,
     source:
       "https://www.imi.gov.my/index.php/en/main-services/pass/student-pass/",

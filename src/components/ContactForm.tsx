@@ -23,7 +23,7 @@ export function ContactForm() {
 
   if (!ACCESS_KEY) {
     return (
-      <div className="rounded-xl border border-sand-400 bg-sand-100 p-6 text-[1.0625rem] leading-relaxed text-ink-muted">
+      <div className="rounded-xl border border-sand-400 bg-sand-100 p-6 text-body-sm leading-relaxed text-ink-muted">
         The enquiry form isn&apos;t connected yet. In the meantime, email{" "}
         <a
           href={`mailto:${FALLBACK_EMAIL}`}
@@ -84,7 +84,7 @@ export function ContactForm() {
     return (
       <div
         role="status"
-        className="rounded-xl border border-forest-300 bg-forest-50 p-6 text-[1.0625rem] leading-relaxed text-forest-900"
+        className="rounded-xl border border-forest-300 bg-forest-50 p-6 text-body-sm leading-relaxed text-forest-900"
       >
         {message}
       </div>
@@ -174,7 +174,7 @@ export function ContactForm() {
       {status === "error" && (
         <p
           role="alert"
-          className="flex items-start gap-2 text-[1rem] font-medium text-alert-600"
+          className="flex items-start gap-2 text-body-sm font-medium text-alert-600"
         >
           {/* Icon, not colour alone — a red-only error is invisible to
               colourblind users. */}
@@ -183,7 +183,7 @@ export function ContactForm() {
         </p>
       )}
 
-      <p className="text-[0.9rem] text-ink-muted">
+      <p className="text-caption text-ink-muted">
         Your details are used only to reply to this enquiry. This is an
         independent guide — sending a question does not start a visa application.
       </p>
@@ -192,7 +192,7 @@ export function ContactForm() {
 }
 
 const inputClass =
-  "w-full rounded-lg border border-sand-400 bg-white px-4 py-3 text-[1.0625rem] text-ink outline-none focus:border-forest-600 focus:ring-2 focus:ring-forest-600/30";
+  "w-full rounded-lg border border-sand-400 bg-white px-4 py-3 text-body-sm text-ink outline-none focus:border-forest-600 focus:ring-2 focus:ring-forest-600/30";
 
 function Field({
   label,

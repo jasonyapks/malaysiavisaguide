@@ -38,11 +38,11 @@ export function Faq({ items }: { items: FaqItem[] }) {
             questions and answers as unrelated. The badge therefore lives
             INSIDE the <dt>, and the <dd> is indented to match by padding. */}
         {items.map((i, n) => (
-          <div key={i.q} className="card-lux p-6">
+          <div key={i.q} className="card-flat p-6">
             <dt className="flex items-center gap-5 font-serif font-extrabold text-forest-900">
               <span
                 aria-hidden
-                className="accent-fill grid size-9 shrink-0 place-items-center rounded-full text-[0.72rem]"
+                className="accent-fill grid size-9 shrink-0 place-items-center rounded-full text-eyebrow"
               >
                 {String(n + 1).padStart(2, "0")}
               </span>

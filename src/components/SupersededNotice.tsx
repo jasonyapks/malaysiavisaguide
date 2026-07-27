@@ -26,20 +26,47 @@ export function SupersededNotice({ programme: p }: { programme: Programme }) {
       aria-label={`${p.name}: terms have changed`}
       className="rounded-xl border-l-4 border-alert-600 bg-sand-100 px-6 py-5"
     >
-      <p className="text-[1.05rem] font-semibold text-forest-900">
-        {p.name} terms changed on {s.changedOn}
-        {s.figuresPending && " — the figures below are the previous ones"}
-      </p>
+      {/*
+       * A disclosure, and URGENCY decides whether it starts open — not the
+       * viewport. While `figuresPending` is true the numbers on the page are
+       * the superseded ones, so the detail is not optional reading and the
+       * panel is open everywhere. Once the figures are corrected it becomes
+       * background: the headline and the attribution still show unprompted,
+       * and the three bullets are one tap away.
+       *
+       * That distinction is what stops this being a dark pattern. Before it
+       * was collapsed, this notice cost a full 390px screen ahead of the
+       * comparison table on the site's most important page — a caveat nobody
+       * scrolls past is not a caveat anyone reads.
+       *
+       * <details>/<summary> is used rather than a JS toggle because it is
+       * keyboard-operable, screen-reader-announced and open-by-default for
+       * printing and for Find-in-page, with no state to manage.
+       */}
+      <details open={s.figuresPending} className="group">
+        <summary className="cursor-pointer list-none text-body-sm font-semibold text-forest-900 [&::-webkit-details-marker]:hidden">
+          <span className="underline decoration-alert-600 decoration-2 underline-offset-4">
+            {p.name} terms changed on {s.changedOn}
+          </span>
+          {s.figuresPending && " — the figures below are the previous ones"}
+          <span className="ml-2 font-normal text-ink-muted group-open:hidden">
+            Show what changed
+          </span>
+          <span className="ml-2 hidden font-normal text-ink-muted group-open:inline">
+            Hide
+          </span>
+        </summary>
 
-      <ul className="mt-3 space-y-2 text-[1rem] leading-relaxed">
-        {s.whatChanged.map((c) => (
-          <li key={c} className="ml-5 list-disc">
-            {c}
-          </li>
-        ))}
-      </ul>
+        <ul className="mt-3 space-y-2 text-body-sm leading-relaxed">
+          {s.whatChanged.map((c) => (
+            <li key={c} className="ml-5 list-disc">
+              {c}
+            </li>
+          ))}
+        </ul>
+      </details>
 
-      <p className="mt-4 border-t border-sand-200 pt-3 text-[0.9rem] leading-relaxed text-ink-muted">
+      <p className="mt-4 border-t border-sand-200 pt-3 text-caption leading-relaxed text-ink-muted">
         Confirmed by <strong>{s.attribution.by}</strong>, current as at{" "}
         {reviewDate(s.attribution.asAt)}. The{" "}
         <a

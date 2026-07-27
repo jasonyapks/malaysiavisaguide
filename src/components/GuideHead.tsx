@@ -18,7 +18,7 @@ export function GuideHead({
   return (
     <div className="space-y-3 text-center">
       <p className="eyebrow">{eyebrow}</p>
-      <h2 className="mx-auto max-w-3xl text-3xl sm:text-4xl">{title}</h2>
+      <h2 className="mx-auto max-w-3xl text-h2">{title}</h2>
       {sub && <p className="mx-auto max-w-2xl text-ink-muted">{sub}</p>}
       <div className="diamond-rule mx-auto max-w-xs pt-1">
         <Lozenge />

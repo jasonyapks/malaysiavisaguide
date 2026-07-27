@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  DataTable,
   H2,
   H3,
   InsightLayout,
   Pullquote,
 } from "@/components/InsightLayout";
+import { DataTable } from "@/components/DataTable";
 import { SupersededNotice } from "@/components/SupersededNotice";
 import { insightPath, insights } from "@/lib/data/insights";
 import { getProgramme } from "@/lib/data/programmes";
@@ -150,28 +150,44 @@ export default function Page() {
         caption="What each programme actually tests. Figures from official sources — see Sources below."
         head={["Programme", "Income requirement", "Capital locked up"]}
         rows={[
-          [
-            <strong key="r">{rantau.name}</strong>,
-            <>
-              {moneyPer(rantau.incomeRequirement!)} for tech professions,{" "}
-              {money({ amount: 60_000, currency: "USD" })} a year for non-tech
-            </>,
-            "None",
-          ],
-          [
-            <strong key="p">{pvip.name}</strong>,
-            <>{moneyPer(pvip.incomeRequirement!)}, any source</>,
-            money(pvip.fixedDeposit!) + " fixed deposit",
-          ],
-          [
-            <strong key="m">MM2H (all tiers)</strong>,
-            <strong key="none">None</strong>,
-            <>
-              {money(silver.fixedDeposit!)} to {money(platinum.fixedDeposit!)},
-              by tier
-            </>,
-          ],
+          {
+            label: <strong>{rantau.name}</strong>,
+            cells: [
+              {
+                value: (
+                  <>
+                    {moneyPer(rantau.incomeRequirement!)} for tech professions,{" "}
+                    {money({ amount: 60_000, currency: "USD" })} a year for
+                    non-tech
+                  </>
+                ),
+              },
+              { value: "None" },
+            ],
+          },
+          {
+            label: <strong>{pvip.name}</strong>,
+            cells: [
+              { value: <>{moneyPer(pvip.incomeRequirement!)}, any source</> },
+              { value: `${money(pvip.fixedDeposit!)} fixed deposit` },
+            ],
+          },
+          {
+            label: <strong>MM2H (all tiers)</strong>,
+            cells: [
+              { value: <strong>None</strong> },
+              {
+                value: (
+                  <>
+                    {money(silver.fixedDeposit!)} to{" "}
+                    {money(platinum.fixedDeposit!)}, by tier
+                  </>
+                ),
+              },
+            ],
+          },
         ]}
+        idPrefix="income-test"
       />
 
       <p>
@@ -267,13 +283,21 @@ export default function Page() {
           "Participation fee",
           "Visa term",
         ]}
-        rows={[silver, gold, platinum].map((t) => [
-          t.name.replace("MM2H ", ""),
-          money(t.fixedDeposit!),
-          money(t.propertyPurchaseMin!),
-          money({ amount: t.participationFee!.principal, currency: "MYR" }),
-          `${t.tenureYears} years`,
-        ])}
+        rows={[silver, gold, platinum].map((t) => ({
+          label: <strong>{t.name.replace("MM2H ", "")}</strong>,
+          cells: [
+            { value: money(t.fixedDeposit!) },
+            { value: money(t.propertyPurchaseMin!) },
+            {
+              value: money({
+                amount: t.participationFee!.principal,
+                currency: "MYR",
+              }),
+            },
+            { value: `${t.tenureYears} years` },
+          ],
+        }))}
+        idPrefix="mm2h-tiers"
       />
 
       <p>
@@ -448,7 +472,7 @@ export default function Page() {
 /** Shown only while `draft` is set in the registry. Never reaches a live page. */
 function DraftBanner() {
   return (
-    <p className="rounded-lg bg-alert-600 px-5 py-4 text-[1rem] font-semibold text-sand-50">
+    <p className="rounded-lg bg-alert-600 px-5 py-4 text-body-sm font-semibold text-sand-50">
       Draft — not indexed, not in the sitemap, not linked from anywhere.
     </p>
   );

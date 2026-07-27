@@ -156,7 +156,7 @@ export function EligibilityQuiz() {
   return (
     <div className="space-y-8">
       <div className="space-y-3">
-        <div className="flex items-center justify-between text-[0.85rem] text-ink-muted">
+        <div className="flex items-center justify-between text-caption text-ink-muted">
           <span>
             {total ? `Question ${index + 1} of ${total}` : "Let's start"}
           </span>
@@ -183,7 +183,7 @@ export function EligibilityQuiz() {
 
       <fieldset className="space-y-5">
         <legend className="space-y-2">
-          <h2 className="font-serif text-2xl font-semibold text-forest-900">
+          <h2 className="font-serif text-h3 font-semibold text-forest-900">
             {step.prompt}
           </h2>
           {step.help && <p className="text-ink-muted">{step.help}</p>}
@@ -201,7 +201,7 @@ export function EligibilityQuiz() {
                 {c.label}
               </span>
               {c.hint && (
-                <span className="mt-0.5 block text-[0.9rem] text-ink-muted">
+                <span className="mt-0.5 block text-caption text-ink-muted">
                   {c.hint}
                 </span>
               )}
@@ -225,7 +225,7 @@ function Results({
   return (
     <div className="space-y-10">
       <header className="space-y-3">
-        <h2 className="font-serif text-3xl font-semibold text-forest-900">
+        <h2 className="font-serif text-h2 font-semibold text-forest-900">
           Your results
         </h2>
         <p className="text-ink-muted">{GOAL_INTRO[answers.goal]}</p>
@@ -233,7 +233,7 @@ function Results({
 
       {qualified.length > 0 && (
         <section className="space-y-4">
-          <h3 className="font-serif text-xl font-semibold text-forest-900">
+          <h3 className="font-serif text-lead font-semibold text-forest-900">
             {qualified.length === 1
               ? "One programme fits"
               : `${qualified.length} programmes fit`}
@@ -248,10 +248,10 @@ function Results({
 
       {nearMiss.length > 0 && (
         <section className="space-y-4">
-          <h3 className="font-serif text-xl font-semibold text-forest-900">
+          <h3 className="font-serif text-lead font-semibold text-forest-900">
             So close
           </h3>
-          <p className="text-[0.95rem] text-ink-muted">
+          <p className="text-body-sm text-ink-muted">
             Ruled out by a single requirement — worth a look if your situation
             might change.
           </p>
@@ -263,11 +263,11 @@ function Results({
               >
                 <Link
                   href={r.href}
-                  className="font-serif text-lg font-semibold text-forest-900 underline underline-offset-2"
+                  className="font-serif text-lead font-semibold text-forest-900 underline underline-offset-2"
                 >
                   {r.name}
                 </Link>
-                <p className="mt-1 text-[0.95rem] text-ink-muted">
+                <p className="mt-1 text-body-sm text-ink-muted">
                   Needs only:{" "}
                   <span className="text-ink">{r.blockers[0]}</span>
                 </p>
@@ -289,7 +289,7 @@ function Results({
       )}
 
       <div className="space-y-3 rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
-        <p className="font-serif text-xl font-semibold text-sand-50">
+        <p className="font-serif text-lead font-semibold text-sand-50">
           Want a second opinion from someone who&apos;s done this 500+ times?
         </p>
         <p className="text-sand-100">
@@ -312,7 +312,7 @@ function Results({
         </div>
       </div>
 
-      <div className="space-y-2 border-t border-sand-200 pt-5 text-[0.85rem] text-ink-muted">
+      <div className="space-y-2 border-t border-sand-200 pt-5 text-caption text-ink-muted">
         <p>
           This is a guide, not a determination or legal advice. US-dollar
           thresholds are compared at an indicative USD&nbsp;1&nbsp;≈&nbsp;RM
@@ -338,7 +338,7 @@ function QualifiedCard({ result }: { result: Result }) {
     <li className="rounded-xl border border-forest-300 bg-forest-50 px-5 py-4">
       <Link
         href={result.href}
-        className="font-serif text-lg font-semibold text-forest-900 underline underline-offset-2"
+        className="font-serif text-lead font-semibold text-forest-900 underline underline-offset-2"
       >
         {result.name}
       </Link>
@@ -347,7 +347,7 @@ function QualifiedCard({ result }: { result: Result }) {
           {met.map((g) => (
             <li
               key={g.requirement}
-              className="flex gap-2 text-[0.95rem] text-ink-muted"
+              className="flex gap-2 text-body-sm text-ink-muted"
             >
               <span aria-hidden className="text-forest-600">
                 ✓
@@ -359,7 +359,7 @@ function QualifiedCard({ result }: { result: Result }) {
       )}
       <Link
         href={result.href}
-        className="mt-3 inline-block text-[0.95rem] font-semibold text-forest-700 hover:text-forest-900"
+        className="mt-3 inline-block text-body-sm font-semibold text-forest-700 hover:text-forest-900"
       >
         Read the full guide →
       </Link>

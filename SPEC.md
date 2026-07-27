@@ -150,6 +150,43 @@ path. **Email still works** — see §10.
 | `/about/` | Jason, credentials, **disclosed MYPVIP relationship** |
 | `/editorial-policy/` | How content is researched, reviewed, and dated |
 
+**Header nav — four labelled dropdowns**, left to right: *Long-stay visas*, *Work & study*,
+*Tools & compare*, *Insights & news*. The order is a funnel — what the programmes are, then
+help deciding, then what is being written about them. Routes carrying `nav: "site"` (About,
+Editorial policy, Contact) are the exception: the header skips them and the footer renders
+them.
+
+`SiteNav.tsx` names no route. Every group and link comes from `navGroups` and `routes` in
+`lib/site.ts`, so a new section is added by editing the route table and nothing else. This
+was learned the hard way on 2026-07-27: News had been a hardcoded link written twice into
+the component, and `/insights/` shipped with `nav: "site"` and therefore no header slot at
+all — invisible on the live site until someone went looking for it.
+
+### 4.3a Type scale and card weights (2026-07-27)
+
+**Nine role-named type steps**, defined as `clamp()` in `globals.css`:
+`--text-eyebrow` · `caption` · `body-sm` · `body` · `lead` · `h3` · `h2` · `h1` · `display`.
+They replaced **27 distinct hardcoded sizes across 29 files**, of which only 17 had any
+responsive variant — so a 390px phone was rendering sizes chosen for a 1440px laptop, and
+every page inherited that independently. `--text-base` is now `--text-body`, fluid rather
+than a flat 19px.
+
+Named by role, never by size, for the same reason the colours are: `--text-lead` can be
+recalibrated for mobile without renaming anything. **If a size is not one of the nine, it
+does not ship** — and never pair two of them across a breakpoint (`text-h2 sm:text-h1`),
+because stacking two clamps reintroduces the jump they exist to remove.
+
+**Three card weights**, replacing the single `card-lux` that was used 15 times across 10
+files: `card-flat` (tinted, most content), `card-outline` (hairline, grouped data),
+`card-lux` (raised — rationed to the Key Facts card and the homepage trust panel). Elevation
+only means "look here" if most things are not elevated.
+
+**One table component**, `components/DataTable.tsx`. Cells hold values, never sentences;
+long conditions go to numbered footnotes (`minStayShort` + `minStayPerYear` in the data
+layer is that split). The row-label column and the header row are both pinned. It stays a
+real `<table>` at every width — stacked mobile cards would either duplicate every figure in
+the HTML or drop the table role.
+
 ### Guide page template
 
 Every programme guide follows the same shape, and the order is deliberate:

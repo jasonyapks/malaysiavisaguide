@@ -48,7 +48,7 @@ export function Figure({
         )}
       </div>
       {image.ready && image.credit && (
-        <figcaption className="mt-2 text-[0.8rem] text-ink-muted">
+        <figcaption className="mt-2 text-eyebrow text-ink-muted">
           Photo:{" "}
           {image.credit.url ? (
             <a
@@ -87,10 +87,10 @@ function Placeholder({ brief }: { brief: string }) {
           <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z" />
           <circle cx="12" cy="13" r="3.5" />
         </svg>
-        <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-sand-100/60">
+        <p className="text-eyebrow font-semibold uppercase tracking-[0.18em] text-sand-100/60">
           Photography
         </p>
-        <p className="text-[0.85rem] leading-snug text-sand-100/85">{brief}</p>
+        <p className="text-caption leading-snug text-sand-100/85">{brief}</p>
       </div>
     </div>
   );

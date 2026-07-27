@@ -104,7 +104,7 @@ export default function Home() {
               Independent · verified against official sources
             </p>
 
-            <h1 className="text-[2.6rem] leading-[1.05] sm:text-6xl">
+            <h1 className="text-display leading-[1.05]">
               Malaysia&apos;s
               <br />
               long-stay visas,
@@ -129,7 +129,7 @@ export default function Home() {
               ].map((label) => (
                 <li
                   key={label}
-                  className="rounded-full border border-sand-200 bg-white/70 px-4 py-1.5 text-[0.8rem] font-bold text-forest-700"
+                  className="rounded-full border border-sand-200 bg-white/70 px-4 py-1.5 text-eyebrow font-bold text-forest-700"
                 >
                   {label}
                 </li>
@@ -155,7 +155,7 @@ export default function Home() {
           {/* The floating promise card — the reference's hero panel. */}
           <div className="card-lux relative p-7 sm:p-9">
             <p className="eyebrow">What this guide is</p>
-            <h2 className="mt-3 text-[1.55rem] leading-snug">
+            <h2 className="mt-3 text-h3 leading-snug">
               Not a brochure —{" "}
               <span className="text-forest-700">a reference you can check</span>
             </h2>
@@ -168,10 +168,10 @@ export default function Home() {
                 >
                   <NumberBadge n={i + 1} />
                   <div className="space-y-1">
-                    <p className="font-serif text-[0.98rem] font-bold leading-snug text-forest-900">
+                    <p className="font-serif text-body-sm font-bold leading-snug text-forest-900">
                       {p.title}
                     </p>
-                    <p className="text-[0.85rem] leading-relaxed text-ink-muted">
+                    <p className="text-caption leading-relaxed text-ink-muted">
                       {p.body}
                     </p>
                   </div>
@@ -251,7 +251,7 @@ export default function Home() {
           />
           <div className="space-y-4">
             <p className="eyebrow">Trust &amp; authority</p>
-            <h2 className="text-3xl sm:text-4xl">
+            <h2 className="text-h2">
               Every fee and threshold
               <br />
               <span className="font-display accent-text font-medium italic">
@@ -347,13 +347,13 @@ export default function Home() {
                   href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="card-lux flex items-start justify-between gap-4 px-5 py-4 transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700"
+                  className="card-outline flex items-start justify-between gap-4 px-5 py-4 transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700"
                 >
                   <span>
-                    <span className="block font-serif text-[0.98rem] font-bold leading-snug text-forest-900">
+                    <span className="block font-serif text-body-sm font-bold leading-snug text-forest-900">
                       {s.authority}
                     </span>
-                    <span className="mt-1 block break-all text-[0.78rem] leading-relaxed text-ink-muted">
+                    <span className="mt-1 block break-all text-eyebrow leading-relaxed text-ink-muted">
                       {sourceHost(s.url)}
                     </span>
                   </span>
@@ -386,7 +386,7 @@ export default function Home() {
             <li key={r.path}>
               <Link
                 href={r.path}
-                className="card-lux flex h-full items-center justify-between gap-3 px-5 py-5 font-serif font-bold text-forest-900 transition-transform hover:-translate-y-0.5"
+                className="card-outline flex h-full items-center justify-between gap-3 px-5 py-5 font-serif font-bold text-forest-900 transition-transform hover:-translate-y-0.5"
               >
                 {r.title}
                 <span aria-hidden className="text-forest-600">
@@ -409,7 +409,7 @@ export default function Home() {
         <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 py-16 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
             <p className="eyebrow">1:1 consultation</p>
-            <h2 className="text-3xl sm:text-4xl">
+            <h2 className="text-h2">
               Still not sure
               <br />
               <span className="font-display accent-text font-medium italic">
@@ -447,7 +447,7 @@ function SectionHead({
     <div className="grid gap-6 md:grid-cols-[1fr_1fr] md:items-start md:gap-10">
       <div className="space-y-3">
         <p className="eyebrow">{eyebrow}</p>
-        <h2 className="text-3xl leading-[1.1] sm:text-4xl">{title}</h2>
+        <h2 className="text-h2 leading-[1.1]">{title}</h2>
       </div>
       <p className="border-l-2 border-forest-600/40 pl-5 text-ink-muted md:mt-9">
         {body}
@@ -469,12 +469,12 @@ function ProgrammeCard({
     <li>
       <Link
         href={path}
-        className="card-lux group flex h-full flex-col p-6 transition-transform hover:-translate-y-1"
+        className="card-outline group flex h-full flex-col p-6 transition-transform hover:-translate-y-1"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <NumberBadge n={n} />
-            <span className="font-serif text-[1.05rem] font-extrabold leading-tight text-forest-900">
+            <span className="font-serif text-body-sm font-extrabold leading-tight text-forest-900">
               {title}
             </span>
           </div>
@@ -483,7 +483,7 @@ function ProgrammeCard({
           </span>
         </div>
 
-        <p className="font-display accent-text mt-9 text-4xl font-medium">
+        <p className="font-display accent-text mt-9 text-h1 font-medium">
           {DISPLAY_WORD[path]}
         </p>
 
@@ -491,7 +491,7 @@ function ProgrammeCard({
           <Lozenge />
         </div>
 
-        <p className="text-[0.9rem] leading-relaxed text-ink-muted">
+        <p className="text-caption leading-relaxed text-ink-muted">
           {BLURB[path]}
         </p>
       </Link>
@@ -522,7 +522,7 @@ function NumberBadge({ n }: { n: number }) {
   return (
     <span
       aria-hidden
-      className="accent-fill grid size-9 shrink-0 place-items-center rounded-full font-serif text-[0.72rem] font-extrabold tracking-wide"
+      className="accent-fill grid size-9 shrink-0 place-items-center rounded-full font-serif text-eyebrow font-extrabold tracking-wide"
     >
       {String(n).padStart(2, "0")}
     </span>

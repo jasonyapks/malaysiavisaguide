@@ -23,15 +23,20 @@ export const site = {
 export type Route = {
   path: string;
   title: string;
-  /** Shown in the primary nav. */
-  nav?: "programmes" | "work-study" | "tools" | "site";
+  /**
+   * Shown in the primary nav, under the group of this name. The exception is
+   * "site", which the header ignores — those routes render in the footer.
+   */
+  nav?: "programmes" | "work-study" | "tools" | "reading" | "site";
 };
 
 export const routes: Route[] = [
   { path: "/", title: "Home" },
 
-  { path: "/news/", title: "News" },
-  { path: "/insights/", title: "Insights", nav: "site" },
+  // Insights before News: the dropdown renders in this order, and the group is
+  // labelled "Insights & news" to match.
+  { path: "/insights/", title: "Insights", nav: "reading" },
+  { path: "/news/", title: "News", nav: "reading" },
 
   { path: "/visas/pvip/", title: "PVIP", nav: "programmes" },
   { path: "/visas/mm2h/", title: "MM2H", nav: "programmes" },
@@ -62,10 +67,13 @@ export const navRoutes = (group: Route["nav"]) =>
  * in the header instead of every programme sitting flat in one row. Order here
  * is the order they appear left-to-right.
  */
-export type NavGroupKey = "programmes" | "work-study" | "tools";
+export type NavGroupKey = "programmes" | "work-study" | "tools" | "reading";
 
 export const navGroups: { key: NavGroupKey; label: string }[] = [
   { key: "programmes", label: "Long-stay visas" },
   { key: "work-study", label: "Work & study" },
   { key: "tools", label: "Tools & compare" },
+  // Last, so the header reads as a funnel: what the programmes are, then help
+  // deciding, then what is being written about them.
+  { key: "reading", label: "Insights & news" },
 ];

@@ -51,7 +51,7 @@ export function CostCalculator() {
     <div className="space-y-8">
       {/* Programme picker */}
       <fieldset className="space-y-3">
-        <legend className="font-serif text-lg font-semibold text-forest-900">
+        <legend className="font-serif text-lead font-semibold text-forest-900">
           1. Choose a programme
         </legend>
         <div className="grid gap-2 sm:grid-cols-2">
@@ -64,7 +64,7 @@ export function CostCalculator() {
                 type="button"
                 aria-pressed={active}
                 onClick={() => setSlug(s)}
-                className={`rounded-lg border px-4 py-3 text-left text-[0.95rem] transition-colors ${
+                className={`rounded-lg border px-4 py-3 text-left text-body-sm transition-colors ${
                   active
                     ? "border-forest-600 bg-forest-50 font-semibold text-forest-900"
                     : "border-sand-200 bg-white text-ink hover:border-forest-300"
@@ -79,7 +79,7 @@ export function CostCalculator() {
 
       {/* Family size */}
       <fieldset className="space-y-3">
-        <legend className="font-serif text-lg font-semibold text-forest-900">
+        <legend className="font-serif text-lead font-semibold text-forest-900">
           2. How many dependants?
         </legend>
         <div className="flex items-center gap-4">
@@ -93,7 +93,7 @@ export function CostCalculator() {
           </span>
         </div>
         {!scalesWithFamily && dependants > 0 && (
-          <p className="text-[0.9rem] text-ink-muted">
+          <p className="text-caption text-ink-muted">
             {programme.name}&apos;s published fees don&apos;t change with family
             size — dependants are added to the pass, but no per-dependant fee is
             listed in the official source.
@@ -104,12 +104,12 @@ export function CostCalculator() {
       {/* Results */}
       <section className="space-y-6 rounded-2xl border border-sand-200 bg-white p-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="font-serif text-2xl font-semibold text-forest-900">
+          <h2 className="font-serif text-h3 font-semibold text-forest-900">
             {programme.name}
           </h2>
           <Link
             href={GUIDE_HREF[slug]}
-            className="text-[0.9rem] font-semibold text-forest-700 hover:text-forest-900"
+            className="text-caption font-semibold text-forest-700 hover:text-forest-900"
           >
             Full guide →
           </Link>
@@ -117,7 +117,7 @@ export function CostCalculator() {
 
         {/* Fees */}
         <div className="space-y-3">
-          <h3 className="font-serif text-lg font-semibold text-forest-900">
+          <h3 className="font-serif text-lead font-semibold text-forest-900">
             Fees — money you don&apos;t get back
           </h3>
           {feeItems.length > 0 ? (
@@ -137,10 +137,10 @@ export function CostCalculator() {
         {/* Capital */}
         {capitalItems.length > 0 && (
           <div className="space-y-3 border-t border-sand-200 pt-5">
-            <h3 className="font-serif text-lg font-semibold text-forest-900">
+            <h3 className="font-serif text-lead font-semibold text-forest-900">
               Capital — refundable, or an asset you own
             </h3>
-            <p className="text-[0.95rem] text-ink-muted">
+            <p className="text-body-sm text-ink-muted">
               This is not a cost. A fixed deposit stays your money; property
               becomes your asset. You need it ready, but you don&apos;t spend it.
             </p>
@@ -151,11 +151,11 @@ export function CostCalculator() {
 
         {/* Grand total per currency */}
         <div className="space-y-2 border-t border-sand-200 pt-5">
-          <h3 className="font-serif text-lg font-semibold text-forest-900">
+          <h3 className="font-serif text-lead font-semibold text-forest-900">
             To have ready in year one
           </h3>
           <TotalRows label="Fees + capital" rows={combine(fees, capital)} strong />
-          <p className="text-[0.85rem] text-ink-muted">
+          <p className="text-caption text-ink-muted">
             Ringgit and US-dollar figures are shown separately and never added
             together — the exchange rate you get is itself part of the real
             cost. MM2H is denominated in USD; PVIP and S-MM2H in ringgit.
@@ -164,7 +164,7 @@ export function CostCalculator() {
       </section>
 
       {/* Honesty footer */}
-      <div className="space-y-2 text-[0.85rem] text-ink-muted">
+      <div className="space-y-2 text-caption text-ink-muted">
         <p>
           <strong className="text-ink">What this leaves out:</strong> agent
           fees (never published — get them in writing before committing),
@@ -196,13 +196,13 @@ function Stepper({
         aria-label="Fewer dependants"
         disabled={value <= 0}
         onClick={() => onChange(Math.max(0, value - 1))}
-        className="px-4 py-2 text-xl text-forest-700 disabled:text-sand-400"
+        className="px-4 py-2 text-lead text-forest-700 disabled:text-sand-400"
       >
         −
       </button>
       <span
         aria-live="polite"
-        className="w-10 text-center text-lg font-semibold tabular-nums text-ink"
+        className="w-10 text-center text-lead font-semibold tabular-nums text-ink"
       >
         {value}
       </span>
@@ -211,7 +211,7 @@ function Stepper({
         aria-label="More dependants"
         disabled={value >= max}
         onClick={() => onChange(Math.min(max, value + 1))}
-        className="px-4 py-2 text-xl text-forest-700 disabled:text-sand-400"
+        className="px-4 py-2 text-lead text-forest-700 disabled:text-sand-400"
       >
         +
       </button>
@@ -247,7 +247,7 @@ function TotalRows({
   return (
     <div
       className={`flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 ${
-        strong ? "text-lg" : ""
+        strong ? "text-lead" : ""
       }`}
     >
       <span

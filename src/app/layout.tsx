@@ -96,13 +96,13 @@ export default function RootLayout({
             <Link href="/" className="flex shrink-0 items-center gap-3">
               <Mark />
               <span className="leading-tight">
-                <span className="block whitespace-nowrap font-serif text-[1.05rem] font-extrabold tracking-tight text-forest-900">
+                <span className="block whitespace-nowrap font-serif text-body-sm font-extrabold tracking-tight text-forest-900">
                   {site.name}
                 </span>
                 {/* The disclaimer strapline is what makes the brand block wide
                     enough to push the nav onto a second row — it only earns its
                     space once there is room for it. */}
-                <span className="hidden text-[0.7rem] tracking-wide text-ink-muted xl:block">
+                <span className="hidden text-eyebrow tracking-wide text-ink-muted xl:block">
                   Independent visa guide · not a government body
                 </span>
               </span>
@@ -112,7 +112,7 @@ export default function RootLayout({
               <LanguagePill />
               <Link
                 href="/contact/"
-                className="accent-fill hidden rounded-full px-5 py-2 text-[0.85rem] font-bold transition-transform hover:-translate-y-px lg:inline-block"
+                className="accent-fill hidden rounded-full px-5 py-2 text-caption font-bold transition-transform hover:-translate-y-px lg:inline-block"
               >
                 Ask a question
               </Link>
@@ -120,7 +120,10 @@ export default function RootLayout({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-14">
+        {/* py-8 on phones, py-14 from `sm`. The generous desktop rhythm was
+            costing a fifth of a 390px screen before the h1 even appeared, and
+            vertical space is the scarcest thing there is on a phone. */}
+        <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-8 sm:py-14">
           {children}
         </main>
 
@@ -131,10 +134,10 @@ export default function RootLayout({
             aria-hidden
             className="ring-decor -right-24 -top-40 size-[26rem] opacity-70"
           />
-          <div className="relative mx-auto max-w-6xl space-y-8 px-6 py-14 text-[0.95rem]">
+          <div className="relative mx-auto max-w-6xl space-y-8 px-6 py-14 text-body-sm">
             <div className="space-y-3">
               <p className="eyebrow">Malaysia Visa Guide</p>
-              <h2 className="max-w-2xl text-2xl font-extrabold sm:text-3xl">
+              <h2 className="max-w-2xl text-h2 font-extrabold">
                 The programmes, the real numbers, and{" "}
                 <span className="font-display accent-text font-medium italic">
                   no sales pitch
@@ -146,7 +149,12 @@ export default function RootLayout({
               aria-label="Footer"
               className="flex flex-wrap gap-x-6 gap-y-2 font-semibold text-forest-700"
             >
-              {navRoutes("site").map((r) => (
+              {/* "reading" as well as "site". The header renders those two
+                  sections inside a dropdown that only mounts when opened, so
+                  they contribute no crawlable link — the footer is where
+                  /insights/ and /news/ are actually reachable by a crawler on
+                  every page. Removing this would silently de-link both. */}
+              {[...navRoutes("reading"), ...navRoutes("site")].map((r) => (
                 <Link key={r.path} href={r.path} className="hover:text-forest-900">
                   {r.title}
                 </Link>
@@ -155,7 +163,7 @@ export default function RootLayout({
 
             {/* SPEC.md §1 — the commercial relationship is disclosed, always, and
                 independence from any government body is stated up front. */}
-            <div className="card-lux max-w-3xl p-6">
+            <div className="card-outline max-w-3xl p-6">
               <p className="eyebrow mb-2">Publisher &amp; disclosure</p>
               <p className="text-ink-muted">
                 An independent guide — not affiliated with the Immigration
@@ -173,7 +181,7 @@ export default function RootLayout({
             </div>
 
             <div className="flex flex-col items-start gap-4 border-t border-sand-400/40 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-[0.85rem] text-ink-muted">
+              <p className="text-caption text-ink-muted">
                 © {new Date().getFullYear()} {site.name}. All rights reserved.
               </p>
               <Link
@@ -204,7 +212,7 @@ function Mark() {
   return (
     <span
       aria-hidden
-      className="accent-fill grid size-11 shrink-0 place-items-center rounded-xl font-serif text-[0.95rem] font-extrabold tracking-tight"
+      className="accent-fill grid size-11 shrink-0 place-items-center rounded-xl font-serif text-body-sm font-extrabold tracking-tight"
     >
       MVG
     </span>
@@ -218,7 +226,7 @@ function Mark() {
  */
 function LanguagePill() {
   return (
-    <div className="flex items-center overflow-hidden rounded-full border border-sand-200 text-[0.75rem] font-bold">
+    <div className="flex items-center overflow-hidden rounded-full border border-sand-200 text-eyebrow font-bold">
       <span className="bg-forest-900 px-3 py-1 text-sand-50">EN</span>
       {/* Full-strength ink-muted, not /70: the faded version measured 3.15:1 on
           white, under the 4.5:1 floor. "Not yet available" is carried by the

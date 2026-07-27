@@ -56,7 +56,7 @@ export default function Page() {
         }}
       />
 
-      <nav aria-label="Breadcrumb" className="text-[0.85rem] text-ink-muted">
+      <nav aria-label="Breadcrumb" className="text-caption text-ink-muted">
         <Link href="/insights/" className="text-forest-700 underline">
           Insights
         </Link>
@@ -65,13 +65,13 @@ export default function Page() {
       </nav>
 
       <header className="space-y-6">
-        <h1 className="text-4xl font-semibold sm:text-[2.75rem]">
+        <h1 className="text-h1 font-semibold">
           {CATEGORY_TITLE[CATEGORY]}
         </h1>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-[1.25rem] leading-relaxed text-forest-900">
+        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
           {CATEGORY_BLURB[CATEGORY]}
         </p>
-        <p className="text-[0.95rem] text-ink-muted">
+        <p className="text-body-sm text-ink-muted">
           {articles.length === 1
             ? "One article so far."
             : `${articles.length} articles, newest first.`}{" "}
