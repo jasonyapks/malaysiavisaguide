@@ -52,7 +52,7 @@ export default function Page() {
         },
         {
           q: "Can I apply for PVIP myself?",
-          a: "No. All applications must be made through an agency authorised by the Immigration Department of Malaysia. This differs from MM2H, where MOTAC's own guidance says an applicant who started independently may continue without an agent.",
+          a: "No. All applications must be made through an agency authorised by the Immigration Department of Malaysia. MM2H is no different on the current guidance: MOTAC's December 2025 guide routes every MM2H application through a licensed MM2H company too, so the agent requirement is not a PVIP peculiarity.",
         },
         {
           q: "Is there an age limit?",

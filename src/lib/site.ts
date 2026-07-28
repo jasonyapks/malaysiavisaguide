@@ -9,10 +9,12 @@ export const site = {
   // /news and every /news/<slug>/ page are prerendered from it. The build points
   // itself at a local Worker via NEWS_API_URL; see src/lib/news.ts.
   newsApi: "https://mvg-news.jason-6bf.workers.dev/api/news",
-  // Cloudflare Web Analytics beacon token — cookieless, privacy-first. Public by
-  // design (it ships in the page HTML). Same value as the Worker's
-  // WEB_ANALYTICS_SITE_TAG, which the dashboard queries for visitor stats.
-  webAnalyticsToken: "1a342e6cdad047ccb88138e3b35a6ab0",
+  // No Cloudflare Web Analytics token here — Cloudflare injects its own beacon at
+  // the edge for this zone (site tag 6d5e4a6a…, which the Worker dashboard queries).
+  // The hand-placed token that used to live here recorded nothing; removed 2026-07-28.
+  // Google Analytics 4 measurement ID. Public by design (ships in the page HTML).
+  // Unlike the Cloudflare beacon this one sets first-party cookies.
+  gaMeasurementId: "G-VRPMB0841V",
 } as const;
 
 /**
@@ -56,6 +58,7 @@ export const routes: Route[] = [
 
   { path: "/about/", title: "About", nav: "site" },
   { path: "/editorial-policy/", title: "Editorial policy", nav: "site" },
+  { path: "/privacy/", title: "Privacy", nav: "site" },
   { path: "/contact/", title: "Contact", nav: "site" },
 ];
 

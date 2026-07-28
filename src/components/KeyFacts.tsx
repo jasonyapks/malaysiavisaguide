@@ -18,7 +18,9 @@ export function KeyFacts({ programme: p }: { programme: Programme }) {
   rows.push(["Authority", p.authority]);
   rows.push([
     "Tenure",
-    p.renewable ? `${years(p.tenureYears)}, renewable` : years(p.tenureYears),
+    p.renewable
+      ? `${years(p.tenureYears)}, renewable${p.renewalLimit ? ` — ${p.renewalLimit}` : ""}`
+      : years(p.tenureYears),
   ]);
   if (p.minAge !== null) rows.push(["Minimum age", `${p.minAge}`]);
   if (p.fixedDeposit)

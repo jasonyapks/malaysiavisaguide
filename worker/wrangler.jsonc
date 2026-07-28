@@ -67,8 +67,11 @@
     "TEAM_DOMAIN": "https://square-darkness-5a07.cloudflareaccess.com",
     "POLICY_AUD": "0d561ccc798791e812c9546bde8a775ce6015573527aa3d71ec444c96ebcafcd",
     // Web Analytics — account id + the site tag from the Web Analytics site.
+    // NB: this is the tag Cloudflare's own zone-level RUM injection reports under,
+    // NOT the token in the site's hand-placed beacon (1a342e6c…), which records
+    // nothing. Verified against the GraphQL API on 2026-07-28.
     "CF_ACCOUNT_ID": "d6bfff8a6a949401fc1ccb437e40a3ea",
-    "WEB_ANALYTICS_SITE_TAG": "1a342e6cdad047ccb88138e3b35a6ab0",
+    "WEB_ANALYTICS_SITE_TAG": "6d5e4a6a67ed4592929b44d9f4d4fdc6",
     // Workers AI model for summaries (swappable). llama-3.2-3b is small, fast and
     // non-reasoning — well suited to short JSON summaries. (The llama-3.1-8b line
     // was deprecated 2026-05-30; reasoning models like glm are too slow per call

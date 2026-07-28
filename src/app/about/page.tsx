@@ -77,7 +77,13 @@ export default function Page() {
           The commercial relationship — disclosed
         </h2>
         <p>
-          Jason is Managing Director of <strong>MYPVIP</strong> (MY PR Program
+          Jason is Managing Director of{" "}
+          <strong>
+            <a href="https://mypvip.com" rel="nofollow noopener">
+              MYPVIP
+            </a>
+          </strong>{" "}
+          (MY PR Program
           Sdn Bhd), which handles Premium Visa Programme applications, and of{" "}
           <strong>MY Premium MM2H</strong> (My Premium (MM2H) Sdn Bhd), which
           handles Malaysia My Second Home applications. Both are licensed
@@ -87,11 +93,11 @@ export default function Page() {
         </p>
         <p>
           Two things follow from that, and both are deliberate. First, this site
-          earns nothing from you reading it — there are no ads, no affiliate
-          links, and no cookies or cross-site trackers following you around the
-          web. The only measurement is a privacy-preserving, cookieless count of
-          page views, which sells nothing and identifies no one. Second, it
-          covers the{" "}
+          earns nothing from you reading it — there are no ads and no affiliate
+          links. It does count page views, through Google Analytics and
+          Cloudflare, so Jason can see which guides actually get read; Google
+          Analytics sets cookies to do that. Nothing is sold to anyone. Second,
+          it covers the{" "}
           <Link href="/visas/sarawak-mm2h/">do-it-yourself routes</Link> and the
           cheaper programmes just as fully as the ones an agency is paid to
           file, because a reference that hides the inconvenient options is not a

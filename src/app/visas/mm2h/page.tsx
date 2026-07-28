@@ -36,7 +36,7 @@ export default function Page() {
           "You want the cheapest serious route: Silver's participation fee is RM1,000",
         ],
         no: [
-          "You want to work in Malaysia — MM2H does not carry a work right",
+          "You want to work in Malaysia and are not taking Platinum — business, investment and career activities are barred outright on Silver and Gold",
           "You do not want to own Malaysian property; purchase is compulsory on every tier",
           "You are under 25 and therefore ineligible",
           "Your capital is in ringgit — all three deposits are denominated in US dollars",
@@ -61,7 +61,7 @@ export default function Page() {
         },
         {
           q: "Do I need a licensed agent to apply for MM2H?",
-          a: "Not necessarily. MOTAC's own application guidelines booklet states that if you handled your MM2H application independently from the beginning, you may proceed on your own without appointing an agent. If you previously used an agent and want to continue alone, you need a release letter from them.",
+          a: "On the current official guide, yes. MOTAC's Guide: Malaysia My Second Home (December 2025) says at general requirement 3 that an application \"should be submitted and completed through any MM2H tour operating business that has been licenced by the Ministry of Tourism, Arts & Culture under the Tourism Industry Act 1992\", and its application flowchart routes every step through a registered agent — there is no independent path drawn in it. Read that with the disclosure on this site in mind: the author runs a licensed agency, so check requirement 3 and the flowchart yourself rather than taking our word for it. Older MOTAC guidance did describe applying independently; if you are relying on that, ask the One Stop Centre directly before you commit.",
         },
         {
           q: "Why is Platinum's participation fee RM200,000 when Gold's is RM3,000?",

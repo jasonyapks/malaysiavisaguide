@@ -78,7 +78,7 @@ export default function Page() {
         },
         {
           q: "Is the fixed deposit gone for good?",
-          a: "No. It stays in your name, it earns interest, and up to half is withdrawable after a year against qualifying spending in Malaysia. What you do not get back is the participation and processing fees.",
+          a: "No. It stays in your name, it earns interest, and up to half of the principal may be withdrawn from the second year onwards after approval — against a residence purchase, education, or medical and tourism activities in Malaysia. What you do not get back is the participation and processing fees.",
         },
         {
           q: "I am 62. Does the minimum stay apply to me?",
@@ -91,7 +91,7 @@ export default function Page() {
       ]}
       sources={[
         {
-          label: "MOTAC — Insights on The Categories (MM2H tiers, December 2025)",
+          label: "MOTAC — Guide: Malaysia My Second Home (December 2025)",
           url: silver.source,
           verified: silver.lastVerified,
         },
@@ -334,10 +334,14 @@ export default function Page() {
       </p>
 
       <p>
-        Where MM2H genuinely disappoints people: work rights are restricted. It
-        is a residence programme, not a work permit. If your plan involves
-        earning actively in Malaysia, read the next section before you commit
-        capital.
+        Where MM2H genuinely disappoints people: on Silver and Gold there are no
+        work rights at all. MOTAC&apos;s guide marks business and investment
+        activities and career opportunities <em>Not allowed</em> on both — not
+        restricted, barred. Platinum is the exception, and marks both{" "}
+        <em>Permissible</em>. So on the two cheaper tiers it is a residence
+        programme and not a work permit; if your plan involves earning actively
+        in Malaysia, that is a RM200,000 participation fee away, and you should
+        read the next section before you commit capital.
       </p>
 
       <H3>
@@ -396,10 +400,17 @@ export default function Page() {
       </p>
 
       <p>
-        The honest test is whether you will use the work rights. If you will not,
-        MM2H Platinum delivers {platinum.tenureYears} years on the same footing
-        and keeps the {money({ amount: pvip.participationFee!.principal, currency: "MYR" })}{" "}
-        in your pocket.
+        Work rights no longer decide this one. Platinum permits business and
+        career activity too, so both programmes carry them, both run{" "}
+        {platinum.tenureYears} years, and both charge the same{" "}
+        {money({ amount: pvip.participationFee!.principal, currency: "MYR" })}{" "}
+        participation fee. What separates them is the shape of the capital. PVIP
+        wants {money(pvip.fixedDeposit!)} on deposit and{" "}
+        {money(pvip.incomeRequirement!)} a month in income, and compels no
+        property purchase. Platinum wants {money(platinum.fixedDeposit!)} on
+        deposit — several times larger once converted — no income at all, and a
+        compulsory {money(platinum.propertyPurchaseMin!)} residence you cannot
+        sell for ten years. Choose on which of those you can actually meet.
       </p>
 
       <H2>The fork, stated plainly</H2>

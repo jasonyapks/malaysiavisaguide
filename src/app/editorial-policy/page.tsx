@@ -56,8 +56,9 @@ export default function Page() {
         <p>Each number is checked against the authority that owns it:</p>
         <ul className="ml-5 list-disc space-y-2">
           <li>
-            <strong>PVIP</strong> — the Ministry of Tourism, Arts and Culture
-            and the Immigration Department of Malaysia.
+            <strong>PVIP</strong> — the Immigration Department of Malaysia,
+            which owns the programme outright. MOTAC has no part in it; that is
+            MM2H.
           </li>
           <li>
             <strong>MM2H</strong> — the MM2H centre at MOTAC (
@@ -97,7 +98,11 @@ export default function Page() {
         <p>
           Every guide carries a{" "}
           <strong>&ldquo;last reviewed&rdquo; date and a named reviewer</strong>{" "}
-          — Jason Yap, Managing Director of MYPVIP — at the foot of
+          — Jason Yap, Managing Director of{" "}
+          <a href="https://mypvip.com" rel="nofollow noopener">
+            MYPVIP
+          </a>{" "}
+          — at the foot of
           the page. That date is functional, not decorative: a visa figure from
           two years ago may simply be wrong, and both readers and AI assistants
           are right to trust a recently-checked page more than an undated one. If

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import "./globals.css";
 import { navRoutes, site } from "@/lib/site";
 import { SiteNav } from "@/components/SiteNav";
+import CookieConsent from "@/components/CookieConsent";
 
 // Heavy geometric-humanist sans for headings and UI — the Latin equivalent of
 // the reference's Pretendard 800.
@@ -99,11 +101,18 @@ export default function RootLayout({
                 <span className="block whitespace-nowrap font-serif text-body-sm font-extrabold tracking-tight text-forest-900">
                   {site.name}
                 </span>
-                {/* The disclaimer strapline is what makes the brand block wide
-                    enough to push the nav onto a second row — it only earns its
-                    space once there is room for it. */}
-                <span className="hidden text-eyebrow tracking-wide text-ink-muted xl:block">
-                  Independent visa guide · not a government body
+                {/* Stacked, not run on one line: as a single 45-character row
+                    this strapline set the width of the whole brand block and
+                    pushed the nav onto a second row. Broken in two it is half as
+                    wide, which is what lets it appear from `lg` rather than only
+                    at `xl`. The mid-dot separator goes with the line break. */}
+                <span className="hidden text-eyebrow leading-snug tracking-wide text-ink-muted lg:block">
+                  <span className="block whitespace-nowrap">
+                    Independent visa guide
+                  </span>
+                  <span className="block whitespace-nowrap">
+                    not a government body
+                  </span>
                 </span>
               </span>
             </Link>
@@ -168,8 +177,15 @@ export default function RootLayout({
               <p className="text-ink-muted">
                 An independent guide — not affiliated with the Immigration
                 Department of Malaysia or any government agency. Published by
-                Jason Yap, Managing Director of MYPVIP, a licensed agency whose
-                services are described on{" "}
+                Jason Yap, Managing Director of{" "}
+                <a
+                  href="https://mypvip.com"
+                  rel="nofollow noopener"
+                  className="font-semibold text-forest-700 underline underline-offset-2"
+                >
+                  MYPVIP
+                </a>
+                , a licensed agency whose services are described on{" "}
                 <Link
                   href="/about/"
                   className="font-semibold text-forest-700 underline underline-offset-2"
@@ -194,28 +210,80 @@ export default function RootLayout({
           </div>
         </footer>
 
-        {/* Cloudflare Web Analytics — cookieless, privacy-first (SPEC §9 was
-            "no analytics in v1"; added deliberately, no cookies, no cross-site
-            tracking). Token is public by design. */}
+        {/* No hand-placed Cloudflare beacon here. One was removed on 2026-07-28:
+            its token recorded nothing, because Cloudflare injects its own beacon at
+            the edge for this zone under a different site tag (6d5e4a6a…) — that is
+            the tag the Worker dashboard queries. Re-adding a beacon tag by hand will
+            not help; Cloudflare Web Analytics keeps working without it. */}
+
+        {/* Google Analytics 4 (gtag.js) behind Consent Mode v2. Unlike the
+            edge-injected Cloudflare beacon, this sets first-party cookies and shares
+            data with Google, so it stays denied until the visitor opts in via
+            <CookieConsent />. Pageviews on client-side navigation are handled by GA's
+            own Enhanced measurement ("page changes based on browser history events"),
+            not by this snippet.
+
+            ORDER MATTERS, and this block loads gtag.js itself rather than sitting
+            next to a <script src> tag for it. React 19 hoists src-bearing scripts
+            into <head> while leaving inline ones in <body> — which put the loader
+            ~31KB *earlier* in the document than the consent defaults meant to gate
+            it, so the tag could execute unconsented. Injecting the loader on the
+            last line makes the ordering unconditional instead of a hoisting
+            side effect. Don't split this back into two tags. */}
         <script
-          defer
-          src="https://static.cloudflareinsights.com/beacon.min.js"
-          data-cf-beacon={`{"token":"${site.webAnalyticsToken}"}`}
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+var c = 'denied';
+try { if (localStorage.getItem('mvg-consent') === 'granted') c = 'granted'; } catch (e) {}
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  analytics_storage: c,
+  wait_for_update: 500
+});
+gtag('js', new Date());
+gtag('config', '${site.gaMeasurementId}');
+var s = document.createElement('script');
+s.async = true;
+s.src = 'https://www.googletagmanager.com/gtag/js?id=${site.gaMeasurementId}';
+document.head.appendChild(s);`,
+          }}
         />
+        <CookieConsent />
       </body>
     </html>
   );
 }
 
-/** Our own mark — a cobalt monogram, never the government crest. */
+/**
+ * Our own mark — the towers from the Malaysia Visa Guide logo, never the
+ * government crest.
+ *
+ * Only the icon is used here: the supplied logo is a vertical lockup whose
+ * wordmark would duplicate the site name rendered beside it, and stacked type
+ * does not fit a horizontal header bar. The full lockup lives at
+ * `/logo-full.png` for social and print use.
+ *
+ * `priority` because it sits in the header of every page — it is always in the
+ * initial viewport, so lazy-loading it only delays the LCP region.
+ */
 function Mark() {
   return (
-    <span
+    <Image
+      src="/logo-mark.png"
+      alt=""
       aria-hidden
-      className="accent-fill grid size-11 shrink-0 place-items-center rounded-xl font-serif text-body-sm font-extrabold tracking-tight"
-    >
-      MVG
-    </span>
+      width={126}
+      height={264}
+      priority
+      // h-14 matches the height of the stacked name + two-line strapline beside
+      // it, so the towers start and finish with the text block instead of
+      // floating short against it. Header height is unchanged — the text block
+      // was already the taller of the two.
+      className="h-14 w-auto shrink-0"
+    />
   );
 }
 

@@ -38,6 +38,10 @@ export function TierTable({
     {
       label: "Fixed deposit",
       cell: (p) => (p.fixedDeposit ? money(p.fixedDeposit) : "—"),
+      // The withdrawal rule was carried in the data but rendered nowhere, so a
+      // reader saw the deposit as wholly locked. It is half the point of the
+      // deposit and belongs next to the figure.
+      note: (p) => p.fixedDeposit?.withdrawable ?? null,
     },
     {
       label: "Property purchase",
@@ -68,6 +72,20 @@ export function TierTable({
       cell: (p) => p.minStayShort ?? "None",
       note: (p) => (p.minStayShort ? p.minStayPerYear : null),
     },
+    // Work rights vary between tiers of the same programme — Platinum carries
+    // them, Silver and Gold do not — so the comparison has to show the row or
+    // the difference is invisible on the one page where the tiers sit together.
+    {
+      label: "Work rights",
+      cell: (p) =>
+        ({ full: "Yes", restricted: "Restricted", none: "No" })[p.workRights],
+      note: (p) =>
+        p.workRights === "full"
+          ? "May work and run a business."
+          : p.workRights === "restricted"
+            ? "Conditions apply."
+            : null,
+    },
   ];
 
   const workStudyRows: Row[] = [
@@ -87,7 +105,10 @@ export function TierTable({
     },
     {
       label: "Maximum term",
-      cell: (p) => (p.renewable ? `${years(p.tenureYears)}, renewable` : years(p.tenureYears)),
+      cell: (p) =>
+        p.renewable
+          ? `${years(p.tenureYears)}, renewable${p.renewalLimit ? ` — ${p.renewalLimit}` : ""}`
+          : years(p.tenureYears),
     },
     {
       label: "Government fee",

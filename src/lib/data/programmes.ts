@@ -93,6 +93,12 @@ export type Programme = {
   authority: string;
   tenureYears: number;
   renewable: boolean;
+  /**
+   * Qualifies `renewable` where the right to renew is capped. Rendered after
+   * "renewable" wherever tenure is shown, so a limited renewal can never be
+   * read as an open-ended one. Omit when renewal is unlimited.
+   */
+  renewalLimit?: string;
   minAge: number | null;
   fixedDeposit: (Money & { withdrawable?: string }) | null;
   incomeRequirement: (Money & { period: "month" | "year" }) | null;
@@ -161,8 +167,14 @@ export type Programme = {
  * medical insurance and a medical examination, neither of which has a published
  * government figure (they are priced by the insurer and the clinic).
  */
+// MOTAC's own 51-page MM2H guide, which supersedes the Insights-on-The-Categories
+// extract previously cited: it carries the same category table plus the
+// per-category detail pages, including the work-rights rows that extract omits.
+// Every Silver/Gold/Platinum figure below was re-checked against it on 2026-07-28
+// — deposit, property minimum, participation fee, term, minimum age and minimum
+// stay all matched; only work rights had to change.
 const MM2H_SOURCE =
-  "https://www.motac.gov.my/wp-content/uploads/2025/12/Insights-on-The-Categories.pdf";
+  "https://www.motac.gov.my/wp-content/uploads/2025/12/Guide-Malaysia-My-Second-Home.pdf";
 
 const MM2H_COMMON = {
   category: "long-stay" as const,
@@ -178,7 +190,12 @@ const MM2H_COMMON = {
   minStayPerYear:
     "90 days per year for ages 25–49, met between the main applicant and/or spouse and dependants. No minimum stay from age 50.",
   minStayShort: "90 days, ages 25–49",
-  workRights: "restricted" as const,
+  // Gold and Silver are "Not allowed" outright — the official guide's per-category
+  // pages say business/investment activities and career opportunities are both
+  // barred (pp.35, 39). Not "restricted": that would read as "you may work under
+  // conditions", which is the opposite of what the document says. Platinum
+  // overrides this to "full" — it is the only tier where both are Permissible.
+  workRights: "none" as const,
   dependants: [
     "Spouse",
     "Children up to age 35, unmarried",
@@ -188,11 +205,17 @@ const MM2H_COMMON = {
   sponsorShort: null,
   salaryFloor: null,
   source: MM2H_SOURCE,
-  lastVerified: "2026-07-23",
+  lastVerified: "2026-07-28",
 };
 
+// Phrased from the guide's summary page (p.18), which is the fuller of the two
+// statements it makes. The per-category pages (pp.28, 33, 37) drop the "second
+// year onwards" timing and say only "after the approval ... has been obtained";
+// they are an abbreviation of this, not a competing rule — both carry the same
+// "after approval" clause. Quote the timed version, since the untimed one would
+// read as "withdraw on day one".
 const MM2H_FD_WITHDRAWAL =
-  "Up to 50% may be withdrawn after one year in the programme, for property purchase, medical, education or tourism.";
+  "Up to 50% of the principal may be withdrawn from the second year onwards after approval, for purchasing a residence, education, medical or tourism activities in Malaysia.";
 
 export const programmes: Programme[] = [
   {
@@ -293,6 +316,10 @@ export const programmes: Programme[] = [
     slug: "mm2h-platinum",
     name: "MM2H Platinum",
     tenureYears: 20,
+    // The only tier where the guide marks both Business/Investment Activities
+    // and Career Opportunities "Permissible" (p.31). Silver and Gold inherit
+    // "none" from MM2H_COMMON.
+    workRights: "full",
     fixedDeposit: {
       amount: 1_000_000,
       currency: "USD",
@@ -347,6 +374,7 @@ export const programmes: Programme[] = [
     // Issued for 3–12 months, renewable once for a further 12.
     tenureYears: 1,
     renewable: true,
+    renewalLimit: "one time only",
     minAge: null,
     fixedDeposit: null,
     // USD24,000/year for tech talent. Non-tech professions must show

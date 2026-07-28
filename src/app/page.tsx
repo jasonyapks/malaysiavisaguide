@@ -292,8 +292,10 @@ export default function Home() {
             <p>
               Malaysia&apos;s long-stay visas are governed by several different
               bodies, and that is the root of most of the confusion around them.
-              PVIP and MM2H are administered through the Ministry of Tourism,
-              Arts and Culture and its One Stop Centre. Sarawak MM2H is a state
+              PVIP sits with the Immigration Department of Malaysia; MM2H is
+              administered through the Ministry of Tourism, Arts and Culture and
+              its One Stop Centre. Confusing the two is the single most common
+              error in secondary coverage. Sarawak MM2H is a state
               programme with its own ministry, its own deposit and its own
               approvals — which is why an S-MM2H figure quoted from a federal
               page is usually wrong. DE Rantau sits with MDEC, the Employment

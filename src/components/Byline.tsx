@@ -30,7 +30,15 @@ export function Byline({
         <Link href="/about/" className="font-semibold text-forest-700 underline">
           Jason Yap
         </Link>
-        , Managing Director of MYPVIP.
+        , Managing Director of{" "}
+        <a
+          href="https://mypvip.com"
+          rel="nofollow noopener"
+          className="font-semibold text-forest-700 underline"
+        >
+          MYPVIP
+        </a>
+        .
         {lastVerified && (
           <>
             <br />
