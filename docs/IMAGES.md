@@ -59,6 +59,11 @@ cwebp -q 82 -m 6 -sharp_yuv -metadata none -resize 500 0  jason-yap.jpg -o jason
 `git show <commit-before-this>:public/images/pvip.jpg > pvip.jpg` — the masters
 were `.jpg`, so ask git for the old extension, not the new one.
 
+`home-hero.webp` above is gone: the `home` slot took a different image on
+2026-07-28 and the old file was deleted rather than left orphaned in `public/`.
+The command is kept as written because it records what was actually run. Same
+recovery route — `git show 139858f~1:public/images/home-hero.webp > home-hero.webp`.
+
 ---
 
 ## The slots
