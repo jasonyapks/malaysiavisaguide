@@ -10,8 +10,8 @@ import {
 import { DataTable } from "@/components/DataTable";
 import { SupersededNotice } from "@/components/SupersededNotice";
 import { insightPath, insights } from "@/lib/data/insights";
-import { getProgramme } from "@/lib/data/programmes";
-import { money, moneyPer } from "@/lib/format";
+import { getProgramme, MM2H_INCOME_PRACTICE } from "@/lib/data/programmes";
+import { money, moneyPer, reviewDate } from "@/lib/format";
 import { site } from "@/lib/site";
 
 /**
@@ -62,7 +62,7 @@ export default function Page() {
       faq={[
         {
           q: "Does MM2H really have no income requirement?",
-          a: "Correct, for all three federal tiers. Qualification is capital: the fixed deposit, and where you buy, the property threshold. Sarawak MM2H is the exception — it does test income.",
+          a: `Correct, for all three federal tiers. Qualification is capital: the fixed deposit, and where you buy, the property threshold. Sarawak MM2H is the exception — it does test income. One practical caveat: ${MM2H_INCOME_PRACTICE.note.charAt(0).toLowerCase()}${MM2H_INCOME_PRACTICE.note.slice(1)} (${MM2H_INCOME_PRACTICE.attribution.by}, ${reviewDate(MM2H_INCOME_PRACTICE.attribution.asAt)}.)`,
         },
         {
           q: "Can I move from DE Rantau to MM2H or PVIP later?",
@@ -203,6 +203,16 @@ export default function Page() {
         table published in December 2025 sets out fixed deposit, property
         threshold, participation fee, minimum age and minimum stay for every
         tier, and there is no monthly income line anywhere in it.
+      </p>
+
+      <p>
+        Read that precisely, though, because it is easy to over-read.{" "}
+        {MM2H_INCOME_PRACTICE.note}{" "}
+        <em>
+          {MM2H_INCOME_PRACTICE.attribution.by}, as at{" "}
+          {reviewDate(MM2H_INCOME_PRACTICE.attribution.asAt)} &mdash; practice
+          rather than a published rule, since MOTAC states no figure either way.
+        </em>
       </p>
 
       <p>
@@ -393,8 +403,9 @@ export default function Page() {
       <p>
         What PVIP buys is genuinely different from MM2H. There is{" "}
         <strong>no age limit at all</strong>. There is{" "}
-        <strong>no minimum stay requirement</strong>. Work rights are full rather
-        than restricted, so you do not need a separate permit to earn here. And
+        <strong>no minimum stay requirement</strong>. Work rights are full, where
+        Silver and Gold bar business and career activity outright, so you do not
+        need a separate permit to earn here. And
         dependants are defined broadly enough to include foreign domestic
         helpers, which for a family moving with staff is not a footnote.
       </p>

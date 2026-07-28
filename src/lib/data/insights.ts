@@ -130,6 +130,20 @@ export const hasIndex: Record<InsightCategory, boolean> = {
  */
 export const insights: Insight[] = [
   {
+    slug: "mm2h-platinum-vs-pvip",
+    category: "comparisons",
+    title:
+      "MM2H Platinum vs. PVIP: Which 20-Year Malaysia Visa Actually Costs Less?",
+    dek: "Both run twenty years, both charge RM200,000, and since December 2025 both let you work — so the tiebreaker everyone still quotes is gone. One question separates them: whether you can prove RM40,000 a month. If you can, PVIP locks a fraction of the capital. If you cannot, PVIP is shut at any price.",
+    published: "2026-07-28",
+    reviewed: "2026-07-28",
+    readingMinutes: 7,
+    relatedGuides: [
+      { path: "/visas/pvip/", title: "the PVIP guide" },
+      { path: "/visas/mm2h/", title: "the MM2H guide" },
+    ],
+  },
+  {
     slug: "mm2h-vs-pvip-vs-de-rantau",
     category: "comparisons",
     title: "MM2H vs. PVIP vs. DE Rantau: Which Malaysia Visa Fits Your Income?",

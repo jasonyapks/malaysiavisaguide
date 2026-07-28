@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { GuideLayout, Section } from "@/components/GuideLayout";
 import { images } from "@/lib/images";
 import { TierTable } from "@/components/TierTable";
-import { getProgramme } from "@/lib/data/programmes";
+import { getProgramme, MM2H_INCOME_PRACTICE } from "@/lib/data/programmes";
+import { reviewDate } from "@/lib/format";
 
 const silver = getProgramme("mm2h-silver")!;
 const gold = getProgramme("mm2h-gold")!;
@@ -66,6 +67,10 @@ export default function Page() {
         {
           q: "Why is Platinum's participation fee RM200,000 when Gold's is RM3,000?",
           a: "Because they are structured as different products rather than as a simple ladder. Silver charges RM1,000, Gold RM3,000, Platinum RM200,000. The processing fee is the same across all three: RM5,000 for the principal and RM2,500 per dependant.",
+        },
+        {
+          q: "Does MM2H have an income requirement?",
+          a: `${MM2H_INCOME_PRACTICE.note} Qualification itself is on capital — the fixed deposit and the property purchase — which is why MM2H stays open to applicants whose wealth is in assets rather than in monthly income. Stated by ${MM2H_INCOME_PRACTICE.attribution.by}, ${reviewDate(MM2H_INCOME_PRACTICE.attribution.asAt)}; MOTAC's guide publishes no income figure either way.`,
         },
         {
           q: "Is there tax on my foreign income?",

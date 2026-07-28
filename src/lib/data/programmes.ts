@@ -176,6 +176,27 @@ export type Programme = {
 const MM2H_SOURCE =
   "https://www.motac.gov.my/wp-content/uploads/2025/12/Guide-Malaysia-My-Second-Home.pdf";
 
+/**
+ * The caveat that has to travel with `incomeRequirement: null` on MM2H.
+ *
+ * "No income requirement" is true and is the most useful single fact about the
+ * programme — it is why an asset-rich, income-light applicant can take MM2H and
+ * cannot take PVIP. But stated bare it invites the wrong inference, that an
+ * applicant may turn up with nothing to show. No threshold is published and none
+ * is scored; sustainability is still looked at, and an application is stronger
+ * with bank statements or proof of income attached.
+ *
+ * This is practice, not a published rule, so it carries a named and dated
+ * attribution wherever it is rendered — the same standard as any other figure
+ * the official document does not yet state. It lives here rather than in three
+ * page bodies because three copies of a nuance drift apart, and the flat claim
+ * is made in three places.
+ */
+export const MM2H_INCOME_PRACTICE = {
+  note: "No income threshold is published and none is applied. That is not the same as bringing nothing: an applicant is still expected to show they can sustain themselves in Malaysia, so bank statements or proof of income are worth attaching even though no figure has to be met.",
+  attribution: { by: "MYPVIP practice", asAt: "2026-07-28" } satisfies Attribution,
+} as const;
+
 const MM2H_COMMON = {
   category: "long-stay" as const,
   authority: "MOTAC (One Stop Centre MM2H)",
