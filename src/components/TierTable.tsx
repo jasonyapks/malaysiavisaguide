@@ -47,6 +47,10 @@ export function TierTable({
       label: "Property purchase",
       cell: (p) =>
         p.propertyPurchaseMin ? `From ${money(p.propertyPurchaseMin)}` : "Optional",
+      // "From RM600,000" read alone is the most expensive misreading on the
+      // site: the state's foreign-buyer floor is usually the higher of the two
+      // and is the one that binds. The figure cannot ship without it.
+      note: (p) => p.propertyStateFloorNote ?? null,
     },
     { label: "Term", cell: (p) => `${years(p.tenureYears)}, renewable` },
     {
@@ -59,12 +63,34 @@ export function TierTable({
             })
           : "—",
     },
+    // The largest fee on every MM2H tier, and the row that shows the structural
+    // difference: on MM2H the agency fee is a published government figure, on
+    // PVIP it is commercial and unpublished. Omitting it flattered MM2H by tens
+    // of thousands of ringgit.
+    {
+      label: "Agency fee",
+      cell: (p) => {
+        const fee = p.governmentExtras?.agencyFee;
+        if (fee) return money({ amount: fee.principal, currency: fee.currency });
+        return "Not government-set";
+      },
+      note: (p) => {
+        const fee = p.governmentExtras?.agencyFee;
+        return fee
+          ? `${fee.note} Covers ${fee.includes.join("; ").toLowerCase()}. ${fee.paymentTerms}`
+          : "Set commercially by the agency and published nowhere official. Get the figure in writing before committing.";
+      },
+    },
     {
       label: "Processing fee",
       cell: (p) =>
         p.processingFee
           ? `${money({ amount: p.processingFee.principal, currency: p.processingFee.currency })} principal`
           : "—",
+      note: (p) =>
+        p.governmentExtras?.agencyFee?.absorbsPrincipalProcessingFee
+          ? "Already inside the agency fee above — it should not appear twice on a quote."
+          : null,
     },
     { label: "Minimum age", cell: (p) => (p.minAge ? `${p.minAge}` : "None") },
     {

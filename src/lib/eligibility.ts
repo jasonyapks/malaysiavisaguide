@@ -26,7 +26,7 @@ import { money, moneyPer } from "@/lib/format";
  * `programmes.ts` via `format.ts`. The results screen discloses that the real
  * rate the user gets is part of the real cost. See SPEC.md §4.1.
  */
-export const INDICATIVE_USD_TO_MYR = 4.7;
+export const INDICATIVE_USD_TO_MYR = 4.1;
 
 export type Goal = "live" | "remote" | "job" | "study";
 

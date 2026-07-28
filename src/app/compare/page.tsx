@@ -99,23 +99,44 @@ export default function Page() {
             <strong className="text-ink">
               A fixed deposit is not a cost.
             </strong>{" "}
-            It stays your money. The participation and processing fees are the
-            money that actually leaves. On MM2H Silver that difference is
-            USD 150,000 committed against RM6,000 genuinely spent — and the
-            compulsory RM600,000 property is a third category again.
-          </p>
-          <p>
-            <strong className="text-ink">Agent fees are not published.</strong>{" "}
-            No government source states them, so they appear nowhere in this
-            table. They are real, they vary widely, and you should get the
-            figure in writing before committing to anything.
+            It stays your money. The fees are the money that actually leaves. On
+            MM2H Silver that difference is USD 150,000 committed against
+            RM46,000 genuinely spent — RM1,000 participation, RM5,000 processing
+            and a RM40,000 government-set agency fee — and the compulsory
+            RM600,000 property is a third category again.
           </p>
           <p>
             <strong className="text-ink">
-              Only PVIP carries a full work right.
+              Agent fees are fixed on MM2H and not on PVIP.
             </strong>{" "}
-            MM2H and S-MM2H do not. If you intend to earn a living in Malaysia,
-            that single row narrows the field faster than any of the money.
+            This is the reverse of how the market is usually described. MM2H
+            agency fees are set by the government — RM40,000 Silver, RM55,000
+            Gold, RM70,000 Platinum, all inclusive of 8% SST — so a higher quote
+            is wrong rather than expensive. PVIP agency fees are commercial,
+            published nowhere official, and the one number on this page you have
+            to get in writing yourself.
+          </p>
+          <p>
+            <strong className="text-ink">
+              The property minimum is not the price you will pay.
+            </strong>{" "}
+            MM2H&apos;s figures are national minimums. A foreign buyer must also
+            clear the state&apos;s own floor — RM2,000,000 in Selangor,
+            RM1,000,000 in Kuala Lumpur — and where that is higher, it is the
+            one that binds. Silver&apos;s RM600,000 is the number this catches
+            hardest.
+          </p>
+          <p>
+            <strong className="text-ink">
+              The work right is a tier question, not a programme question.
+            </strong>{" "}
+            PVIP and MM2H Platinum both carry it — MOTAC&apos;s December 2025
+            guide marks business, investment and career activity{" "}
+            <em>Permissible</em> on Platinum. MM2H Silver and Gold bar it
+            outright, and S-MM2H is restricted. So &ldquo;MM2H doesn&apos;t let
+            you work&rdquo; is only true of two tiers out of three, and if you
+            intend to earn a living in Malaysia the row above narrows the field
+            to PVIP and Platinum rather than to PVIP alone.
           </p>
         </div>
       </section>

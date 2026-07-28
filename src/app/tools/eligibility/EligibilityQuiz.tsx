@@ -58,20 +58,24 @@ const STEPS: Record<StepId, Step> = {
     choices: [
       { label: "Under RM 500,000", patch: { capitalMYR: 0 } },
       { label: "RM 500,000 – RM 1 million", patch: { capitalMYR: 500_000 } },
+      // Band edges are the USD floors converted at INDICATIVE_USD_TO_MYR, so
+      // they move when the rate does. At RM4.10 the top two bands sit lower
+      // than they did at RM4.70 — a reader with RM2.1 million now clears the
+      // USD 500,000 tier, and did not before.
       {
-        label: "RM 1 million – RM 2.35 million",
+        label: "RM 1 million – RM 2.05 million",
         hint: "≈ USD 150,000 – 500,000",
         patch: { capitalMYR: 1_000_000 },
       },
       {
-        label: "RM 2.35 million – RM 4.7 million",
+        label: "RM 2.05 million – RM 4.1 million",
         hint: "≈ USD 500,000 – 1 million",
-        patch: { capitalMYR: 2_350_000 },
+        patch: { capitalMYR: 2_050_000 },
       },
       {
-        label: "More than RM 4.7 million",
+        label: "More than RM 4.1 million",
         hint: "≈ USD 1 million+",
-        patch: { capitalMYR: 4_700_000 },
+        patch: { capitalMYR: 4_100_000 },
       },
     ],
   },

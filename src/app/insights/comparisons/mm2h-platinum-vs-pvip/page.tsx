@@ -10,7 +10,11 @@ import {
 import { DataTable } from "@/components/DataTable";
 import { SupersededNotice } from "@/components/SupersededNotice";
 import { insightPath, insights } from "@/lib/data/insights";
-import { getProgramme, MM2H_INCOME_PRACTICE } from "@/lib/data/programmes";
+import {
+  getProgramme,
+  MM2H_AGENCY_FEE_ATTRIBUTION,
+  MM2H_INCOME_PRACTICE,
+} from "@/lib/data/programmes";
 import { money, moneyPer, reviewDate, years } from "@/lib/format";
 import { site } from "@/lib/site";
 
@@ -70,7 +74,15 @@ export default function Page() {
         },
         {
           q: "Which one needs less money up front?",
-          a: "PVIP, and not by a small margin. PVIP pledges RM1,000,000 on fixed deposit and compels no property purchase. Platinum pledges USD1,000,000 and compels a residence of RM2,000,000 or above that you cannot sell for ten years. The participation fee is RM200,000 on both.",
+          a: "PVIP, and not by a small margin, on capital. PVIP pledges RM1,000,000 on fixed deposit and compels no property purchase. Platinum pledges USD1,000,000 and compels a residence of RM2,000,000 or above that you cannot sell for ten years. The participation fee is RM200,000 on both. Fees run the other way once a family is involved: Platinum's agency fee is a government-fixed RM70,000 and its participation fee is charged per application, while PVIP charges RM100,000 or RM50,000 per dependant plus a RM2,000 per person per year pass fee.",
+        },
+        {
+          q: "Which one is better for a large family?",
+          a: "Platinum, on fees. MM2H charges its participation fee per application, so four dependants add roughly RM27,000 in processing, additional agency and pass fees over a five-year initial approval. PVIP charges per person: the same four cost RM400,000 in participation fees at the twenty-year term, plus RM40,000 of pass fees. Platinum also admits a wider family — children up to 35 while unmarried, and both sets of parents. The capital gap still runs the other way, so run your own numbers rather than treating this as decisive.",
+        },
+        {
+          q: "What if I want to rent rather than buy?",
+          a: "Then PVIP, clearly. PVIP compels no property purchase on any timescale. Platinum's purchase is compulsory after approval, so you cannot rent for a year, learn the market and then decide. Renting also keeps you out of the state-law thresholds that sit above the programme minimum — RM2,000,000 in Selangor, RM1,000,000 in Kuala Lumpur.",
         },
         {
           q: "What if I cannot show RM40,000 a month?",
@@ -177,6 +189,19 @@ export default function Page() {
             ],
           },
           {
+            label: <strong>Agency fee</strong>,
+            cells: [
+              {
+                value: money({
+                  amount: platinum.governmentExtras!.agencyFee!.principal,
+                  currency: "MYR",
+                }),
+                note: 5,
+              },
+              { value: "Set by the agency", note: 6 },
+            ],
+          },
+          {
             label: <strong>Participation fee</strong>,
             cells: [
               {
@@ -227,8 +252,10 @@ export default function Page() {
         notes={[
           `${MM2H_INCOME_PRACTICE.note} ${MM2H_INCOME_PRACTICE.attribution.by}, as at ${reviewDate(MM2H_INCOME_PRACTICE.attribution.asAt)}.`,
           pvip.fixedDeposit!.withdrawable!,
-          "Compulsory after approval, and the residence may not be sold for ten years unless you are upgrading to one of higher value.",
-          "For the principal, whose term is fixed. A dependant chooses their own: RM100,000 for 20 years, or RM50,000 for 10.",
+          `Compulsory after approval, and the residence may not be sold for ten years unless you are upgrading to one of higher value. ${platinum.propertyStateFloorNote!}`,
+          "For the principal, whose term is fixed. A dependant chooses their own: RM100,000 for 20 years, or RM50,000 for 10 years. PVIP charges this per person; MM2H charges its participation fee per application.",
+          `Fixed by the government and inclusive of 8% SST, so there is nothing to shop around for. It covers the main applicant's processing fee, their first five years of pass fee and visa fee, and their security bond. ${MM2H_AGENCY_FEE_ATTRIBUTION.by}, as at ${reviewDate(MM2H_AGENCY_FEE_ATTRIBUTION.asAt)}.`,
+          "PVIP agency fees are commercial and are published nowhere official — this is the one line on the table with no figure behind it, and the one to get in writing before committing. PVIP also charges a pass fee of RM2,000 per person per year of the approved term, plus a nationality-set visa fee and security bond, none of which any agency fee covers.",
         ]}
       />
 
@@ -243,15 +270,95 @@ export default function Page() {
 
       <H2>Which one is yours</H2>
 
+      <H3>You are bringing a large family</H3>
+
+      <p>
+        Platinum, and the reason is arithmetic rather than policy. MM2H charges
+        its {money({ amount: platinum.participationFee!.principal, currency: "MYR" })}{" "}
+        participation fee <strong>per application</strong>, so a dependant adds
+        the {money({ amount: platinum.processingFee!.dependant, currency: "MYR" })}{" "}
+        processing fee, {money({ amount: 2_160, currency: "MYR" })} of additional
+        agency fee from the second dependant onwards, and small per-year pass and
+        visa fees. PVIP charges its participation fee{" "}
+        <strong>per person</strong>: {money({ amount: 100_000, currency: "MYR" })}{" "}
+        for a dependant on the twenty-year term, or{" "}
+        {money({ amount: 50_000, currency: "MYR" })} on the ten.
+      </p>
+
+      <p>
+        Take a couple with two children and a parent — four dependants. On
+        Platinum that is {money({ amount: 10_000, currency: "MYR" })} of
+        processing fees, {money({ amount: 6_480, currency: "MYR" })} of
+        additional agency fee, and {money({ amount: 10_000, currency: "MYR" })}{" "}
+        of pass fees across a five-year initial approval: under{" "}
+        {money({ amount: 27_000, currency: "MYR" })} all in. The same four on
+        PVIP cost {money({ amount: 400_000, currency: "MYR" })} in participation
+        fees at the twenty-year term, before the pass fee adds{" "}
+        {money({ amount: 40_000, currency: "MYR" })} more.
+      </p>
+
+      <p>
+        The capital gap runs the other way and is larger, so this does not
+        overturn the comparison on its own. But past three or four dependants
+        the fee gap stops being a rounding error and starts closing it, and
+        Platinum takes a wider family in the first place: children up to 35 while
+        unmarried, and both sets of parents. Run your own family size through the{" "}
+        <Link href="/tools/cost-calculator/">cost calculator</Link> rather than
+        taking the couple above as representative.
+      </p>
+
+      <H3>You have decided to buy property in Malaysia</H3>
+
+      <p>
+        Platinum, because the thing that looks like its worst term is not a cost
+        to you. The compulsory {money(platinum.propertyPurchaseMin!)} residence
+        is capital you were going to commit anyway, and the ten-year sale
+        restriction only bites if you intended to trade it. Read that alongside
+        the state floor: a foreign buyer in Selangor faces a RM2,000,000
+        threshold regardless of programme, so on Platinum the programme minimum
+        and the state minimum are the same number, and the requirement costs you
+        nothing you were not already spending.
+      </p>
+
+      <p>
+        The condition attached to it is the stay. {platinum.minStayPerYear} If
+        you are under 50 and genuinely in Malaysia for a season each year, that
+        is satisfied without planning around it — and it is met between the main
+        applicant and/or spouse and dependants rather than by you alone, so a
+        family clears it more easily than one person does. If you are not, it is
+        a recurring obligation PVIP does not have at all.
+      </p>
+
+      <H3>You would rather rent, or are not ready to buy</H3>
+
+      <p>
+        PVIP, and this is the cleanest case for it. PVIP compels no property
+        purchase on any timescale. Platinum compels one after approval — so
+        &ldquo;I will decide where to live once I have spent a year there&rdquo;
+        is not available on Platinum, and a first-year purchase made under
+        deadline in a market you do not yet know is an expensive way to satisfy a
+        visa condition.
+      </p>
+
+      <p>
+        Renting keeps the choice open, keeps your capital liquid, and keeps you
+        out of the state-threshold question altogether. Add the missing minimum
+        stay and PVIP becomes the low-commitment option on every axis except the
+        income test — which is the one axis where it is the strict one.
+      </p>
+
       <H3>You have income you can document</H3>
 
       <p>
-        PVIP, almost certainly. You get the same twenty years and the same work
-        rights for a fraction of the committed capital, with no property purchase
-        forced on you, no minimum stay, and no age limit. If someone is steering
-        you towards Platinum while you comfortably clear{" "}
-        {moneyPer(pvip.incomeRequirement!)}, ask them to put the reason in
-        writing.
+        PVIP, unless one of the two cases above applies to you. You get the same
+        twenty years and the same work rights for a fraction of the committed
+        capital, with no property purchase forced on you, no minimum stay, and no
+        age limit. The exceptions are real, though: a large family or a purchase
+        you had already decided on can outweigh the capital saving, and those are
+        the reasons an honest agent would give you. If someone is steering you
+        towards Platinum while you comfortably clear{" "}
+        {moneyPer(pvip.incomeRequirement!)} and neither exception fits, ask them
+        to put the reason in writing.
       </p>
 
       <H3>You are asset-rich and income-light</H3>
@@ -293,7 +400,7 @@ export default function Page() {
       <p>
         <strong>Platinum</strong> asks for a great deal of capital and then
         immobilises more of it: a US dollar deposit, half of which stays put
-        until the second year, plus a residence you cannot sell for ten years.
+        for the life of the pass, plus a residence you cannot sell for ten years.
         It also carries a {platinum.minStayShort} requirement and a minimum age
         of {platinum.minAge}, neither of which PVIP has.
       </p>

@@ -10,7 +10,13 @@ import {
 import { DataTable } from "@/components/DataTable";
 import { SupersededNotice } from "@/components/SupersededNotice";
 import { insightPath, insights } from "@/lib/data/insights";
-import { getProgramme, MM2H_INCOME_PRACTICE } from "@/lib/data/programmes";
+import {
+  getProgramme,
+  MM2H_AGENCY_FEE_ATTRIBUTION,
+  MM2H_AGENCY_FEE_TERMS,
+  MM2H_FD_WITHDRAWAL,
+  MM2H_INCOME_PRACTICE,
+} from "@/lib/data/programmes";
 import { money, moneyPer, reviewDate } from "@/lib/format";
 import { site } from "@/lib/site";
 
@@ -74,11 +80,11 @@ export default function Page() {
         },
         {
           q: "Can my spouse take a shorter PVIP term than mine?",
-          a: "Yes, and it is the cheaper route. Your own term is fixed at 20 years, but each dependant chooses: RM100,000 for 20 years, or RM50,000 for 10. For a couple that is a RM50,000 decision, so it is worth making deliberately rather than by default.",
+          a: "Yes, and it is the cheaper route. Your own term is fixed at 20 years, but each dependant chooses: RM100,000 for 20 years, or RM50,000 for 10 years. For a couple that is a RM50,000 decision, so it is worth making deliberately rather than by default.",
         },
         {
           q: "Is the fixed deposit gone for good?",
-          a: "No. It stays in your name, it earns interest, and up to half of the principal may be withdrawn from the second year onwards after approval — against a residence purchase, education, or medical and tourism activities in Malaysia. What you do not get back is the participation and processing fees.",
+          a: "No. It stays in your name, it earns interest, and up to half of the principal may be withdrawn once the application is approved — against a residence purchase, education, or medical and tourism activities in Malaysia. What you do not get back is the participation and processing fees.",
         },
         {
           q: "I am 62. Does the minimum stay apply to me?",
@@ -293,22 +299,34 @@ export default function Page() {
           "Fixed deposit",
           "Property purchase floor",
           "Participation fee",
+          "Agency fee",
           "Visa term",
         ]}
         rows={[silver, gold, platinum].map((t) => ({
           label: <strong>{t.name.replace("MM2H ", "")}</strong>,
           cells: [
             { value: money(t.fixedDeposit!) },
-            { value: money(t.propertyPurchaseMin!) },
+            { value: money(t.propertyPurchaseMin!), note: 1 },
             {
               value: money({
                 amount: t.participationFee!.principal,
                 currency: "MYR",
               }),
             },
+            {
+              value: money({
+                amount: t.governmentExtras!.agencyFee!.principal,
+                currency: "MYR",
+              }),
+              note: 2,
+            },
             { value: `${t.tenureYears} years` },
           ],
         }))}
+        notes={[
+          silver.propertyStateFloorNote!,
+          `Fixed by the government, not by the agency, and inclusive of 8% SST — a higher quote is wrong rather than expensive. It covers the main applicant's processing fee, their first five years of pass fee and visa fee, and their security bond. ${MM2H_AGENCY_FEE_TERMS} ${MM2H_AGENCY_FEE_ATTRIBUTION.by}, as at ${reviewDate(MM2H_AGENCY_FEE_ATTRIBUTION.asAt)}.`,
+        ]}
         idPrefix="mm2h-tiers"
       />
 
@@ -319,11 +337,16 @@ export default function Page() {
         {money({ amount: silver.processingFee!.dependant, currency: "MYR" })} per
         dependant across all three tiers &mdash; and the participation fee above
         is charged per application, not per person, so a dependant adds that
-        processing fee plus their own medical insurance and medical examination
-        rather than a second participation fee. Minimum age is {silver.minAge}{" "}
-        &mdash; not 30, whatever you have read elsewhere. Up to half the deposit
-        can be withdrawn after one year in the programme, against property,
-        medical, education or tourism spending in Malaysia.
+        processing fee, a {money({ amount: 500, currency: "MYR" })} per-year pass
+        fee, a visa fee set by their nationality, a{" "}
+        {money({ amount: 10, currency: "MYR" })} security bond, and — from the
+        second dependant onwards —{" "}
+        {money({ amount: 2_160, currency: "MYR" })} of additional agency fee,
+        rather than a second participation fee. The main applicant&apos;s
+        processing fee is already inside the agency fee in the table above and
+        should not appear twice on a quote. Minimum age is {silver.minAge}{" "}
+        &mdash; not 30, whatever you have read elsewhere.{" "}
+        {MM2H_FD_WITHDRAWAL}
       </p>
 
       <p>Two things to weigh properly.</p>
@@ -394,6 +417,22 @@ export default function Page() {
         . For a couple that is a{" "}
         {money({ amount: 50_000, currency: "MYR" })} decision on its own, and it
         is one people make by default rather than deliberately.
+      </p>
+
+      <p>
+        Three further government charges sit outside the participation fee and
+        are routinely left out of quotes. The pass fee is{" "}
+        {money({ amount: 2_000, currency: "MYR" })} per person per year of the
+        approved term, collected up front &mdash; and because the approval is
+        capped by passport validity, a five-year issuance means{" "}
+        {money({ amount: 10_000, currency: "MYR" })} a head, not{" "}
+        {money({ amount: 2_000, currency: "MYR" })}. A multiple-entry visa fee
+        and a security bond follow, both set by nationality: the bond runs from{" "}
+        {money({ amount: 200, currency: "MYR" })} to{" "}
+        {money({ amount: 2_000, currency: "MYR" })} for the main applicant and is
+        a flat {money({ amount: 10, currency: "MYR" })} per dependant. Unlike
+        MM2H, PVIP&apos;s agency fee is commercial rather than government-set, so
+        it is the one figure nobody publishes and the one to get in writing.
       </p>
 
       {/* Data-driven: the day Immigration republishes its FAQ and the entry is

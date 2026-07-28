@@ -85,6 +85,77 @@ export type Superseded = {
   figuresPending: boolean;
 };
 
+/**
+ * Government charges that sit outside the participation and processing fees.
+ *
+ * These were missing from the site entirely until 2026-07-28, and their absence
+ * flattered both programmes: a PVIP applicant on a five-year initial approval
+ * pays RM10,000 in pass fees alone, and an MM2H applicant pays a government-set
+ * agency fee that is larger than every other fee on the tier combined. A cost
+ * page that omits them is not a cost page.
+ *
+ * Two of them — the multiple-entry visa fee and the principal's security bond —
+ * are priced by nationality, not by programme. Those amounts live in
+ * `nationality-fees.ts`; a programme only declares that it charges them.
+ */
+export type GovernmentExtras = {
+  /**
+   * Immigration pass fee, per person per year of the approved term. Collected
+   * for the whole term when the visa is issued or renewed, not annually.
+   */
+  passFeePerYear?: {
+    principal?: number;
+    dependant?: number;
+    currency: Currency;
+    note: string;
+  };
+  /** Multiple-entry visa fee. Amount is nationality-dependent. */
+  visaFee?: {
+    appliesTo: ("principal" | "dependant")[];
+    /** True where the fee is charged for each year of the term. */
+    perYear: boolean;
+    note: string;
+  };
+  /** Security bond. The principal's is nationality-dependent; a dependant's is flat. */
+  securityBond?: {
+    principalByNationality: boolean;
+    dependant?: number;
+    currency: Currency;
+    note: string;
+  };
+  /**
+   * Agency fee, where the government fixes it. MM2H only — PVIP agency fees are
+   * set by the agency and are deliberately absent rather than guessed at.
+   */
+  agencyFee?: {
+    principal: number;
+    /** Charged per dependant beyond `dependantsIncluded`. */
+    perDependant: number;
+    /** How many dependants the principal's fee already covers. */
+    dependantsIncluded: number;
+    currency: Currency;
+    /** What the principal's fee already contains, so nothing is double-counted. */
+    includes: string[];
+    /** True where the principal's processing fee is inside the agency fee. */
+    absorbsPrincipalProcessingFee: boolean;
+    /** When each part of it falls due. */
+    paymentTerms: string;
+    note: string;
+  };
+  /**
+   * Years the initial approval runs, and the multiplier every per-year fee is
+   * priced over.
+   *
+   * Five on both programmes, and fixed rather than offered as a choice: MM2H's
+   * agency fee is written against exactly five years, and PVIP's approval is
+   * capped by passport validity, where five is the ordinary case. The
+   * calculator briefly let a reader vary it; Jason cut that on 2026-07-28
+   * because a term dial invites the reader to model an edge case instead of
+   * reading the figure that will actually be quoted to them.
+   */
+  defaultTermYears: number;
+};
+
 export type Programme = {
   slug: ProgrammeSlug;
   name: string;
@@ -103,6 +174,17 @@ export type Programme = {
   fixedDeposit: (Money & { withdrawable?: string }) | null;
   incomeRequirement: (Money & { period: "month" | "year" }) | null;
   propertyPurchaseMin: Money | null;
+  /**
+   * Qualifies `propertyPurchaseMin` where a state floor overrides it.
+   *
+   * The programme minimum is a national figure, but a foreigner buying property
+   * in Malaysia must also clear the threshold set by the state the property sits
+   * in — and in the two states most applicants actually buy in, that threshold
+   * is several times the programme's. Rendered anywhere the minimum is, because
+   * "from RM600,000" read alone is the single most expensive misunderstanding
+   * on this site.
+   */
+  propertyStateFloorNote?: string;
   participationFee:
     | {
         principal: number;
@@ -144,6 +226,8 @@ export type Programme = {
   sponsorShort: string | null;
   /** Work/study only: minimum monthly salary the role must pay. */
   salaryFloor: Money | null;
+  /** Government charges beyond the participation and processing fees. */
+  governmentExtras?: GovernmentExtras;
   /** Official URL — every claim traceable. */
   source: string;
   /** ISO date. */
@@ -229,14 +313,103 @@ const MM2H_COMMON = {
   lastVerified: "2026-07-28",
 };
 
-// Phrased from the guide's summary page (p.18), which is the fuller of the two
-// statements it makes. The per-category pages (pp.28, 33, 37) drop the "second
-// year onwards" timing and say only "after the approval ... has been obtained";
-// they are an abbreviation of this, not a competing rule — both carry the same
-// "after approval" clause. Quote the timed version, since the untimed one would
-// read as "withdraw on day one".
-const MM2H_FD_WITHDRAWAL =
-  "Up to 50% of the principal may be withdrawn from the second year onwards after approval, for purchasing a residence, education, medical or tourism activities in Malaysia.";
+// The per-category pages (pp.28, 33, 37) are the operative statement: the
+// withdrawal right opens on approval, with no waiting period. The summary page
+// (p.18) adds a "second year onwards" gloss that this site quoted until
+// 2026-07-28; Jason corrected it that day — in practice the window is from
+// approval, and the earlier wording cost applicants a year they did not owe.
+export const MM2H_FD_WITHDRAWAL =
+  "Up to 50% of the principal may be withdrawn once the application is approved, for purchasing a residence, education, medical or tourism activities in Malaysia.";
+
+/**
+ * The state-law floor that sits on top of every MM2H property minimum.
+ *
+ * MOTAC's own fee schedule carries the caveat — "Minimum purchase prices are
+ * also subject to respective State Laws" — but the number that reaches readers
+ * is always the programme's, and the gap is enormous: a Silver applicant told
+ * "from RM600,000" who intends to buy in Selangor is looking at RM2,000,000.
+ * Attached to all three tiers, since a state floor above the tier minimum binds
+ * on Gold as well as Silver.
+ */
+const MM2H_PROPERTY_STATE_FLOOR =
+  "This is the programme's national minimum, not the price you will actually be allowed to buy at. A foreign buyer must also clear the floor set by the state the property sits in, and in the two states most applicants buy in that floor is higher: RM2,000,000 in Selangor and RM1,000,000 in Kuala Lumpur. Where the state floor is the higher of the two, it is the one that binds.";
+
+/**
+ * MM2H agency fees are set by the government, not by the agency.
+ *
+ * This is the opposite of PVIP, where the agency fee is commercial and
+ * unpublished, and it is worth stating plainly: on MM2H there is nothing to
+ * shop around for, and a quote above these figures is wrong rather than
+ * expensive. All figures include 8% SST. Supplied by Jason on 2026-07-28 from
+ * the MM2H fee structure and schedule; MOTAC's December 2025 guide does not
+ * publish them, so they carry the attribution below.
+ */
+export const MM2H_AGENCY_FEE_ATTRIBUTION: Attribution = {
+  by: "MYPVIP, from the government MM2H fee schedule",
+  asAt: "2026-07-28",
+};
+
+/**
+ * PVIP's pass fee, visa fee and security bond rest on the same footing as the
+ * rest of the 2026 terms: Immigration's published FAQ states none of them.
+ * The superseded notice on the guide page covers the terms; this covers the
+ * fee schedule specifically, so the section that introduces it can say whose
+ * word it is on without borrowing the notice's.
+ */
+export const PVIP_GOVERNMENT_FEE_ATTRIBUTION: Attribution = {
+  by: "MYPVIP, from the Immigration Department fee schedules",
+  asAt: "2026-07-28",
+};
+
+/** Payment terms attached to the government-fixed agency fee. */
+export const MM2H_AGENCY_FEE_TERMS =
+  "20% of the agency fee is payable on submission and the remaining 80% after approval. All agency fees are inclusive of 8% SST.";
+
+const MM2H_AGENCY_FEE_INCLUDES = [
+  "The main applicant's processing fee",
+  "The main applicant's first five years of pass fee and visa fee",
+  "The main applicant's security bond",
+];
+
+function mm2hAgencyFee(principal: number) {
+  return {
+    principal,
+    // From the 2nd dependant onwards, so the first is already covered.
+    perDependant: 2_160,
+    dependantsIncluded: 1,
+    currency: "MYR" as const,
+    includes: MM2H_AGENCY_FEE_INCLUDES,
+    absorbsPrincipalProcessingFee: true,
+    paymentTerms: MM2H_AGENCY_FEE_TERMS,
+    note: "Fixed by the government, not by the agency — there is nothing to negotiate here, and a quote above this figure is wrong rather than expensive.",
+  };
+}
+
+/**
+ * Everything a dependant is charged that the principal's agency fee does not
+ * cover. Identical across the three tiers.
+ */
+const MM2H_GOVERNMENT_EXTRAS = {
+  passFeePerYear: {
+    dependant: 500,
+    currency: "MYR" as const,
+    note: "Per dependant per year of the approved term, paid to Immigration at the approval stage. The main applicant's first five years are already inside the agency fee.",
+  },
+  visaFee: {
+    appliesTo: ["dependant"] as ("principal" | "dependant")[],
+    perYear: true,
+    note: "Per dependant per year, set by the dependant's nationality. The main applicant's first five years are already inside the agency fee.",
+  },
+  securityBond: {
+    principalByNationality: false,
+    dependant: 10,
+    currency: "MYR" as const,
+    note: "RM10 per dependant, one-off. The main applicant's bond is inside the agency fee.",
+  },
+  // The initial approval runs five years, which is what the agency fee's
+  // inclusion of "the first five years" is measured against.
+  defaultTermYears: 5,
+};
 
 export const programmes: Programme[] = [
   {
@@ -288,6 +461,33 @@ export const programmes: Programme[] = [
     sponsor: null,
     sponsorShort: null,
     salaryFloor: null,
+    // Three government charges the site omitted until 2026-07-28. On a
+    // five-year initial approval the pass fee alone is RM10,000 a head — an
+    // order of magnitude above the visa fee and bond, and the one most quotes
+    // leave out. Supplied by Jason 2026-07-28; Immigration's FAQ states none of
+    // them, so they rest on the same attribution as the rest of the 2026 terms.
+    governmentExtras: {
+      passFeePerYear: {
+        principal: 2_000,
+        dependant: 2_000,
+        currency: "MYR",
+        note: "RM2,000 per person per year, collected for the whole approved term when the visa is issued and again on renewal. A five-year approval means RM10,000 per person up front, not RM2,000.",
+      },
+      visaFee: {
+        appliesTo: ["principal", "dependant"],
+        perYear: true,
+        note: "The multiple-entry visa fee, set by your nationality rather than by the programme. Small next to everything else here, but it is a real line on the invoice.",
+      },
+      securityBond: {
+        principalByNationality: true,
+        dependant: 10,
+        currency: "MYR",
+        note: "One-off. The main applicant's bond is set by nationality and ranges from RM200 to RM2,000; each dependant is a flat RM10.",
+      },
+      // The approval is capped by passport validity, so five years is the
+      // common case rather than the twenty the programme itself runs.
+      defaultTermYears: 5,
+    },
     source: "https://imigresen-online.imi.gov.my/eservices/doc/FAQ_PVIP.pdf",
     lastVerified: "2026-07-23",
     // The fields above are now the 2026 terms, supplied by Jason on 2026-07-27.
@@ -317,7 +517,12 @@ export const programmes: Programme[] = [
       withdrawable: MM2H_FD_WITHDRAWAL,
     },
     propertyPurchaseMin: { amount: 600_000, currency: "MYR" },
+    propertyStateFloorNote: MM2H_PROPERTY_STATE_FLOOR,
     participationFee: { principal: 1_000, dependant: 0, currency: "MYR" },
+    governmentExtras: {
+      ...MM2H_GOVERNMENT_EXTRAS,
+      agencyFee: mm2hAgencyFee(40_000),
+    },
   },
   {
     ...MM2H_COMMON,
@@ -330,7 +535,12 @@ export const programmes: Programme[] = [
       withdrawable: MM2H_FD_WITHDRAWAL,
     },
     propertyPurchaseMin: { amount: 1_000_000, currency: "MYR" },
+    propertyStateFloorNote: MM2H_PROPERTY_STATE_FLOOR,
     participationFee: { principal: 3_000, dependant: 0, currency: "MYR" },
+    governmentExtras: {
+      ...MM2H_GOVERNMENT_EXTRAS,
+      agencyFee: mm2hAgencyFee(55_000),
+    },
   },
   {
     ...MM2H_COMMON,
@@ -347,7 +557,12 @@ export const programmes: Programme[] = [
       withdrawable: MM2H_FD_WITHDRAWAL,
     },
     propertyPurchaseMin: { amount: 2_000_000, currency: "MYR" },
+    propertyStateFloorNote: MM2H_PROPERTY_STATE_FLOOR,
     participationFee: { principal: 200_000, dependant: 0, currency: "MYR" },
+    governmentExtras: {
+      ...MM2H_GOVERNMENT_EXTRAS,
+      agencyFee: mm2hAgencyFee(70_000),
+    },
   },
 
   {
@@ -504,6 +719,16 @@ export const UNVERIFIED: { slug: ProgrammeSlug; question: string }[] = [
     slug: "pvip",
     question:
       "Is there any citable document for the 2026 terms — circular, gazette, or an updated Immigration FAQ? Everything above currently rests on attribution to MYPVIP practice, which is declared on the page but is a weaker source than a government PDF. Swap it the moment one exists.",
+  },
+  {
+    slug: "pvip",
+    question:
+      "Is the multiple-entry visa fee charged per year of the approved term, or once at issuance? The MM2H schedule marks the equivalent line 'per annum', and the calculator prices PVIP the same way on that basis. The amounts are small (RM6–RM50), so the answer changes very little — but it should be confirmed rather than inferred from the neighbouring programme.",
+  },
+  {
+    slug: "mm2h-silver",
+    question:
+      "The government agency fee schedule prints one figure for 'Silver/SEZ' (RM40,000). Do the SEZ and SFZ tiers really carry the same agency fee as Silver despite a fixed deposit a fifth the size? The SEZ tiers are described in prose on the MM2H guide page but are not modelled as programmes here, so nothing renders the figure for them yet.",
   },
   {
     slug: "student-pass",
