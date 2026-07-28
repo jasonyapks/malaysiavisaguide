@@ -22,7 +22,7 @@ export default function Page() {
       programme={p}
       hero={images.pvip}
       title="Premium Visa Programme (PVIP)"
-      answer="PVIP grants residence in Malaysia for 20 years. You need income of RM40,000 a month — offshore, or Malaysian-sourced with proof of Malaysian income tax paid on it — a RM1 million fixed deposit with a Malaysian bank, and a participation fee of RM200,000 for the principal. A dependant pays RM100,000 for the same 20 years, or RM50,000 for 10 years. On top of that sit the government pass fee of RM2,000 per person per year of the approved term, a multiple-entry visa fee and a security bond, both set by nationality. There is no age limit and no minimum stay."
+      answer="PVIP grants residence in Malaysia for 20 years. You need income of RM40,000 a month — offshore, or Malaysian-sourced with proof of Malaysian income tax paid on it — a RM1 million fixed deposit with a Malaysian bank, and a participation fee of RM200,000 for the principal. A dependant pays RM100,000 for the same 20 years, or RM50,000 for 10 years. The participation fee is not the only government charge: a pass fee of RM2,000 per person per year of the approved term, a multiple-entry visa fee and a security bond follow it, the last two set by nationality. There is no age limit and no minimum stay."
       suits={{
         yes: [
           "You want to work or run a business in Malaysia without committing to property — PVIP and MM2H Platinum both permit it, but only Platinum forces a RM2 million purchase",
@@ -41,11 +41,11 @@ export default function Page() {
       faq={[
         {
           q: "How much does PVIP actually cost in the first year?",
-          a: "RM200,000 for the principal, whose term is fixed at 20 years. Each dependant chooses their own term: RM100,000 for 20 years, or RM50,000 for 10 years. That is a fee, not a deposit — it is not returned. Three government charges sit on top of it: the pass fee at RM2,000 per person per year of the approved term, a multiple-entry visa fee set by your nationality, and a security bond also set by nationality for the main applicant and RM10 for each dependant. On a five-year initial approval the pass fee alone is RM10,000 a head. Separately, RM1,000,000 is placed on fixed deposit, which remains yours and is half withdrawable after six months. Agent fees are additional and, unlike MM2H's, are not set by the government.",
+          a: "RM200,000 for the principal, whose term is fixed at 20 years. Each dependant chooses their own term: RM100,000 for 20 years, or RM50,000 for 10 years. That is a fee, not a deposit — it is not returned. That is the largest of four government fees, not the only one: a pass fee of RM2,000 per person per year of the approved term, a multiple-entry visa fee and a security bond follow it, the last two set by your nationality. On a five-year initial approval the pass fee alone is RM10,000 a head. Separately, RM1,000,000 is placed on fixed deposit, which remains yours and is half withdrawable after six months. Agent fees are additional and, unlike MM2H's, are not set by the government.",
         },
         {
-          q: "What are the PVIP government fees beyond the participation fee?",
-          a: "Three of them. The pass fee is RM2,000 per person per year, collected for the whole approved term when the visa is issued and again at each renewal — a five-year approval means RM10,000 per person, not RM2,000. The multiple-entry visa fee is set by your nationality and runs from about RM6 to RM50 a year. The security bond is one-off: RM200 to RM2,000 for the main applicant depending on passport, and a flat RM10 for each dependant. The cost calculator prices all three against your own nationality and term.",
+          q: "What are the PVIP government fees?",
+          a: "Four. The participation fee is one of them — RM200,000 for the principal, RM100,000 or RM50,000 per dependant — and it is the one everybody quotes. The other three are the pass fee at RM2,000 per person per year of the approved term, a multiple-entry visa fee, and a one-off security bond. The last two are set by your nationality rather than by the programme, so the cost calculator is the place to get your own figure. What is not a government fee is the agency fee: that one is commercial and unpublished.",
         },
         {
           q: "Why is my visa only five years when PVIP runs twenty?",
@@ -121,10 +121,10 @@ export default function Page() {
         </p>
         <ul>
           <li>
-            <strong>Money you do not get back:</strong> the RM200,000
-            participation fee, plus RM100,000 for each dependant on the 20-year
-            term or RM50,000 each on the 10-year one — and the three government
-            charges set out below, which most quotes omit.
+            <strong>Money you do not get back:</strong> the government fees. The
+            RM200,000 participation fee is the largest and the only one most
+            write-ups mention, but the pass fee, visa fee and security bond are
+            government charges too — see below.
           </li>
           <li>
             <strong>Money that stays yours:</strong> the RM1,000,000 fixed
@@ -139,60 +139,57 @@ export default function Page() {
           </li>
         </ul>
         <p>
-          A single applicant is therefore looking at RM200,000 plus the
-          government fees below genuinely spent, and RM1,000,000 committed but
+          A single applicant is therefore looking at a little over RM210,000 in
+          government fees genuinely spent, and RM1,000,000 committed but
           retained — before agent fees.
         </p>
       </Section>
 
-      <Section title="The government fees that are not the participation fee">
+      <Section title="The government fees">
         <p>
-          Three charges sit outside the RM200,000 and are easy to be quoted
-          without. Two of them are set by your nationality rather than by the
-          programme, which is why no single figure can be published for them:
+          The participation fee is a government fee, and it is not the only one.
+          There are four, and a quote that shows you the first and stops has
+          left money out:
         </p>
         <ul>
           <li>
-            <strong>Pass fee — RM2,000 per person per year.</strong> Collected
-            for the whole approved term when the visa is issued, and again at
-            each renewal. The initial approval is capped by your passport&apos;s
-            remaining validity, so five years is the common case: RM2,000 × 5 =
-            RM10,000 for one person, and the same again for every dependant.
-            This is the largest of the three by an order of magnitude and the
-            one most often left out.
+            <strong>Participation fee</strong> — RM200,000 for the principal,
+            RM100,000 or RM50,000 per dependant depending on the term they take.
           </li>
           <li>
-            <strong>Multiple-entry visa fee — by nationality.</strong> Charged
-            per person per year. It ranges from RM6 (Denmark, the United States)
-            to RM50 (India), with RM20 applying to any country the Immigration
-            schedule does not name. Small, but it is a real line on the invoice.
+            <strong>Pass fee</strong> — RM2,000 per person per year of the
+            approved term, collected up front and again at each renewal. On a
+            five-year approval that is RM10,000 a head, which makes it much the
+            largest of the other three.
           </li>
           <li>
-            <strong>Security bond — by nationality, one-off.</strong> RM2,000
-            for Canadian, American, Colombian and most African passports;
-            RM1,500 for Australia, China, Europe, Saudi Arabia, Taiwan and
-            Vietnam; RM1,000 for Japan, South Korea, Hong Kong and Macao; RM750
-            for India, Pakistan, Bangladesh, the Philippines, Myanmar, Nepal and
-            Sri Lanka; RM500 Indonesia, RM300 Thailand, RM200 Singapore. Any
-            country not named pays RM1,500. Each{" "}
-            <em>dependant</em> pays a flat RM10 regardless of passport.
+            <strong>Multiple-entry visa fee</strong> — per person per year, set
+            by your nationality.
+          </li>
+          <li>
+            <strong>Security bond</strong> — one-off, set by your nationality
+            for the main applicant and a flat RM10 per dependant.
           </li>
         </ul>
         <p>
-          The{" "}
-          <a href="/tools/cost-calculator/">cost calculator</a> prices all three
-          against your own nationality and family size, over a five-year initial
-          approval, so you can see the real first-year figure rather than the
-          headline one.
+          The last two are priced by passport rather than by programme, so no
+          single figure can be printed here. The{" "}
+          <a href="/tools/cost-calculator/">cost calculator</a> works all four
+          out against your own nationality and family size, over a five-year
+          initial approval.
+        </p>
+        <p>
+          Only the agency fee sits outside this list. That one is commercial,
+          set by the agency rather than by Immigration, and published nowhere
+          official — get it in writing.
         </p>
         <p>
           <em>
-            Stated by {PVIP_GOVERNMENT_FEE_ATTRIBUTION.by},{" "}
-            {reviewDate(PVIP_GOVERNMENT_FEE_ATTRIBUTION.asAt)}. The
-            Immigration Department&apos;s published PVIP FAQ does not state any
-            of these three charges, and the nationality schedules are not posted
-            at a government URL, so they rest on attribution rather than on the
-            source cited above.
+            Pass fee, visa fee and security bond stated by{" "}
+            {PVIP_GOVERNMENT_FEE_ATTRIBUTION.by},{" "}
+            {reviewDate(PVIP_GOVERNMENT_FEE_ATTRIBUTION.asAt)}. The Immigration
+            Department&apos;s published PVIP FAQ states none of them, so they
+            rest on attribution rather than on the source cited above.
           </em>
         </p>
       </Section>

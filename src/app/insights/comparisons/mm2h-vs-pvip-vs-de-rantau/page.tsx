@@ -420,8 +420,8 @@ export default function Page() {
       </p>
 
       <p>
-        Three further government charges sit outside the participation fee and
-        are routinely left out of quotes. The pass fee is{" "}
+        The participation fee is a government fee, and three more sit alongside
+        it that quotes routinely leave out. The pass fee is{" "}
         {money({ amount: 2_000, currency: "MYR" })} per person per year of the
         approved term, collected up front &mdash; and because the approval is
         capped by passport validity, a five-year issuance means{" "}

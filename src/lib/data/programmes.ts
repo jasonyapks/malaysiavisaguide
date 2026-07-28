@@ -86,7 +86,11 @@ export type Superseded = {
 };
 
 /**
- * Government charges that sit outside the participation and processing fees.
+ * Government charges beyond the participation and processing fees.
+ *
+ * All of these ARE government fees — the participation fee is one too, not a
+ * separate category from them. The split is a modelling convenience only: the
+ * fees above are flat per person, these are priced per year or by passport.
  *
  * These were missing from the site entirely until 2026-07-28, and their absence
  * flattered both programmes: a PVIP applicant on a five-year initial approval
@@ -226,7 +230,7 @@ export type Programme = {
   sponsorShort: string | null;
   /** Work/study only: minimum monthly salary the role must pay. */
   salaryFloor: Money | null;
-  /** Government charges beyond the participation and processing fees. */
+  /** Further government charges, priced per year or by nationality. */
   governmentExtras?: GovernmentExtras;
   /** Official URL — every claim traceable. */
   source: string;
