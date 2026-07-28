@@ -243,7 +243,9 @@ export default function Home() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-6 py-16 md:grid-cols-[0.9fr_1.1fr]">
           <Figure
             image={images.home}
-            aspect="aspect-[4/3]"
+            // Square, not 4/3: the graphic is 1024×997 and object-cover would
+            // crop its title off the top.
+            aspect="aspect-square"
             rounded="rounded-card"
             priority
             sizes="(min-width: 768px) 460px, 100vw"

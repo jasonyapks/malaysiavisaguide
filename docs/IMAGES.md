@@ -65,7 +65,7 @@ were `.jpg`, so ask git for the old extension, not the new one.
 
 | Slot | File to add | Shot brief | Suggested source |
 |---|---|---|---|
-| `home` | `public/images/home-hero.webp` | Warm expat-life scene — balcony, garden or café in KL at golden hour. Not a corporate skyline. | Unsplash → *Adobe Stock* if you want it premium |
+| `home` | `public/images/home-visa-guide.webp` | The paperwork itself — visa application, approval stamp, Malaysian flag. The one composed graphic on the site, supplied by Jason 2026-07-28; it fills the freshness band, which is about checked figures rather than about Malaysian life. Nearly square, so the Figure uses `aspect-square`. | Jason (own asset) |
 | `pvip` | `public/images/pvip.webp` | Upscale modern condo interior with a city view — premium, calm, lived-in. | Unsplash / Adobe Stock |
 | `mm2h` | `public/images/mm2h.webp` | Second-home retirement lifestyle — couple 55+, veranda or garden, tropical green. | Unsplash / Pexels |
 | `sarawak-mm2h` | `public/images/sarawak-mm2h.webp` | Distinctly Sarawak — Kuching riverfront, Borneo rainforest or a longhouse. Not peninsular Malaysia. | **Wikimedia Commons** (best for local place) / Unsplash |
