@@ -4,6 +4,7 @@ import { runNewsSweep, submitUrl, submitManual, VALID_CATEGORIES } from "./news"
 import { generateAndStore } from "./article";
 import { humanizeStored } from "./humanize";
 import { getAnalytics } from "./analytics";
+import { triggerPublish, getDeployStatus, getBuildLog } from "./publish";
 import { dashboardHtml } from "./dashboard";
 
 /**
@@ -424,6 +425,27 @@ export default {
       const days = Math.min(90, Math.max(1, Number(url.searchParams.get("days")) || 7));
       const stats = await getAnalytics(env, days);
       return json(stats);
+    }
+
+    // POST /api/admin/publish — build and deploy the site.
+    //
+    // This is the step that makes an approved article visible. Everything else
+    // in this dashboard writes to D1; a reader sees none of it until a build
+    // runs. Refuses while a build is already in flight — see publish.ts.
+    if (pathname === "/api/admin/publish" && request.method === "POST") {
+      const result = await triggerPublish(env);
+      return json(result, result.ok ? 200 : 422);
+    }
+
+    // GET /api/admin/deployments — how the current build is doing.
+    if (pathname === "/api/admin/deployments" && request.method === "GET") {
+      return json(await getDeployStatus(env));
+    }
+
+    // GET /api/admin/deployments/:id/log — the tail of a failed build.
+    const buildLog = pathname.match(/^\/api\/admin\/deployments\/([^/]+)\/log$/);
+    if (buildLog && request.method === "GET") {
+      return json(await getBuildLog(env, buildLog[1]));
     }
 
     return new Response("Not found", { status: 404 });

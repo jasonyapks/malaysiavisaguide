@@ -70,13 +70,54 @@ if (noDeploy) {
 }
 
 console.log(`\nPushed ${pushed}. Publishing…`);
-const { deploySite } = await import(join(WORKER_DIR, "..", "scripts", "deploy-site.mjs"));
-const result = deploySite();
-if (!result.ok) {
-  console.error("The polish is saved in D1 — only the deploy failed. Re-run `npm run publish:site`.");
+
+/**
+ * Publish by asking Pages to build from `main`, NOT by building here and
+ * uploading.
+ *
+ * This used to call deploySite(), which does a direct upload. That was right when
+ * a direct upload was the only way the site ever shipped. It is wrong now: since
+ * the Git integration was fixed, a direct upload becomes the live deployment
+ * while `main` carries on being the source of truth, so the site silently stops
+ * matching the repo and the next git build reverts whatever the upload added.
+ *
+ * One mechanism instead: the same POST the dashboard's Publish button uses.
+ */
+const ACCOUNT = readAccountId();
+const TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+
+if (!TOKEN) {
+  console.log("\nThe articles are pushed and staged. Publish them with the");
+  console.log("Publish button in the dashboard — or set CLOUDFLARE_API_TOKEN");
+  console.log("(Cloudflare Pages: Edit) to have this script do it.");
+  process.exit(0);
+}
+
+const form = new FormData();
+form.set("branch", "main");
+const res = await fetch(
+  `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT}/pages/projects/malaysiavisaguide/deployments`,
+  { method: "POST", headers: { authorization: `Bearer ${TOKEN}` }, body: form },
+);
+const body = await res.json().catch(() => null);
+
+if (!res.ok || !body?.success) {
+  const why = body?.errors?.map((e) => e.message).join("; ") ?? `HTTP ${res.status}`;
+  console.error(`\nThe polish is saved in D1 — only the deploy failed: ${why}`);
+  console.error("Click Publish in the dashboard, or run `npm run publish:site`.");
   process.exit(1);
 }
-console.log("Live.");
+
+console.log(`Build started (${body.result.short_id}). Live in about two minutes.`);
+console.log("Watch it in the dashboard's Publish panel.");
+
+/** The account id lives in wrangler.jsonc, so it is not restated here. */
+function readAccountId() {
+  const raw = readFileSync(join(WORKER_DIR, "wrangler.jsonc"), "utf8");
+  const m = raw.match(/"CF_ACCOUNT_ID"\s*:\s*"([^"]+)"/);
+  if (!m) throw new Error("CF_ACCOUNT_ID not found in wrangler.jsonc.");
+  return m[1];
+}
 
 /** Returns true when the row was written, false when the draft was rejected. */
 function push(id) {

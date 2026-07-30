@@ -35,6 +35,17 @@ const TRANSIENT = [
 ];
 
 export function deploySite({ log = console.log } = {}) {
+  // BREAK-GLASS ONLY, as of 2026-07-30. The normal way to publish is the Publish
+  // button in the dashboard, or a push to `main` — both build on Cloudflare from
+  // the commit, so the live site provably matches the repo.
+  //
+  // What this does instead is a DIRECT UPLOAD, which becomes the live deployment
+  // without coming from a commit. Use it when Pages CI is down or a build needs
+  // debugging locally, and expect the next git build to supersede it. If it ever
+  // ships something `main` does not contain, the site and the repo have diverged
+  // and that difference is invisible until someone pushes.
+  log("!! Direct upload — bypasses the git build. The next push supersedes it.");
+
   // Bring across any image attached in the dashboard since the last deploy.
   // This is the last moment it can happen: the build that follows reads the
   // registry, so an article whose picture has not been pulled ships without one.

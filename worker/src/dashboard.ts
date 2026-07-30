@@ -120,6 +120,19 @@ export function dashboardHtml(
     padding:10px 12px; border-radius:8px; font-size:.85rem; margin-top:10px; }
   .live { font-size:.8rem; }
   .spin { color:var(--ink-muted); font-size:.85rem; }
+  /* Publish panel. The dot carries the state at a glance; the words carry the
+     detail. Colour alone would fail anyone who cannot tell amber from green. */
+  .deploy { display:flex; align-items:center; gap:9px; margin-top:12px;
+    font-size:.9rem; }
+  .deploy .dot { width:9px; height:9px; border-radius:50%; flex:none;
+    background:var(--ink-muted); }
+  .deploy.running .dot { background:var(--amber); animation:pulse 1.1s infinite; }
+  .deploy.success .dot { background:var(--forest-600); }
+  .deploy.failure .dot { background:var(--red); }
+  @keyframes pulse { 50% { opacity:.25; } }
+  .deploy-log { margin-top:10px; padding:12px 14px; border-radius:8px;
+    background:var(--ink); color:#e6edf3; font-size:.78rem; line-height:1.55;
+    overflow-x:auto; white-space:pre-wrap; word-break:break-word; }
 </style>
 </head>
 <body>
@@ -128,6 +141,19 @@ export function dashboardHtml(
   <span class="who">Signed in: ${escapeHtml(email)}</span>
 </header>
 <main>
+
+  <section id="publish">
+    <div class="row" style="justify-content:space-between">
+      <h2>Publish</h2>
+      <button class="approve" id="publishBtn">Publish site</button>
+    </div>
+    <p class="muted" style="margin:6px 0 0">
+      Nothing above is visible to a reader until the site is rebuilt. Takes about
+      two minutes — one click is enough.
+    </p>
+    <div id="deployState" class="deploy"><span class="muted">Checking…</span></div>
+    <pre id="deployLog" class="deploy-log" hidden></pre>
+  </section>
 
   <section id="analytics">
     <div class="row" style="justify-content:space-between">
@@ -231,6 +257,111 @@ async function api(path, opts) {
   const r = await fetch(path, opts);
   return r.json();
 }
+
+// ---- Publish ----
+//
+// The site is a static export, so every panel below writes to D1 and changes
+// nothing a reader can see. This is the only control on the page that publishes.
+
+// Polling handle, so a second Publish cannot start a second timer racing the
+// first — both would write the same element and the elapsed count would jitter.
+let deployTimer = null;
+// 6 minutes at 5s. A Pages build of this site takes ~50s; anything past six
+// minutes is stuck, and polling forever would hammer the API all day on a tab
+// nobody closed.
+const DEPLOY_POLL_MS = 5000;
+const DEPLOY_POLL_MAX = 72;
+let deployPolls = 0;
+
+const PHASE_WORDS = {
+  queued: "Queued",
+  building: "Building",
+  deploying: "Uploading",
+  success: "Live",
+  failure: "Failed",
+};
+
+function renderDeploy(s) {
+  const el = $("#deployState");
+  const log = $("#deployLog");
+
+  if (!s.ok) {
+    el.className = "deploy";
+    el.innerHTML = '<span class="dot"></span><span class="muted">' + esc(s.error || "Unavailable.") + "</span>";
+    return;
+  }
+  if (!s.latest) {
+    el.className = "deploy";
+    el.innerHTML = '<span class="dot"></span><span class="muted">No deployment yet.</span>';
+    return;
+  }
+
+  const d = s.latest;
+  const running = d.phase === "queued" || d.phase === "building" || d.phase === "deploying";
+  el.className = "deploy " + (running ? "running" : d.phase);
+
+  // Past tense once it is done: "in 49s" reads as a duration, "49s" while running
+  // reads as a stopwatch. Same number, two different questions.
+  const time = running ? d.elapsedSeconds + "s" : "in " + d.elapsedSeconds + "s";
+  let text = "<strong>" + esc(PHASE_WORDS[d.phase] || d.phase) + "</strong> · " + time;
+  if (d.commit) text += " · " + esc(d.commit);
+  if (d.commitMessage) text += " · " + esc(d.commitMessage);
+
+  el.innerHTML = '<span class="dot"></span><span>' + text + "</span>";
+
+  if (d.phase === "failure") {
+    loadDeployLog(d.id);
+  } else if (d.phase !== "queued") {
+    log.hidden = true;
+  }
+}
+
+async function loadDeployLog(id) {
+  const log = $("#deployLog");
+  const r = await api("/api/admin/deployments/" + encodeURIComponent(id) + "/log");
+  log.hidden = false;
+  log.textContent = r.ok && r.lines.length
+    ? r.lines.join("\\n")
+    : (r.error || "No log available.");
+}
+
+async function pollDeploy() {
+  const s = await api("/api/admin/deployments");
+  renderDeploy(s);
+
+  const running = s.ok && s.busy;
+  if (deployTimer) { clearTimeout(deployTimer); deployTimer = null; }
+
+  if (running && ++deployPolls < DEPLOY_POLL_MAX) {
+    deployTimer = setTimeout(pollDeploy, DEPLOY_POLL_MS);
+  } else {
+    deployPolls = 0;
+  }
+  return s;
+}
+
+$("#publishBtn").addEventListener("click", async (e) => {
+  const btn = e.target;
+  btn.disabled = true;
+  btn.textContent = "Publishing…";
+  try {
+    const r = await api("/api/admin/publish", { method: "POST" });
+    if (!r.ok) {
+      renderDeploy({ ok: false, error: r.error });
+      return;
+    }
+    // A build was already running. Not an error — say so, then follow the one
+    // that is running rather than pretending a new one started.
+    if (r.queued && r.deployment) {
+      renderDeploy({ ok: true, latest: r.deployment, busy: true });
+    }
+    deployPolls = 0;
+    await pollDeploy();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Publish site";
+  }
+});
 
 // ---- Analytics ----
 async function loadStats() {
@@ -679,7 +810,7 @@ async function loadCategories() {
 
 function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-loadStats(); loadList(); loadCategories();
+loadStats(); loadList(); loadCategories(); pollDeploy();
 </script>
 </body>
 </html>`;

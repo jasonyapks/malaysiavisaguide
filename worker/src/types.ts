@@ -16,6 +16,12 @@ export interface Env {
   ARTICLE_MODEL: string;
   /** Secret — Cloudflare API token with Account Analytics: Read. */
   CF_ANALYTICS_TOKEN: string;
+  /**
+   * Secret — Cloudflare API token with Cloudflare Pages: Edit. Starts a build and
+   * reads its status; see publish.ts. Absent, publishing degrades to a message
+   * rather than breaking the dashboard.
+   */
+  CF_PAGES_TOKEN: string;
 }
 
 export interface NewsItem {
