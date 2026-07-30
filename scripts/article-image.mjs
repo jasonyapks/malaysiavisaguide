@@ -5,12 +5,15 @@
  *   node scripts/article-image.mjs                          # every news article
  *   node scripts/article-image.mjs news <slug>
  *   node scripts/article-image.mjs insights <cat>/<slug> --file photo.jpg --alt "…"
+ *   node scripts/article-image.mjs --soft                    # never fail the caller
  *
  * WHY A STEP AT ALL. The site is a static export, so the picture a reader loads
  * has to be a file in this repo before `next build` runs, at the sizes the pages
  * ask for. Jason attaches the image in the dashboard, which stores it in D1; this
  * is the step that brings it across, resizes it, and writes the alt text into
- * the registry the pages read. `npm run publish:site` runs it first.
+ * the registry the pages read. It runs as npm's `prebuild`, so Cloudflare Pages
+ * CI does it too — a Publish that only pokes a deploy hook would otherwise ship
+ * an article whose picture was never pulled, and look like it had worked.
  *
  * WHAT IT WRITES, per article:
  *   public/images/<section>/<slug>.webp      1440×810, the page hero
@@ -42,6 +45,23 @@ const NEWS_API =
  */
 const HERO = { width: 1440, height: 810 };
 const OG = { width: 1200, height: 630 };
+
+/**
+ * `--soft`: report a failure loudly and exit 0 anyway.
+ *
+ * How `prebuild` runs it, and the same policy deploy-site.mjs has always applied
+ * by hand — a hiccup fetching a photo must never hold a corrected fee figure off
+ * the site. The build that follows falls back to the images already committed,
+ * which is exactly the state the site shipped in before this step existed.
+ *
+ * Deliberately narrower than `|| true` in the npm script: that would also
+ * swallow a genuine crash in this file, and every future build would silently
+ * stop pulling images with nothing to show for it. A syntax error or an
+ * unresolvable import still fails before main() is reached, and still fails the
+ * build. What is soft is the *operational* set — an unreachable API, a non-2xx,
+ * a photo that will not decode — every one of which is caught below.
+ */
+const SOFT = process.argv.includes("--soft");
 
 // ---------------------------------------------------------------------------
 
@@ -79,7 +99,15 @@ async function pullNews(slug, { force }) {
   if (!res.ok) die(`The news API returned ${res.status}.`);
   const { items } = await res.json();
 
-  let articles = (items ?? []).filter((it) => it.slug);
+  // Asserted, not defaulted. The loop below DELETES a registry entry whenever the
+  // article it belongs to says it has no image, so "what the API told us" is the
+  // only thing standing between a committed photo and its deletion. A 200 whose
+  // body is not the shape we expect must stop the run, never read as "no article
+  // has an image any more" — in a fresh CI clone that would prune every entry and
+  // strip the pictures out of the build.
+  if (!Array.isArray(items)) die("The news API returned no `items` array.");
+
+  let articles = items.filter((it) => it.slug);
   if (slug) {
     articles = articles.filter((it) => it.slug === slug);
     if (articles.length === 0) die(`No published article with the slug "${slug}".`);
@@ -227,10 +255,29 @@ function argValue(argv, flag) {
 
 function die(msg) {
   console.error(msg);
+  giveUp();
   process.exit(1);
+}
+
+/**
+ * In soft mode, say plainly what the build is about to ship without and stop
+ * with a success code. Loud, because the only other symptom is a missing picture
+ * that nobody would connect to this step.
+ */
+function giveUp() {
+  if (!SOFT) return;
+  console.error(
+    "\n" +
+      "!! IMAGE PULL FAILED — building with the images already in the repo.\n" +
+      "!! Any picture attached in the dashboard since the last commit is NOT in\n" +
+      "!! this build. Everything else in it is fine. Re-run when the API is back:\n" +
+      "!!   npm run images:pull\n",
+  );
+  process.exit(0);
 }
 
 main().catch((err) => {
   console.error(`\n${err.message ?? err}`);
+  giveUp();
   process.exit(1);
 });
