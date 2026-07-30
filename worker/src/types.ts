@@ -22,6 +22,12 @@ export interface Env {
    * rather than breaking the dashboard.
    */
   CF_PAGES_TOKEN: string;
+  /** The NUMERIC GA4 property id — not the G-XXXX measurement tag. See ga4.ts. */
+  GA_PROPERTY_ID: string;
+  /** The GA4 service account's client_email. Must be a Viewer on the property. */
+  GA_SA_EMAIL: string;
+  /** Secret — the service account's private_key PEM (PKCS#8). */
+  GA_SA_PRIVATE_KEY: string;
 }
 
 export interface NewsItem {

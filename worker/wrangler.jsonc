@@ -72,6 +72,15 @@
     // nothing. Verified against the GraphQL API on 2026-07-28.
     "CF_ACCOUNT_ID": "d6bfff8a6a949401fc1ccb437e40a3ea",
     "WEB_ANALYTICS_SITE_TAG": "6d5e4a6a67ed4592929b44d9f4d4fdc6",
+    // GA4 — the traffic panel's real source; Cloudflare RUM above is the fallback
+    // and the comparison. GA_PROPERTY_ID is the NUMERIC property id from GA4 Admin
+    // → Property Settings, NOT the G-VRPMB0841V measurement tag (the Data API
+    // rejects that). GA_SA_PRIVATE_KEY is a secret, set with `wrangler secret put`.
+    // The service account must also be added as a Viewer under GA4 Admin →
+    // Property Access Management, or every call returns 403. Placeholders fail
+    // closed — the panel says "not configured" and falls back to Cloudflare.
+    "GA_PROPERTY_ID": "REPLACE_WITH_NUMERIC_GA4_PROPERTY_ID",
+    "GA_SA_EMAIL": "REPLACE_WITH_SERVICE_ACCOUNT_EMAIL",
     // Workers AI model for summaries (swappable). llama-3.2-3b is small, fast and
     // non-reasoning — well suited to short JSON summaries. (The llama-3.1-8b line
     // was deprecated 2026-05-30; reasoning models like glm are too slow per call

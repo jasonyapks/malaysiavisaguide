@@ -4,6 +4,7 @@ import { runNewsSweep, submitUrl, submitManual, VALID_CATEGORIES } from "./news"
 import { generateAndStore } from "./article";
 import { humanizeStored } from "./humanize";
 import { getAnalytics } from "./analytics";
+import { getGa4Stats } from "./ga4";
 import { triggerPublish, getDeployStatus, getBuildLog } from "./publish";
 import { dashboardHtml } from "./dashboard";
 
@@ -420,11 +421,31 @@ export default {
       return json({ ok: true, added });
     }
 
-    // GET /api/admin/stats?days=7
+    // GET /api/admin/stats?days=7[&source=cf]
+    //
+    // GA4 is the source of truth — it is the one that can say where the traffic
+    // came from. Cloudflare RUM is kept for two reasons: it answers while GA4 is
+    // still being wired up, and `?source=cf` lets the two be compared, because
+    // GA4 is consent-gated and its numbers are materially lower. Delete
+    // analytics.ts once that comparison has been made.
     if (pathname === "/api/admin/stats" && request.method === "GET") {
       const days = Math.min(90, Math.max(1, Number(url.searchParams.get("days")) || 7));
-      const stats = await getAnalytics(env, days);
-      return json(stats);
+      const wantCf = url.searchParams.get("source") === "cf";
+
+      if (!wantCf) {
+        const ga = await getGa4Stats(env, days);
+        // Only fall back when GA4 is not set up. A configured GA4 that errors
+        // must surface its error — silently swapping in different numbers would
+        // hide a broken credential behind plausible-looking traffic.
+        if (ga.ok || !ga.error?.startsWith("GA4 not configured")) return json(ga);
+      }
+
+      const cf = await getAnalytics(env, days);
+      return json({
+        ...cf,
+        source: "cloudflare",
+        totals: { ...cf.totals, users: 0 },
+      });
     }
 
     // POST /api/admin/publish — build and deploy the site.
