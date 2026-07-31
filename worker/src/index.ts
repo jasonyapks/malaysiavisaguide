@@ -4,6 +4,17 @@ import { runNewsSweep, submitUrl, submitManual, VALID_CATEGORIES } from "./news"
 import { generateAndStore } from "./article";
 import { humanizeStored } from "./humanize";
 import { triggerPublish, getDeployStatus, getBuildLog } from "./publish";
+import {
+  commitAsset,
+  deleteAsset,
+  heroForSlot,
+  imageBytes,
+  imageManifest,
+  isVariant,
+  listAssets,
+  migrateNewsImages,
+  putVariant,
+} from "./assets";
 import { dashboardHtml } from "./dashboard";
 
 /**
@@ -64,21 +75,46 @@ export default {
     // that is not about to be published on the site anyway. Cached hard: the
     // bytes for a given slug only change when Jason replaces the picture, and
     // the build asks for each one exactly once.
-    const imageBytes = pathname.match(/^\/api\/news\/([a-z0-9-]+)\/image$/);
-    if (imageBytes) {
+    const legacyImage = pathname.match(/^\/api\/news\/([a-z0-9-]+)\/image$/);
+    if (legacyImage) {
       const row = await env.DB.prepare(
         `SELECT image_data, image_mime FROM news_items
           WHERE slug = ? AND status = 'approved' AND image_data IS NOT NULL`,
       )
-        .bind(imageBytes[1])
+        .bind(legacyImage[1])
         .first<{ image_data: string; image_mime: string }>();
-      if (!row) return new Response("No image", { status: 404 });
-      return new Response(base64ToBytes(row.image_data), {
-        headers: {
-          "content-type": row.image_mime || "image/jpeg",
-          "cache-control": "public, max-age=300",
-        },
-      });
+      if (row) {
+        return new Response(base64ToBytes(row.image_data), {
+          headers: {
+            "content-type": row.image_mime || "image/jpeg",
+            "cache-control": "public, max-age=300",
+          },
+        });
+      }
+      // Migrated to R2 — answer from there rather than 404ing. This route is not
+      // used by the build any more (pull-images.mjs reads /api/images), but the
+      // dashboard's preview and anything else holding the URL still works, and a
+      // half-migrated table serves both kinds of row from one address.
+      const fromR2 = await heroForSlot(env, `news/${legacyImage[1]}`);
+      return fromR2 ?? new Response("No image", { status: 404 });
+    }
+
+    // --- Public: the image manifest, and the bytes behind it ---
+    //
+    // Read once per build by scripts/pull-images.mjs, which downloads each
+    // rendition into public/images/cms/ so the exported site serves them
+    // same-origin. Public for exactly the reason /api/news is: the build machine
+    // has no browser to log in with, and nothing here is not about to be
+    // published anyway.
+    if (pathname === "/api/images") {
+      if (request.method === "OPTIONS") return cors(env, new Response(null, { status: 204 }));
+      return cors(env, json(await imageManifest(env)));
+    }
+
+    const imageFile = pathname.match(/^\/api\/images\/([^/]+)\/(orig|hero|og)$/);
+    if (imageFile) {
+      if (!isVariant(imageFile[2])) return new Response("Not found", { status: 404 });
+      return imageBytes(env, imageFile[1], imageFile[2], request.headers.get("if-none-match"));
     }
 
     // --- Public: one full article by slug ---
@@ -329,6 +365,42 @@ export default {
         .run();
       return json({ ok: true });
     }
+
+    // --- The image library ---------------------------------------------------
+    //
+    // Three requests to add a picture, then a fourth to make it real:
+    //
+    //   PUT  /api/admin/assets/:id/orig   raw bytes, content-type header
+    //   PUT  /api/admin/assets/:id/hero   1440×810 webp, cropped in the browser
+    //   PUT  /api/admin/assets/:id/og     1200×630 jpeg, same
+    //   POST /api/admin/assets/:id        { slot, alt, credit, source, … }
+    //
+    // Raw bytes rather than a base64 field, because base64 adds a third to every
+    // payload and the old path paid it twice. The commit is last and separate so
+    // an interrupted upload leaves orphaned objects and no row, never a row whose
+    // bytes are missing. See assets.ts.
+
+    if (pathname === "/api/admin/assets" && request.method === "GET") {
+      return json(await listAssets(env));
+    }
+
+    // One-shot, and safe to run twice — see migrateNewsImages.
+    if (pathname === "/api/admin/assets/migrate-news" && request.method === "POST") {
+      return migrateNewsImages(env);
+    }
+
+    const assetVariant = pathname.match(/^\/api\/admin\/assets\/([^/]+)\/([a-z]+)$/);
+    if (assetVariant && request.method === "PUT") {
+      const [, id, variant] = assetVariant;
+      if (!isVariant(variant)) {
+        return json({ ok: false, error: `Unknown rendition "${variant}".` }, 400);
+      }
+      return putVariant(env, id, variant, request);
+    }
+
+    const asset = pathname.match(/^\/api\/admin\/assets\/([^/]+)$/);
+    if (asset && request.method === "POST") return commitAsset(env, asset[1], request);
+    if (asset && request.method === "DELETE") return deleteAsset(env, asset[1]);
 
     // POST /api/admin/submit  { url }  — manual add of a pasted article
     if (pathname === "/api/admin/submit" && request.method === "POST") {

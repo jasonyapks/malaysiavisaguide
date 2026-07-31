@@ -3,6 +3,8 @@ export interface Env {
   AI: Ai;
   /** Headless Chrome — the fallback reader in extract.ts. Metered; see wrangler.jsonc. */
   BROWSER: BrowserRun;
+  /** R2 — image bytes. Metadata lives in the D1 `assets` table; see assets.ts. */
+  ASSETS: R2Bucket;
   SITE_ORIGIN: string;
   /** This Worker's own workers.dev origin — see SITE_API in dashboard.ts. */
   NEWS_API_ORIGIN: string;
@@ -77,4 +79,31 @@ export interface NewsItem {
   /** The URL it was fetched from, or the filename it was uploaded as. */
   image_source: string | null;
   image_updated_at: string | null;
+}
+
+/**
+ * One row of the D1 `assets` table — see schema-005-assets.sql for why each
+ * column exists. The bytes are in R2 under the three `*_key` values; nothing in
+ * this interface carries image data, deliberately.
+ */
+export interface Asset {
+  id: string;
+  /** 'site/<key>' | 'news/<slug>' | 'insights/<cat>/<slug>', or NULL for a figure. */
+  slot: string | null;
+  /** R2 key for the 1440×810 webp the page renders. */
+  hero_key: string;
+  /** R2 key for the 1200×630 jpeg social card. NULL where none is needed. */
+  og_key: string | null;
+  /** R2 key for the file exactly as uploaded. */
+  orig_key: string;
+  /** Mime type of the original — the derivatives are always webp and jpeg. */
+  mime: string;
+  width: number | null;
+  height: number | null;
+  /** Required. See schema-005-assets.sql. */
+  alt: string;
+  credit: string | null;
+  source: string | null;
+  created_at: string;
+  updated_at: string;
 }

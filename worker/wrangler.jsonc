@@ -49,6 +49,27 @@
     }
   ],
 
+  // R2 — where image bytes live. Three objects per upload: orig/, hero/, og/.
+  //
+  // The metadata (alt, credit, provenance, which slot it fills) is in D1's
+  // `assets` table, not here: R2 has no queryable metadata and a manifest built
+  // by listing a bucket would be a list call per build. See schema-005-assets.sql.
+  //
+  // NOTE the binding does NOT flip `workers_dev` — that stays explicitly true
+  // above, and must, because the site's build fetches this Worker's workers.dev
+  // origin for both /api/news and /api/images.
+  //
+  // Readers never touch this bucket. There is no r2.dev URL and no public custom
+  // domain: r2.dev is rate-limited, documented as not-for-production, and would
+  // put an unbranded third-party origin on the LCP element. The build machine
+  // pulls the bytes through /api/images and the site serves them same-origin.
+  "r2_buckets": [
+    {
+      "binding": "ASSETS",
+      "bucket_name": "mvg-assets"
+    }
+  ],
+
   // Workers AI — used to summarise + classify each candidate item.
   "ai": { "binding": "AI" },
 
