@@ -11,5 +11,9 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["src/**/*.ts"]
+  // shared/ is compiled by BOTH projects — see shared/blocks.ts. The Worker
+  // reaches it with ordinary relative imports (`../../shared/validate`) rather
+  // than a path alias, because wrangler bundles with esbuild and a tsconfig
+  // path here would typecheck and then fail to build.
+  "include": ["src/**/*.ts", "../shared/**/*.ts"]
 }
