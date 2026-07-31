@@ -14,7 +14,18 @@ export const site = {
   // The hand-placed token that used to live here recorded nothing; removed 2026-07-28.
   // Google Analytics 4 measurement ID. Public by design (ships in the page HTML).
   // Unlike the Cloudflare beacon this one sets first-party cookies.
-  gaMeasurementId: "G-VRPMB0841V",
+  //
+  // Corrected 2026-07-31. The previous value, G-VRPMB0841V, belonged to no GA4
+  // property in any account Jason owns — the tag fired on every page from
+  // 2026-07-26 and the data went nowhere, so five days of "we have Google
+  // Analytics now" collected nothing. Cloudflare Web Analytics was the only
+  // working source that whole time, which is the reason it is still here.
+  //
+  // This one is property 547981147 ("malaysiavisaguide.com", account "Malaysia
+  // Visa Guide" under jason@mypvip.com) — the same property the Worker's traffic
+  // panel queries via GA_PROPERTY_ID. If you change one, change both, or the
+  // dashboard will report on a property the site is not tagged with.
+  gaMeasurementId: "G-PXKCPDWJET",
 } as const;
 
 /**

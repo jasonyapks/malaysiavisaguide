@@ -79,7 +79,10 @@
     // The service account must also be added as a Viewer under GA4 Admin →
     // Property Access Management, or every call returns 403. Placeholders fail
     // closed — the panel says "not configured" and falls back to Cloudflare.
-    "GA_PROPERTY_ID": "REPLACE_WITH_NUMERIC_GA4_PROPERTY_ID",
+    // Property "malaysiavisaguide.com", account "Malaysia Visa Guide" (403061713),
+    // created 2026-07-31 under jason@mypvip.com. Measurement ID G-PXKCPDWJET —
+    // kept in step with `gaMeasurementId` in src/lib/site.ts; see the note there.
+    "GA_PROPERTY_ID": "547981147",
     "GA_SA_EMAIL": "REPLACE_WITH_SERVICE_ACCOUNT_EMAIL",
     // Workers AI model for summaries (swappable). llama-3.2-3b is small, fast and
     // non-reasoning — well suited to short JSON summaries. (The llama-3.1-8b line
