@@ -145,17 +145,23 @@ export async function imageManifest(env: Env): Promise<{ images: ManifestEntry[]
  * it and cannot authenticate. Nothing is exposed that is not about to be
  * published on the site anyway.
  *
- * Conditional on ETag. R2 hands back a strong etag per object, the build sends
- * it as `if-none-match` on the next run, and an unchanged photo costs a 304
- * instead of a megabyte. The `stamp` check in pull-images.mjs usually short-
- * circuits before this, but a fresh CI clone has no registry to compare against
- * and this is what keeps that case cheap.
+ * Conditional on ETag. R2 hands back a strong etag per object, a caller sends it
+ * as `if-none-match` on the next run, and an unchanged photo costs a 304 instead
+ * of a megabyte. The `stamp` check in pull-images.mjs usually short-circuits
+ * before this, but a fresh CI clone has no registry to compare against and this
+ * is what keeps that case cheap.
+ *
+ * The whole `Headers` object goes to `onlyIf`, not a plucked string. R2 parses
+ * the conditional headers itself, and it is strict: handed an `if-none-match`
+ * value with the quotes RFC 9110 requires on it, the binding throws
+ * "Conditional ETag should not be wrapped in quotes" and the request 500s. Ask
+ * it to do the parsing and that whole class of mistake belongs to someone else.
  */
 export async function imageBytes(
   env: Env,
   id: string,
   variant: Variant,
-  ifNoneMatch: string | null,
+  conditional: Headers | null,
 ): Promise<Response> {
   if (!ID_RE.test(id)) return new Response("Not found", { status: 404 });
 
@@ -171,7 +177,7 @@ export async function imageBytes(
   if (!key) return new Response("No such rendition", { status: 404 });
 
   const object = await env.ASSETS.get(key, {
-    onlyIf: ifNoneMatch ? { etagDoesNotMatch: ifNoneMatch } : undefined,
+    onlyIf: conditional ?? undefined,
   });
   if (!object) return new Response("Not found", { status: 404 });
 
@@ -376,12 +382,38 @@ export async function commitAsset(env: Env, id: string, request: Request): Promi
     );
   }
 
-  const mime = (body.mime ?? "image/jpeg").toLowerCase();
-  const heroKey = assetKey(id, "hero", "webp");
-  const ogKey = body.hasOg === false ? null : assetKey(id, "og", "jpg");
-  const origKey = assetKey(id, "orig", extForMime(mime));
+  // An existing row, if this is a re-commit rather than a new upload.
+  const prior = await env.DB.prepare(
+    `SELECT hero_key, og_key, orig_key, mime, width, height FROM assets WHERE id = ?`,
+  )
+    .bind(id)
+    .first<Pick<Asset, "hero_key" | "og_key" | "orig_key" | "mime" | "width" | "height">>();
 
-  // Both renditions the manifest promises must actually be in the bucket. Without
+  // Two different calls arrive here and they must not be treated the same.
+  //
+  // A fresh upload sends `mime` (derive() always does) and its bytes are already
+  // in the bucket under keys computable from it. A CAPTION EDIT sends only the
+  // slot, the alt and the credit — no bytes moved, and recomputing the keys from
+  // a defaulted mime would rewrite a webp original's `orig_key` to `.jpg` and
+  // point the row at an object that does not exist. Worse for the rows migration
+  // 005 moved out of D1, whose hero is not a webp at all.
+  //
+  // So: bytes were sent iff `mime` was. Otherwise every key, and the dimensions,
+  // are carried over untouched.
+  const rebinding = body.mime !== undefined || !prior;
+
+  const mime = rebinding ? (body.mime ?? "image/jpeg").toLowerCase() : prior.mime;
+  const heroKey = rebinding ? assetKey(id, "hero", "webp") : prior.hero_key;
+  const ogKey = rebinding
+    ? body.hasOg === false
+      ? null
+      : assetKey(id, "og", "jpg")
+    : prior.og_key;
+  const origKey = rebinding ? assetKey(id, "orig", extForMime(mime)) : prior.orig_key;
+  const width = rebinding ? (body.width ?? null) : prior.width;
+  const height = rebinding ? (body.height ?? null) : prior.height;
+
+  // The rendition the manifest promises must actually be in the bucket. Without
   // this the failure surfaces days later as a 404 on the build machine, soft-
   // failed, and a picture quietly missing from the site.
   const head = await env.ASSETS.head(heroKey);
@@ -418,8 +450,8 @@ export async function commitAsset(env: Env, id: string, request: Request): Promi
       ogKey,
       origKey,
       mime,
-      body.width ?? null,
-      body.height ?? null,
+      width,
+      height,
       alt,
       (body.credit ?? "")?.toString().trim() || null,
       (body.source ?? "")?.toString().trim() || null,

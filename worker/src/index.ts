@@ -136,7 +136,7 @@ export default {
     const imageFile = pathname.match(/^\/api\/images\/([^/]+)\/(orig|hero|og)$/);
     if (imageFile) {
       if (!isVariant(imageFile[2])) return new Response("Not found", { status: 404 });
-      return imageBytes(env, imageFile[1], imageFile[2], request.headers.get("if-none-match"));
+      return imageBytes(env, imageFile[1], imageFile[2], request.headers);
     }
 
     // --- Public: one full article by slug ---
@@ -309,6 +309,42 @@ export default {
         .run();
       return json({ ok: true });
     }
+
+    // --- The image library ---------------------------------------------------
+    //
+    // Three requests to add a picture, then a fourth to make it real:
+    //
+    //   PUT  /api/admin/assets/:id/orig   raw bytes, content-type header
+    //   PUT  /api/admin/assets/:id/hero   1440×810 webp, cropped in the browser
+    //   PUT  /api/admin/assets/:id/og     1200×630 jpeg, same
+    //   POST /api/admin/assets/:id        { slot, alt, credit, source, … }
+    //
+    // Raw bytes rather than a base64 field, because base64 adds a third to every
+    // payload and the old path paid it twice. The commit is last and separate so
+    // an interrupted upload leaves orphaned objects and no row, never a row whose
+    // bytes are missing. See assets.ts.
+
+    if (pathname === "/api/admin/assets" && request.method === "GET") {
+      return json(await listAssets(env));
+    }
+
+    // One-shot, and safe to run twice — see migrateNewsImages.
+    if (pathname === "/api/admin/assets/migrate-news" && request.method === "POST") {
+      return migrateNewsImages(env);
+    }
+
+    const assetVariant = pathname.match(/^\/api\/admin\/assets\/([^/]+)\/([a-z]+)$/);
+    if (assetVariant && request.method === "PUT") {
+      const [, id, variant] = assetVariant;
+      if (!isVariant(variant)) {
+        return json({ ok: false, error: `Unknown rendition "${variant}".` }, 400);
+      }
+      return putVariant(env, id, variant, request);
+    }
+
+    const asset = pathname.match(/^\/api\/admin\/assets\/([^/]+)$/);
+    if (asset && request.method === "POST") return commitAsset(env, asset[1], request);
+    if (asset && request.method === "DELETE") return deleteAsset(env, asset[1]);
 
     // DELETE /api/admin/items/:id/image — take the picture off the article.
     //

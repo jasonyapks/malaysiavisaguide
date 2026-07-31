@@ -18,8 +18,16 @@ import type { SiteImage } from "@/lib/images";
 
 type Entry = {
   src: string;
-  /** 1200×630 JPEG for the social card; JPEG because webp OG cards still lose. */
-  og: string;
+  /**
+   * 1200×630 JPEG for the social card; JPEG because webp OG cards still lose.
+   *
+   * Nullable since images moved to R2. An article always has one. A `site/*`
+   * slot — a programme photo, Jason's portrait — does not: nothing renders those
+   * as a social card, and generating a rendition that will never be served is
+   * waste. `articleOgImage()` already answered null for a missing entry, so this
+   * changes no behaviour anywhere; it only stops the type claiming otherwise.
+   */
+  og: string | null;
   alt: string;
   /** Photographer or agency, rendered as a caption. null renders none. */
   credit: string | null;
