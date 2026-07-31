@@ -211,6 +211,79 @@ export async function heroForSlot(env: Env, slot: string): Promise<Response | nu
 // ---------------------------------------------------------------------------
 // Admin
 
+/**
+ * Fetch an image the user pasted the URL of, and hand the bytes back to the
+ * browser that asked.
+ *
+ * A proxy rather than a store, and that is the point. The browser cannot fetch a
+ * publisher's photo itself — cross-origin, no CORS header, `createImageBitmap`
+ * on a tainted response is not allowed — so without this the URL path would have
+ * to store whatever the Worker downloaded, uncropped, and there would be two
+ * different ways an image gets its dimensions. This way there is one crop, in
+ * `derive()`, and a pasted URL and a picked file arrive at R2 identically.
+ *
+ * Deliberately strict about what comes back, exactly as the endpoint it replaces
+ * was: a URL that 404s to an HTML error page, or points at an article rather
+ * than a file, would otherwise reach `createImageBitmap` as a decode error with
+ * nothing useful to say.
+ */
+export async function proxyImageUrl(env: Env, raw: string | null): Promise<Response> {
+  if (!raw) return json({ ok: false, error: "Missing url." }, 400);
+  let target: URL;
+  try {
+    target = new URL(raw);
+  } catch {
+    return json({ ok: false, error: "That is not a URL." }, 400);
+  }
+  if (target.protocol !== "https:" && target.protocol !== "http:") {
+    return json({ ok: false, error: "Only http(s) URLs." }, 400);
+  }
+
+  let res: Response;
+  try {
+    res = await fetch(target.toString(), {
+      headers: {
+        // Some publishers refuse a bare fetch. The same courtesy extract.ts
+        // extends when reading a source page.
+        "user-agent":
+          "Mozilla/5.0 (compatible; MalaysiaVisaGuide/1.0; +https://malaysiavisaguide.com)",
+        accept: "image/*",
+      },
+      redirect: "follow",
+    });
+  } catch (err) {
+    return json({ ok: false, error: `Could not reach that URL — ${String(err)}` }, 422);
+  }
+  if (!res.ok) return json({ ok: false, error: `That URL returned ${res.status}.` }, 422);
+
+  const mime = (res.headers.get("content-type") ?? "").split(";")[0].trim();
+  if (!mime.startsWith("image/")) {
+    return json(
+      {
+        ok: false,
+        error: `That URL is ${mime || "not an image"} — link straight to the image file, not the page it sits on.`,
+      },
+      422,
+    );
+  }
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  if (bytes.byteLength === 0) return json({ ok: false, error: "That URL returned an empty file." }, 422);
+  if (bytes.byteLength > MAX_OBJECT_BYTES) {
+    return json({ ok: false, error: "That image is too big — 12MB is the ceiling." }, 413);
+  }
+  return new Response(bytes, { headers: { "content-type": mime, "cache-control": "no-store" } });
+}
+
+/** Drop whatever asset currently fills a slot. Used when an image is removed. */
+export async function deleteAssetBySlot(env: Env, slot: string): Promise<boolean> {
+  const row = await env.DB.prepare(`SELECT id FROM assets WHERE slot = ?`)
+    .bind(slot)
+    .first<{ id: string }>();
+  if (!row) return false;
+  await deleteAsset(env, row.id);
+  return true;
+}
+
 /** Everything in the library, newest first, for the dashboard's Images panel. */
 export async function listAssets(env: Env): Promise<{ assets: Asset[] }> {
   const { results } = await env.DB.prepare(

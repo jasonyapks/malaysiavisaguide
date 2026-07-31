@@ -6,6 +6,7 @@ import { humanizeStored } from "./humanize";
 import { triggerPublish, getDeployStatus, getBuildLog } from "./publish";
 import {
   commitAsset,
+  deleteAssetBySlot,
   deleteAsset,
   heroForSlot,
   imageBytes,
@@ -13,6 +14,7 @@ import {
   isVariant,
   listAssets,
   migrateNewsImages,
+  proxyImageUrl,
   putVariant,
 } from "./assets";
 import { dashboardHtml } from "./dashboard";
@@ -34,13 +36,33 @@ const INDEX_COLUMNS = `id, slug, headline, title, dek, summary, category,
  * characters and a list returns 200 rows. On principle: the pasted text is model
  * input, and the fewer places it travels to the easier that stays true. The
  * editor doesn't show it and nothing in the dashboard renders it.
+ *
+ * The `asset_*` values come from the R2 image library, joined on the slot an
+ * article's hero occupies. Correlated subqueries rather than a LEFT JOIN because
+ * the slot is a computed string and the index on `assets.slot` is unique, so each
+ * one is a single index seek.
+ *
+ * They are here and deliberately NOT in INDEX_COLUMNS: /api/news is read by the
+ * deployed site's build and its shape is frozen — that coupling caused the
+ * 2026-07-25 outage. Only the private queue sees these.
+ *
+ * `has_image` accordingly means "there is a picture, in either home" — the
+ * migration-004 base64 column or the asset library. That is what the dashboard
+ * has always used it for, and it stays true right through the migration.
  */
+const ASSET_SLOT = `'news/' || news_items.slug`;
 const ADMIN_COLUMNS = `id, title, summary, category, source_name, source_url,
    published_at, status, created_at, decided_at, slug, headline, dek, body,
    source_excerpt, reading_minutes, article_model, updated_at, origin,
    polish_state, polished_at, image_alt, image_credit, image_source,
    image_updated_at,
-   CASE WHEN image_data IS NOT NULL THEN 1 ELSE 0 END AS has_image`;
+   (SELECT a.id FROM assets a WHERE a.slot = ${ASSET_SLOT}) AS asset_id,
+   (SELECT a.alt FROM assets a WHERE a.slot = ${ASSET_SLOT}) AS asset_alt,
+   (SELECT a.credit FROM assets a WHERE a.slot = ${ASSET_SLOT}) AS asset_credit,
+   (SELECT a.updated_at FROM assets a WHERE a.slot = ${ASSET_SLOT}) AS asset_updated_at,
+   CASE WHEN image_data IS NOT NULL
+          OR EXISTS (SELECT 1 FROM assets a WHERE a.slot = ${ASSET_SLOT})
+        THEN 1 ELSE 0 END AS has_image`;
 
 export default {
   // Daily news sweep — fills the pending queue only. Nothing goes public here.
@@ -288,119 +310,38 @@ export default {
       return json({ ok: true });
     }
 
-    // PUT /api/admin/items/:id/image — attach the hero image.
+    // DELETE /api/admin/items/:id/image — take the picture off the article.
     //
-    // Two ways in, because the picture is sometimes already on the web and
-    // sometimes on Jason's desk: `{ url }` has the Worker fetch it, `{ data }`
-    // carries a base64 file the dashboard has already downscaled in the browser.
-    // Either way it lands in the same three columns, and the build machine reads
-    // it back through the public /image route.
-    //
-    // Alt text is required. A hero image with no alt fails WCAG 1.1.1 on every
-    // article page it appears on, and this is the only moment anybody knows what
-    // the picture shows — asking later means never.
+    // There is no PUT here any more. Attaching an image is
+    // PUT /api/admin/assets/:id/<rendition> plus a commit, with the slot set to
+    // `news/<slug>` — one library, one crop, one place the bytes live. This route
+    // remains because "remove" has to clear BOTH homes: the R2 asset for the slot
+    // and the migration-004 columns, which are still populated on any row that
+    // has not been migrated yet.
     const image = pathname.match(/^\/api\/admin\/items\/([^/]+)\/image$/);
-    if (image && (request.method === "PUT" || request.method === "DELETE")) {
+    if (image && request.method === "DELETE") {
       const [, id] = image;
-
-      if (request.method === "DELETE") {
-        await env.DB.prepare(
-          `UPDATE news_items
-              SET image_data = NULL, image_mime = NULL, image_alt = NULL,
-                  image_credit = NULL, image_source = NULL,
-                  image_updated_at = datetime('now')
-            WHERE id = ?`,
-        )
-          .bind(id)
-          .run();
-        return json({ ok: true });
-      }
-
-      const patch = (await request.json().catch(() => null)) as {
-        url?: string;
-        data?: string;
-        mime?: string;
-        alt?: string;
-        credit?: string | null;
-        source?: string;
-      } | null;
-      if (!patch) return json({ ok: false, error: "Bad JSON" }, 400);
-
-      const alt = (patch.alt ?? "").trim();
-      if (alt.length < 5) {
-        return json({ ok: false, error: "Alt text is required — describe what the picture shows." }, 400);
-      }
-
-      let data = patch.data ?? null;
-      let mime = patch.mime ?? null;
-      let source = patch.source ?? null;
-
-      if (!data && patch.url) {
-        const fetched = await fetchImage(patch.url);
-        if (!fetched.ok) return json({ ok: false, error: fetched.error }, 422);
-        data = fetched.data;
-        mime = fetched.mime;
-        source = patch.url;
-      }
-      if (!data) return json({ ok: false, error: "Need a file or a URL." }, 400);
-      if (data.length > MAX_IMAGE_B64) {
-        return json(
-          {
-            ok: false,
-            error:
-              "That image is too big to store. Save it and use the file picker — " +
-              "the dashboard shrinks an upload before sending it.",
-          },
-          413,
-        );
-      }
-
+      const row = await env.DB.prepare(`SELECT slug FROM news_items WHERE id = ?`)
+        .bind(id)
+        .first<{ slug: string | null }>();
+      if (row?.slug) await deleteAssetBySlot(env, `news/${row.slug}`);
       await env.DB.prepare(
         `UPDATE news_items
-            SET image_data = ?, image_mime = ?, image_alt = ?, image_credit = ?,
-                image_source = ?, image_updated_at = datetime('now')
+            SET image_data = NULL, image_mime = NULL, image_alt = NULL,
+                image_credit = NULL, image_source = NULL,
+                image_updated_at = datetime('now')
           WHERE id = ?`,
       )
-        .bind(data, mime ?? "image/jpeg", alt, patch.credit?.trim() || null, source, id)
+        .bind(id)
         .run();
       return json({ ok: true });
     }
 
-    // --- The image library ---------------------------------------------------
-    //
-    // Three requests to add a picture, then a fourth to make it real:
-    //
-    //   PUT  /api/admin/assets/:id/orig   raw bytes, content-type header
-    //   PUT  /api/admin/assets/:id/hero   1440×810 webp, cropped in the browser
-    //   PUT  /api/admin/assets/:id/og     1200×630 jpeg, same
-    //   POST /api/admin/assets/:id        { slot, alt, credit, source, … }
-    //
-    // Raw bytes rather than a base64 field, because base64 adds a third to every
-    // payload and the old path paid it twice. The commit is last and separate so
-    // an interrupted upload leaves orphaned objects and no row, never a row whose
-    // bytes are missing. See assets.ts.
-
-    if (pathname === "/api/admin/assets" && request.method === "GET") {
-      return json(await listAssets(env));
+    // GET /api/admin/fetch-image?url=… — bytes for a URL the browser cannot read
+    // itself. See proxyImageUrl; the crop still happens in the browser.
+    if (pathname === "/api/admin/fetch-image" && request.method === "GET") {
+      return proxyImageUrl(env, url.searchParams.get("url"));
     }
-
-    // One-shot, and safe to run twice — see migrateNewsImages.
-    if (pathname === "/api/admin/assets/migrate-news" && request.method === "POST") {
-      return migrateNewsImages(env);
-    }
-
-    const assetVariant = pathname.match(/^\/api\/admin\/assets\/([^/]+)\/([a-z]+)$/);
-    if (assetVariant && request.method === "PUT") {
-      const [, id, variant] = assetVariant;
-      if (!isVariant(variant)) {
-        return json({ ok: false, error: `Unknown rendition "${variant}".` }, 400);
-      }
-      return putVariant(env, id, variant, request);
-    }
-
-    const asset = pathname.match(/^\/api\/admin\/assets\/([^/]+)$/);
-    if (asset && request.method === "POST") return commitAsset(env, asset[1], request);
-    if (asset && request.method === "DELETE") return deleteAsset(env, asset[1]);
 
     // POST /api/admin/submit  { url }  — manual add of a pasted article
     if (pathname === "/api/admin/submit" && request.method === "POST") {
@@ -521,77 +462,8 @@ export default {
   },
 } satisfies ExportedHandler<Env>;
 
-/**
- * The cap on a stored image, in base64 characters — about 900 KB of file.
- *
- * Set by D1, not by taste: the limit is 2,000,000 bytes for a string AND for the
- * whole row, and this row also holds the article body and up to 12,000
- * characters of pasted source text. 1.2 MB of base64 leaves that comfortably
- * clear. The dashboard downscales an upload to 1800px wide before sending, which
- * lands a normal press photo at a third of this; the cap is really for the URL
- * path, where nothing has resized anything.
- *
- * Note the separate 100 KB limit on SQL *statement text* — irrelevant here
- * because the image travels as a bound parameter, but it is what makes
- * `wrangler d1 execute` refuse the same insert from the command line.
- */
-const MAX_IMAGE_B64 = 1_200_000;
 
-/**
- * Fetch an image someone pasted the URL of.
- *
- * Deliberately strict about what comes back. A URL that 404s to an HTML error
- * page, or points at a page rather than a file, would otherwise be stored as a
- * perfectly valid row whose bytes are not an image — and the failure would
- * surface days later as a broken picture on a live article.
- */
-async function fetchImage(
-  url: string,
-): Promise<{ ok: true; data: string; mime: string } | { ok: false; error: string }> {
-  let res: Response;
-  try {
-    res = await fetch(url, {
-      headers: {
-        // Some publishers refuse a bare fetch. This is the same courtesy
-        // extract.ts extends when reading a source page.
-        "user-agent":
-          "Mozilla/5.0 (compatible; MalaysiaVisaGuide/1.0; +https://malaysiavisaguide.com)",
-        accept: "image/*",
-      },
-      redirect: "follow",
-    });
-  } catch (err) {
-    return { ok: false, error: `Could not reach that URL — ${String(err)}` };
-  }
-  if (!res.ok) return { ok: false, error: `That URL returned ${res.status}.` };
 
-  const mime = (res.headers.get("content-type") ?? "").split(";")[0].trim();
-  if (!mime.startsWith("image/")) {
-    return {
-      ok: false,
-      error: `That URL is ${mime || "not an image"} — link straight to the image file, not the page it sits on.`,
-    };
-  }
-
-  const bytes = new Uint8Array(await res.arrayBuffer());
-  if (bytes.byteLength === 0) return { ok: false, error: "That URL returned an empty file." };
-  return { ok: true, data: bytesToBase64(bytes), mime };
-}
-
-/**
- * Base64 in a Worker, in chunks.
- *
- * `String.fromCharCode(...bytes)` on a megabyte of image blows the call stack —
- * the spread becomes a million arguments. 8KB at a time is well inside every
- * engine's limit and costs nothing measurable.
- */
-function bytesToBase64(bytes: Uint8Array): string {
-  let binary = "";
-  for (let i = 0; i < bytes.length; i += 8192) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
-  }
-  return btoa(binary);
-}
 
 function base64ToBytes(b64: string): Uint8Array {
   const binary = atob(b64);

@@ -462,8 +462,14 @@ function renderEditor(it) {
  * the copy it already has and the obvious conclusion is that the upload failed.
  */
 function renderImageBox(it) {
-  const src = SITE_API + "/api/news/" + esc(it.slug || "") + "/image?v=" +
-    encodeURIComponent(it.image_updated_at || "");
+  // Prefer the asset library. The /api/news/<slug>/image address still answers
+  // for a row that has not been migrated, and falls through to R2 for one that
+  // has, so either works — but the library URL is content-addressed by asset id
+  // and needs no cache-buster at all.
+  const src = it.asset_id
+    ? SITE_API + "/api/images/" + esc(it.asset_id) + "/hero"
+    : SITE_API + "/api/news/" + esc(it.slug || "") + "/image?v=" +
+      encodeURIComponent(it.image_updated_at || "");
   return '<div class="imgbox" data-img="' + it.id + '">' +
     '<h4>Hero image</h4>' +
     (it.has_image
@@ -475,9 +481,9 @@ function renderImageBox(it) {
     '<div class="or">or paste the address of an image already on the web</div>' +
     '<input type="url" data-f="imgUrl" placeholder="https://…/photo.jpg">' +
     '<label>Alt text — what the picture shows (required)</label>' +
-    '<input type="text" data-f="imgAlt" value="' + esc(it.image_alt || "") + '">' +
+    '<input type="text" data-f="imgAlt" value="' + esc(it.asset_alt || it.image_alt || "") + '">' +
     '<label>Credit — photographer or agency, blank for none</label>' +
-    '<input type="text" data-f="imgCredit" value="' + esc(it.image_credit || "") + '">' +
+    '<input type="text" data-f="imgCredit" value="' + esc(it.asset_credit || it.image_credit || "") + '">' +
     '<div class="row" style="margin-top:10px">' +
       '<button class="approve" data-act="saveimg" data-id="' + it.id + '">Save image</button>' +
       (it.has_image ? '<button class="delete" data-act="delimg" data-id="' + it.id + '">Remove image</button>' : '') +
@@ -486,26 +492,127 @@ function renderImageBox(it) {
 }
 
 /**
- * Shrink an upload in the browser before it is sent.
- *
- * A photo off a phone is four thousand pixels wide and several megabytes, and
- * base64 adds a third on top of that. The site never renders a hero above
- * 1440px, so anything past 1800 is bytes nobody will ever see — carried through
- * a Worker, into a D1 row, back out to the build machine, and thrown away by the
- * resize there. Doing it here is one canvas call and removes the whole problem.
+ * The renditions, and the quality settings that used to live in sharp's call.
+ * Changed here, they change everywhere — this is now the only place an image on
+ * this site is resized.
  */
-async function shrink(file) {
-  const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, 1800 / bitmap.width);
-  const w = Math.round(bitmap.width * scale), h = Math.round(bitmap.height * scale);
+const HERO = { w: 1440, h: 810, type: "image/webp", q: 0.76 };
+const OG   = { w: 1200, h: 630, type: "image/jpeg", q: 0.82 };
+
+/**
+ * Crop-to-fill, reproducing sharp's \`fit: "cover"\` with the default centre
+ * position.
+ *
+ * That equivalence is the point of the function: this replaces a \`sharp\` resize
+ * that ran in Pages CI, and a hero that suddenly framed differently would look
+ * like a bug in the photo rather than a change of tool.
+ *
+ * What cover does: scale so the source COVERS the target — the larger of the two
+ * ratios — then take the overflow off both sides equally. Done here as a source
+ * rectangle handed to drawImage rather than as a scale-then-clip, so the browser
+ * resamples straight from the original pixels once instead of twice.
+ *
+ * Note it enlarges a source smaller than the target, exactly as sharp does by
+ * default (\`withoutEnlargement\` is false). Better a soft hero than a 600px
+ * picture in a 1440px slot.
+ */
+function coverCrop(bitmap, spec) {
+  const scale = Math.max(spec.w / bitmap.width, spec.h / bitmap.height);
+  // The source rectangle that maps onto the whole target. Clamped, because
+  // rounding at the extremes can put it a pixel outside the bitmap.
+  const sw = Math.min(bitmap.width, Math.round(spec.w / scale));
+  const sh = Math.min(bitmap.height, Math.round(spec.h / scale));
+  const sx = Math.max(0, Math.round((bitmap.width - sw) / 2));
+  const sy = Math.max(0, Math.round((bitmap.height - sh) / 2));
+
   const canvas = document.createElement("canvas");
-  canvas.width = w; canvas.height = h;
-  canvas.getContext("2d").drawImage(bitmap, 0, 0, w, h);
-  const blob = await new Promise(res => canvas.toBlob(res, "image/jpeg", 0.85));
-  const buf = new Uint8Array(await blob.arrayBuffer());
-  let binary = "";
-  for (let i = 0; i < buf.length; i += 8192) binary += String.fromCharCode(...buf.subarray(i, i + 8192));
-  return { data: btoa(binary), mime: "image/jpeg", source: file.name };
+  canvas.width = spec.w; canvas.height = spec.h;
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, spec.w, spec.h);
+  return new Promise((res, rej) =>
+    canvas.toBlob(b => b ? res(b) : rej(new Error("The browser could not encode " + spec.type)), spec.type, spec.q));
+}
+
+/**
+ * Turn one picked file into the three objects R2 stores.
+ *
+ * This is where \`sharp\` went. It used to run on the Pages build machine, which
+ * meant a native dependency installed on every CI run to resize a photograph
+ * that a browser with the file already open could crop in a few milliseconds on
+ * a GPU. The bytes also stopped travelling: base64 through a Worker, into a D1
+ * row and back out again is gone, and each rendition is now PUT as-is.
+ *
+ * \`orig\` is the file untouched. It is what makes a re-crop possible later
+ * without asking Jason for the photo again — the reason the bucket keeps three
+ * objects instead of two.
+ */
+async function derive(file) {
+  const bitmap = await createImageBitmap(file);
+  try {
+    const [hero, og] = await Promise.all([coverCrop(bitmap, HERO), coverCrop(bitmap, OG)]);
+    return {
+      id: crypto.randomUUID(),
+      orig: file,
+      mime: file.type || "image/jpeg",
+      width: bitmap.width,
+      height: bitmap.height,
+      source: file.name || null,
+      hero: hero,
+      og: og,
+    };
+  } finally {
+    bitmap.close();
+  }
+}
+
+/**
+ * Send the three renditions, then the row that makes them real.
+ *
+ * Order matters and is the reverse of what feels natural: bytes first, metadata
+ * last. An upload that dies half way then leaves objects nobody references —
+ * invisible, and a fraction of a cent — rather than a manifest entry whose
+ * picture 404s on the build machine and vanishes off the site.
+ */
+async function uploadAsset(d, meta) {
+  const put = async (variant, blob, mime) => {
+    const r = await api("/api/admin/assets/" + d.id + "/" + variant, {
+      method: "PUT", headers: { "content-type": mime }, body: blob,
+    });
+    if (!r.ok) throw new Error(r.error || ("Could not upload the " + variant + " image."));
+  };
+  await put("orig", d.orig, d.mime);
+  await put("hero", d.hero, HERO.type);
+  await put("og", d.og, OG.type);
+
+  const r = await api("/api/admin/assets/" + d.id, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      slot: meta.slot, alt: meta.alt, credit: meta.credit, source: meta.source ?? d.source,
+      mime: d.mime, width: d.width, height: d.height,
+    }),
+  });
+  if (!r.ok) throw new Error(r.error || "Could not save the image details.");
+  return r;
+}
+
+/**
+ * A file for a pasted URL.
+ *
+ * The browser cannot read a publisher's photo itself — no CORS header, and a
+ * tainted response is not something createImageBitmap will decode — so the
+ * Worker fetches it and hands the bytes back. One crop path for both ways in.
+ */
+async function fileFromUrl(url) {
+  const r = await fetch("/api/admin/fetch-image?url=" + encodeURIComponent(url));
+  if (!r.ok) {
+    const why = await r.json().catch(() => ({}));
+    throw new Error(why.error || ("That URL returned " + r.status + "."));
+  }
+  const blob = await r.blob();
+  const name = (url.split("?")[0].split("/").pop() || "image");
+  return new File([blob], name, { type: blob.type || "image/jpeg" });
 }
 
 function parseBody(raw) {
@@ -584,23 +691,44 @@ $("#list").addEventListener("click", async (e) => {
     const credit = get("imgCredit").value.trim();
 
     if (alt.length < 5) { alert("Alt text is required — one line describing what the picture shows."); return; }
-    // Alt or credit alone is a legitimate edit of an image already attached.
     const item = currentItems.find(i => i.id === id);
+    // Alt or credit alone is a legitimate edit of an image already attached.
     if (!file && !url && !(item && item.has_image)) { alert("Pick a file or paste an image URL."); return; }
+    if (!item || !item.slug) { alert("Write the article first — the image is filed against its slug."); return; }
 
-    b.disabled = true; b.textContent = "Saving…";
+    b.disabled = true;
     try {
-      const payload = { alt: alt, credit: credit || null };
-      if (file) Object.assign(payload, await shrink(file));
-      else if (url) payload.url = url;
-      const r = await api("/api/admin/items/" + id + "/image", {
-        method: "PUT", headers: {"content-type":"application/json"}, body: JSON.stringify(payload),
+      // No new picture: this is a caption edit, and re-uploading three
+      // renditions to change a line of text would be absurd. Re-commit the
+      // existing asset instead.
+      if (!file && !url) {
+        if (!item.asset_id) {
+          alert("This picture is still in the old store. Re-upload it to edit the caption.");
+          b.disabled = false; b.textContent = "Save image"; return;
+        }
+        b.textContent = "Saving…";
+        const r = await api("/api/admin/assets/" + item.asset_id, {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ slot: "news/" + item.slug, alt: alt, credit: credit || null }),
+        });
+        if (r.ok) loadList();
+        else { b.disabled = false; b.textContent = "Save image"; alert(r.error || "Could not save."); }
+        return;
+      }
+
+      b.textContent = url && !file ? "Fetching…" : "Resizing…";
+      const source = file ? (file.name || null) : url;
+      const picked = file || await fileFromUrl(url);
+      const derived = await derive(picked);
+
+      b.textContent = "Uploading…";
+      await uploadAsset(derived, {
+        slot: "news/" + item.slug, alt: alt, credit: credit || null, source: source,
       });
-      if (r.ok) loadList();
-      else { b.disabled = false; b.textContent = "Save image"; alert(r.error || "Could not save the image."); }
+      loadList();
     } catch (err) {
       b.disabled = false; b.textContent = "Save image";
-      alert("Could not read that file — " + err);
+      alert(String(err.message || err));
     }
     return;
   }
