@@ -152,9 +152,31 @@ separate from the article's Save on purpose: a file transfer fails on its own
 terms — too big, a URL that is really a web page, a publisher's 403 — and a
 rejected picture should not look like lost edits to the prose.
 
-An upload is downscaled to 1800px wide in the browser before it is sent. A
-four-thousand-pixel phone photo is bytes nobody will ever see: the site renders a
-hero at 1440 at most.
+An upload never leaves the browser at full size. `derive()` in the dashboard
+makes all three renditions there — the original, a 1440×810 webp hero and a
+1200×630 JPEG social card — using a centre cover-crop that reproduces what
+`sharp` used to do on the build machine. Each one is PUT to R2 as raw bytes, and
+a fourth request writes the row that makes the asset real. `sharp` is no longer
+a dependency of this site.
+
+### Where the bytes live
+
+R2 bucket **`mvg-assets`**, three objects per image:
+
+```
+orig/<id>.<ext>     the file exactly as uploaded — what makes a re-crop possible
+hero/<id>.webp      1440×810, the page hero
+og/<id>.jpg         1200×630, the social card
+```
+
+The metadata — alt, credit, provenance, which slot it fills — is in D1's
+`assets` table, because R2 has no metadata you can query. See
+`worker/schema-005-assets.sql`.
+
+**A reader never touches R2.** Not `r2.dev`: it is rate-limited, documented as
+not for production, and would put an unbranded third-party origin on the LCP
+element of every article. The build pulls the bytes down and the site serves them
+same-origin.
 
 ### Getting it onto the site
 
@@ -163,24 +185,28 @@ npm run images:pull      # bring across everything attached since the last deplo
 npm run publish:site     # runs the pull, then builds and deploys
 ```
 
-The pull is idempotent and it also **removes**: take a picture off an article in
-the dashboard, run the pull, and the files and the registry entry go with it.
+`npm run images:pull` is `scripts/pull-images.mjs`: it reads the manifest at
+`GET /api/images`, downloads each rendition into `public/images/cms/`, and writes
+`src/lib/data/article-images.json`. It also runs as `prebuild`, so Cloudflare
+Pages CI does exactly the same thing — which is what stops a Publish shipping an
+article whose picture was never pulled.
 
-For `/insights/` articles, which live in this repo rather than in D1 and so have
-no dashboard:
-
-```
-node scripts/article-image.mjs insights comparisons/<slug> \
-  --file ~/Desktop/photo.jpg --alt "what the picture shows" --credit "Name"
-```
+It is idempotent (an unchanged stamp is skipped) and it **removes**: take a
+picture off an article in the dashboard, run the pull, and the files and the
+registry entry go with it.
 
 ### What lands where
 
-| Path | What |
-|---|---|
-| `public/images/news/<slug>.webp` | 1440×810, the page hero |
-| `public/images/news/<slug>-og.jpg` | 1200×630, the social card and the `image` in JSON-LD |
-| `src/lib/data/article-images.json` | alt, credit and the sync stamp |
+| Path | What | In git? |
+|---|---|---|
+| `public/images/cms/<key>.webp` | 1440×810, the page hero | **no** — build artifact |
+| `public/images/cms/<key>-og.jpg` | 1200×630, the social card and the `image` in JSON-LD | **no** — build artifact |
+| `src/lib/data/article-images.json` | alt, credit and the sync stamp | **no** — build artifact |
+| `public/images/*.webp` | the hand-picked scene photos | yes — the code fallback |
+
+The first three are gitignored. D1 and R2 are the source of truth and a repo that
+also carried the binaries would have two. `prebuild` regenerates them, in CI as
+well as locally.
 
 **Do not hand-edit the registry** — the next pull overwrites it. Alt text and
 credit are edited in the dashboard, which is also the only place that knows what
@@ -189,15 +215,28 @@ the picture shows.
 No entry means no image slot renders. An article published before anyone has
 chosen a picture looks like an article without one, not like a broken page.
 
-### Two limits worth knowing
+### The scene photos are in the CMS too
 
-- **D1 holds at most 2 MB per row**, and that row also carries the article body
-  and up to 12,000 characters of pasted source text. The upload cap is 1.2 MB of
-  base64, about a 900 KB file, which leaves that clear.
-- **A SQL statement is capped at 100 KB**, separately. It does not affect the
-  dashboard, where the image travels as a bound parameter, but it is why
-  `wrangler d1 execute` refuses to insert the same image from the command line.
-  Do not conclude from that failure that the image is too big.
+`src/lib/images.ts` still holds the eight hand-picked photos, and it still holds
+their `brief` — the editorial note describing what the picture should show, which
+drives the branded placeholder. A CMS can only describe images that exist, so
+that stays in code.
 
-The image is deleted from D1's holding pen only by removing it from the article;
-the durable copy is the file committed here.
+What changed is precedence: an asset in the slot `site/<key>` wins over the code
+entry, so the PVIP photo can be swapped in the dashboard without a commit. With
+no asset, the code entry renders exactly as before. `worker/scripts/seed-assets.mjs`
+is what put the eight existing files into those slots.
+
+### Limits worth knowing
+
+- **12 MB per uploaded object.** R2 would take far more; the Worker buffers the
+  body to measure it, and a camera RAW would be memory spent on bytes the crop is
+  about to discard. The browser sends a cropped rendition, so this only catches a
+  mistake.
+- **D1's 2 MB row limit no longer applies to images**, and that is the point of
+  the move. It did: `news_items.image_data` held base64 in a row shared with the
+  article body and up to 12,000 characters of pasted source text, and a second
+  picture on one article would have been a row D1 refused to write back.
+- **A SQL statement is still capped at 100 KB.** Irrelevant to the dashboard, but
+  it is why `worker/scripts/seed-assets.mjs` sends bytes through
+  `wrangler r2 object put` and only metadata through `wrangler d1 execute`.

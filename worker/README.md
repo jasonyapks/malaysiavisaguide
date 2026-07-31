@@ -44,6 +44,36 @@ Copy the printed `database_id` into `wrangler.jsonc` → `d1_databases[0].databa
 npm run db:remote        # applies schema.sql to the live D1
 ```
 
+### 2b. Create the R2 bucket — the image store
+
+**⚠️ R2 must be enabled on the account first, and only Jason can do it.** It is a
+dashboard action: Cloudflare dashboard → R2 → enable/subscribe. There is no API
+for it — `wrangler r2 bucket create` and the REST API both answer
+`10042: Please enable R2 through the Cloudflare Dashboard` until it is done, and
+**`wrangler deploy` will fail while the `ASSETS` binding points at a bucket that
+does not exist.** The free tier covers this site's usage many times over; the
+subscription still has to be accepted.
+
+```bash
+npx wrangler r2 bucket create mvg-assets
+npx wrangler d1 execute mvg-news --remote --file=./schema-005-assets.sql
+```
+
+Then, once the Worker is deployed, seed and migrate:
+
+```bash
+node scripts/seed-assets.mjs --remote     # the 8 scene photos → site/<key>
+curl -X POST https://malaysiavisaguide.com/api/admin/assets/migrate-news
+```
+
+The second one moves the base64 heroes out of `news_items.image_data` into R2. It
+is idempotent, and `/api/news/:slug/image` keeps answering throughout — from D1
+for a row not yet moved, from R2 for one that has been.
+
+**Do not add a public custom domain or an `r2.dev` URL to this bucket.** Readers
+never fetch from it; the build pulls the bytes into `public/images/cms/` and the
+site serves them same-origin. See docs/IMAGES.md.
+
 ### 3. First deploy
 ```bash
 npx wrangler deploy
@@ -160,6 +190,14 @@ build, so the button stages and `npm run publish:site` publishes.
 | `ARTICLE_MODEL` | Workers AI model that writes the article, and runs the humanize pass |
 | `NEWS_API_ORIGIN` | This Worker's workers.dev origin, for dashboard image previews |
 | `CF_PAGES_TOKEN` | **secret** — API token, Pages: Edit; the only secret this Worker holds |
+
+## Bindings
+| Binding | What |
+|---|---|
+| `DB` | D1 `mvg-news` — articles, and the `assets` metadata table |
+| `ASSETS` | R2 `mvg-assets` — image bytes, `orig/` `hero/` `og/` |
+| `AI` | Workers AI — summaries and the article writer |
+| `BROWSER` | Browser Run — the fallback reader in `extract.ts` |
 
 ## Tuning
 - **Feeds / search queries**: edit `FEEDS` in `src/news.ts`.
