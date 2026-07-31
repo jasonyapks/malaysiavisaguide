@@ -4,12 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/pull-images.mjs --soft",
+    "predev": "node scripts/emit-figures.mjs && node scripts/sync-insight-routes.mjs --soft",
+    "prebuild": "node scripts/pull-images.mjs --soft && node scripts/emit-figures.mjs && node scripts/sync-insight-routes.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "publish:site": "node scripts/deploy-site.mjs",
-    "images:pull": "node scripts/pull-images.mjs"
+    "images:pull": "node scripts/pull-images.mjs",
+    "figures:emit": "node scripts/emit-figures.mjs",
+    "insights:sync": "node scripts/sync-insight-routes.mjs"
   },
   "dependencies": {
     "next": "16.2.11",
