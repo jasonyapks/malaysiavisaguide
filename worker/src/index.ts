@@ -3,8 +3,6 @@ import { requireAccess } from "./access";
 import { runNewsSweep, submitUrl, submitManual, VALID_CATEGORIES } from "./news";
 import { generateAndStore } from "./article";
 import { humanizeStored } from "./humanize";
-import { getAnalytics } from "./analytics";
-import { getGa4Stats } from "./ga4";
 import { triggerPublish, getDeployStatus, getBuildLog } from "./publish";
 import { dashboardHtml } from "./dashboard";
 
@@ -421,32 +419,14 @@ export default {
       return json({ ok: true, added });
     }
 
-    // GET /api/admin/stats?days=7[&source=cf]
+    // No traffic endpoint. The dashboard had a Cloudflare RUM panel and briefly a
+    // GA4 one; both were removed on 2026-07-31. Traffic is read in Cloudflare Web
+    // Analytics and Google Analytics directly — both are better at it than a panel
+    // here, and neither needed this Worker to hold a credential to do it.
     //
-    // GA4 is the source of truth — it is the one that can say where the traffic
-    // came from. Cloudflare RUM is kept for two reasons: it answers while GA4 is
-    // still being wired up, and `?source=cf` lets the two be compared, because
-    // GA4 is consent-gated and its numbers are materially lower. Delete
-    // analytics.ts once that comparison has been made.
-    if (pathname === "/api/admin/stats" && request.method === "GET") {
-      const days = Math.min(90, Math.max(1, Number(url.searchParams.get("days")) || 7));
-      const wantCf = url.searchParams.get("source") === "cf";
-
-      if (!wantCf) {
-        const ga = await getGa4Stats(env, days);
-        // Only fall back when GA4 is not set up. A configured GA4 that errors
-        // must surface its error — silently swapping in different numbers would
-        // hide a broken credential behind plausible-looking traffic.
-        if (ga.ok || !ga.error?.startsWith("GA4 not configured")) return json(ga);
-      }
-
-      const cf = await getAnalytics(env, days);
-      return json({
-        ...cf,
-        source: "cloudflare",
-        totals: { ...cf.totals, users: 0 },
-      });
-    }
+    // The site is still tagged (G-PXKCPDWJET, property 547981147) and Cloudflare
+    // RUM still records at the edge, so no data collection was lost — only the
+    // second-hand view of it. This Worker is now a content tool, nothing else.
 
     // POST /api/admin/publish — build and deploy the site.
     //

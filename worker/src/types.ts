@@ -6,28 +6,20 @@ export interface Env {
   SITE_ORIGIN: string;
   /** This Worker's own workers.dev origin — see SITE_API in dashboard.ts. */
   NEWS_API_ORIGIN: string;
+  /** Still needed by publish.ts for the Pages API. */
+  CF_ACCOUNT_ID: string;
   TEAM_DOMAIN: string;
   POLICY_AUD: string;
-  CF_ACCOUNT_ID: string;
-  WEB_ANALYTICS_SITE_TAG: string;
   /** Small, fast model — triage and the 2-sentence blurb, ~20 calls a sweep. */
   SUMMARY_MODEL: string;
   /** Large model — writes the full article, once per approved item. */
   ARTICLE_MODEL: string;
-  /** Secret — Cloudflare API token with Account Analytics: Read. */
-  CF_ANALYTICS_TOKEN: string;
   /**
    * Secret — Cloudflare API token with Cloudflare Pages: Edit. Starts a build and
    * reads its status; see publish.ts. Absent, publishing degrades to a message
    * rather than breaking the dashboard.
    */
   CF_PAGES_TOKEN: string;
-  /** The NUMERIC GA4 property id — not the G-XXXX measurement tag. See ga4.ts. */
-  GA_PROPERTY_ID: string;
-  /** The GA4 service account's client_email. Must be a Viewer on the property. */
-  GA_SA_EMAIL: string;
-  /** Secret — the service account's private_key PEM (PKCS#8). */
-  GA_SA_PRIVATE_KEY: string;
 }
 
 export interface NewsItem {

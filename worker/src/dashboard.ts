@@ -35,15 +35,6 @@ export function dashboardHtml(
     padding:20px; margin-bottom:24px; }
   h2 { font-size:1.05rem; margin:0 0 14px; }
   .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-  .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; }
-  .stat { background:var(--sand-100); border-radius:10px; padding:14px 16px; }
-  .stat .n { font-size:1.7rem; font-weight:700; color:var(--forest-900); }
-  .stat .l { font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-muted); }
-  .chart { display:flex; align-items:flex-end; gap:3px; height:120px; margin:16px 0 4px; }
-  .chart .bar { flex:1; background:var(--forest-600); border-radius:3px 3px 0 0; min-height:2px; opacity:.85; }
-  .chart .bar:hover { opacity:1; }
-  .twocol { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  @media (max-width:640px){ .twocol{ grid-template-columns:1fr; } }
   table { width:100%; border-collapse:collapse; font-size:.9rem; }
   td { padding:6px 4px; border-bottom:1px solid var(--sand-100); }
   td.num { text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-muted); }
@@ -133,16 +124,6 @@ export function dashboardHtml(
   .deploy-log { margin-top:10px; padding:12px 14px; border-radius:8px;
     background:var(--ink); color:#e6edf3; font-size:.78rem; line-height:1.55;
     overflow-x:auto; white-space:pre-wrap; word-break:break-word; }
-  /* Which numbers these are. GA4 is consent-gated and Cloudflare is not, so the
-     two disagree by a lot and the panel has to say which it is showing. */
-  .src { font-weight:400; font-size:.8rem; color:var(--ink-muted); }
-  /* Period-on-period change. The arrow carries the direction as well as the
-     colour, so it still reads without colour vision. */
-  .stat .d { margin-top:4px; font-size:.78rem; color:var(--ink-muted); }
-  .stat .d.up::before { content:"\\2191 "; }
-  .stat .d.down::before { content:"\\2193 "; }
-  .stat .d.up { color:var(--forest-600); }
-  .stat .d.down { color:var(--amber); }
 </style>
 </head>
 <body>
@@ -163,34 +144,6 @@ export function dashboardHtml(
     </p>
     <div id="deployState" class="deploy"><span class="muted">Checking…</span></div>
     <pre id="deployLog" class="deploy-log" hidden></pre>
-  </section>
-
-  <section id="analytics">
-    <div class="row" style="justify-content:space-between">
-      <h2>Site traffic <span class="src" id="statsSource"></span></h2>
-      <div class="row">
-        <select id="source">
-          <option value="">Google Analytics</option>
-          <option value="cf">Cloudflare (all visitors)</option>
-        </select>
-        <select id="range">
-          <option value="7">Last 7 days</option>
-          <option value="30">Last 30 days</option>
-          <option value="90">Last 90 days</option>
-        </select>
-      </div>
-    </div>
-    <div class="stat-grid" id="stats"><div class="muted">Loading…</div></div>
-    <div class="chart" id="chart"></div>
-    <div class="muted" id="chartLabel"></div>
-    <div id="channelsWrap" hidden style="margin-top:18px">
-      <h2>Where they came from</h2>
-      <table id="channels"></table>
-    </div>
-    <div class="twocol" style="margin-top:18px">
-      <div><h2>Top pages</h2><table id="topPages"></table></div>
-      <div><h2>Top countries</h2><table id="topCountries"></table></div>
-    </div>
   </section>
 
   <section id="news">
@@ -382,78 +335,6 @@ $("#publishBtn").addEventListener("click", async (e) => {
     btn.textContent = "Publish site";
   }
 });
-
-// ---- Analytics ----
-async function loadStats() {
-  const days = $("#range").value;
-  const src = $("#source").value;
-  const s = await api("/api/admin/stats?days=" + days + (src ? "&source=" + src : ""));
-  if (!s.ok) {
-    $("#stats").innerHTML = '<div class="muted">' + (s.error || "No analytics yet.") + '</div>';
-    $("#chart").innerHTML = ""; $("#topPages").innerHTML = ""; $("#topCountries").innerHTML = "";
-    $("#channelsWrap").hidden = true;
-    $("#statsSource").textContent = "";
-    return;
-  }
-
-  // Say which numbers these are. GA4 is consent-gated and Cloudflare is not, so
-  // the two disagree by a lot — a panel that did not name its source would look
-  // like it had lost half the traffic overnight.
-  $("#statsSource").textContent = s.source === "ga4"
-    ? "· consented visitors (Google Analytics)"
-    : "· all visitors (Cloudflare)";
-
-  $("#stats").innerHTML =
-    stat(s.totals.visits, "Visits", delta(s, "visits")) +
-    stat(s.totals.pageViews, "Page views", delta(s, "pageViews")) +
-    (s.source === "ga4"
-      ? stat(s.totals.users, "Visitors", delta(s, "users"))
-      : stat(s.daily.length ? Math.round(s.totals.pageViews / days) : 0, "Views / day"));
-
-  const chans = s.channels || [];
-  $("#channelsWrap").hidden = chans.length === 0;
-  if (chans.length) {
-    const total = chans.reduce((a, c) => a + c.sessions, 0) || 1;
-    $("#channels").innerHTML = chans.map(c =>
-      '<tr><td>' + esc(c.channel) + '</td><td class="num">' + c.sessions +
-      '</td><td class="num muted">' + Math.round(c.sessions / total * 100) + '%</td></tr>'
-    ).join("");
-  }
-  const max = Math.max(1, ...s.daily.map(d => d.visits));
-  $("#chart").innerHTML = s.daily.map(d =>
-    '<div class="bar" style="height:' + (d.visits / max * 100) + '%" title="' +
-    d.date + ': ' + d.visits + ' visits"></div>').join("");
-  $("#chartLabel").textContent = s.daily.length
-    ? s.daily[0].date + " → " + s.daily[s.daily.length - 1].date + " (daily visits)" : "";
-  $("#topPages").innerHTML = s.topPages.map(p =>
-    '<tr><td>' + esc(p.path) + '</td><td class="num">' + p.pageViews + '</td></tr>').join("")
-    || '<tr><td class="muted">No data</td></tr>';
-  $("#topCountries").innerHTML = s.topCountries.map(c =>
-    '<tr><td>' + esc(c.country) + '</td><td class="num">' + c.visits + '</td></tr>').join("")
-    || '<tr><td class="muted">No data</td></tr>';
-}
-function stat(n, l, d){
-  return '<div class="stat"><div class="n">' + n + '</div><div class="l">' + l + '</div>' +
-    (d || "") + '</div>';
-}
-
-/**
- * Change against the equal-length window before this one.
- *
- * A bare number does not say whether anything is working. 82 visits is good news
- * or bad news depending entirely on last week, and the whole point of watching a
- * new site is the direction. Returns "" when there is no previous period, rather
- * than a misleading 0%.
- */
-function delta(s, key){
-  if (!s.previous) return "";
-  const now = s.totals[key], was = s.previous[key];
-  if (!was) return now ? '<div class="d up">new</div>' : "";
-  const pct = Math.round((now - was) / was * 100);
-  if (pct === 0) return '<div class="d">level</div>';
-  const cls = pct > 0 ? "up" : "down";
-  return '<div class="d ' + cls + '">' + (pct > 0 ? "+" : "") + pct + '%</div>';
-}
 
 // ---- News queue ----
 async function loadList() {
@@ -806,8 +687,6 @@ $("#submitBtn").addEventListener("click", async () => {
   if (r.ok) { $("#submitUrl").value = ""; showTab("pending"); }
   else alert(r.error || "Could not add that URL.");
 });
-$("#range").addEventListener("change", loadStats);
-$("#source").addEventListener("change", loadStats);
 
 // ---- Manual intake ----
 // Two requests, not one: insert, then the ordinary approve call that every other
@@ -876,7 +755,7 @@ async function loadCategories() {
 
 function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-loadStats(); loadList(); loadCategories(); pollDeploy();
+loadList(); loadCategories(); pollDeploy();
 </script>
 </body>
 </html>`;
