@@ -16,7 +16,15 @@
  *   - `alt` describes what the photo actually shows (accessibility + SEO); it
  *     makes no claim the image can't back up (e.g. it doesn't assert a generic
  *     office is in Kuala Lumpur).
+ *
+ * WHY THIS FILE SURVIVED THE MOVE TO R2. Everything else about images now lives
+ * in the CMS, but `brief` does not and cannot: it is editorial copy describing
+ * what a photograph *should* show, and it is what the branded placeholder
+ * renders when there is no picture yet. A CMS can only describe images that
+ * exist. So the code entries below stay as the fallback and the brief, and a
+ * picture uploaded into the slot `site/<key>` wins over them — see `siteImage()`.
  */
+import { articleImage } from "@/lib/articleImages";
 export type SiteImage = {
   /** Path under /public. */
   src: string;
@@ -35,7 +43,13 @@ export type SiteImage = {
   ready?: boolean;
 };
 
-export const images: Record<string, SiteImage> = {
+/**
+ * The hand-written entries — the fallback, and the only home of `brief`.
+ *
+ * Not exported. `images` below is what everything reads, and it is these merged
+ * with whatever the CMS has for the same key.
+ */
+const codeImages: Record<string, SiteImage> = {
   // The one composed graphic on the site rather than a photograph, and the only
   // slot where that is right: the freshness band is about the paperwork, not
   // about Malaysian life, and the Chinatown street scene that sat here said
@@ -92,3 +106,37 @@ export const images: Record<string, SiteImage> = {
     ready: true,
   },
 };
+
+/**
+ * The image for a site slot: the CMS's if there is one, the code entry if not.
+ *
+ * `articleImage("site/<key>") ?? codeImages[key] ?? null`, with one refinement —
+ * a CMS hit keeps the code entry's `brief`. The manifest has no brief to give
+ * (it is not a property of a photograph; it is a note about what to look for),
+ * and losing it would mean deleting a picture in the dashboard left an
+ * unlabelled placeholder rather than the one that says what belongs there.
+ */
+export function siteImage(key: string): SiteImage | null {
+  const code = codeImages[key];
+  const cms = articleImage(`site/${key}`);
+  if (!cms) return code ?? null;
+  return { ...code, ...cms, brief: code?.brief ?? cms.brief };
+}
+
+/**
+ * The registry every page reads, CMS-merged.
+ *
+ * Computed at module load rather than exposed as a lookup function ONLY so that
+ * the twenty-odd `images["pvip"]` call sites — several of them under
+ * `src/app/visas/`, which is hand-edited on purpose and stays that way — did not
+ * all have to change to gain the CMS. `siteImage()` is the same answer for code
+ * written from here on.
+ *
+ * Safe at build time: `article-images.json` is written by `prebuild` before Next
+ * ever imports this file, and an empty registry simply means every key falls
+ * through to its code entry — which is exactly the state the site shipped in
+ * before any of this existed.
+ */
+export const images: Record<string, SiteImage> = Object.fromEntries(
+  Object.keys(codeImages).map((key) => [key, siteImage(key) as SiteImage]),
+);

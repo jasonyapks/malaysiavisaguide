@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/article-image.mjs --soft",
+    "prebuild": "node scripts/pull-images.mjs --soft",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "publish:site": "node scripts/deploy-site.mjs",
-    "images:pull": "node scripts/article-image.mjs"
+    "images:pull": "node scripts/pull-images.mjs"
   },
   "dependencies": {
     "next": "16.2.11",
@@ -23,7 +23,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.11",
-    "sharp": "^0.35.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

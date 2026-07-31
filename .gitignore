@@ -68,3 +68,14 @@ next-env.d.ts
 *.log
 .vscode/
 .idea/
+
+# Images pulled out of R2 by scripts/pull-images.mjs, and the registry it writes
+# alongside them. Build artifacts: D1's `assets` table and the mvg-assets bucket
+# are the source of truth, and a repo that also carried the binaries would have
+# two. `prebuild` regenerates both, in CI as well as locally.
+/public/images/cms/
+/src/lib/data/article-images.json
+# The directory scripts/article-image.mjs used to write into, before the images
+# moved to R2. Ignored rather than merely deleted so a stale local copy cannot
+# creep back into a commit.
+/public/images/news/
