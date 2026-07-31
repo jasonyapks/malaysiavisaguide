@@ -2,22 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { InsightCard, InsightStrip } from "@/components/InsightLayout";
 import {
-  byCategory,
   CATEGORY_BLURB,
   CATEGORY_TITLE,
   categoryPath,
   insightPath,
-  liveCategories,
 } from "@/lib/data/insights";
+import { insightsByCategory, liveInsightCategories } from "@/lib/insights";
 import { site } from "@/lib/site";
 
 /**
  * /insights/comparisons/ — the category index.
  *
- * One of these exists per category that has articles in it. It is a literal
- * folder rather than a [category] segment because the articles below it are
- * literal folders too, and a dynamic segment at this level would never match
- * them. See the header of src/lib/data/insights.ts.
+ * A literal folder, because the two hand-written articles below it are literal
+ * folders too. It is NOT the only way a category index gets built: every other
+ * category's index comes from the [category] dynamic route, which coexists with
+ * this file — see the header of src/lib/data/insights.ts. Both render the same
+ * merged list, so a CMS article filed under `comparisons` appears here without
+ * this file changing.
  */
 
 const CATEGORY = "comparisons" as const;
@@ -34,8 +35,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Page() {
-  const articles = byCategory(CATEGORY);
+export default async function Page() {
+  const articles = await insightsByCategory(CATEGORY);
+  const categories = await liveInsightCategories();
 
   return (
     <div className="space-y-12">
@@ -80,7 +82,7 @@ export default function Page() {
         </p>
       </header>
 
-      <InsightStrip categories={liveCategories()} current={CATEGORY} />
+      <InsightStrip categories={categories} current={CATEGORY} />
 
       <ul className="space-y-6">
         {articles.map((a) => (

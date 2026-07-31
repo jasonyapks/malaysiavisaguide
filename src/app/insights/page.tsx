@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { GuideHead } from "@/components/GuideHead";
 import { InsightCard, InsightStrip } from "@/components/InsightLayout";
-import { insightPath, liveCategories, published } from "@/lib/data/insights";
+import { insightPath, type Insight } from "@/lib/data/insights";
+import { liveInsightCategories, publishedInsights } from "@/lib/insights";
 import { site } from "@/lib/site";
 
 /**
@@ -29,13 +30,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Page() {
-  const categories = liveCategories();
-  const [lead, ...rest] = published();
+export default async function Page() {
+  const categories = await liveInsightCategories();
+  const articles = await publishedInsights();
+  const [lead, ...rest] = articles;
 
   return (
     <div className="space-y-12">
-      <ListSchema />
+      <ListSchema articles={articles} />
 
       <header className="space-y-6">
         <p className="eyebrow">Insights</p>
@@ -101,12 +103,12 @@ export default function Page() {
   );
 }
 
-function ListSchema() {
+function ListSchema({ articles }: { articles: Insight[] }) {
   const schema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "Insights",
-    itemListElement: published().map((a, i) => ({
+    itemListElement: articles.map((a, i) => ({
       "@type": "ListItem",
       position: i + 1,
       url: `${site.url}${insightPath(a)}`,

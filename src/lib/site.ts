@@ -9,6 +9,11 @@ export const site = {
   // /news and every /news/<slug>/ page are prerendered from it. The build points
   // itself at a local Worker via NEWS_API_URL; see src/lib/news.ts.
   newsApi: "https://mvg-news.jason-6bf.workers.dev/api/news",
+  // Public read-only endpoint for CMS-authored /insights/ articles, on the same
+  // Worker. Read at BUILD time, like the news API, and subject to the same rule:
+  // if it is unreachable the build fails rather than shipping an empty section.
+  // Override with INSIGHTS_API_URL; see src/lib/insights.ts.
+  insightsApi: "https://mvg-news.jason-6bf.workers.dev/api/cms/insights",
   // No Cloudflare Web Analytics token here — Cloudflare injects its own beacon at
   // the edge for this zone (site tag 6d5e4a6a…, which the Worker dashboard queries).
   // The hand-placed token that used to live here recorded nothing; removed 2026-07-28.

@@ -1,6 +1,12 @@
 /**
- * The registry for /insights/ — Jason's own authored articles, as distinct from
- * the six programme guides under /visas/ and the aggregated feed under /news/.
+ * The registry for /insights/ — the articles that are still hand-written .tsx,
+ * as distinct from the six programme guides under /visas/, the aggregated feed
+ * under /news/, and the CMS-authored articles that now arrive from the Worker
+ * (src/lib/insights.ts).
+ *
+ * This list only shrinks. Every new article is written in the dashboard; the two
+ * below are transcribed into blocks in Phase 5, at which point their folders are
+ * deleted and their URLs do not change.
  *
  * Three sections, three jobs:
  *   /visas/*    reference. What a programme is. Structurally identical pages.
@@ -16,21 +22,34 @@
  * deleted path at the edge for up to seven days, so the old URL will keep
  * serving 200 long after the rebuild. Pick the category once.
  *
- * ## Why there are no dynamic segments here
+ * ## Literal folders and the dynamic route DO coexist
  *
- * Every article and every category index is a real folder under src/app/insights/.
- * A [category] segment cannot coexist with a literal `comparisons` folder at the
- * same level — the literal wins and the dynamic route would never match it — and
- * a static export has already bitten this project once over dynamic routes that
- * generate zero paths (see the note in src/app/news/[slug]/page.tsx). Literal
- * folders cost one file each and cannot fail at build time.
+ * This file used to claim the opposite — that "a [category] segment cannot
+ * coexist with a literal `comparisons` folder at the same level; the literal
+ * wins and the dynamic route would never match it". The first half is false and
+ * the second is true only of the one colliding path. Measured on Next 16.2.11
+ * (2026-07-31): a dynamic route adds new children into a directory that already
+ * has literal children, and where a param collides with a literal the literal
+ * wins **deterministically** — Next scores segment specificity (static 0,
+ * `[param]` 1) and drops the colliding param from the dynamic prerender set
+ * before rendering, so it is not a last-writer race. The static page count did
+ * not move when a colliding param was added. There is already a precedent
+ * shipping in this repo: `news/[slug]` sits beside literal `news/category/`.
+ *
+ * What is true, and is the reason this note matters: a colliding CMS article
+ * vanishes **silently**. No error, no warning, no 404, nothing in the build log.
+ * So `assertNoCollisions()` in src/lib/insights.ts throws instead of filtering.
  *
  * ## The rule for adding an article
  *
- * 1. Add its entry to `insights` below.
- * 2. Create src/app/insights/<category>/<slug>/page.tsx.
- * 3. If that is the category's FIRST article, create
- *    src/app/insights/<category>/page.tsx too — see `hasIndex` below.
+ * Write it in the dashboard. Nothing here changes.
+ *
+ * For the two hand-written articles that remain:
+ * 1. Their entry is in `insights` below.
+ * 2. Their folder is src/app/insights/<category>/<slug>/page.tsx.
+ * 3. Their category has a literal index at src/app/insights/<category>/page.tsx
+ *    — and that folder's existence is what `hasAuthoredIndex()` derives from,
+ *    so there is no separate flag to keep in step any more.
  *
  * Figures in article prose come from `programmes.ts` via the format helpers,
  * never typed as literals. §4.1 applies here exactly as it does to a guide page:
@@ -101,21 +120,18 @@ export const CATEGORY_BLURB: Record<InsightCategory, string> = {
     "First-person notes from running two licensed Malaysian long-stay agencies — where the published rules and the counter behave differently, and what that costs an applicant.",
 };
 
-/**
- * Which categories have an index page built.
+/*
+ * `hasIndex` used to live here — a hand-maintained map of which categories had
+ * an index page built. It is gone, and is now computed: a category has an index
+ * iff it has at least one published article, from either source. See
+ * `liveInsightCategories()` in src/lib/insights.ts.
  *
- * An index with a heading and no articles under it is the thin content Search
- * Console flags, so a category page is created when its first article lands,
- * not in advance. This flag exists so /insights can render the browse strip
- * without linking at a 404 — keep it in step with the folders under
- * src/app/insights/.
+ * The rule it encoded still holds — an index with a heading and no articles
+ * under it is the thin content Search Console flags — but a flag someone has to
+ * remember to flip is the wrong way to hold it. Forget it and the browse strip
+ * either links at a 404 or hides a category that exists, and neither shows up
+ * in a build.
  */
-export const hasIndex: Record<InsightCategory, boolean> = {
-  comparisons: true,
-  "by-nationality": false,
-  "expat-living": false,
-  perspective: false,
-};
 
 /**
  * Launched 2026-07-27, once Jason supplied the PVIP 2026 figures and the
@@ -159,9 +175,6 @@ export const insights: Insight[] = [
   },
 ];
 
-/** What the public site is allowed to list, link and submit to a sitemap. */
-export const published = (): Insight[] => insights.filter((a) => !a.draft);
-
 export function insightPath(a: Pick<Insight, "category" | "slug">): string {
   return `/insights/${a.category}/${a.slug}/`;
 }
@@ -170,21 +183,10 @@ export function categoryPath(category: InsightCategory): string {
   return `/insights/${category}/`;
 }
 
-export function byCategory(category: InsightCategory): Insight[] {
-  return published().filter((a) => a.category === category);
-}
-
-/**
- * Categories that have at least one article AND an index page, in registry
- * order. Feeds the browse strip on /insights and every category page.
+/*
+ * `published()`, `byCategory()` and `liveCategories()` moved to
+ * src/lib/insights.ts and became async, because the answer now depends on a
+ * fetch. They are not re-exported here on purpose: a synchronous accessor left
+ * in place would keep compiling and would quietly answer with the two
+ * hand-written articles and nothing else.
  */
-export function liveCategories(): {
-  category: InsightCategory;
-  articles: Insight[];
-}[] {
-  const seen: InsightCategory[] = [];
-  for (const a of published()) {
-    if (!seen.includes(a.category) && hasIndex[a.category]) seen.push(a.category);
-  }
-  return seen.map((category) => ({ category, articles: byCategory(category) }));
-}
