@@ -4,6 +4,7 @@ import { runNewsSweep, submitUrl, submitManual, VALID_CATEGORIES } from "./news"
 import { generateAndStore } from "./article";
 import { humanizeStored } from "./humanize";
 import { triggerPublish, getDeployStatus, getBuildLog } from "./publish";
+import { getInsight, listInsights } from "./cms";
 import {
   commitAsset,
   deleteAssetBySlot,
@@ -150,6 +151,33 @@ export default {
       )
         .bind(article[1])
         .first<NewsItem>();
+      if (!item) return cors(env, json({ error: "Not found" }, 404));
+      return cors(env, json({ item }));
+    }
+
+    // --- Public: CMS-authored /insights/ documents, read by the site's build ---
+    //
+    // Public for the same reason /api/news is: `next build` reads them and has
+    // no browser to log in with. Drafts are included on purpose — a draft is
+    // reviewed at its real URL, noindex and unlisted, which only works if the
+    // build can see it. See worker/src/cms.ts for the contract.
+    //
+    // ⚠️ These paths need a Bypass policy on the "MVG Dashboard" Access app
+    // before a deployed Worker can serve them. Access is scoped to the whole
+    // host and today only /api/news is bypassed — /api/images (Phase 3) needs
+    // the same. Without it the site build gets a 302 to the login page, reads
+    // HTML where it expected JSON, and stops.
+    if (pathname === "/api/cms/insights") {
+      if (request.method === "OPTIONS") return cors(env, new Response(null, { status: 204 }));
+      return cors(env, json(await listInsights(env)));
+    }
+
+    const cmsInsight = pathname.match(
+      /^\/api\/cms\/insights\/([a-z0-9-]+)\/([a-z0-9-]+)$/,
+    );
+    if (cmsInsight) {
+      if (request.method === "OPTIONS") return cors(env, new Response(null, { status: 204 }));
+      const item = await getInsight(env, cmsInsight[1], cmsInsight[2]);
       if (!item) return cors(env, json({ error: "Not found" }, 404));
       return cors(env, json({ item }));
     }
