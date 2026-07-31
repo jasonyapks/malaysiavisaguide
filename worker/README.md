@@ -2,9 +2,12 @@
 
 A self-contained Cloudflare Worker that (1) fetches Malaysia visa news on a daily
 schedule, summarises each item with Workers AI into a **pending** queue, (2) serves
-a **private dashboard** (Cloudflare Access, locked to Jason) to approve/reject and
-view site traffic, and (3) exposes a **public** `/api/news` of approved items that
-the site's `/news` page reads.
+a **private dashboard** (Cloudflare Access, locked to Jason) to write, edit and
+approve those items and publish the site, and (3) exposes a **public** `/api/news`
+of approved items that the site's `/news` page reads.
+
+It is a content tool and nothing else — no analytics. Traffic is read in
+Cloudflare Web Analytics and Google Analytics directly.
 
 The public marketing site stays a static export on Cloudflare Pages — untouched.
 
@@ -14,7 +17,6 @@ Cron ──► Google News RSS ──► Workers AI summary ──► D1 (pendin
                                                        ▼
 /news page ◄── GET /api/news (public) ◄────────── D1 (approved)
 Dashboard  ◄── /dashboard + /api/admin/* (Cloudflare Access, only Jason)
-Traffic    ◄── Cloudflare Web Analytics (GraphQL API)
 ```
 
 Nothing is public until Jason approves it. Items store a short AI summary + the
@@ -69,30 +71,7 @@ npx wrangler deploy
 Now visiting `/dashboard` prompts a Cloudflare login and only your email gets in.
 (Until this is set, `/dashboard` returns 403 by design — fail-closed.)
 
-### 5. Site traffic — Cloudflare Web Analytics
-- **Zero Trust/Analytics → Web Analytics → Add a site** for the site hostname
-  (`malaysiavisaguide.pages.dev`, later the custom domain). Copy the **site tag**.
-- Add the beacon to the site so visits are counted — in
-  `src/app/layout.tsx`, just before `</body>`, add (token is public, safe to commit):
-  ```tsx
-  <script
-    defer
-    src="https://static.cloudflareinsights.com/beacon.min.js"
-    data-cf-beacon={`{"token":"YOUR_SITE_TAG"}`}
-  />
-  ```
-- Put the account id + site tag into `wrangler.jsonc` `vars`
-  (`CF_ACCOUNT_ID`, `WEB_ANALYTICS_SITE_TAG`).
-- Create an API token (**My Profile → API Tokens → Create → Account Analytics: Read**)
-  and store it as a secret (never in the repo):
-  ```bash
-  npx wrangler secret put CF_ANALYTICS_TOKEN
-  ```
-```bash
-npx wrangler deploy
-```
-
-### 6. Point the site at the feed
+### 5. Point the site at the feed
 In `src/lib/site.ts`, set `site.newsApi` to
 `https://mvg-news.<your-subdomain>.workers.dev/api/news`, then rebuild + redeploy
 the Pages site (the usual `wrangler pages deploy out`). Also set the Worker's
@@ -106,7 +85,8 @@ the Pages site (the usual `wrangler pages deploy out`). Also set the Worker's
    (they go live on `/news` immediately) or **Reject**. **Fetch latest now** runs a
    sweep on demand; the cron does it automatically every day at 09:00 MYT.
    Paste any article URL into the box to add it manually.
-3. **Site traffic**: visits, page views, top pages and countries for 7/30/90 days.
+3. **Publish** → *Publish site*: rebuilds and deploys the Pages site, which is what
+   makes everything approved above visible to a reader.
 
 Nothing on `/news` changes until the site is rebuilt and deployed. Approving
 writes to D1; `npm run build && wrangler pages deploy out --project-name=malaysiavisaguide`
@@ -175,11 +155,11 @@ build, so the button stages and `npm run publish:site` publishes.
 | `SITE_ORIGIN` | Site origin allowed to call `/api/news` (CORS) |
 | `TEAM_DOMAIN` | `https://<team>.cloudflareaccess.com` |
 | `POLICY_AUD` | Access application AUD tag |
-| `CF_ACCOUNT_ID` | Cloudflare account id |
-| `WEB_ANALYTICS_SITE_TAG` | Web Analytics site tag |
+| `CF_ACCOUNT_ID` | Cloudflare account id (used by `publish.ts` for the Pages API) |
 | `SUMMARY_MODEL` | Workers AI model for summaries |
 | `ARTICLE_MODEL` | Workers AI model that writes the article, and runs the humanize pass |
-| `CF_ANALYTICS_TOKEN` | **secret** — API token, Account Analytics: Read |
+| `NEWS_API_ORIGIN` | This Worker's workers.dev origin, for dashboard image previews |
+| `CF_PAGES_TOKEN` | **secret** — API token, Pages: Edit; the only secret this Worker holds |
 
 ## Tuning
 - **Feeds / search queries**: edit `FEEDS` in `src/news.ts`.

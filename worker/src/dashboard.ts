@@ -15,7 +15,7 @@ export function dashboardHtml(
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>News & Traffic — Malaysia Visa Guide</title>
+<title>Content — Malaysia Visa Guide</title>
 <style>
   :root {
     --forest-900:#14342b; --forest-700:#1f5c43; --forest-600:#2a7a58;

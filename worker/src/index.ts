@@ -419,14 +419,10 @@ export default {
       return json({ ok: true, added });
     }
 
-    // No traffic endpoint. The dashboard had a Cloudflare RUM panel and briefly a
-    // GA4 one; both were removed on 2026-07-31. Traffic is read in Cloudflare Web
-    // Analytics and Google Analytics directly — both are better at it than a panel
-    // here, and neither needed this Worker to hold a credential to do it.
-    //
-    // The site is still tagged (G-PXKCPDWJET, property 547981147) and Cloudflare
-    // RUM still records at the edge, so no data collection was lost — only the
-    // second-hand view of it. This Worker is now a content tool, nothing else.
+    // No analytics here, deliberately. This Worker edits and publishes content;
+    // traffic is read in Cloudflare Web Analytics and Google Analytics directly.
+    // Collection on the site is untouched — only the second-hand panel is gone,
+    // and with it the need for this Worker to hold an analytics credential.
 
     // POST /api/admin/publish — build and deploy the site.
     //

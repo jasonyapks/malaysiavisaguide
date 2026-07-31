@@ -59,19 +59,15 @@
   // authenticated. `quickAction()` needs compatibility_date >= 2026-03-24.
   "browser": { "binding": "BROWSER" },
 
-  // Non-secret config. Secrets (CF_ANALYTICS_TOKEN) are set with `wrangler secret put`.
+  // Non-secret config. Secrets (CF_PAGES_TOKEN) are set with `wrangler secret put`.
   "vars": {
     // Site origin allowed to call the public /api/news (CORS).
     "SITE_ORIGIN": "https://malaysiavisaguide.com",
     // Cloudflare Access — app "MVG Dashboard" (self-hosted, whole host, Allow jason@mypvip.com).
     "TEAM_DOMAIN": "https://square-darkness-5a07.cloudflareaccess.com",
     "POLICY_AUD": "0d561ccc798791e812c9546bde8a775ce6015573527aa3d71ec444c96ebcafcd",
-    // Used by publish.ts for the Pages API. It is NOT here for analytics any more:
-    // the traffic panel was removed on 2026-07-31, so WEB_ANALYTICS_SITE_TAG and
-    // the whole GA4 block are gone. Traffic is read in Cloudflare Web Analytics and
-    // Google Analytics directly — collection is unaffected, the site is still
-    // tagged, and this Worker no longer needs an analytics credential to show a
-    // worse version of the same numbers.
+    // Used by publish.ts to call the Pages API. Nothing here is for analytics:
+    // this Worker only edits and publishes content.
     "CF_ACCOUNT_ID": "d6bfff8a6a949401fc1ccb437e40a3ea",
     // Workers AI model for summaries (swappable). llama-3.2-3b is small, fast and
     // non-reasoning — well suited to short JSON summaries. (The llama-3.1-8b line

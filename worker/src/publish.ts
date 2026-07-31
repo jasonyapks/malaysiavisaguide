@@ -14,14 +14,13 @@ import type { Env } from "./types";
  * URL that triggers a build with no auth, which means it has to be created by hand
  * in the dashboard and stored as a second secret. `POST /deployments` does the same
  * job with the API token the status panel already needs, so there is one credential
- * instead of two and nothing for Jason to click. The tradeoff is that the token is
+ * for both and nothing for Jason to click. The tradeoff is that the token is
  * broader than a hook URL — Pages: Edit can also roll back and delete — which is
  * acceptable for a token only this Worker holds, and better than a bearer URL that
  * anyone who ever sees it can fire forever.
  *
  * Needs CF_PAGES_TOKEN (Cloudflare Pages: Edit). Absent, publishing and the status
- * panel both degrade to a clear message rather than breaking the dashboard — the
- * same policy analytics.ts applies.
+ * panel both degrade to a clear message rather than breaking the dashboard.
  */
 
 const API = "https://api.cloudflare.com/client/v4";
