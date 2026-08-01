@@ -80,13 +80,11 @@ next-env.d.ts
 # creep back into a commit.
 /public/images/news/
 
-# The /insights/ dynamic routes, placed by scripts/sync-insight-routes.mjs when
-# the CMS has something for them to render and removed when it does not. The
-# reviewable source is src/lib/insight-routes/; these are copies of it. Committed
-# they would be a second source of truth for whether the routes should exist —
-# and `output: "export"` hard-fails a dynamic route with zero paths, so a
-# committed copy means a repo that cannot build until an article is published.
-/src/app/insights/[category]/
+# Which /insights/ dynamic routes are switched on for this build, written by
+# scripts/sync-insight-routes.mjs and read by next.config.ts. Derived from D1,
+# which is the source of truth — a committed copy would be a second one, and a
+# stale `true` in a fresh clone means a build that cannot succeed.
+/.insight-routes.json
 
 # The figure catalogue the dashboard's picker reads, regenerated from
 # programmes.ts on every build by scripts/emit-figures.mjs.

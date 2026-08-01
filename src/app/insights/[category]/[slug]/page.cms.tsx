@@ -16,24 +16,19 @@ import { site } from "@/lib/site";
 /**
  * /insights/<category>/<slug>/ for every CMS-authored article.
  *
- * ## This file is the SOURCE. The route is a copy of it.
+ * ## Why the extension is `.cms.tsx` and not `.tsx`
  *
- * `scripts/sync-insight-routes.mjs` copies this file to
- * `src/app/insights/[category]/[slug]/page.tsx` before a build, and deletes it
- * again when the CMS has no articles. That indirection buys one specific thing,
- * and it is not optional:
+ * Next only treats a file as a page when its extension is in `pageExtensions`,
+ * so with the defaults this file is inert — present, committed, typechecked, and
+ * not a route. `next.config.ts` adds `cms.tsx` to that list only when
+ * scripts/sync-insight-routes.mjs has found at least one CMS document.
  *
- * Under `output: "export"`, Next hard-fails any dynamic route whose
- * `generateStaticParams` yields zero paths — `if (config.output === 'export' &&
- * isDynamic && !hasGenerateStaticParams) throw` in next/dist/build/index.js, with
- * no escape hatch. On day one the CMS is empty, so a committed route here would
- * mean a repo that cannot build until somebody publishes an article. The whole
- * point of this phase is that it ships invisibly, with zero articles and a
- * byte-identical `out/`.
- *
- * Keeping the source under src/lib/ rather than as a string inside the script
- * keeps it typechecked, linted and reviewable. Every import is `@/`-absolute, so
- * the copy compiles identically wherever it lands.
+ * That switch is not decoration. Under `output: "export"` Next hard-fails any
+ * dynamic route whose `generateStaticParams` yields zero paths — `if
+ * (config.output === 'export' && isDynamic && !hasGenerateStaticParams) throw`
+ * in next/dist/build/index.js, with no escape hatch. Phase 4 ships with zero
+ * articles, so an always-on route here would mean a repo that cannot build until
+ * somebody publishes something.
  *
  * ## Coexistence with the two hand-written folders
  *
@@ -58,10 +53,10 @@ export async function generateStaticParams() {
   // which sends you looking for a bug in this file. It is not a bug in this
   // file: there is simply nothing published yet. Say so.
   //
-  // In practice sync-insight-routes.mjs does not put this route in place until
-  // there is at least one article, so this should be unreachable. It stays
-  // because "should be unreachable" is not a guarantee, and the failure it
-  // preempts costs an hour to diagnose from Next's own message.
+  // In practice the extension gate keeps this route off until there is at least
+  // one article, so this should be unreachable. It stays because "should be
+  // unreachable" is not a guarantee, and the failure it preempts costs an hour
+  // to diagnose from Next's own message.
   if (items.length === 0) {
     throw new Error(
       "No CMS insight articles, so /insights/[category]/[slug] has no pages to " +

@@ -18,9 +18,10 @@ import { site } from "@/lib/site";
 /**
  * /insights/<category>/ for every category that has no literal folder.
  *
- * The source for `src/app/insights/[category]/page.tsx`; see the long note at
- * the top of src/lib/insight-routes/article.tsx for why the route is copied
- * into place rather than committed.
+ * Inert until `next.config.ts` adds `cmsindex.tsx` to `pageExtensions`, which it
+ * does only when a category with a published article has no literal folder. See
+ * the note at the top of [slug]/page.cms.tsx, and next.config.ts, for why the
+ * routes are switchable at all.
  *
  * `comparisons` is deliberately NOT generated here — it has a literal index at
  * src/app/insights/comparisons/page.tsx, which wins, and which renders the same
@@ -37,8 +38,9 @@ export async function generateStaticParams() {
 
   // Same trap as the article route, same preemption: `output: "export"` refuses
   // a dynamic route with zero paths and blames a missing generateStaticParams.
-  // sync-insight-routes.mjs does not place this route until at least one
-  // category needs it, so this should be unreachable.
+  // The extension gate keeps this route off until a category needs it, so this
+  // should be unreachable — it stays because "should be" is not a guarantee and
+  // Next's own message costs an hour to diagnose.
   if (categories.length === 0) {
     throw new Error(
       "Every category with a published article already has a literal index page, " +
