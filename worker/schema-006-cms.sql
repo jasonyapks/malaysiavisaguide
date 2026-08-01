@@ -29,8 +29,9 @@
 --
 -- Run: wrangler d1 execute mvg-news --remote --file=./schema-006-cms.sql
 --
--- NOT YET APPLIED TO PRODUCTION as at 2026-07-31. Phase 4 ships the read path
--- with zero documents; the table is created when the editor lands (Phase 5).
+-- APPLIED TO PRODUCTION 2026-08-01 — table plus both indexes, zero rows. Phase 4
+-- ships the read path against an empty table on purpose; the first row arrives
+-- with the editor in Phase 5.
 
 CREATE TABLE IF NOT EXISTS cms_documents (
   -- A UUID, not the path. The path is the URL and the URL can be corrected once,

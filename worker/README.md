@@ -101,6 +101,33 @@ npx wrangler deploy
 Now visiting `/dashboard` prompts a Cloudflare login and only your email gets in.
 (Until this is set, `/dashboard` returns 403 by design — fail-closed.)
 
+#### As built (verified against the live account 2026-08-01)
+
+The account ended up with the inverse arrangement, which is equivalent and fewer
+moving parts: **one gated app covering the whole host, and bypass apps carving
+out the public read paths.** Access matches the most specific application, so a
+narrower bypass app wins over the host-wide Allow.
+
+| App | Covers | Policy |
+|---|---|---|
+| `MVG Dashboard` | `mvg-news.…workers.dev`, `malaysiavisaguide.com/dashboard`, `malaysiavisaguide.com/api/admin/*` | Allow — `jason@mypvip.com` |
+| `MVG Public API` | `mvg-news.…workers.dev/api/news` | Bypass — everyone |
+| `MVG Build API` | `mvg-news.…workers.dev/api/cms`, `…/api/images` | Bypass — everyone |
+
+`POLICY_AUD` in `wrangler.jsonc` is the **`MVG Dashboard`** AUD — that is the app
+whose JWT the Worker verifies. The bypass apps have their own AUDs and are not
+referenced anywhere in code.
+
+**Every public read path the site's build fetches needs a bypass app.** Without
+one the build machine gets a 302 to the login page, reads HTML where it expected
+JSON, and stops — with an error that names the endpoint rather than the cause.
+`MVG Build API` was added for exactly that reason when `/api/cms/*` (Phase 4) and
+`/api/images/*` (Phase 3) landed. Path matching is by prefix, so
+`/api/cms/insights/comparisons/some-slug` is covered by the `/api/cms` entry.
+
+New Access applications take **up to a minute to propagate** — a 302 immediately
+after creating one is not a misconfiguration, so re-test before changing anything.
+
 ### 5. Point the site at the feed
 In `src/lib/site.ts`, set `site.newsApi` to
 `https://mvg-news.<your-subdomain>.workers.dev/api/news`, then rebuild + redeploy
