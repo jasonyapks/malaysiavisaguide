@@ -38,33 +38,49 @@ function at(docPath: string, index: number): string {
 export function InlineNodes({
   nodes,
   where,
+  onNavy = false,
 }: {
   nodes: Inline[];
   where: string;
+  /**
+   * Set inside the navy CTA. Link colour is the only thing that changes, and it
+   * has to: forest-700 on forest-900 is unreadable, and an author has no way to
+   * say "this one is on a dark panel" — nor should they. The renderer knows
+   * which block it is in; the document does not.
+   */
+  onNavy?: boolean;
 }) {
   return (
     <>
       {nodes.map((n, i) => (
-        <InlineNode key={i} node={n} where={where} />
+        <InlineNode key={i} node={n} where={where} onNavy={onNavy} />
       ))}
     </>
   );
 }
 
-function InlineNode({ node, where }: { node: Inline; where: string }) {
+function InlineNode({
+  node,
+  where,
+  onNavy,
+}: {
+  node: Inline;
+  where: string;
+  onNavy: boolean;
+}) {
   switch (node.t) {
     case "text":
       return <>{node.v}</>;
     case "strong":
       return (
         <strong>
-          <InlineNodes nodes={node.c} where={where} />
+          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} />
         </strong>
       );
     case "em":
       return (
         <em>
-          <InlineNodes nodes={node.c} where={where} />
+          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} />
         </em>
       );
     case "note":
@@ -73,26 +89,29 @@ function InlineNode({ node, where }: { node: Inline; where: string }) {
       // to <em> so it reads the same everywhere and can later be linted for.
       return (
         <span className="text-caption text-ink-muted">
-          <InlineNodes nodes={node.c} where={where} />
+          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} />
         </span>
       );
     case "link": {
       const external = /^https?:\/\//.test(node.href);
+      const cls = onNavy
+        ? "font-semibold underline"
+        : "text-forest-700 underline";
       // The author supplies a destination; the renderer supplies the rel and
       // the target. Outbound links are nofollow noopener without anyone having
       // to remember, and an internal link gets the client-side <Link>.
       return external ? (
         <a
           href={node.href}
-          className="text-forest-700 underline"
+          className={cls}
           rel="nofollow noopener"
           target="_blank"
         >
-          <InlineNodes nodes={node.c} where={where} />
+          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} />
         </a>
       ) : (
-        <Link href={node.href} className="text-forest-700 underline">
-          <InlineNodes nodes={node.c} where={where} />
+        <Link href={node.href} className={cls}>
+          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} />
         </Link>
       );
     }
@@ -258,8 +277,8 @@ function BlockNode({
     case "cta":
       // Never a full stop. The article answers a question; this asks the next.
       return (
-        <p className="rounded-xl bg-forest-900 px-6 py-6 text-sand-50 [&_a]:font-semibold [&_a]:underline">
-          <InlineNodes nodes={block.c} where={where} />
+        <p className="rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
+          <InlineNodes nodes={block.c} where={where} onNavy />
         </p>
       );
   }
