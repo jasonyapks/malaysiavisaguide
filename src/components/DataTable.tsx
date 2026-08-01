@@ -51,7 +51,17 @@ export function DataTable({
    *  emphasise it — a comparison of programmes wants the name prominent, a
    *  comparison of attributes wants the label quiet. */
   rows: { label: ReactNode; cells: Cell[] }[];
-  notes?: string[];
+  /**
+   * Footnotes in reference order. Numbering is the array index + 1.
+   *
+   * ReactNode rather than string, because a footnote is where the long
+   * conditions go and those conditions are full of live figures — every note
+   * under the tables in the two /insights/ articles interpolates something from
+   * programmes.ts. Restricting it to strings would force a CMS author to retype
+   * the number, which is the one thing this whole design exists to prevent.
+   * Every existing caller passes strings and renders identically.
+   */
+  notes?: ReactNode[];
   idPrefix?: string;
 }) {
   return (
@@ -116,7 +126,12 @@ export function DataTable({
           <ol className="space-y-1 text-caption leading-relaxed text-ink-muted">
             {notes.map((n, i) => (
               <li
-                key={n}
+                // The note's own text where it is text — `noteCollector` already
+                // deduplicates by it, so it is stable across a reorder in a way
+                // the index is not. An inline tree has no such handle and falls
+                // back to the index, which is fine: those come from a stored
+                // document that is replaced wholesale, never spliced.
+                key={typeof n === "string" ? n : i}
                 id={`${idPrefix}-${i + 1}`}
                 className="scroll-mt-24"
               >

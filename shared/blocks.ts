@@ -136,7 +136,13 @@ export type Block =
       /** Column headers. The first is the row-label column, usually blank. */
       head: string[];
       rows: { label: Inline[]; cells: TableCell[] }[];
-      notes?: string[];
+      /**
+       * Inline trees, not strings. A footnote carries the long condition that
+       * must not sit inside a cell, and those conditions are where the live
+       * figures are — "up to 50% of RM1,000,000 may be withdrawn after six
+       * months". Plain strings would make the author retype the number.
+       */
+      notes?: Inline[][];
     }
   /** An image from the asset library (D1 `assets`, bytes in R2). */
   | { t: "figure"; assetId: string; caption?: string; aspect?: string }

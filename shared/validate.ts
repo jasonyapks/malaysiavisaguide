@@ -173,10 +173,12 @@ function checkBlock(block: unknown, where: string, errs: Errors): void {
         return;
       }
       const notes = block.notes;
-      if (notes !== undefined && (!Array.isArray(notes) || !notes.every(str))) {
-        errs.push(`${where}.notes: expected an array of strings`);
+      if (notes !== undefined && !Array.isArray(notes)) {
+        errs.push(`${where}.notes: expected an array of inline trees`);
       }
-      const noteCount = Array.isArray(notes) ? notes.length : 0;
+      const noteList = Array.isArray(notes) ? notes : [];
+      noteList.forEach((n, i) => checkInlineArray(n, `${where}.notes[${i}]`, errs));
+      const noteCount = noteList.length;
       if (!Array.isArray(block.rows) || block.rows.length === 0) {
         errs.push(`${where}.rows: a table needs at least one row`);
         return;

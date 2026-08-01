@@ -204,7 +204,9 @@ function BlockNode({
           caption={block.caption}
           head={block.head}
           rows={rows}
-          notes={block.notes ?? []}
+          notes={(block.notes ?? []).map((n, i) => (
+            <InlineNodes key={i} nodes={n} where={`${where} note ${i + 1}`} />
+          ))}
           // Unique per table on the page, which is what the footnote anchors
           // need. The block index is the only thing guaranteed to be unique.
           idPrefix={`b${index}`}
