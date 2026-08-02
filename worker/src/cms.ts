@@ -1,6 +1,7 @@
 import type { Env } from "./types";
 import type { InsightDoc, InsightSummary } from "../../shared/insight";
 import type { Block } from "../../shared/blocks";
+import { validateInsightDoc } from "../../shared/validate";
 
 /**
  * The public read path for CMS-authored documents — what `next build` fetches.
@@ -188,4 +189,170 @@ function parseJson<T>(raw: string | null, fallback: T): T {
  */
 function missingTable(err: unknown): boolean {
   return /no such table:\s*cms_documents/i.test(String(err));
+}
+
+/* ------------------------------------------------------------------ *
+ * The write path — Phase 5. Admin only; the router gates it on Access.
+ * ------------------------------------------------------------------ */
+
+/**
+ * The admin list. Same rows as the public index plus `id`, because the editor
+ * addresses a document by identity and the public site addresses it by path.
+ * That distinction is the whole reason the primary key is a UUID rather than
+ * the path (see migration 006): correcting a slug is an ordinary edit, and it
+ * must not orphan the row being edited.
+ */
+export async function listInsightsAdmin(
+  env: Env,
+): Promise<{ items: (InsightSummary & { id: string })[] }> {
+  let results: SummaryRow[] | undefined;
+  try {
+    ({ results } = await env.DB.prepare(
+      `SELECT ${SUMMARY_COLUMNS} FROM cms_documents
+        WHERE kind = 'insight'
+        ORDER BY COALESCE(published, created_at) DESC
+        LIMIT 500`,
+    ).all<SummaryRow>());
+  } catch (err) {
+    if (missingTable(err)) return { items: [] };
+    throw err;
+  }
+  return {
+    items: (results ?? []).map((r) => ({ ...toSummary(r), id: r.id })),
+  };
+}
+
+/** One whole document by id, for the editor to load. */
+export async function getInsightById(
+  env: Env,
+  id: string,
+): Promise<(InsightDoc & { id: string }) | null> {
+  let row: DocRow | null = null;
+  try {
+    row = await env.DB.prepare(
+      `SELECT ${SUMMARY_COLUMNS}, blocks, faq, sources FROM cms_documents
+        WHERE kind = 'insight' AND id = ?`,
+    )
+      .bind(id)
+      .first<DocRow>();
+  } catch (err) {
+    if (missingTable(err)) return null;
+    throw err;
+  }
+  if (!row) return null;
+  return {
+    ...toSummary(row),
+    id: row.id,
+    blocks: parseJson<Block[]>(row.blocks, []),
+    faq: parseJson<InsightDoc["faq"]>(row.faq, []),
+    sources: parseJson<InsightDoc["sources"]>(row.sources, []),
+  };
+}
+
+export type SaveOutcome =
+  | { ok: true; id: string; created: boolean }
+  | { ok: false; status: 404 | 409 | 422; error: string; errors?: string[] };
+
+/**
+ * Create or replace a document, whole.
+ *
+ * A whole-document PUT rather than a field patch, and that is deliberate. The
+ * body is an AST: a patch that could touch one block would need block identity,
+ * an ordering column and a merge rule, all to save bytes on a payload that is
+ * 26KB at its worst. The editor holds the document in memory and sends it back.
+ *
+ * `validateInsightDoc` runs here **before** anything is written. That is the
+ * point of Phase 5 — a malformed document has to fail against the thing Jason
+ * just typed, not ten minutes later in a red Pages build that names no article.
+ * The site validates again at render, because a row can also arrive from a
+ * script or a migration (both of which have already happened once).
+ */
+export async function saveInsightDoc(
+  env: Env,
+  doc: unknown,
+  id: string | null,
+): Promise<SaveOutcome> {
+  const errors = validateInsightDoc(doc);
+  if (errors.length) {
+    return { ok: false, status: 422, error: "Document did not validate", errors };
+  }
+  const d = doc as InsightDoc;
+
+  // The unique index on (kind, category, slug) would raise a constraint error
+  // anyway. Checking first turns "D1_ERROR: UNIQUE constraint failed" into a
+  // sentence naming the article that already sits at that URL.
+  const clash = await env.DB.prepare(
+    `SELECT id FROM cms_documents WHERE kind = 'insight' AND category = ? AND slug = ?`,
+  )
+    .bind(d.category, d.slug)
+    .first<{ id: string }>();
+  if (clash && clash.id !== id) {
+    return {
+      ok: false,
+      status: 409,
+      error: `/insights/${d.category}/${d.slug}/ is already taken by another document.`,
+    };
+  }
+
+  // Undefined means draft. Migration 006 defaults the column the same way, for
+  // the same reason: a half-written article that is accidentally live is worse
+  // than a finished one that needs a second click.
+  const draft = d.draft === false ? 0 : 1;
+  const guides = JSON.stringify(d.relatedGuides);
+  const blocks = JSON.stringify(d.blocks);
+  const faq = JSON.stringify(d.faq);
+  const sources = JSON.stringify(d.sources);
+
+  if (id === null) {
+    const newId = crypto.randomUUID();
+    await env.DB.prepare(
+      `INSERT INTO cms_documents
+         (id, kind, category, slug, title, dek, published, reviewed,
+          reading_minutes, related_guides, blocks, faq, sources, draft)
+       VALUES (?, 'insight', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+      .bind(
+        newId, d.category, d.slug, d.title, d.dek, d.published, d.reviewed,
+        d.readingMinutes, guides, blocks, faq, sources, draft,
+      )
+      .run();
+    return { ok: true, id: newId, created: true };
+  }
+
+  const res = await env.DB.prepare(
+    `UPDATE cms_documents
+        SET category = ?, slug = ?, title = ?, dek = ?, published = ?,
+            reviewed = ?, reading_minutes = ?, related_guides = ?, blocks = ?,
+            faq = ?, sources = ?, draft = ?, updated_at = datetime('now')
+      WHERE kind = 'insight' AND id = ?`,
+  )
+    .bind(
+      d.category, d.slug, d.title, d.dek, d.published, d.reviewed,
+      d.readingMinutes, guides, blocks, faq, sources, draft, id,
+    )
+    .run();
+
+  if (!res.meta.changes) {
+    return { ok: false, status: 404, error: "No such document." };
+  }
+  return { ok: true, id, created: false };
+}
+
+/**
+ * Delete a document.
+ *
+ * No soft delete and no undo, and that is a considered omission rather than a
+ * gap. A published article's URL is the thing worth protecting, and Cloudflare
+ * Pages keeps serving a removed path from the edge for up to seven days — so
+ * "deleted" is already slow and messy at the reader's end. Unpublishing is what
+ * the draft flag is for, and it is reversible in one click. Delete is for a
+ * document that was never live.
+ */
+export async function deleteInsightDoc(env: Env, id: string): Promise<boolean> {
+  const res = await env.DB.prepare(
+    `DELETE FROM cms_documents WHERE kind = 'insight' AND id = ?`,
+  )
+    .bind(id)
+    .run();
+  return Boolean(res.meta.changes);
 }

@@ -134,46 +134,22 @@ export const CATEGORY_BLURB: Record<InsightCategory, string> = {
  */
 
 /**
- * Launched 2026-07-27, once Jason supplied the PVIP 2026 figures and the
- * `superseded` mechanism in programmes.ts gave them a declared source.
+ * Empty since the Phase 5 migration (2026-08-02), and that is the finished
+ * state rather than a gap.
  *
- * Adding an article: entry here, folder under src/app/insights/<category>/, and
- * a category index page if it is that category's first. Set `draft: true` while
- * a figure in the body is still unconfirmed — a draft is reviewable at its real
- * URL in `next dev`, is noindex, and stays out of the sitemap and every listing.
+ * Both comparison articles that used to live here are CMS documents now, at
+ * the same URLs, with every figure still a `fig` node resolved from
+ * programmes.ts at build. Their folders under src/app/insights/comparisons/
+ * went in the same commit — deleting one without the other is the silent
+ * failure `assertNoCollisions()` in src/lib/insights.ts exists to catch, and
+ * a literal folder left behind would win over the CMS copy with nothing in
+ * the build log to say so.
  *
- * Newest first. This order is the order /insights renders.
+ * Nothing should be added back. A new article is written in the dashboard.
+ * The type, the labels and the blurbs below are still live — they describe
+ * every article, whichever side it is authored on.
  */
-export const insights: Insight[] = [
-  {
-    slug: "mm2h-platinum-vs-pvip",
-    category: "comparisons",
-    title:
-      "MM2H Platinum vs. PVIP: Which 20-Year Malaysia Visa Actually Costs Less?",
-    dek: "Both run twenty years, both charge RM200,000, and since December 2025 both let you work — so the tiebreaker everyone still quotes is gone. One question separates them: whether you can prove RM40,000 a month. If you can, PVIP locks a fraction of the capital. If you cannot, PVIP is shut at any price.",
-    published: "2026-07-28",
-    reviewed: "2026-07-28",
-    readingMinutes: 7,
-    relatedGuides: [
-      { path: "/visas/pvip/", title: "the PVIP guide" },
-      { path: "/visas/mm2h/", title: "the MM2H guide" },
-    ],
-  },
-  {
-    slug: "mm2h-vs-pvip-vs-de-rantau",
-    category: "comparisons",
-    title: "MM2H vs. PVIP vs. DE Rantau: Which Malaysia Visa Fits Your Income?",
-    dek: "Only one of the three qualifies you on income alone. One tests income and capital together. The third does not test income at all — which is the fact that decides this for most people.",
-    published: "2026-07-27",
-    reviewed: "2026-07-27",
-    readingMinutes: 8,
-    relatedGuides: [
-      { path: "/visas/mm2h/", title: "the MM2H guide" },
-      { path: "/visas/pvip/", title: "the PVIP guide" },
-      { path: "/visas/de-rantau/", title: "the DE Rantau guide" },
-    ],
-  },
-];
+export const insights: Insight[] = [];
 
 export function insightPath(a: Pick<Insight, "category" | "slug">): string {
   return `/insights/${a.category}/${a.slug}/`;

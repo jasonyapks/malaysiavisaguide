@@ -4,7 +4,14 @@ import { runNewsSweep, submitUrl, submitManual, VALID_CATEGORIES } from "./news"
 import { generateAndStore } from "./article";
 import { humanizeStored } from "./humanize";
 import { triggerPublish, getDeployStatus, getBuildLog } from "./publish";
-import { getInsight, listInsights } from "./cms";
+import {
+  deleteInsightDoc,
+  getInsight,
+  getInsightById,
+  listInsights,
+  listInsightsAdmin,
+  saveInsightDoc,
+} from "./cms";
 import {
   commitAsset,
   deleteAssetBySlot,
@@ -351,6 +358,68 @@ export default {
     // payload and the old path paid it twice. The commit is last and separate so
     // an interrupted upload leaves orphaned objects and no row, never a row whose
     // bytes are missing. See assets.ts.
+
+    // --- Admin: authoring /insights/ documents (Phase 5) ---
+    //
+    // Addressed by id, not by path, unlike the public read routes above. The
+    // path is editable — correcting a slug before first publish is an ordinary
+    // edit — and a key that moves takes the row being edited with it.
+    //
+    // Every write runs validateInsightDoc first. That is the reason this exists
+    // rather than a wrangler d1 execute: a document that cannot render must be
+    // refused against the thing just typed, not discovered in a red Pages build
+    // that names no article.
+    if (pathname === "/api/admin/insights" && request.method === "GET") {
+      return json(await listInsightsAdmin(env));
+    }
+
+    // The figure catalogue, proxied rather than fetched by the browser.
+    //
+    // public/figures.json is a Pages asset on the site's origin, and the
+    // dashboard is served from two different hosts (the custom domain and
+    // workers.dev). Fetching it client-side would be same-origin on one and a
+    // CORS failure on the other, and Pages sends no CORS headers. Server-side
+    // there is no origin to be wrong about. See scripts/emit-figures.mjs for
+    // why this is a build artifact and can be one deploy stale.
+    if (pathname === "/api/admin/figures" && request.method === "GET") {
+      const res = await fetch(`${env.SITE_ORIGIN}/figures.json`, {
+        headers: { accept: "application/json" },
+      });
+      if (!res.ok) {
+        return json({ error: `figures.json — status ${res.status}` }, 502);
+      }
+      return json(await res.json());
+    }
+
+    if (pathname === "/api/admin/insights" && request.method === "POST") {
+      const doc = await request.json().catch(() => null);
+      if (doc === null) return json({ ok: false, error: "Bad JSON" }, 400);
+      const outcome = await saveInsightDoc(env, doc, null);
+      return json(outcome, outcome.ok ? 201 : outcome.status);
+    }
+
+    const cmsAdmin = pathname.match(/^\/api\/admin\/insights\/([^/]+)$/);
+    if (cmsAdmin) {
+      const [, id] = cmsAdmin;
+
+      if (request.method === "GET") {
+        const item = await getInsightById(env, id);
+        if (!item) return json({ ok: false, error: "Not found" }, 404);
+        return json({ item });
+      }
+
+      if (request.method === "PUT") {
+        const doc = await request.json().catch(() => null);
+        if (doc === null) return json({ ok: false, error: "Bad JSON" }, 400);
+        const outcome = await saveInsightDoc(env, doc, id);
+        return json(outcome, outcome.ok ? 200 : outcome.status);
+      }
+
+      if (request.method === "DELETE") {
+        const gone = await deleteInsightDoc(env, id);
+        return json({ ok: gone }, gone ? 200 : 404);
+      }
+    }
 
     if (pathname === "/api/admin/assets" && request.method === "GET") {
       return json(await listAssets(env));

@@ -1,3 +1,10 @@
+import {
+  BLOCK_TYPES,
+  INSIGHT_CATEGORIES,
+  PROGRAMME_IDS,
+} from "../../shared/blocks";
+import { EDITOR_JS } from "./editor";
+
 /**
  * The private dashboard, served only to Jason (behind Cloudflare Access).
  * Self-contained HTML + vanilla JS — it talks to the same Worker's /api/admin
@@ -124,6 +131,46 @@ export function dashboardHtml(
   .deploy-log { margin-top:10px; padding:12px 14px; border-radius:8px;
     background:var(--ink); color:#e6edf3; font-size:.78rem; line-height:1.55;
     overflow-x:auto; white-space:pre-wrap; word-break:break-word; }
+
+  /* ---- Insight editor (Phase 5) ---- */
+  .doc { border:1px solid var(--sand-200); border-radius:12px; padding:12px 14px;
+    margin-bottom:10px; display:flex; gap:12px; align-items:baseline;
+    flex-wrap:wrap; justify-content:space-between; }
+  .doc h3 { font-size:.95rem; margin:0; }
+  .doc .path { font-size:.78rem; color:var(--ink-muted); font-family:ui-monospace,Menlo,monospace; }
+  .pill { font-size:.68rem; text-transform:uppercase; letter-spacing:.05em;
+    padding:2px 8px; border-radius:999px; }
+  .pill.live { background:#dcfce7; color:#14532d; }
+  .pill.draft { background:var(--sand-100); color:var(--ink-muted); }
+  .ed { margin-top:16px; }
+  .ed .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:10px 14px; }
+  .ed label { display:block; font-size:.75rem; text-transform:uppercase;
+    letter-spacing:.05em; color:var(--ink-muted); margin-bottom:4px; }
+  .ed input[type=text], .ed input[type=date], .ed input[type=number],
+  .ed select, .ed textarea { width:100%; padding:8px 10px; font:inherit;
+    border:1px solid var(--sand-400); border-radius:8px; background:#fff; }
+  .ed textarea { resize:vertical; line-height:1.5; }
+  /* Blocks. The drag handle is deliberately absent — reordering is two buttons,
+     which works with a keyboard and needs no pointer gymnastics. */
+  .blk { border:1px solid var(--sand-200); border-radius:10px; padding:10px 12px;
+    margin-bottom:9px; background:var(--sand-50); }
+  .blk > .hd { display:flex; gap:6px; align-items:center; margin-bottom:8px; }
+  .blk > .hd .kind { font-size:.7rem; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--forest-700); font-weight:700; margin-right:auto; }
+  .blk button.mini { padding:2px 8px; font-size:.78rem; background:#fff;
+    border:1px solid var(--sand-400); }
+  .blk .cell { margin-bottom:8px; }
+  .rowline { display:flex; gap:8px; align-items:flex-start; margin-bottom:6px; }
+  .rowline > * { flex:1 1 0; min-width:0; }
+  .rowline > button { flex:0 0 auto; }
+  .syntax { font-size:.75rem; color:var(--ink-muted); margin:6px 0 0;
+    font-family:ui-monospace,Menlo,monospace; }
+  .errs { background:#fef2f2; border:1px solid #fca5a5; color:#991b1b;
+    padding:10px 12px; border-radius:8px; font-size:.85rem; margin:10px 0; }
+  .errs ul { margin:6px 0 0; padding-left:18px; }
+  .ok { background:#f0fdf4; border:1px solid #86efac; color:#14532d;
+    padding:10px 12px; border-radius:8px; font-size:.85rem; margin:10px 0; }
 </style>
 </head>
 <body>
@@ -144,6 +191,20 @@ export function dashboardHtml(
     </p>
     <div id="deployState" class="deploy"><span class="muted">Checking…</span></div>
     <pre id="deployLog" class="deploy-log" hidden></pre>
+  </section>
+
+  <!--
+    Insights. The evergreen half of the site — what Jason thinks, as opposed to
+    /news (machine-fed, perishable) and /visas (reference). Written here since
+    Phase 5; before that an article was 500 lines of hand-written JSX.
+  -->
+  <section id="insights">
+    <div class="row" style="justify-content:space-between">
+      <h2>Insight articles</h2>
+      <button class="approve" id="newDoc">Write a new article</button>
+    </div>
+    <div id="docList"><div class="empty">Loading…</div></div>
+    <div id="editor" class="ed" hidden></div>
   </section>
 
   <section id="news">
@@ -208,6 +269,11 @@ export function dashboardHtml(
 <script>
 const $ = (s) => document.querySelector(s);
 const SITE = ${JSON.stringify(siteOrigin)};
+// Serialised from shared/blocks.ts rather than retyped, so the picker cannot
+// drift from the union the validator enforces.
+const BLOCK_TYPES = ${JSON.stringify(BLOCK_TYPES)};
+const CATEGORIES = ${JSON.stringify(INSIGHT_CATEGORIES)};
+const PROGRAMMES = ${JSON.stringify(PROGRAMME_IDS)};
 /**
  * Where to load an attached image preview from.
  *
@@ -884,6 +950,7 @@ async function loadCategories() {
 function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
 loadList(); loadCategories(); pollDeploy();
+${EDITOR_JS}
 </script>
 </body>
 </html>`;

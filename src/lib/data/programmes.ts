@@ -291,6 +291,12 @@ const MM2H_COMMON = {
   renewable: true,
   minAge: 25,
   incomeRequirement: null,
+  // `incomeRequirement: null` says there is no published figure. It cannot say
+  // what actually happens at the counter, and "no threshold" is easy to
+  // over-read as "bring nothing". This carries that, with the attribution it
+  // needs, and it lives on the programme so an article can reference it rather
+  // than restate it.
+  incomePractice: MM2H_INCOME_PRACTICE,
   processingFee: {
     principal: 5000,
     dependant: 2500,
@@ -385,6 +391,11 @@ function mm2hAgencyFee(principal: number) {
     includes: MM2H_AGENCY_FEE_INCLUDES,
     absorbsPrincipalProcessingFee: true,
     paymentTerms: MM2H_AGENCY_FEE_TERMS,
+    // Carried on the fee itself, not left beside it as a loose export. An
+    // article body can only address programme data, so an attribution that
+    // lives outside the programme is one an article has to hardcode — which is
+    // exactly the staleness §4.1 exists to prevent.
+    attribution: MM2H_AGENCY_FEE_ATTRIBUTION,
     note: "Fixed by the government, not by the agency — there is nothing to negotiate here, and a quote above this figure is wrong rather than expensive.",
   };
 }

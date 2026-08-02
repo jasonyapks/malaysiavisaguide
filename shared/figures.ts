@@ -64,15 +64,38 @@ export interface ProgrammeLike {
   workRights: "full" | "restricted" | "none";
   salaryFloor: MoneyLike | null;
   governmentExtras?: {
-    agencyFee?: { principal: number; currency: CurrencyLike };
+    agencyFee?: {
+      principal: number;
+      currency: CurrencyLike;
+      paymentTerms?: string;
+      /** Whose word the fee schedule is on. See `attribution` below. */
+      attribution?: AttributionLike;
+    };
     passFeePerYear?: {
       principal?: number;
       dependant?: number;
       currency: CurrencyLike;
     };
   };
+  /**
+   * A practice that is applied but published nowhere — MM2H's absent income
+   * threshold being the case this exists for.
+   *
+   * It carries an attribution because it has to: an unsourced claim about what
+   * a ministry actually does is the one kind of sentence this site cannot
+   * print. Attaching it to the programme rather than leaving it a loose module
+   * constant is what makes it addressable from an article body, which is what
+   * keeps §4.1 true once articles live in the CMS instead of in JSX.
+   */
+  incomePractice?: { note: string; attribution: AttributionLike };
   source: string;
   lastVerified: string;
+}
+
+/** Who asserted something, and when it was current. */
+export interface AttributionLike {
+  by: string;
+  asAt: string;
 }
 
 /**
@@ -190,6 +213,39 @@ export const FIGURE_FIELDS = [
     id: "passFeePerYear.dependant",
     label: "Pass fee per year — dependant",
     kind: "money",
+  },
+  {
+    id: "agencyFee.paymentTerms",
+    label: "Agency fee — payment terms",
+    kind: "text",
+  },
+  {
+    id: "agencyFee.attributionBy",
+    label: "Agency fee — whose word it is on",
+    kind: "text",
+  },
+  {
+    id: "agencyFee.attributionAsAt",
+    label: "Agency fee — attribution date",
+    kind: "date",
+  },
+  /*
+   * The three below carry a practice rather than a published figure, and they
+   * are split into note / by / date rather than pre-joined into one sentence
+   * for the same reason every other figure is split from its format: an article
+   * writes "X, as at 28 July 2026" in prose and "X (28/07/26)" in a table
+   * footnote, and neither spelling belongs in programmes.ts.
+   */
+  { id: "incomePractice.note", label: "Income practice — note", kind: "text" },
+  {
+    id: "incomePractice.attributionBy",
+    label: "Income practice — whose word it is on",
+    kind: "text",
+  },
+  {
+    id: "incomePractice.attributionAsAt",
+    label: "Income practice — attribution date",
+    kind: "date",
   },
   { id: "minStayPerYear", label: "Minimum stay (full)", kind: "text" },
   { id: "minStayShort", label: "Minimum stay (short)", kind: "text" },
@@ -319,6 +375,30 @@ export function figureValue(
         ? { kind: "money", amount: fee.principal, currency: fee.currency }
         : null;
     }
+    case "agencyFee.paymentTerms": {
+      const terms = p.governmentExtras?.agencyFee?.paymentTerms;
+      return terms ? { kind: "text", s: terms } : null;
+    }
+    case "agencyFee.attributionBy": {
+      const at = p.governmentExtras?.agencyFee?.attribution;
+      return at ? { kind: "text", s: at.by } : null;
+    }
+    case "agencyFee.attributionAsAt": {
+      const at = p.governmentExtras?.agencyFee?.attribution;
+      return at ? { kind: "date", iso: at.asAt } : null;
+    }
+    case "incomePractice.note":
+      return p.incomePractice
+        ? { kind: "text", s: p.incomePractice.note }
+        : null;
+    case "incomePractice.attributionBy":
+      return p.incomePractice
+        ? { kind: "text", s: p.incomePractice.attribution.by }
+        : null;
+    case "incomePractice.attributionAsAt":
+      return p.incomePractice
+        ? { kind: "date", iso: p.incomePractice.attribution.asAt }
+        : null;
     case "passFeePerYear.principal": {
       const fee = p.governmentExtras?.passFeePerYear;
       return fee?.principal === undefined
