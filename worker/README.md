@@ -213,7 +213,8 @@ build, so the button stages and `npm run publish:site` publishes.
 | `TEAM_DOMAIN` | `https://<team>.cloudflareaccess.com` |
 | `POLICY_AUD` | Access application AUD tag |
 | `CF_ACCOUNT_ID` | Cloudflare account id (used by `publish.ts` for the Pages API) |
-| `SUMMARY_MODEL` | Workers AI model for summaries |
+| `SUMMARY_MODEL` | Workers AI model for summaries, and for describing an official-source change |
+| `TRIAGE_MODEL_WORLD` | Larger model, world-sector triage only — the 3B could not tell a fee change from a listicle |
 | `ARTICLE_MODEL` | Workers AI model that writes the article, and runs the humanize pass |
 | `NEWS_API_ORIGIN` | This Worker's workers.dev origin, for dashboard image previews |
 | `CF_PAGES_TOKEN` | **secret** — API token, Pages: Edit; the only secret this Worker holds |
@@ -223,10 +224,43 @@ build, so the button stages and `npm run publish:site` publishes.
 |---|---|
 | `DB` | D1 `mvg-news` — articles, and the `assets` metadata table |
 | `ASSETS` | R2 `mvg-assets` — image bytes, `orig/` `hero/` `og/` |
-| `AI` | Workers AI — summaries and the article writer |
-| `BROWSER` | Browser Run — the fallback reader in `extract.ts` |
+| `AI` | Workers AI — summaries, the article writer, and `toMarkdown` for watched PDFs |
+| `BROWSER` | Browser Run — the fallback reader in `extract.ts` and the watcher |
 
 ## Tuning
-- **Feeds / search queries**: edit `FEEDS` in `src/news.ts`.
+- **Feeds / search queries**: edit `FEEDS` in `src/news.ts`. Each carries a
+  `region`; regions balance the world budget against each other.
 - **Schedule**: `triggers.crons` in `wrangler.jsonc`.
-- **Per-run cap**: `PER_RUN_LIMIT` in `src/news.ts` (controls AI calls/sweep).
+- **Per-run cap**: `PER_RUN_LIMIT` in `src/news.ts` (controls AI calls/sweep), and
+  `PER_REGION_LIMIT` inside the world half of it.
+- **What gets rejected before any AI call**: `JUNK_TITLE` in `src/news.ts`.
+
+---
+
+## Official sources — the watcher
+
+`src/watch.ts`, migrations 007 and 008, both applied to production 2026-08-02.
+
+Every figure the site publishes cites an official page. The watcher reads those
+pages daily (after the news sweep), and raises an event when one moves. It exists
+because PVIP's terms changed and the site served the old numbers for four months:
+no newspaper covered it, so no news sweep could have caught it.
+
+- **The list is not maintained here.** `scripts/emit-figures.mjs` publishes the
+  `source` URL of every programme into `public/figures.json`, and the watcher
+  upserts a row per URL. The watched set is the cited set by construction.
+- **PDFs are read, not just hashed.** `env.AI.toMarkdown` converts them, so a
+  changed PDF produces a real diff and a real sentence about what moved. Over
+  8 MB (MOTAC's guide is 37 MB) it falls back to cache validators and reports
+  only that the file moved.
+- **A row remembers every edition it has been served** (`seen_hashes`). The PVIP
+  FAQ URL alternates between a September 2025 copy and a January 2026 copy,
+  request by request — without this the panel would alert every other day.
+- **Two actions per alert**: *Seen it* re-baselines, *Queue as news* pushes it
+  into the pending queue with the diff as `source_text`, which the writer uses
+  directly instead of trying to fetch a PDF.
+
+```bash
+npx wrangler d1 execute mvg-news --remote --file=./schema-007-watch.sql
+npx wrangler d1 execute mvg-news --remote --file=./schema-008-watch-seen.sql
+```

@@ -1,0 +1,27 @@
+-- Migration 008 — the set of fingerprints a watched page is known to serve.
+--
+-- WHY. `content_hash` assumes one URL means one document. On the very first live
+-- run that assumption failed, on the most important row in the table:
+-- imigresen-online.imi.gov.my serves the PVIP FAQ from at least two backends
+-- holding DIFFERENT FILES, and alternates between them per request. One is dated
+-- 4 September 2025 (10 pages, offshore income only, 50% withdrawal after a
+-- year); the other is dated 23 January 2026 (11 pages, onshore income accepted,
+-- an RM1bn net-worth alternative, withdrawal after six months). Both are served
+-- at the same URL, both 200, both valid PDFs.
+--
+-- Against a single hash that is an alert every other day, for ever — which
+-- trains the reader to close the panel without reading it, and the next alert
+-- that matters gets closed with it.
+--
+-- So the row remembers every fingerprint it has been shown. A change is a
+-- fingerprint that has NOT been seen before; a page round-robining between known
+-- editions is quiet. A genuinely new document is unseen by definition, so
+-- nothing real is suppressed — the alert simply stops repeating once
+-- acknowledged.
+--
+-- Run: wrangler d1 execute mvg-news --remote --file=./schema-008-watch-seen.sql
+
+-- JSON array of fingerprints, most recent first, capped in watch.ts. Not a
+-- separate table: it is bounded, it is never queried across rows, and it is only
+-- ever read and rewritten whole alongside the row it belongs to.
+ALTER TABLE source_watch ADD COLUMN seen_hashes TEXT NOT NULL DEFAULT '[]';

@@ -47,6 +47,19 @@ const OUT = path.join(ROOT, "public", "figures.json");
 
 const fns = { money, moneyPer, years, reviewDate };
 
+/** The leading words several programme names have in common, or the first name. */
+function sharedName(names) {
+  if (names.length === 1) return names[0];
+  const words = names.map((n) => n.split(" "));
+  const shared = [];
+  for (let i = 0; i < words[0].length; i++) {
+    const w = words[0][i];
+    if (!words.every((parts) => parts[i] === w)) break;
+    shared.push(w);
+  }
+  return shared.length ? shared.join(" ") : names[0];
+}
+
 const catalogue = {
   /**
    * Stamped so the dashboard can say how old the preview data is rather than
@@ -61,6 +74,34 @@ const catalogue = {
     label: f.label,
     kind: f.kind,
     formats: [...FORMATS_FOR_KIND[f.kind]],
+  })),
+  /**
+   * The official page behind each programme's figures, deduplicated by URL —
+   * the MM2H tiers all cite the one MOTAC guide.
+   *
+   * Emitted for the Worker's official-source watcher (worker/src/watch.ts),
+   * which upserts a watch row per URL. Publishing the list here rather than
+   * keeping one in the Worker is the point: the watched set becomes the cited
+   * set by construction, so adding a programme puts its source under watch on
+   * the next deploy and there is no second list to drift.
+   */
+  sources: Object.values(
+    programmes.reduce((acc, p) => {
+      if (!p.source) return acc;
+      const row = (acc[p.source] ??= {
+        url: p.source,
+        programme: p.slug,
+        names: [],
+        lastVerified: p.lastVerified ?? null,
+      });
+      row.names.push(p.name);
+      return acc;
+    }, {}),
+  ).map(({ names, ...row }) => ({
+    ...row,
+    // Three MM2H tiers cite one MOTAC guide, so the label is what their names
+    // agree on ("MM2H") rather than whichever tier happened to be first.
+    label: `${sharedName(names)} — official source`,
   })),
   programmes: programmes.map((p) => ({
     id: p.slug,

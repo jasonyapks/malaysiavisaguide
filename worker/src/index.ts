@@ -4,6 +4,7 @@ import { runNewsSweep, submitUrl, submitManual, VALID_CATEGORIES } from "./news"
 import { generateAndStore } from "./article";
 import { humanizeStored } from "./humanize";
 import { triggerPublish, getDeployStatus, getBuildLog } from "./publish";
+import { runWatch, listWatch, acknowledgeEvent, promoteEvent } from "./watch";
 import {
   deleteInsightDoc,
   getInsight,
@@ -73,10 +74,19 @@ const ADMIN_COLUMNS = `id, title, summary, category, source_name, source_url,
         THEN 1 ELSE 0 END AS has_image`;
 
 export default {
-  // Daily news sweep — fills the pending queue only. Nothing goes public here.
-  // Await the sweep so the scheduled invocation stays alive until it finishes.
+  // Daily news sweep, then the official-source check — both fill queues only.
+  // Nothing goes public here. Await them so the scheduled invocation stays alive
+  // until they finish.
+  //
+  // The watcher runs second and in its own try: it is the newer of the two and
+  // the less proven, and a throw inside it must not cost the day's sweep.
   async scheduled(_event: ScheduledController, env: Env, _ctx: ExecutionContext) {
     await runNewsSweep(env);
+    try {
+      await runWatch(env);
+    } catch (err) {
+      console.log(`[watch] run failed — ${String(err)}`);
+    }
   },
 
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -563,6 +573,33 @@ export default {
     if (pathname === "/api/admin/refresh" && request.method === "POST") {
       const added = await runNewsSweep(env);
       return json({ ok: true, added });
+    }
+
+    // --- Admin: the official-source watcher ----------------------------------
+    //
+    // Separate from the news queue on purpose. A changed government page usually
+    // means programmes.ts needs an edit, not that an article needs writing, so
+    // the default action here is "acknowledge" and promoting one into the news
+    // queue is a deliberate second click. See watch.ts.
+    if (pathname === "/api/admin/watch" && request.method === "GET") {
+      return json(await listWatch(env));
+    }
+
+    if (pathname === "/api/admin/watch/run" && request.method === "POST") {
+      const changed = await runWatch(env);
+      return json({ ok: true, changed });
+    }
+
+    const watchAck = pathname.match(/^\/api\/admin\/watch\/([^/]+)\/ack$/);
+    if (watchAck && request.method === "POST") {
+      const ok = await acknowledgeEvent(env, watchAck[1]);
+      return json({ ok }, ok ? 200 : 404);
+    }
+
+    const watchPromote = pathname.match(/^\/api\/admin\/watch\/([^/]+)\/promote$/);
+    if (watchPromote && request.method === "POST") {
+      const outcome = await promoteEvent(env, watchPromote[1]);
+      return json(outcome, outcome.ok ? 201 : outcome.status);
     }
 
     // No analytics here, deliberately. This Worker edits and publishes content;

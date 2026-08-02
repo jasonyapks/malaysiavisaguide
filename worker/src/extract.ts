@@ -54,14 +54,7 @@ export interface Extracted {
  * tried first because it is metered and roughly a thousand times slower.
  */
 export async function extractArticle(url: string, env: Env): Promise<Extracted | null> {
-  let read = usableProse(url, await fetchDirect(url));
-
-  if (!read) {
-    // Only keep the rendered copy if it actually beat the plain fetch — a
-    // browser that lands on the same consent wall gains us nothing.
-    read = usableProse(url, await fetchRendered(url, env));
-    if (read) console.log(`[extract] ${url} — read via browser`);
-  }
+  const read = await readPage(url, env);
   if (!read) return null;
 
   const { html, text } = read;
@@ -76,6 +69,35 @@ export async function extractArticle(url: string, env: Env): Promise<Extracted |
     ),
     siteName: meta(html, "og:site_name"),
   };
+}
+
+/**
+ * The read ladder on its own — cheap fetch, then a real browser, prose either
+ * way. Exported for the official-source watcher (watch.ts), which needs exactly
+ * this and none of the article metadata below: a government page is read to be
+ * compared against yesterday's copy, not to be written about.
+ *
+ * Government sites are the hardest case on the ladder — slow, JavaScript-heavy,
+ * and behind the same edge protection that 403s the Worker at The Star — so the
+ * browser rung matters more here than it does for a newspaper.
+ */
+export async function readPage(
+  url: string,
+  env: Env,
+  // The watcher reads a dozen pages in one run and shares a 10-minute daily
+  // browser allowance with the article path, so it caps its own browser use and
+  // asks for direct-only reads past that cap.
+  opts: { allowBrowser?: boolean } = {},
+): Promise<{ html: string; text: string } | null> {
+  const direct = usableProse(url, await fetchDirect(url));
+  if (direct) return direct;
+  if (opts.allowBrowser === false) return null;
+
+  // Only keep the rendered copy if it actually beat the plain fetch — a
+  // browser that lands on the same consent wall gains us nothing.
+  const rendered = usableProse(url, await fetchRendered(url, env));
+  if (rendered) console.log(`[extract] ${url} — read via browser`);
+  return rendered;
 }
 
 /** Strip to prose and keep the pair only if there is enough of it to write from. */

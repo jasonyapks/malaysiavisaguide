@@ -19,30 +19,82 @@ import type { Env } from "./types";
  */
 type Sector = "malaysia" | "world";
 
-// Each query maps to the programme it most likely concerns; the AI can override.
-const FEEDS: { query: string; category: string; sector: Sector }[] = [
-  { query: "Malaysia MM2H visa", category: "mm2h", sector: "malaysia" },
-  { query: "Malaysia Premium Visa Programme PVIP", category: "pvip", sector: "malaysia" },
-  { query: "Sarawak MM2H visa", category: "sarawak-mm2h", sector: "malaysia" },
-  { query: "Malaysia DE Rantau nomad pass", category: "de-rantau", sector: "malaysia" },
-  {
-    query: "Malaysia expatriate employment pass immigration",
-    category: "general",
-    sector: "malaysia",
-  },
+/**
+ * Where in the world an item is about.
+ *
+ * A second axis under `sector`, and an ingest-side one only: every non-Malaysian
+ * item is still `category: "world"` to a reader, so nothing here reaches the
+ * public API or the "Other countries" label. It exists to stop one busy region
+ * taking the whole world budget — Europe's golden-visa churn alone would, most
+ * weeks — and to make "which regions did this sweep actually cover" a fact in
+ * the log rather than a guess.
+ */
+type Region =
+  | "malaysia"
+  | "thailand"
+  | "europe"
+  | "uk"
+  | "north-america"
+  | "south-america"
+  | "anz"
+  | "gulf"
+  | "asia";
 
-  // Other countries. Chosen as the programmes this audience actually compares
-  // Malaysia against — regional long-stay routes first, then the investor and
-  // retirement visas an HNW reader shortlists alongside PVIP and MM2H.
-  { query: "Thailand long term resident visa policy", category: "world", sector: "world" },
-  { query: "Indonesia KITAS visa foreigners rules", category: "world", sector: "world" },
-  { query: "Philippines SRRV retirement visa change", category: "world", sector: "world" },
-  { query: "Vietnam Cambodia long stay visa rules foreigners", category: "world", sector: "world" },
-  { query: "Singapore employment pass ONE pass criteria", category: "world", sector: "world" },
-  { query: "UAE golden visa residency rule change", category: "world", sector: "world" },
-  { query: "Portugal Spain Greece golden visa programme change", category: "world", sector: "world" },
-  { query: "Japan Korea Taiwan digital nomad visa", category: "world", sector: "world" },
-  { query: "digital nomad visa launched country requirements", category: "world", sector: "world" },
+/**
+ * The coverage map. Two halves, and they are there for different reasons.
+ *
+ * DESTINATIONS the reader is choosing between — Malaysia, Thailand, Schengen
+ * Europe, the Americas, Australia and New Zealand. SOURCE MARKETS the reader is
+ * leaving — the UK, the Gulf, Hong Kong, India, Singapore, Japan/Korea/Taiwan —
+ * because a route closing where somebody lives now is what starts the search.
+ *
+ * Subject matter is long-stay, residency and investor routes ONLY: golden visas,
+ * retirement and rentista visas, nomad passes, investor residency, citizenship by
+ * investment. Not work permits, student visas, asylum, or border enforcement.
+ *
+ * Queries lead with a policy verb or a programme's actual name rather than
+ * "<country> visa", which is the phrasing that returns relocation-agency
+ * listicles by the dozen. Each maps to the programme it most likely concerns;
+ * the AI can override the category, never the sector or the region.
+ */
+const FEEDS: { query: string; category: string; sector: Sector; region: Region }[] = [
+  // --- Malaysia: the site's own subject -------------------------------------
+  { query: "Malaysia MM2H visa", category: "mm2h", sector: "malaysia", region: "malaysia" },
+  { query: "MM2H tier threshold change ministry tourism", category: "mm2h", sector: "malaysia", region: "malaysia" },
+  { query: "Malaysia Premium Visa Programme PVIP", category: "pvip", sector: "malaysia", region: "malaysia" },
+  { query: "Sarawak MM2H visa", category: "sarawak-mm2h", sector: "malaysia", region: "malaysia" },
+  { query: "Malaysia DE Rantau nomad pass", category: "de-rantau", sector: "malaysia", region: "malaysia" },
+  { query: "Malaysia expatriate employment pass immigration", category: "general", sector: "malaysia", region: "malaysia" },
+  { query: "Malaysia immigration department announcement foreigners", category: "general", sector: "malaysia", region: "malaysia" },
+
+  // --- Thailand: the closest substitute, and the one readers name unprompted -
+  { query: "Thailand long term resident visa LTR change", category: "world", sector: "world", region: "thailand" },
+  { query: "Thailand elite privilege visa rules change", category: "world", sector: "world", region: "thailand" },
+
+  // --- Schengen Europe: the noisiest region on the map ----------------------
+  { query: "Portugal golden visa D7 residency change", category: "world", sector: "world", region: "europe" },
+  { query: "Spain Italy Greece golden visa programme change", category: "world", sector: "world", region: "europe" },
+  { query: "Malta Cyprus residence by investment change", category: "world", sector: "world", region: "europe" },
+  { query: "Europe digital nomad visa launch requirements", category: "world", sector: "world", region: "europe" },
+
+  // --- The UK, on its own: not Schengen, and its rules move independently ----
+  { query: "UK investor visa settlement rules change", category: "world", sector: "world", region: "uk" },
+
+  { query: "US EB-5 investor visa residency rule change", category: "world", sector: "world", region: "north-america" },
+  { query: "Canada start-up investor visa immigration change", category: "world", sector: "world", region: "north-america" },
+
+  { query: "Brazil Argentina Uruguay retirement rentista visa", category: "world", sector: "world", region: "south-america" },
+  { query: "Panama Paraguay Ecuador residency visa investors", category: "world", sector: "world", region: "south-america" },
+
+  { query: "Australia significant investor visa change", category: "world", sector: "world", region: "anz" },
+  { query: "New Zealand active investor plus visa change", category: "world", sector: "world", region: "anz" },
+
+  { query: "UAE golden visa residency rule change", category: "world", sector: "world", region: "gulf" },
+
+  { query: "Hong Kong capital investment entrant scheme", category: "world", sector: "world", region: "asia" },
+  { query: "India investor emigration residency programme", category: "world", sector: "world", region: "asia" },
+  { query: "Singapore global investor programme employment pass", category: "world", sector: "world", region: "asia" },
+  { query: "Japan Korea Taiwan digital nomad investor visa", category: "world", sector: "world", region: "asia" },
 ];
 
 export const VALID_CATEGORIES = new Set([
@@ -58,7 +110,18 @@ export const VALID_CATEGORIES = new Set([
 
 // Cap AI calls + inserts per sweep, per sector. Malaysia keeps the larger share:
 // it is the site's subject, and world items are context, not the main event.
-const PER_RUN_LIMIT: Record<Sector, number> = { malaysia: 20, world: 8 };
+const PER_RUN_LIMIT: Record<Sector, number> = { malaysia: 20, world: 12 };
+
+/**
+ * And a second cap, per region, inside the world budget.
+ *
+ * Nine regions competing for 12 slots on a first-come basis is not coverage —
+ * Europe files more golden-visa copy in a week than South America does in a
+ * quarter, so the un-capped queue is a European one with a rounding error
+ * attached. Two apiece means every region has to be crowded out by itself.
+ * Malaysia is exempt: it is the site's subject, not one region among nine.
+ */
+const PER_REGION_LIMIT = 2;
 
 /**
  * Nothing published before the current calendar year enters the queue, in
@@ -85,6 +148,7 @@ interface RawItem {
   description: string;
   fallbackCategory: string;
   sector: Sector;
+  region: Region;
 }
 
 /**
@@ -102,16 +166,45 @@ function isRecent(pubDate: string | null): boolean {
   return new Date(t).getUTCFullYear() === new Date().getUTCFullYear();
 }
 
+/**
+ * Headline shapes that are never a policy change.
+ *
+ * The world brief already tells the model to reject these, and the model lets
+ * about half of them through anyway — it is being asked for an editorial
+ * judgement a 3B parameter model cannot hold. A regex holds it perfectly, for
+ * free, before any AI call: nothing titled "Top 10 places to retire in 2026" has
+ * ever been a fee change, in any country, in any year.
+ *
+ * Deliberately matched on shape rather than on topic words. "Guide" and "best"
+ * appear in perfectly good headlines; "The 12 best…" and "…: everything you need
+ * to know" do not.
+ */
+const JUNK_TITLE = [
+  /^(the\s+)?(top|best|worst)\s+\d+\b/i,
+  /\b\d+\s+(best|cheapest|safest|top)\s+(countries|places|cities|destinations)\b/i,
+  /\bbest\s+(places|countries|cities)\s+to\s+(retire|live|move|relocate)\b/i,
+  /\b(ranked|ranking|rankings)\b/i,
+  /\beverything\s+you\s+need\s+to\s+know\b/i,
+  /\b(ultimate|complete|comprehensive)\s+guide\b/i,
+  /\bvisa\s+guide\s+\d{4}\b/i,
+  /\bhow\s+to\s+(get|apply\s+for)\b/i,
+];
+
+function isJunkTitle(title: string): boolean {
+  return JUNK_TITLE.some((re) => re.test(title));
+}
+
 /** Fetch every feed, summarise new items, insert as pending. Returns count added. */
 export async function runNewsSweep(env: Env): Promise<number> {
   const seen = new Set<string>();
   const candidates: RawItem[] = [];
   let stale = 0;
   let undated = 0;
+  let junk = 0;
 
   for (const feed of FEEDS) {
     try {
-      const items = await fetchFeed(feed.query, feed.category, feed.sector);
+      const items = await fetchFeed(feed.query, feed.category, feed.sector, feed.region);
       for (const it of items) {
         if (seen.has(it.link)) continue;
         seen.add(it.link);
@@ -125,6 +218,13 @@ export async function runNewsSweep(env: Env): Promise<number> {
           stale++;
           continue;
         }
+        // Shape gate, also before any AI spend. Malaysia items are exempt: the
+        // listicle problem is a world-search problem, and a Malaysian headline
+        // matching one of these is likelier to be a story we want.
+        if (it.sector === "world" && isJunkTitle(it.title)) {
+          junk++;
+          continue;
+        }
         candidates.push(it);
       }
     } catch (err) {
@@ -133,11 +233,14 @@ export async function runNewsSweep(env: Env): Promise<number> {
   }
 
   // Skip anything already stored (by source_url), and spend each sector's
-  // budget separately so the world feed always gets a look in.
+  // budget separately so the world feed always gets a look in. Within the world
+  // budget, spend each region's separately too — see PER_REGION_LIMIT.
   const used: Record<Sector, number> = { malaysia: 0, world: 0 };
+  const byRegion: Partial<Record<Region, number>> = {};
   const fresh: RawItem[] = [];
   for (const c of candidates) {
     if (used[c.sector] >= PER_RUN_LIMIT[c.sector]) continue;
+    if (c.sector === "world" && (byRegion[c.region] ?? 0) >= PER_REGION_LIMIT) continue;
     const existing = await env.DB.prepare(
       "SELECT 1 FROM news_items WHERE source_url = ?",
     )
@@ -146,11 +249,16 @@ export async function runNewsSweep(env: Env): Promise<number> {
     if (existing) continue;
     fresh.push(c);
     used[c.sector]++;
+    byRegion[c.region] = (byRegion[c.region] ?? 0) + 1;
   }
+  const regionTally = Object.entries(byRegion)
+    .filter(([r]) => r !== "malaysia")
+    .map(([r, n]) => `${r} ${n}`)
+    .join(", ");
   console.log(
     `[news] ${candidates.length} published in ${new Date().getUTCFullYear()}, ` +
-      `${stale} older, ${undated} undated; ` +
-      `taking ${used.malaysia} malaysia + ${used.world} world`,
+      `${stale} older, ${undated} undated, ${junk} junk-shaped; ` +
+      `taking ${used.malaysia} malaysia + ${used.world} world (${regionTally || "none"})`,
   );
 
   let added = 0;
@@ -232,7 +340,7 @@ export async function findAlternateSources(
   const originalHost = hostOf(originalUrl);
   let items: RawItem[];
   try {
-    items = await fetchFeed(headline, "general", "malaysia");
+    items = await fetchFeed(headline, "general", "malaysia", "malaysia");
   } catch (err) {
     console.log(`[alt] search failed for "${headline}" — ${String(err)}`);
     return [];
@@ -287,9 +395,10 @@ export async function submitUrl(env: Env, url: string): Promise<boolean> {
     pubDate: new Date().toISOString(),
     description: desc,
     fallbackCategory: "general",
-    // Manual paste is deliberate, so it bypasses both the age gate and the
-    // per-sector budget — this path never runs through the sweep.
+    // Manual paste is deliberate, so it bypasses the age gate, the shape gate
+    // and both budgets — this path never runs through the sweep.
     sector: "malaysia",
+    region: "malaysia",
   };
   const enriched = await summarise(env, item);
   if (!enriched) return false;
@@ -416,6 +525,7 @@ async function fetchFeed(
   query: string,
   fallbackCategory: string,
   sector: Sector,
+  region: Region,
 ): Promise<RawItem[]> {
   // Bing News RSS — query-based and reachable from Cloudflare Workers (Google
   // News blocks Worker egress IPs). Each item carries a <News:Source> outlet
@@ -432,11 +542,16 @@ async function fetchFeed(
   const res = await fetch(url, { headers: { "user-agent": BROWSER_UA } });
   if (!res.ok) throw new Error(`status ${res.status}`);
   const xml = await res.text();
-  return parseRss(xml, fallbackCategory, sector);
+  return parseRss(xml, fallbackCategory, sector, region);
 }
 
 /** Minimal RSS parser for Bing News output (item-per-<item>). */
-function parseRss(xml: string, fallbackCategory: string, sector: Sector): RawItem[] {
+function parseRss(
+  xml: string,
+  fallbackCategory: string,
+  sector: Sector,
+  region: Region,
+): RawItem[] {
   const out: RawItem[] = [];
   const items = xml.match(/<item>[\s\S]*?<\/item>/g) ?? [];
   for (const block of items) {
@@ -460,6 +575,7 @@ function parseRss(xml: string, fallbackCategory: string, sector: Sector): RawIte
       description,
       fallbackCategory,
       sector,
+      region,
     });
   }
   return out;
@@ -522,17 +638,46 @@ Student Pass, or Malaysian immigration policy for foreigners).
 - category: one of pvip, mm2h, sarawak-mm2h, de-rantau, employment-pass, student-pass, general.`,
 
   world: `This item is about a country OTHER than Malaysia. Your readers are
-weighing Malaysia against other long-stay options, so they want real programme
-news: a launch, closure, suspension, fee or threshold change, eligibility or
-quota shift, or a firm government announcement.
+weighing Malaysia against other long-stay options, or leaving a country whose own
+rules have just moved. Either way they want real programme news about long-stay,
+residency and investor routes — golden visas, retirement and rentista visas,
+digital nomad passes, investor residency, citizenship by investment: a launch,
+closure, suspension, fee or threshold change, eligibility or quota shift, or a
+firm government announcement.
 
 Set relevant=false for: "best places to retire" roundups, listicles, rankings,
 relocation-agency or law-firm marketing, opinion pieces, and anything with no
-identifiable policy change. Being merely interesting is not enough.
+identifiable policy change. Being merely interesting is not enough. Work permits,
+student visas, asylum, tourist entry and border enforcement are out of scope even
+when a government announces them.
+
+WORKED EXAMPLES.
+
+  "Portugal raises golden visa investment floor to EUR 500,000 from January"
+  -> relevant=true, change="minimum investment raised to EUR 500,000 from January"
+  A named programme, a named number, a named date.
+
+  "The 10 best countries for retirees in 2026, according to a new index"
+  -> relevant=false, change=""
+  A ranking. No government has done anything. This is the single most common
+  thing in these search results and it is never news.
+
+  "Why Thailand is losing digital nomads to its neighbours"
+  -> relevant=false, change=""
+  Opinion. Interesting, and still not a policy change.
 
 - Name the country in the first sentence of the summary.
+- change: the specific policy movement, in a few words, quoting the number or
+  date where there is one. If you cannot name one, the item is not relevant.
 - category: always "world".`,
 };
+
+/**
+ * Vague enough to be a non-answer. The model reaches for these when it has
+ * decided an item is relevant and cannot say what actually changed, which is the
+ * exact failure the `change` field exists to catch.
+ */
+const EMPTY_CHANGE = /^(n\/?a|none|unknown|unclear|not specified|various|general|no change)\b/i;
 
 /** Ask Workers AI for a neutral 2-sentence summary + a category. */
 async function summarise(env: Env, item: RawItem): Promise<Enriched | null> {
@@ -540,17 +685,24 @@ async function summarise(env: Env, item: RawItem): Promise<Enriched | null> {
 Given a news headline and snippet, ${SECTOR_BRIEF[item.sector]}
 
 Respond with ONLY a JSON object, no prose:
-{"relevant": boolean, "summary": string, "category": string}
+{"relevant": boolean, "summary": string, "category": string, "change": string}
 
 - summary: your own neutral 2-sentence summary. Do NOT copy the snippet verbatim.
-- If not relevant, set relevant=false and leave summary/category empty.
+- change: the specific policy movement this reports, in a few words. Empty if none.
+- If not relevant, set relevant=false and leave the other fields empty.
 
 HEADLINE: ${item.title}
 SNIPPET: ${item.description.slice(0, 600)}
 SOURCE: ${item.sourceName}`;
 
+  // World items get the larger model. It is the harder judgement — "is this a
+  // policy change or an SEO listicle" rather than "is this about Malaysia" — and
+  // it runs at most PER_RUN_LIMIT.world times a day, so the per-call cost that
+  // rules a bigger model out of the Malaysia sweep is affordable here.
+  const model = item.sector === "world" ? env.TRIAGE_MODEL_WORLD : env.SUMMARY_MODEL;
+
   try {
-    const resp = (await env.AI.run(env.SUMMARY_MODEL as keyof AiModels, {
+    const resp = (await env.AI.run(model as keyof AiModels, {
       messages: [{ role: "user", content: prompt }],
       max_tokens: 512,
     } as never)) as AiResponse;
@@ -561,6 +713,18 @@ SOURCE: ${item.sourceName}`;
 
     const summary = String(parsed.summary ?? "").trim();
     if (summary.length < 20) return null;
+
+    // The guard the `change` field is for. A world item that cannot be described
+    // as a specific policy movement is rejected in code, whatever the model
+    // claimed one line earlier — asking for the field and then not checking it
+    // would leave the judgement exactly where it already fails.
+    if (item.sector === "world") {
+      const change = String(parsed.change ?? "").trim();
+      if (change.length < 8 || EMPTY_CHANGE.test(change)) {
+        console.log(`[news] world item names no policy change — "${item.title}"`);
+        return null;
+      }
+    }
 
     let category = String(parsed.category ?? "").trim();
     if (!VALID_CATEGORIES.has(category)) category = item.fallbackCategory;

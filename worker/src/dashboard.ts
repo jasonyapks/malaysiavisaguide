@@ -132,6 +132,26 @@ export function dashboardHtml(
     background:var(--ink); color:#e6edf3; font-size:.78rem; line-height:1.55;
     overflow-x:auto; white-space:pre-wrap; word-break:break-word; }
 
+  /* ---- Official sources ----
+     Same dot-plus-words convention as the publish panel above: the dot is the
+     glance, the words are the answer, and neither depends on telling colours
+     apart. A changed source gets the amber treatment rather than red — it is a
+     thing to read, not a thing that has broken. */
+  .src { display:flex; gap:9px; align-items:baseline; padding:8px 0;
+    border-bottom:1px solid var(--sand-200); font-size:.88rem; }
+  .src:last-child { border-bottom:0; }
+  .src .dot { width:9px; height:9px; border-radius:50%; flex:none;
+    background:var(--forest-600); align-self:center; }
+  .src.stale .dot { background:var(--ink-muted); }
+  .src.bad .dot { background:var(--red); }
+  .src .name { flex:1 1 auto; min-width:0; }
+  .src .when { color:var(--ink-muted); font-size:.78rem; white-space:nowrap; }
+  .chg { border:1px solid #fdba74; background:#fff7ed; border-radius:10px;
+    padding:12px 14px; margin:12px 0; }
+  .chg h4 { margin:0 0 4px; font-size:.92rem; }
+  .chg .diff { margin-top:10px; max-height:280px; overflow:auto; }
+  .chg .row { margin-top:10px; }
+
   /* ---- Insight editor (Phase 5) ---- */
   .doc { border:1px solid var(--sand-200); border-radius:12px; padding:12px 14px;
     margin-bottom:10px; display:flex; gap:12px; align-items:baseline;
@@ -191,6 +211,26 @@ export function dashboardHtml(
     </p>
     <div id="deployState" class="deploy"><span class="muted">Checking…</span></div>
     <pre id="deployLog" class="deploy-log" hidden></pre>
+  </section>
+
+  <!--
+    Official sources. Sits directly under Publish because it is the only panel on
+    this page that can tell you the site is currently WRONG — the news queue can
+    only tell you it is incomplete. PVIP's terms changed in March 2026 and the
+    site served the 2022 numbers until July; nothing here would have let that run.
+  -->
+  <section id="watch">
+    <div class="row" style="justify-content:space-between">
+      <h2>Official sources</h2>
+      <button class="ghost" id="watchRun">Check now</button>
+    </div>
+    <p class="muted" style="margin:6px 0 0">
+      The government pages every figure on the site cites, checked daily. A change
+      here usually means <code>programmes.ts</code> needs an edit — not that an
+      article needs writing.
+    </p>
+    <div id="watchEvents"></div>
+    <div id="watchList"><div class="empty">Loading…</div></div>
   </section>
 
   <!--
@@ -947,9 +987,98 @@ async function loadCategories() {
     '<option value="' + esc(c) + '"' + (c === "general" ? " selected" : "") + '>' + esc(c) + '</option>').join("");
 }
 
+// ---- Official sources ----
+//
+// Two lists in one panel, and the order is the argument: unacknowledged changes
+// first, because they are the only thing here that needs a decision, then the
+// roster underneath as reassurance that the rest were checked and are the same.
+
+async function loadWatch() {
+  const r = await api("/api/admin/watch");
+  renderWatch(r.sources || [], r.events || []);
+}
+
+function watchWhen(s) {
+  if (s.status === "unreachable") {
+    return ["bad", "Unreadable — " + s.consecutive_failures + " runs"];
+  }
+  if (!s.content_hash) return ["stale", "Not read yet"];
+  if (!s.last_checked_at) return ["stale", "Never checked"];
+  return ["", "Checked " + s.last_checked_at.slice(0, 16)];
+}
+
+function renderWatch(sources, events) {
+  $("#watchEvents").innerHTML = events.map(e =>
+    '<div class="chg">' +
+      "<h4>" + esc(e.label) + " changed</h4>" +
+      "<div>" + esc(e.summary) + "</div>" +
+      (e.diff ? '<pre class="deploy-log diff">' + esc(e.diff) + "</pre>" : "") +
+      '<div class="row">' +
+        '<button class="approve" data-ack="' + esc(e.id) + '">Seen it</button>' +
+        '<button class="ghost" data-promote="' + esc(e.id) + '">Queue as news</button>' +
+        '<span class="muted" style="font-size:.78rem">Detected ' + esc(e.detected_at.slice(0, 16)) + "</span>" +
+      "</div>" +
+    "</div>").join("");
+
+  $("#watchList").innerHTML = sources.length
+    ? sources.map(s => {
+        const st = watchWhen(s);
+        return '<div class="src ' + st[0] + '">' +
+          '<span class="dot"></span>' +
+          '<span class="name"><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' +
+            esc(s.label) + "</a>" +
+            (s.mode === "binary" ? ' <span class="muted" style="font-size:.75rem">PDF</span>' : "") +
+          "</span>" +
+          '<span class="when">' + esc(st[1]) + "</span>" +
+        "</div>";
+      }).join("")
+    : '<div class="empty">No sources yet — run a check.</div>';
+}
+
+// Delegated, because the buttons are rebuilt on every render and the page has no
+// inline handlers to bind (CSP).
+$("#watchEvents").addEventListener("click", async (ev) => {
+  const btn = ev.target.closest("button");
+  if (!btn) return;
+  const ack = btn.getAttribute("data-ack");
+  const promote = btn.getAttribute("data-promote");
+  if (!ack && !promote) return;
+
+  btn.disabled = true;
+  if (ack) {
+    await api("/api/admin/watch/" + encodeURIComponent(ack) + "/ack", { method: "POST" });
+    await loadWatch();
+    return;
+  }
+
+  const r = await api("/api/admin/watch/" + encodeURIComponent(promote) + "/promote", { method: "POST" });
+  btn.disabled = false;
+  if (!r.ok) {
+    btn.insertAdjacentHTML("afterend", '<span class="warn">' + esc(r.error || "Could not queue it.") + "</span>");
+    return;
+  }
+  // It is a pending item now, so send the eye to where the decision continues.
+  await loadWatch();
+  await loadList();
+  showTab("pending");
+});
+
+$("#watchRun").addEventListener("click", async (e) => {
+  const btn = e.target;
+  btn.disabled = true;
+  btn.textContent = "Checking…";
+  try {
+    await api("/api/admin/watch/run", { method: "POST" });
+    await loadWatch();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Check now";
+  }
+});
+
 function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-loadList(); loadCategories(); pollDeploy();
+loadList(); loadCategories(); pollDeploy(); loadWatch();
 ${EDITOR_JS}
 </script>
 </body>

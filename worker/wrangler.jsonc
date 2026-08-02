@@ -95,6 +95,11 @@
     // was deprecated 2026-05-30; reasoning models like glm are too slow per call
     // for a batch.) For higher-quality summaries try @cf/meta/llama-3.1-8b-instruct-fp8.
     "SUMMARY_MODEL": "@cf/meta/llama-3.2-3b-instruct",
+    // Triage for the world sector only. The 3B model cannot reliably tell a fee
+    // change from an SEO listicle — about half of what it passed was junk — and
+    // the world budget is 12 items a day, so the bigger model costs little here.
+    // Verified present in `wrangler ai models` on 2026-08-02.
+    "TRIAGE_MODEL_WORLD": "@cf/meta/llama-3.1-8b-instruct-fp8",
     // Model that writes the published article. Big and slow on purpose: it runs
     // once per APPROVED item (a handful a week), not once per candidate, so the
     // per-call cost that rules it out of the sweep is affordable here — and this

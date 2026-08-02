@@ -14,6 +14,11 @@ export interface Env {
   POLICY_AUD: string;
   /** Small, fast model — triage and the 2-sentence blurb, ~20 calls a sweep. */
   SUMMARY_MODEL: string;
+  /**
+   * Triage for world items only — a harder judgement on at most 12 calls a
+   * sweep, so it can afford a bigger model than SUMMARY_MODEL. See news.ts.
+   */
+  TRIAGE_MODEL_WORLD: string;
   /** Large model — writes the full article, once per approved item. */
   ARTICLE_MODEL: string;
   /**
