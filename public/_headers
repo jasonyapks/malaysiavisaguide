@@ -26,3 +26,20 @@
 
 /images/*
   Cache-Control: public, max-age=2592000
+
+# The brand assets live at the root rather than under /images/, so the rule
+# above misses them — and logo-mark.webp is the one file preloaded on every
+# page. Same 30 days for the same reason: stable paths, replaced in place.
+# figures.json is deliberately absent; it is regenerated on every build from
+# the programme data and a stale copy would state a wrong fee.
+/logo-mark.webp
+  Cache-Control: public, max-age=2592000
+
+/logo-mark.png
+  Cache-Control: public, max-age=2592000
+
+/logo-full.png
+  Cache-Control: public, max-age=2592000
+
+/og.png
+  Cache-Control: public, max-age=2592000
