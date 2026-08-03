@@ -280,13 +280,23 @@
   pointer-events: none;
 }
 
+/* Transform only — deliberately no opacity.
+ *
+ * This animation used to fade from `opacity: 0`, which left the hero <h1>
+ * unpaintable for up to the full 700ms of its duration. A transparent element
+ * is not a candidate for Largest Contentful Paint, so the browser looked
+ * elsewhere and settled on the cookie banner instead — 851ms of element render
+ * delay, measured on Slow 4G with 4x CPU throttling. The page was being judged
+ * on the one piece of furniture nobody comes here to read.
+ *
+ * Sliding without fading means the copy is legible in the very first painted
+ * frame and the h1 can win LCP on its own text. The 12px travel still reads as
+ * an entrance. Do NOT reintroduce `opacity: 0` here. */
 @keyframes rise {
   from {
-    opacity: 0;
     transform: translateY(12px);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }

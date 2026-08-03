@@ -247,7 +247,12 @@ export default function Home() {
             // crop its title off the top.
             aspect="aspect-square"
             rounded="rounded-card"
-            priority
+            // No `priority` here, on purpose. This band sits five viewports
+            // down — page offset 4095px on an 823px viewport — but `priority`
+            // emits a <link rel="preload" as="image">, which told the browser
+            // to fetch 108KB at highest priority in competition with the paint
+            // of a hero the visitor is actually looking at. Lazy is correct for
+            // anything this far below the fold; don't add it back.
             sizes="(min-width: 768px) 460px, 100vw"
             className="shadow-[0_24px_60px_-30px_rgb(0_20_60/0.5)]"
           />

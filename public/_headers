@@ -1,0 +1,28 @@
+# Cache lifetimes for the static export.
+#
+# Next copies public/ verbatim into out/, and out/ is what gets uploaded, so
+# this file arrives at the deploy root where Pages looks for it — the same route
+# _redirects beside it already takes. Production was serving max-age=14400 on
+# everything, content-hashed assets included, which throws away the one caching
+# guarantee a hashed filename buys you.
+#
+# /_next/static/* is safe to pin for a year because the filenames carry a
+# content hash: a changed file is a changed URL, so a cached copy can never go
+# stale. `immutable` additionally stops revalidation on reload.
+#
+# /images/* gets 30 days rather than the same treatment, because those filenames
+# are NOT content-hashed. scripts/pull-images.mjs writes each photo to a stable
+# path — public/images/cms/<key>.webp — and replaces it in place when the
+# picture behind a key changes. Marking those immutable for a year would strand
+# a superseded photo in visitors' caches with no way to evict it.
+#
+# HTML is deliberately absent and therefore uncached. Every page here is a
+# static file that gets rewritten on each deploy at the same URL, and the review
+# dates and fee figures are the entire point of the site — a cached document is
+# a wrong document.
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=2592000

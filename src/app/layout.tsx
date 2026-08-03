@@ -83,6 +83,20 @@ export default function RootLayout({
       className={`${heading.variable} ${sans.variable} ${accent.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
+        {/* Resolve googletagmanager's DNS early. React 19 hoists this into
+            <head>, which is why it can be written here — the same hoisting the
+            gtag block at the bottom of this file is careful to work around.
+
+            dns-prefetch rather than preconnect, deliberately: the loader below
+            is only created after the document has parsed, so a TLS connection
+            opened at page start would sit idle and Lighthouse would score it as
+            an unused preconnect. DNS is the part that is genuinely worth
+            resolving ahead of the request.
+
+            Nothing here for static.cloudflareinsights.com — that beacon is
+            injected at the edge, not by us, and we cannot time a hint to it. */}
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
@@ -272,11 +286,16 @@ document.head.appendChild(s);`,
 function Mark() {
   return (
     <Image
-      src="/logo-mark.png"
+      // WebP at 80×168, not the 126×264 PNG that used to be here. This mark is
+      // preloaded on every page — `priority` below — so its weight sits on the
+      // critical path sitewide, and 24KB of lossless PNG bought nothing: the
+      // slot renders at roughly 27×56 CSS px, so even a 3× display is served
+      // more pixels than it can use. 6.6KB now, visually identical at this size.
+      src="/logo-mark.webp"
       alt=""
       aria-hidden
-      width={126}
-      height={264}
+      width={80}
+      height={168}
       priority
       // h-14 matches the height of the stacked name + two-line strapline beside
       // it, so the towers start and finish with the text block instead of
