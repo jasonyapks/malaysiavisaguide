@@ -40,6 +40,7 @@ export default function CookieConsent() {
       role="dialog"
       aria-modal="false"
       aria-labelledby="cookie-consent-heading"
+      data-bottom-overlay
       className="fixed inset-x-0 bottom-0 z-50 border-t border-sand-200 bg-sand-50 shadow-[0_-4px_24px_rgba(14,22,34,0.10)]"
     >
       <div className="mx-auto flex max-w-5xl flex-col gap-5 px-5 py-5 sm:px-8 md:flex-row md:items-center md:justify-between md:gap-8">

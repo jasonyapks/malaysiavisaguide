@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { navGroups, navRoutes } from "@/lib/site";
 
 /**
@@ -26,6 +26,8 @@ export function SiteNav() {
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [panelMaxHeight, setPanelMaxHeight] = useState<number | undefined>();
 
   // Any navigation closes every menu.
   useEffect(() => {
@@ -53,6 +55,45 @@ export function SiteNav() {
       document.removeEventListener("keydown", onKey);
     };
   }, []);
+
+  /**
+   * The panel hangs off a `sticky` header, so anything taller than the space
+   * below that header is unreachable: it does not extend the page's scroll
+   * height, and the header carries it down as you scroll. Eleven links across
+   * four groups overflow a short phone, which is why the last group —
+   * "Insights & news" — was the one nobody could reach.
+   *
+   * Cap it at the gap between the panel's own top edge (which sits exactly on
+   * the header's bottom edge) and the bottom of the viewport, and scroll
+   * inside. Measured rather than hardcoded because the header's height changes
+   * with the strapline and with the user's font size. `visualViewport` is what
+   * mobile browsers shrink when the URL bar shows, so track it too.
+   *
+   * The cookie banner is `fixed bottom-0` at a higher z-index, so on a first
+   * visit it covers the bottom of the panel — the last group would scroll into
+   * a region the reader cannot see. Anything marked `data-bottom-overlay` is
+   * subtracted as well.
+   */
+  useLayoutEffect(() => {
+    if (!mobileOpen) return;
+    function measure() {
+      const el = panelRef.current;
+      if (!el) return;
+      const viewport = window.visualViewport?.height ?? window.innerHeight;
+      const overlay = document.querySelector("[data-bottom-overlay]");
+      const covered = overlay ? overlay.getBoundingClientRect().height : 0;
+      setPanelMaxHeight(
+        Math.max(0, viewport - covered - el.getBoundingClientRect().top),
+      );
+    }
+    measure();
+    window.addEventListener("resize", measure);
+    window.visualViewport?.addEventListener("resize", measure);
+    return () => {
+      window.removeEventListener("resize", measure);
+      window.visualViewport?.removeEventListener("resize", measure);
+    };
+  }, [mobileOpen]);
 
   /**
    * Prefix match, not equality. A reader on /insights/comparisons/<slug>/ or
@@ -142,7 +183,9 @@ export function SiteNav() {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="absolute inset-x-0 top-full z-30 border-b border-sand-200 bg-white shadow-lg shadow-forest-900/10 lg:hidden"
+          ref={panelRef}
+          style={{ maxHeight: panelMaxHeight }}
+          className="absolute inset-x-0 top-full z-30 overflow-y-auto overscroll-contain border-b border-sand-200 bg-white shadow-lg shadow-forest-900/10 lg:hidden"
         >
           <div className="mx-auto max-w-6xl space-y-5 px-6 py-5">
             {navGroups.map((group) => (
