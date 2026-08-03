@@ -313,7 +313,10 @@ const MM2H_COMMON = {
   workRights: "none" as const,
   dependants: [
     "Spouse",
-    "Children up to age 35, unmarried",
+    // Up to 34 — that is, before the 35th birthday. MOTAC's guide says "up to
+    // age 35", which reads as though the 35th year still qualifies; Jason
+    // corrected it on 2026-08-03. A dependant turning 35 is already out.
+    "Children up to age 34, unmarried",
     "Parents and parents-in-law",
   ],
   sponsor: null,
@@ -321,15 +324,38 @@ const MM2H_COMMON = {
   salaryFloor: null,
   source: MM2H_SOURCE,
   lastVerified: "2026-07-28",
+  // MOTAC's December 2025 guide still carries the pre-correction wording on
+  // both of the fields below, so they rest on named, dated practice rather than
+  // on `source`. `lastVerified` stays at the date the guide was checked — it
+  // dates the document, not our departures from it. See §4.1 of SPEC.md.
+  superseded: {
+    changedOn: "3 August 2026",
+    attribution: { by: "MYPVIP practice", asAt: "2026-08-03" },
+    whatChanged: [
+      "The 50% fixed-deposit withdrawal opens once the property purchase completes, not on approval of the application. It therefore cannot be used to fund that purchase, and buying a residence is no longer among its permitted uses — education, medical and tourism in Malaysia remain.",
+      "Dependent children qualify up to age 34, meaning before the 35th birthday. The guide's \"up to age 35\" reads a year wider than the counter applies.",
+    ],
+    figuresPending: false,
+  },
 };
 
-// The per-category pages (pp.28, 33, 37) are the operative statement: the
-// withdrawal right opens on approval, with no waiting period. The summary page
-// (p.18) adds a "second year onwards" gloss that this site quoted until
-// 2026-07-28; Jason corrected it that day — in practice the window is from
-// approval, and the earlier wording cost applicants a year they did not owe.
+// Corrected twice, and the second correction reverses part of the first.
+//
+// The per-category pages (pp.28, 33, 37) read as though the withdrawal right
+// opens on approval; the summary page (p.18) adds a "second year onwards"
+// gloss. This site quoted the p.18 gloss until 2026-07-28, when Jason replaced
+// it with "from approval". On 2026-08-03 he corrected it again: in practice the
+// window opens once the property purchase completes.
+//
+// That reversal forces "purchasing a residence" off the permitted-use list. The
+// two cannot both hold — if completion is what unlocks the money, the money
+// cannot have funded the completion. The old string asserted both, which is why
+// the error survived a review: each half reads fine on its own.
+//
+// MOTAC's guide still reads the old way, so this rests on attribution rather
+// than on `source` — see the `superseded` block on MM2H_COMMON.
 export const MM2H_FD_WITHDRAWAL =
-  "Up to 50% of the principal may be withdrawn once the application is approved, for purchasing a residence, education, medical or tourism activities in Malaysia.";
+  "Up to 50% of the principal may be withdrawn once the property purchase completes, for education, medical or tourism activities in Malaysia.";
 
 /**
  * The state-law floor that sits on top of every MM2H property minimum.

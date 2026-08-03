@@ -61,7 +61,8 @@ export type InsightCategory =
   | "comparisons"
   | "by-nationality"
   | "expat-living"
-  | "perspective";
+  | "perspective"
+  | "how-to";
 
 export type Insight = {
   slug: string;
@@ -91,6 +92,7 @@ export const CATEGORY_LABEL: Record<InsightCategory, string> = {
   "by-nationality": "By nationality",
   "expat-living": "Expat living",
   perspective: "From the desk",
+  "how-to": "How-to",
 };
 
 /** The h1 of the category's own index page. */
@@ -99,6 +101,7 @@ export const CATEGORY_TITLE: Record<InsightCategory, string> = {
   "by-nationality": "Malaysia visas by nationality",
   "expat-living": "Expat living, tax and money",
   perspective: "From the desk",
+  "how-to": "How to apply, step by step",
 };
 
 /**
@@ -118,6 +121,8 @@ export const CATEGORY_BLURB: Record<InsightCategory, string> = {
     "The questions that arrive straight after the visa question — tax residency and offshore income, property thresholds by state, opening a bank account, schools and healthcare.",
   perspective:
     "First-person notes from running two licensed Malaysian long-stay agencies — where the published rules and the counter behave differently, and what that costs an applicant.",
+  "how-to":
+    "The application itself, in the order it actually happens — what has to be in hand before you file, what only unlocks after approval, and the steps that must be done inside Malaysia rather than from home.",
 };
 
 /*

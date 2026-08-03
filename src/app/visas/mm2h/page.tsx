@@ -39,7 +39,7 @@ export default function Page() {
           "You are retiring or semi-retiring and want a long horizon at a moderate cost",
           "You are 50 or over — there is then no minimum stay requirement at all",
           "You intend to buy Malaysian property anyway, since it is compulsory — and can clear the state's foreign-buyer floor, not just the programme's",
-          "You want a family route: children up to 35 and both sets of parents may be included",
+          "You want a family route: children up to 34 and both sets of parents may be included",
         ],
         no: [
           "You want to work in Malaysia and are not taking Platinum — business, investment and career activities are barred outright on Silver and Gold",
@@ -76,7 +76,7 @@ export default function Page() {
         },
         {
           q: "Can I withdraw the fixed deposit?",
-          a: `${MM2H_FD_WITHDRAWAL} There is no waiting period — the right opens on approval, not at the start of the second year.`,
+          a: `${MM2H_FD_WITHDRAWAL} Note what that timing rules out: because the window opens on completion of the purchase, the deposit cannot be the source of your down payment. Budget the deposit and the property as two separate sums.`,
         },
         {
           q: "Do I need a licensed agent to apply for MM2H?",
@@ -234,9 +234,11 @@ export default function Page() {
 
       <Section title="Dependants and family">
         <p>
-          Children may be included up to age 35 provided they are single —
-          unusually generous by international standards. Parents and
-          parents-in-law are also allowed.
+          Children may be included up to age 34 provided they are single, which
+          is to say up to but not including their thirty-fifth birthday. That is
+          unusually generous by international standards, and MOTAC&rsquo;s own
+          guide words it as &ldquo;up to age 35&rdquo;, a year wider than it is
+          applied. Parents and parents-in-law are also allowed.
         </p>
       </Section>
 

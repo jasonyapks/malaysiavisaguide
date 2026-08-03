@@ -52,6 +52,7 @@ export const INSIGHT_CATEGORIES = [
   "by-nationality",
   "expat-living",
   "perspective",
+  "how-to",
 ] as const;
 
 export type InsightCategoryId = (typeof INSIGHT_CATEGORIES)[number];
