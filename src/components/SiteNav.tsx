@@ -100,10 +100,13 @@ export function SiteNav() {
    * /news/<slug>/ is inside that section and the header should say so; exact
    * matching left every article page with nothing highlighted at all.
    *
-   * No false positives against the current route table: there is no /visas/ or
-   * /tools/ index route to over-match, and /insights/comparisons/ does not
-   * begin with /compare/. The `path !== "/"` guard is what keeps home from
-   * matching everything.
+   * No false positives against the current route table: /insights/comparisons/
+   * does not begin with /compare/, and the `path !== "/"` guard keeps home from
+   * matching everything. There *is* a /tools/ index route as of 2026-08-08, and
+   * it would over-match both tools underneath it — which is exactly why it
+   * carries no `nav` group. This function only ever sees routes returned by
+   * `navRoutes()`, so a route with no group never reaches it. Give /tools/ a
+   * nav group and two dropdown items light up at once.
    */
   const isActive = (path: string) =>
     pathname === path || (path !== "/" && pathname.startsWith(path));

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { navRoutes } from "@/lib/site";
 import { programmes } from "@/lib/data/programmes";
+import { CATEGORY_LABEL, insightPath } from "@/lib/data/insights";
+import { publishedInsights } from "@/lib/insights";
 import { reviewDate } from "@/lib/format";
 import { images } from "@/lib/images";
 import { Figure } from "@/components/Figure";
@@ -80,7 +82,11 @@ const officialSources = [
   ).values(),
 ].sort((a, b) => a.authority.localeCompare(b.authority));
 
-export default function Home() {
+export default async function Home() {
+  // Read at build time, like /insights/ itself — `output: "export"` prerenders
+  // this page, so there is no request-time fetch here.
+  const articles = await publishedInsights();
+
   return (
     <div className="space-y-24">
       {/* Hero — white to ice blue, drifting rings, one cobalt word. */}
@@ -401,6 +407,77 @@ export default function Home() {
                 <span aria-hidden className="text-forest-600">
                   →
                 </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        {/* /tools/ carries no nav group (see lib/site.ts), so this is its only
+            internal link. Without it the page is an orphan and Google has no
+            reason to recrawl the path it was 404ing on. */}
+        <p className="text-body-sm text-ink-muted">
+          <Link
+            href="/tools/"
+            className="font-semibold text-forest-700 underline"
+          >
+            Which tool answers which question
+          </Link>{" "}
+          — and why eligibility comes before cost.
+        </p>
+      </section>
+
+      {/* Insights.
+
+          The three articles are linked here by name rather than behind a single
+          "read the insights" link, and that is the point of the section: as of
+          2026-08-08 Search Console had /insights/ itself in "Discovered –
+          currently not indexed" with Last crawled N/A, so every article under
+          it sat behind a page Google had never fetched. A direct link from the
+          home page is a crawl path that does not depend on the index. */}
+      <section className="space-y-8">
+        <SectionHead
+          eyebrow="Insights"
+          title={
+            <>
+              Written from{" "}
+              <span className="font-display accent-text font-medium italic">
+                500+ real cases
+              </span>
+            </>
+          }
+          body={
+            <>
+              The guides say what each programme is. These say which one to
+              pick, and what the paperwork is like once you have.{" "}
+              <Link
+                href="/insights/"
+                className="font-semibold text-forest-700 underline"
+              >
+                All insights
+              </Link>
+              .
+            </>
+          }
+        />
+        <ul className="grid gap-6 sm:grid-cols-3">
+          {articles.slice(0, 3).map((a) => (
+            <li key={a.slug}>
+              <Link
+                href={insightPath(a)}
+                className="card-outline flex h-full flex-col p-6 transition-transform hover:-translate-y-1"
+              >
+                <p className="eyebrow">{CATEGORY_LABEL[a.category]}</p>
+                <p className="mt-3 font-serif text-body-sm font-extrabold leading-snug text-forest-900">
+                  {a.title}
+                </p>
+                <div className="diamond-rule my-5">
+                  <Lozenge />
+                </div>
+                <p className="text-caption leading-relaxed text-ink-muted">
+                  {a.dek}
+                </p>
+                <p className="mt-auto pt-5 text-eyebrow font-bold text-forest-700">
+                  {a.readingMinutes} min read <span aria-hidden>→</span>
+                </p>
               </Link>
             </li>
           ))}

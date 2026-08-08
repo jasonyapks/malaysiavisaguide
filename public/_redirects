@@ -9,3 +9,17 @@
 /pvip/          /visas/pvip/    301
 /sample-page    /               301
 /sample-page/   /               301
+
+# The WordPress author archive. Search Console reported it as a 404 on
+# 2026-07-18 with nothing on this site linking to it — it survives only in
+# Google's memory of the old install. /about/ is the page that carries the
+# author identity now, so the redirect consolidates the signal rather than
+# throwing it away.
+#
+# Deliberately not listed here: /family-visas/ and /wp-content/*, the other two
+# 404s in the same report. The first has no successor page, and pointing it at
+# a loosely related guide turns a clean 404 into a soft 404. The second is not
+# a URL at all — it is the `Disallow` line from the old robots.txt, crawled
+# with the asterisk intact. Both are correct as 404s.
+/author/jason-yap    /about/    301
+/author/jason-yap/   /about/    301

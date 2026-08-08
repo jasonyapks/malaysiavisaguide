@@ -71,6 +71,13 @@ export const routes: Route[] = [
   { path: "/compare/", title: "Compare", nav: "tools" },
   { path: "/tools/eligibility/", title: "Eligibility checker", nav: "tools" },
   { path: "/tools/cost-calculator/", title: "Cost calculator", nav: "tools" },
+  // Sitemap only — no `nav`, on purpose. `isActive()` in SiteNav is a prefix
+  // match, so a /tools/ entry in the tools dropdown would light up alongside
+  // whichever tool the reader is actually on. Its internal link is the Tools
+  // section heading on the home page. Added 2026-08-08 because Search Console
+  // was crawling /tools/ as an inferred parent of /tools/eligibility/ and
+  // getting a 404.
+  { path: "/tools/", title: "Tools" },
 
   { path: "/about/", title: "About", nav: "site" },
   { path: "/editorial-policy/", title: "Editorial policy", nav: "site" },
