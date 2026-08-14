@@ -1,4 +1,10 @@
-import { Children, isValidElement, type ReactElement } from "react";
+import {
+  Children,
+  Fragment,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Programme } from "@/lib/data/programmes";
@@ -106,7 +112,7 @@ export function GuideLayout({
   // than from a second list each guide would have to keep in step. Every guide
   // ends with the same two fixed blocks, so those are appended here.
   const contents = [
-    ...Children.toArray(children)
+    ...flattenFragments(children)
       .filter(
         (c): c is ReactElement<{ title: string }> =>
           isValidElement(c) && c.type === Section,
@@ -174,7 +180,7 @@ export function GuideLayout({
               it. Renders nothing unless the programme's source has fallen
               behind — see components/SupersededNotice.tsx. */}
           <div className="max-w-3xl">
-            <SupersededNotice programme={programme} />
+            <SupersededNotice programme={programme} locale={locale} />
           </div>
 
           {/* 2 */}
@@ -383,7 +389,7 @@ function Contents({
   return (
     <div className="mb-10 lg:sticky lg:top-24 lg:mb-0 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto">
       <nav aria-label={onThisPageLabel}>
-        <p className="eyebrow mb-3">On this page</p>
+        <p className="eyebrow mb-3">{onThisPageLabel}</p>
         <ul className="space-y-1 border-l border-sand-200">
           {items.map((i) => (
             <li key={i.id}>
@@ -438,5 +444,27 @@ export function Section({
         {children}
       </div>
     </section>
+  );
+}
+
+/**
+ * The page's children, with any wrapping fragments expanded.
+ *
+ * `Children.toArray` does not descend into a `<>…</>` — it returns the
+ * fragment itself as a single child. That matters because the contents rail is
+ * built by filtering these children for `<Section>`: a guide that returns its
+ * sections wrapped in a fragment, which every guide does now that copy lives in
+ * `copy.sections()`, produced a rail with the two fixed entries and none of the
+ * page's own. No error, no missing section — just a navigation control that
+ * quietly stopped listing the page.
+ *
+ * One level of recursion is not enough to assume, so this recurses; the depth
+ * is bounded by how the copy modules are written, which is a handful.
+ */
+function flattenFragments(children: ReactNode): ReactNode[] {
+  return Children.toArray(children).flatMap((child) =>
+    isValidElement(child) && child.type === Fragment
+      ? flattenFragments((child.props as { children?: ReactNode }).children)
+      : [child],
   );
 }

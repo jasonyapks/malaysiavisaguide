@@ -33,6 +33,14 @@ import type { ProgrammeSlug } from "@/lib/data/programmes";
  */
 export type ProgrammeProse = {
   name?: string;
+  /** The correction banner's prose — a date phrase, who confirmed it, and the
+   *  bullets. Numbers inside the bullets are written exactly as programmes.ts
+   *  writes them, for the same reason the guide copy does. */
+  superseded?: {
+    changedOn?: string;
+    attributionBy?: string;
+    whatChanged?: string[];
+  };
   authority?: string;
   minStayPerYear?: string;
   minStayShort?: string;
@@ -46,6 +54,15 @@ export type ProgrammeProse = {
 export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   pvip: {
     name: "高端簽證計劃（PVIP）",
+    superseded: {
+      changedOn: "2026 年 3 月 16 日",
+      attributionBy: "MYPVIP 的實務操作",
+      whatChanged: [
+        "定期存款改為存滿六個月後即可提取，而非原本的一年。可提取上限不變，仍為質押金額的 50%。",
+        "家屬現在可以選擇 10 年期、繳 RM50,000，為 20 年期 RM100,000（價格不變）的一半。主申請人的期限固定為 20 年，沒有這個選項。",
+        "每月 RM40,000 的收入要求不變，但可計入的範圍比 2022 年常見問答所述更寬。不要求是工資 —— 已實現的投資收益、租金收入和退休金提領都算。也不要求收入來自境外：馬來西亞本地收入現在同樣可以計入，前提是能出示已就該收入繳納大馬所得稅的證明。",
+      ],
+    },
     authority: "馬來西亞移民局（Immigration Department of Malaysia）",
     minStayPerYear: "無",
     minStayShort: "無",

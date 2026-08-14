@@ -82,11 +82,26 @@ export const ui: UiStrings = {
     faqTitleAccent: "問題",
     atAGlance: "一覽",
     keyFactsHeading: "關鍵數據",
+    sourceLabel: "來源：",
+    listSeparator: "，",
     keyFactsLabel: (programme) => `${programme} 關鍵數據`,
     bylineBefore: "撰寫與複核：",
     bylineMid: "，",
     bylineAfter: " 董事總經理",
     bylineLastReviewed: (date) => `最後複核於 ${date}。`,
+    superseded: {
+      termsChangedOn: (programme, date) => `${programme} 的條款已於 ${date} 變更`,
+      figuresArePrevious: " —— 下方顯示的仍是舊數字",
+      showWhatChanged: "查看變更內容",
+      hide: "收起",
+      confirmedByBefore: "此說法來自 ",
+      confirmedByAfter: (date) => `，截至 ${date} 仍然有效。`,
+      officialDocument: (authority) => `${authority} 的官方文件`,
+      notYetUpdated:
+        "尚未更新，因此這些條款無法引用政府來源作為依據。",
+      treatAsUnconfirmed:
+        "在官方更新之前，請把本頁的每一個數字都視為需要另行確認後才可據以行動。",
+    },
     facts: {
       authority: "主管機構",
       tenure: "簽證年限",

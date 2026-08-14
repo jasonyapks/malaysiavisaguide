@@ -1,5 +1,7 @@
 import type { Programme } from "@/lib/data/programmes";
 import { reviewDate } from "@/lib/format";
+import type { Locale } from "@/lib/i18n";
+import { getUi } from "@/lib/ui";
 
 /**
  * The visible half of the `superseded` mechanism in programmes.ts.
@@ -17,7 +19,16 @@ import { reviewDate } from "@/lib/format";
  * Renders nothing when the programme's source is current, so it can be dropped
  * into any page that shows figures without a conditional at the call site.
  */
-export function SupersededNotice({ programme: p }: { programme: Programme }) {
+export function SupersededNotice({
+  programme: p,
+  locale = "en",
+}: {
+  programme: Programme;
+  /** Defaults to English so the comparison table, calculator and quiz — which
+   *  are not translated yet — keep working unchanged. */
+  locale?: Locale;
+}) {
+  const sup = getUi(locale).guide.superseded;
   const s = p.superseded;
   if (!s) return null;
 
@@ -46,14 +57,14 @@ export function SupersededNotice({ programme: p }: { programme: Programme }) {
       <details open={s.figuresPending} className="group">
         <summary className="cursor-pointer list-none text-body-sm font-semibold text-forest-900 [&::-webkit-details-marker]:hidden">
           <span className="underline decoration-alert-600 decoration-2 underline-offset-4">
-            {p.name} terms changed on {s.changedOn}
+            {sup.termsChangedOn(p.name, s.changedOn)}
           </span>
-          {s.figuresPending && " — the figures below are the previous ones"}
+          {s.figuresPending && sup.figuresArePrevious}
           <span className="ml-2 font-normal text-ink-muted group-open:hidden">
-            Show what changed
+            {sup.showWhatChanged}
           </span>
           <span className="ml-2 hidden font-normal text-ink-muted group-open:inline">
-            Hide
+            {sup.hide}
           </span>
         </summary>
 
@@ -67,20 +78,19 @@ export function SupersededNotice({ programme: p }: { programme: Programme }) {
       </details>
 
       <p className="mt-4 border-t border-sand-200 pt-3 text-caption leading-relaxed text-ink-muted">
-        Confirmed by <strong>{s.attribution.by}</strong>, current as at{" "}
-        {reviewDate(s.attribution.asAt)}. The{" "}
+        {sup.confirmedByBefore}
+        <strong>{s.attribution.by}</strong>
+        {sup.confirmedByAfter(reviewDate(s.attribution.asAt, locale))}
         <a
           href={p.source}
           className="underline"
           rel="noopener noreferrer"
           target="_blank"
         >
-          official {p.authority} document
-        </a>{" "}
-        has not yet been updated, so these terms cannot be cited to a government
-        source.{" "}
-        {s.figuresPending &&
-          "Until it is, treat every figure on this page as needing confirmation before you act on it."}
+          {sup.officialDocument(p.authority)}
+        </a>
+        {sup.notYetUpdated}
+        {s.figuresPending && sup.treatAsUnconfirmed}
       </p>
     </aside>
   );

@@ -45,6 +45,27 @@ export function localiseProgramme(p: Programme, locale: Locale): Programme {
       : {}),
     ...(overlay.renewalLimit ? { renewalLimit: overlay.renewalLimit } : {}),
     ...(overlay.dependants ? { dependants: overlay.dependants } : {}),
+    ...(overlay.superseded && p.superseded
+      ? {
+          superseded: {
+            ...p.superseded,
+            ...(overlay.superseded.changedOn
+              ? { changedOn: overlay.superseded.changedOn }
+              : {}),
+            ...(overlay.superseded.whatChanged
+              ? { whatChanged: overlay.superseded.whatChanged }
+              : {}),
+            ...(overlay.superseded.attributionBy
+              ? {
+                  attribution: {
+                    ...p.superseded.attribution,
+                    by: overlay.superseded.attributionBy,
+                  },
+                }
+              : {}),
+          },
+        }
+      : {}),
     ...(overlay.withdrawable && p.fixedDeposit
       ? { fixedDeposit: { ...p.fixedDeposit, withdrawable: overlay.withdrawable } }
       : {}),

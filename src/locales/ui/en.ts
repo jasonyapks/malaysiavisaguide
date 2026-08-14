@@ -57,6 +57,9 @@ export type UiStrings = {
     faqTitleAccent: string;
     atAGlance: string;
     keyFactsHeading: string;
+    sourceLabel: string;
+      /** Joins "20 years" to "renewable" — a full-width comma in Chinese. */
+    listSeparator: string;
     keyFactsLabel: (programme: string) => string;
     /** Split around the two inline links: "<before>Jason Yap<mid>MYPVIP<after>".
      *  Three segments rather than two because Chinese puts the job title after
@@ -65,6 +68,18 @@ export type UiStrings = {
     bylineMid: string;
     bylineAfter: string;
     bylineLastReviewed: (date: string) => string;
+    /** The correction banner — components/SupersededNotice.tsx. */
+    superseded: {
+      termsChangedOn: (programme: string, date: string) => string;
+      figuresArePrevious: string;
+      showWhatChanged: string;
+      hide: string;
+      confirmedByBefore: string;
+      confirmedByAfter: (date: string) => string;
+      officialDocument: (authority: string) => string;
+      notYetUpdated: string;
+      treatAsUnconfirmed: string;
+    };
     /** KeyFacts row labels and the phrases its values are assembled from. */
     facts: {
       authority: string;
@@ -181,11 +196,26 @@ export const ui: UiStrings = {
     faqTitleAccent: "questions",
     atAGlance: "At a glance",
     keyFactsHeading: "Key facts",
+    sourceLabel: "Source:",
+    listSeparator: ", ",
     keyFactsLabel: (programme) => `Key facts: ${programme}`,
     bylineBefore: "Written and reviewed by ",
     bylineMid: ", Managing Director of ",
     bylineAfter: "",
     bylineLastReviewed: (date) => `Last reviewed ${date}.`,
+    superseded: {
+      termsChangedOn: (programme, date) => `${programme} terms changed on ${date}`,
+      figuresArePrevious: " — the figures below are the previous ones",
+      showWhatChanged: "Show what changed",
+      hide: "Hide",
+      confirmedByBefore: "Confirmed by ",
+      confirmedByAfter: (date) => `, current as at ${date}. The `,
+      officialDocument: (authority) => `official ${authority} document`,
+      notYetUpdated:
+        " has not yet been updated, so these terms cannot be cited to a government source. ",
+      treatAsUnconfirmed:
+        "Until it is, treat every figure on this page as needing confirmation before you act on it.",
+    },
     facts: {
       authority: "Authority",
       tenure: "Tenure",

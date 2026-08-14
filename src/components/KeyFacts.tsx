@@ -21,21 +21,22 @@ export function KeyFacts({
   programme: Programme;
   locale: Locale;
 }) {
-  const f = getUi(locale).guide.facts;
+  const g = getUi(locale).guide;
+  const f = g.facts;
   const rows: [string, string][] = [];
 
   rows.push([f.authority, p.authority]);
   rows.push([
     f.tenure,
     p.renewable
-      ? `${years(p.tenureYears)}, ${f.renewable}${p.renewalLimit ? ` — ${p.renewalLimit}` : ""}`
-      : years(p.tenureYears),
+      ? `${years(p.tenureYears, locale)}${g.listSeparator}${f.renewable}${p.renewalLimit ? ` — ${p.renewalLimit}` : ""}`
+      : years(p.tenureYears, locale),
   ]);
   if (p.minAge !== null) rows.push([f.minAge, `${p.minAge}`]);
   if (p.fixedDeposit)
     rows.push([f.fixedDeposit, money(p.fixedDeposit)]);
   if (p.incomeRequirement)
-    rows.push([f.incomeRequirement, moneyPer(p.incomeRequirement)]);
+    rows.push([f.incomeRequirement, moneyPer(p.incomeRequirement, locale)]);
   if (p.salaryFloor)
     rows.push([f.minSalary, f.aMonth(money(p.salaryFloor))]);
   if (p.sponsor) rows.push([f.sponsorRequired, p.sponsor]);
@@ -53,7 +54,7 @@ export function KeyFacts({
         ? f.perDependantTerms(
             fee(pf.principal),
             pf.dependantTerms
-              .map((t) => f.forYears(fee(t.amount), years(t.years)))
+              .map((t) => f.forYears(fee(t.amount), years(t.years, locale)))
               .join(f.or),
           )
         : pf.dependant > 0
@@ -107,7 +108,7 @@ export function KeyFacts({
         ))}
       </dl>
       <p className="mt-4 border-t border-sand-200 pt-4 text-caption text-ink-muted">
-        Source:{" "}
+        {getUi(locale).guide.sourceLabel}{" "}
         <a
           href={p.source}
           className="underline"

@@ -79,11 +79,26 @@ export const ui: UiStrings = {
     faqTitleAccent: "问题",
     atAGlance: "一览",
     keyFactsHeading: "关键数据",
+    sourceLabel: "来源：",
+    listSeparator: "，",
     keyFactsLabel: (programme) => `${programme} 关键数据`,
     bylineBefore: "撰写与复核：",
     bylineMid: "，",
     bylineAfter: " 董事总经理",
     bylineLastReviewed: (date) => `最后复核于 ${date}。`,
+    superseded: {
+      termsChangedOn: (programme, date) => `${programme} 的条款已于 ${date} 变更`,
+      figuresArePrevious: " —— 下方显示的仍是旧数字",
+      showWhatChanged: "查看变更内容",
+      hide: "收起",
+      confirmedByBefore: "此说法来自 ",
+      confirmedByAfter: (date) => `，截至 ${date} 仍然有效。`,
+      officialDocument: (authority) => `${authority} 的官方文件`,
+      notYetUpdated:
+        "尚未更新，因此这些条款无法引用政府来源作为依据。",
+      treatAsUnconfirmed:
+        "在官方更新之前，请把本页的每一个数字都视为需要另行确认后才可据以行动。",
+    },
     facts: {
       authority: "主管机构",
       tenure: "签证年限",

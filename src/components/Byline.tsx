@@ -50,7 +50,7 @@ export function Byline({
         {lastVerified && (
           <>
             <br />
-            {g.bylineLastReviewed(reviewDate(lastVerified))}
+            {g.bylineLastReviewed(reviewDate(lastVerified, locale))}
           </>
         )}
       </p>
