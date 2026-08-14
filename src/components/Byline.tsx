@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { reviewDate } from "@/lib/format";
+import { localePath, type Locale } from "@/lib/i18n";
+import { getUi } from "@/lib/ui";
 
 /**
  * Trust furniture — SPEC.md §4.3. For a 45+, wealthy, scam-alert reader this
@@ -14,9 +16,12 @@ export function Byline({
    * Invalid Date" would undermine the exact thing this component is for.
    */
   lastVerified,
+  locale,
 }: {
   lastVerified?: string | null;
+  locale: Locale;
 }) {
+  const g = getUi(locale).guide;
   return (
     <div className="flex items-start gap-4 border-y border-sand-200 py-5">
       <span
@@ -26,11 +31,14 @@ export function Byline({
         JY
       </span>
       <p className="text-body-sm leading-relaxed text-ink-muted">
-        Written and reviewed by{" "}
-        <Link href="/about/" className="font-semibold text-forest-700 underline">
+        {g.bylineBefore}
+        <Link
+          href={localePath("/about/", locale)}
+          className="font-semibold text-forest-700 underline"
+        >
           Jason Yap
         </Link>
-        , Managing Director of{" "}
+        {g.bylineMid}
         <a
           href="https://mypvip.com"
           rel="nofollow noopener"
@@ -38,11 +46,11 @@ export function Byline({
         >
           MYPVIP
         </a>
-        .
+        {g.bylineAfter}.
         {lastVerified && (
           <>
             <br />
-            Last reviewed {reviewDate(lastVerified)}.
+            {g.bylineLastReviewed(reviewDate(lastVerified))}
           </>
         )}
       </p>

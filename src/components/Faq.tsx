@@ -1,3 +1,5 @@
+import type { Locale } from "@/lib/i18n";
+import { getUi } from "@/lib/ui";
 import { GuideHead } from "@/components/GuideHead";
 
 export type FaqItem = { q: string; a: string };
@@ -7,7 +9,8 @@ export type FaqItem = { q: string; a: string };
  * SPEC.md §4.4. One source, so the structured data can't drift from what the
  * reader actually sees, which is the failure mode Google penalises.
  */
-export function Faq({ items }: { items: FaqItem[] }) {
+export function Faq({ items, locale }: { items: FaqItem[]; locale: Locale }) {
+  const g = getUi(locale).guide;
   const schema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -21,12 +24,12 @@ export function Faq({ items }: { items: FaqItem[] }) {
   return (
     <section className="space-y-8">
       <GuideHead
-        eyebrow="FAQ"
+        eyebrow={g.faqEyebrow}
         title={
           <>
-            Common{" "}
+            {g.faqTitleLead}{" "}
             <span className="font-display accent-text font-medium italic">
-              questions
+              {g.faqTitleAccent}
             </span>
           </>
         }

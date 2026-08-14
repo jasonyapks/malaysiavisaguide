@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <GuideLayout
+      locale="en"
       programme={p}
       hero={images["de-rantau"]}
       title="DE Rantau Nomad Pass"

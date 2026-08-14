@@ -142,7 +142,7 @@ export default function Page() {
       </section>
 
       <div className="max-w-3xl space-y-12">
-        <Byline lastVerified={lastVerified} />
+        <Byline lastVerified={lastVerified} locale="en" />
 
         <p className="rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
           <Link href="/tools/eligibility/" className="font-semibold underline">

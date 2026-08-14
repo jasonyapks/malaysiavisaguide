@@ -72,13 +72,13 @@ export function InsightLayout({
           this article, and the header above reads correctly without it. */}
       <Hero article={article} />
 
-      <Byline lastVerified={article.reviewed} />
+      <Byline lastVerified={article.reviewed} locale="en" />
 
       {/* The prose. Sizing lives here rather than on each child so an article
           body stays plain semantic markup and inherits the reading measure. */}
       <div className="space-y-7 text-body-sm leading-[1.75]">{children}</div>
 
-      <Faq items={faq} />
+      <Faq items={faq} locale="en" />
 
       <Sources sources={sources} />
 

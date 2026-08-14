@@ -1,5 +1,7 @@
 import type { Programme } from "@/lib/data/programmes";
 import { money, moneyPer, years } from "@/lib/format";
+import type { Locale } from "@/lib/i18n";
+import { getUi } from "@/lib/ui";
 
 /**
  * The screenshot-shareable data card — SPEC.md §3, item 2.
@@ -12,73 +14,88 @@ import { money, moneyPer, years } from "@/lib/format";
  * blank row invites the reader to assume zero, and "no minimum stay" is a
  * genuinely different claim from "we didn't check".
  */
-export function KeyFacts({ programme: p }: { programme: Programme }) {
+export function KeyFacts({
+  programme: p,
+  locale,
+}: {
+  programme: Programme;
+  locale: Locale;
+}) {
+  const f = getUi(locale).guide.facts;
   const rows: [string, string][] = [];
 
-  rows.push(["Authority", p.authority]);
+  rows.push([f.authority, p.authority]);
   rows.push([
-    "Tenure",
+    f.tenure,
     p.renewable
-      ? `${years(p.tenureYears)}, renewable${p.renewalLimit ? ` — ${p.renewalLimit}` : ""}`
+      ? `${years(p.tenureYears)}, ${f.renewable}${p.renewalLimit ? ` — ${p.renewalLimit}` : ""}`
       : years(p.tenureYears),
   ]);
-  if (p.minAge !== null) rows.push(["Minimum age", `${p.minAge}`]);
+  if (p.minAge !== null) rows.push([f.minAge, `${p.minAge}`]);
   if (p.fixedDeposit)
-    rows.push(["Fixed deposit", money(p.fixedDeposit)]);
+    rows.push([f.fixedDeposit, money(p.fixedDeposit)]);
   if (p.incomeRequirement)
-    rows.push(["Income requirement", moneyPer(p.incomeRequirement)]);
+    rows.push([f.incomeRequirement, moneyPer(p.incomeRequirement)]);
   if (p.salaryFloor)
-    rows.push(["Minimum salary", `${money(p.salaryFloor)} a month`]);
-  if (p.sponsor) rows.push(["Sponsor required", p.sponsor]);
+    rows.push([f.minSalary, f.aMonth(money(p.salaryFloor))]);
+  if (p.sponsor) rows.push([f.sponsorRequired, p.sponsor]);
   if (p.propertyPurchaseMin)
-    rows.push(["Property purchase", `From ${money(p.propertyPurchaseMin)}`]);
+    rows.push([f.propertyPurchase, f.from(money(p.propertyPurchaseMin))]);
   if (p.participationFee) {
-    const f = p.participationFee;
-    const fee = (amount: number) => money({ amount, currency: f.currency });
+    const pf = p.participationFee;
+    const fee = (amount: number) => money({ amount, currency: pf.currency });
     rows.push([
-      "Participation fee",
+      f.participationFee,
       // Where a dependant's term is a choice, both prices are stated. Quoting
       // one of them would understate or overstate a six-figure decision, and
       // which way it errs would depend on which we happened to pick.
-      f.dependantTerms
-        ? `${fee(f.principal)} principal. Per dependant: ${f.dependantTerms
-            .map((t) => `${fee(t.amount)} for ${years(t.years)}`)
-            .join(", or ")}`
-        : f.dependant > 0
-          ? `${fee(f.principal)} principal, ${fee(f.dependant)} per dependant`
-          : fee(f.principal),
+      pf.dependantTerms
+        ? f.perDependantTerms(
+            fee(pf.principal),
+            pf.dependantTerms
+              .map((t) => f.forYears(fee(t.amount), years(t.years)))
+              .join(f.or),
+          )
+        : pf.dependant > 0
+          ? f.principalAndDependant(fee(pf.principal), fee(pf.dependant))
+          : fee(pf.principal),
     ]);
   }
   if (p.processingFee)
     rows.push([
-      "Processing fee",
+      f.processingFee,
       p.processingFee.dependant > 0
-        ? `${money({ amount: p.processingFee.principal, currency: p.processingFee.currency })} principal, ${money({ amount: p.processingFee.dependant, currency: p.processingFee.currency })} per dependant`
+        ? f.principalAndDependant(
+            money({ amount: p.processingFee.principal, currency: p.processingFee.currency }),
+            money({ amount: p.processingFee.dependant, currency: p.processingFee.currency }),
+          )
         : money({
             amount: p.processingFee.principal,
             currency: p.processingFee.currency,
           }),
     ]);
   rows.push([
-    "Minimum stay",
-    p.minStayPerYear ?? "None",
+    f.minStay,
+    p.minStayPerYear ?? f.none,
   ]);
   rows.push([
-    "Work rights",
+    f.workRights,
     {
-      full: "Full — may work and run a business",
-      restricted: "Restricted — conditions apply",
-      none: "None",
+      full: f.workRightsFull,
+      restricted: f.workRightsRestricted,
+      none: f.workRightsNone,
     }[p.workRights],
   ]);
 
   return (
     <aside
-      aria-label={`Key facts: ${p.name}`}
+      aria-label={getUi(locale).guide.keyFactsLabel(p.name)}
       className="card-lux mx-auto max-w-3xl p-7 sm:p-9"
     >
-      <p className="eyebrow">At a glance</p>
-      <h2 className="mt-2 font-serif text-h3 font-extrabold">Key facts</h2>
+      <p className="eyebrow">{getUi(locale).guide.atAGlance}</p>
+      <h2 className="mt-2 font-serif text-h3 font-extrabold">
+        {getUi(locale).guide.keyFactsHeading}
+      </h2>
       <dl className="mt-5 divide-y divide-sand-200 text-body-sm">
         {rows.map(([label, value]) => (
           <div key={label} className="grid gap-1 py-3.5 sm:grid-cols-[12rem_1fr] sm:gap-4">

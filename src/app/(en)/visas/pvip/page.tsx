@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <GuideLayout
+      locale="en"
       programme={p}
       hero={images.pvip}
       title="Premium Visa Programme (PVIP)"

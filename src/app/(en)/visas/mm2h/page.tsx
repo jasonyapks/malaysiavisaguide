@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <GuideLayout
+      locale="en"
       programme={silver}
       hero={images.mm2h}
       title="Malaysia My Second Home (MM2H)"

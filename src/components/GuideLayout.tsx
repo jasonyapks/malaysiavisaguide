@@ -2,6 +2,8 @@ import { Children, isValidElement, type ReactElement } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Programme } from "@/lib/data/programmes";
+import type { Locale } from "@/lib/i18n";
+import { getUi } from "@/lib/ui";
 import type { SiteImage } from "@/lib/images";
 import { site } from "@/lib/site";
 import { Byline } from "@/components/Byline";
@@ -36,6 +38,7 @@ import { SupersededNotice } from "@/components/SupersededNotice";
  */
 export function GuideLayout({
   programme,
+  locale,
   title,
   /** 40–60 words. AI Overviews and a skimming reader both get the answer without scrolling. */
   answer,
@@ -48,6 +51,7 @@ export function GuideLayout({
   children,
 }: {
   programme: Programme;
+  locale: Locale;
   title: string;
   answer: string;
   hero?: SiteImage;
@@ -96,6 +100,8 @@ export function GuideLayout({
   // about the programme to live — and drift.
   const lead = answer.split(/(?<=\.)\s+/)[0];
 
+  const g = getUi(locale).guide;
+
   // The contents rail, read off the sections the page actually passed rather
   // than from a second list each guide would have to keep in step. Every guide
   // ends with the same two fixed blocks, so those are appended here.
@@ -106,8 +112,8 @@ export function GuideLayout({
           isValidElement(c) && c.type === Section,
       )
       .map((c) => ({ id: sectionId(c.props.title), label: c.props.title })),
-    { id: "who-it-suits", label: "Who it suits" },
-    { id: "questions", label: "Common questions" },
+    { id: "who-it-suits", label: g.contentsSuits },
+    { id: "questions", label: g.contentsQuestions },
   ];
 
   return (
@@ -153,7 +159,8 @@ export function GuideLayout({
               out of step with them. */}
           <Contents
             items={contents}
-            cta={{ href: cta.href, label: cta.label ?? "Continue" }}
+            cta={{ href: cta.href, label: cta.label ?? g.ctaDefault }}
+            onThisPageLabel={g.onThisPage}
           />
 
           <div className="min-w-0 space-y-14 sm:space-y-20">
@@ -171,7 +178,7 @@ export function GuideLayout({
           </div>
 
           {/* 2 */}
-          {facts ?? <KeyFacts programme={programme} />}
+          {facts ?? <KeyFacts programme={programme} locale={locale} />}
 
           {/* 3–5 — the page's own sections.
               The v3 stagger (even sections pushed right, odd left) is gone. It
@@ -184,29 +191,29 @@ export function GuideLayout({
           {/* 6 — the honest section. This is what makes a page worth citing. */}
           <section id="who-it-suits" className="scroll-mt-24 space-y-8">
             <GuideHead
-              eyebrow="Honest fit"
+              eyebrow={g.honestFitEyebrow}
               title={
                 <>
-                  Who it suits — and{" "}
+                  {g.honestFitTitleLead}{" "}
                   <span className="font-display accent-text font-medium italic">
-                    who it doesn&apos;t
+                    {g.honestFitTitleAccent}
                   </span>
                 </>
               }
             />
             <div className="grid gap-6 sm:grid-cols-2">
-              <SuitList heading="A good fit if" tone="good" items={suits.yes} />
-              <SuitList heading="Look elsewhere if" tone="bad" items={suits.no} />
+              <SuitList heading={g.goodFitIf} tone="good" items={suits.yes} />
+              <SuitList heading={g.lookElsewhereIf} tone="bad" items={suits.no} />
             </div>
           </section>
 
           {/* 7 */}
           <div id="questions" className="scroll-mt-24">
-            <Faq items={faq} />
+            <Faq items={faq} locale={locale} />
           </div>
 
           {/* 8 */}
-          <Byline lastVerified={programme.lastVerified} />
+          <Byline lastVerified={programme.lastVerified} locale={locale} />
           </div>
          </div>
         </div>
@@ -226,7 +233,7 @@ export function GuideLayout({
             href={cta.href}
             className="accent-fill shrink-0 rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
           >
-            {cta.label ?? "Continue"}
+            {cta.label ?? g.ctaDefault}
           </Link>
         </div>
       </section>
@@ -366,14 +373,16 @@ export function sectionId(title: string): string {
 function Contents({
   items,
   cta,
+  onThisPageLabel,
 }: {
   items: { id: string; label: string }[];
   cta: { href: string; label: string };
+  onThisPageLabel: string;
 }) {
   if (items.length === 0) return null;
   return (
     <div className="mb-10 lg:sticky lg:top-24 lg:mb-0 lg:max-h-[calc(100vh-8rem)] lg:self-start lg:overflow-y-auto">
-      <nav aria-label="On this page">
+      <nav aria-label={onThisPageLabel}>
         <p className="eyebrow mb-3">On this page</p>
         <ul className="space-y-1 border-l border-sand-200">
           {items.map((i) => (

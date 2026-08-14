@@ -265,7 +265,7 @@ function BlockNode({
       return <SupersededNotice programme={programme(block.programme, where)} />;
 
     case "keyFacts":
-      return <KeyFacts programme={programme(block.programme, where)} />;
+      return <KeyFacts programme={programme(block.programme, where)} locale="en" />;
 
     case "tierTable":
       return (

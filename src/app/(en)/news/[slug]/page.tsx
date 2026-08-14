@@ -263,6 +263,7 @@ export default async function Page({
 
       <Byline
         lastVerified={(article.updatedAt ?? article.publishedAt)?.slice(0, 10) ?? null}
+        locale="en"
       />
 
       {/* One CTA, pointing at the guide that actually answers the question the

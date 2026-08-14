@@ -41,6 +41,58 @@ export type UiStrings = {
     disclosureAfter: string;
     rights: string;
   };
+  /** Chrome around every programme guide — GuideLayout and its sub-components. */
+  guide: {
+    onThisPage: string;
+    contentsSuits: string;
+    contentsQuestions: string;
+    honestFitEyebrow: string;
+    honestFitTitleLead: string;
+    honestFitTitleAccent: string;
+    goodFitIf: string;
+    lookElsewhereIf: string;
+    ctaDefault: string;
+    faqEyebrow: string;
+    faqTitleLead: string;
+    faqTitleAccent: string;
+    atAGlance: string;
+    keyFactsHeading: string;
+    keyFactsLabel: (programme: string) => string;
+    /** Split around the two inline links: "<before>Jason Yap<mid>MYPVIP<after>".
+     *  Three segments rather than two because Chinese puts the job title after
+     *  the company ("MYPVIP 董事总经理") where English puts it before. */
+    bylineBefore: string;
+    bylineMid: string;
+    bylineAfter: string;
+    bylineLastReviewed: (date: string) => string;
+    /** KeyFacts row labels and the phrases its values are assembled from. */
+    facts: {
+      authority: string;
+      tenure: string;
+      minAge: string;
+      fixedDeposit: string;
+      incomeRequirement: string;
+      minSalary: string;
+      sponsorRequired: string;
+      propertyPurchase: string;
+      participationFee: string;
+      processingFee: string;
+      minStay: string;
+      workRights: string;
+      none: string;
+      renewable: string;
+      aMonth: (amount: string) => string;
+      from: (amount: string) => string;
+      principal: (amount: string) => string;
+      principalAndDependant: (principal: string, dependant: string) => string;
+      perDependantTerms: (principal: string, terms: string) => string;
+      forYears: (amount: string, years: string) => string;
+      or: string;
+      workRightsFull: string;
+      workRightsRestricted: string;
+      workRightsNone: string;
+    };
+  };
   consent: {
     heading: string;
     body: string;
@@ -112,6 +164,56 @@ export const ui: UiStrings = {
     disclosureAbout: "the about page",
     disclosureAfter: ".",
     rights: "All rights reserved.",
+  },
+
+  guide: {
+    onThisPage: "On this page",
+    contentsSuits: "Who it suits",
+    contentsQuestions: "Common questions",
+    honestFitEyebrow: "Honest fit",
+    honestFitTitleLead: "Who it suits — and",
+    honestFitTitleAccent: "who it doesn't",
+    goodFitIf: "A good fit if",
+    lookElsewhereIf: "Look elsewhere if",
+    ctaDefault: "Continue",
+    faqEyebrow: "FAQ",
+    faqTitleLead: "Common",
+    faqTitleAccent: "questions",
+    atAGlance: "At a glance",
+    keyFactsHeading: "Key facts",
+    keyFactsLabel: (programme) => `Key facts: ${programme}`,
+    bylineBefore: "Written and reviewed by ",
+    bylineMid: ", Managing Director of ",
+    bylineAfter: "",
+    bylineLastReviewed: (date) => `Last reviewed ${date}.`,
+    facts: {
+      authority: "Authority",
+      tenure: "Tenure",
+      minAge: "Minimum age",
+      fixedDeposit: "Fixed deposit",
+      incomeRequirement: "Income requirement",
+      minSalary: "Minimum salary",
+      sponsorRequired: "Sponsor required",
+      propertyPurchase: "Property purchase",
+      participationFee: "Participation fee",
+      processingFee: "Processing fee",
+      minStay: "Minimum stay",
+      workRights: "Work rights",
+      none: "None",
+      renewable: "renewable",
+      aMonth: (amount) => `${amount} a month`,
+      from: (amount) => `From ${amount}`,
+      principal: (amount) => `${amount} principal`,
+      principalAndDependant: (principal, dependant) =>
+        `${principal} principal, ${dependant} per dependant`,
+      perDependantTerms: (principal, terms) =>
+        `${principal} principal. Per dependant: ${terms}`,
+      forYears: (amount, years) => `${amount} for ${years}`,
+      or: ", or ",
+      workRightsFull: "Full — may work and run a business",
+      workRightsRestricted: "Restricted — conditions apply",
+      workRightsNone: "None",
+    },
   },
 
   consent: {
