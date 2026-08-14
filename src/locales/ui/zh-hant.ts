@@ -1,0 +1,90 @@
+// GENERATED FILE — do not edit.
+// Written by scripts/gen-zh-hant.mjs from the zh-hans source beside it.
+// Edit that file and run `npm run i18n:hant`; edits here are overwritten.
+import type { UiStrings } from "./en";
+
+/**
+ * Simplified Chinese chrome.
+ *
+ * This file is the SOURCE for both Chinese trees. `scripts/gen-zh-hant.mjs`
+ * converts it to `zh-hant.ts` — do not hand-edit that file, your change will be
+ * overwritten on the next build.
+ *
+ * Programme acronyms stay in Latin script on purpose. PVIP, MM2H and DE Rantau
+ * are what the government, the agencies and the applicants themselves write,
+ * and they are what Chinese-language searchers actually type; a purely
+ * translated name would rank for nothing. Each one gets a short Chinese gloss
+ * beside it so a first-time reader knows what it is.
+ */
+export const ui: UiStrings = {
+  siteName: "馬來西亞簽證指南",
+  siteDescription:
+    "獨立解讀馬來西亞長期居留簽證 —— PVIP、MM2H、砂拉越 MM2H 與 DE Rantau。費用、條件與辦理時程，全部核對官方來源。",
+  strapline: ["獨立簽證指南", "並非政府機構"],
+  askQuestion: "諮詢提問",
+  menu: "選單",
+  ariaPrimaryNav: "主導航",
+  ariaFooterNav: "頁腳導航",
+  ariaLanguage: "語言",
+
+  navGroups: {
+    programmes: "長期居留簽證",
+    "work-study": "工作與留學",
+    tools: "工具與對比",
+    reading: "觀點與新聞",
+  },
+
+  routeTitles: {
+    "/": "首頁",
+    "/insights/": "深度觀點",
+    "/news/": "最新消息",
+    "/visas/pvip/": "PVIP 高端簽證",
+    "/visas/mm2h/": "MM2H 第二家園",
+    "/visas/sarawak-mm2h/": "砂拉越 MM2H",
+    "/visas/de-rantau/": "DE Rantau 數字遊民",
+    "/visas/employment-pass/": "工作準證",
+    "/visas/student-pass/": "學生準證",
+    "/compare/": "方案對比",
+    "/tools/eligibility/": "資格評估",
+    "/tools/cost-calculator/": "費用計算器",
+    "/tools/": "實用工具",
+    "/about/": "關於我們",
+    "/editorial-policy/": "編輯方針",
+    "/privacy/": "隱私政策",
+    "/contact/": "聯繫我們",
+  },
+
+  footer: {
+    heading: "把計劃、真實數字講清楚，",
+    headingAccent: "絕不推銷",
+    disclosureTitle: "出版方與利益聲明",
+    disclosureBefore:
+      "本站是獨立指南 —— 與馬來西亞移民局或任何政府機構均無隸屬關係。出版人為 Jason Yap，他同時是 ",
+    disclosureMypvip: "MYPVIP",
+    disclosureBetween: " 的董事總經理；該持牌代理機構提供的服務，說明見",
+    disclosureAbout: "關於我們",
+    disclosureAfter: "。",
+    rights: "版權所有。",
+  },
+
+  consent: {
+    heading: "本站使用的 Cookie",
+    body: "分析類 Cookie 讓我們知道哪些指南有人讀。你不開啟，它就不會啟用；開不開啟，網站的功能完全一樣。",
+    privacyLink: "隱私政策",
+    decline: "拒絕",
+    accept: "接受",
+  },
+
+  notFound: {
+    eyebrow: "錯誤 404",
+    heading: "這個頁面",
+    headingAccent: "不在這裡",
+    lead: "鏈接可能已經過期，或者頁面已經搬走。本指南涵蓋的全部內容都在下面。",
+    tailBefore: "在找特定的內容？可以看看",
+    tailNews: "最新消息",
+    tailBetween: "，或者直接",
+    tailContact: "提出問題",
+    tailAfter: "，撰寫這些指南的人會親自回覆你。",
+    metaTitle: "頁面不存在",
+  },
+};

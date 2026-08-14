@@ -67,6 +67,14 @@ const nextConfig: NextConfig = {
   // No image optimisation server exists in a static export.
   images: { unoptimized: true },
   pageExtensions: [...DEFAULT_PAGE_EXTENSIONS, ...insightRouteExtensions()],
+  experimental: {
+    // Turns on app/global-not-found.tsx. Needed because the app now has two
+    // root layouts — (en) and [locale] — so there is no single layout for
+    // app/not-found.tsx to compose a document from, and without this flag
+    // out/404.html silently reverts to Next's own black default page. See the
+    // header comment in src/app/global-not-found.tsx.
+    globalNotFound: true,
+  },
 };
 
 export default nextConfig;

@@ -5,19 +5,46 @@ import {
 } from "@/lib/data/insights";
 import { liveInsightCategories, publishedInsights } from "@/lib/insights";
 import { categoryPath, getCategoryIndex, getNewsIndex } from "@/lib/news";
-import { routes, site } from "@/lib/site";
+import { assertRouteTitles, routes, site } from "@/lib/site";
+import { htmlLang, localePath } from "@/lib/i18n";
+import { availableLocales } from "@/lib/translated";
 
 /** Generated from the route table in src/lib/site.ts — SPEC.md §4.4. */
 // Required by `output: "export"` — the sitemap is emitted at build time.
 export const dynamic = "force-static";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const pages: MetadataRoute.Sitemap = routes.map((r) => ({
-    url: `${site.url}${r.path}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly",
-    priority: r.path === "/" ? 1 : 0.8,
-  }));
+  // Every build runs the sitemap, which makes it the cheapest place to hang the
+  // check that no route has shipped without a title in all three locales.
+  assertRouteTitles();
+
+  /**
+   * Static pages, once per locale they exist in, each carrying the `alternates`
+   * block for its whole language group.
+   *
+   * The sitemap is the second place hreflang can be declared (the first is the
+   * <link> tags `pageMetadata()` emits) and Google reads both. Stating it twice
+   * is not redundant here: the tags are per-page and easy to get wrong one page
+   * at a time, while this is generated from one loop over the route table, so a
+   * page whose tags are missing is still discovered as part of its group.
+   */
+  const pages: MetadataRoute.Sitemap = routes.flatMap((r) => {
+    const available = availableLocales(r.path);
+    const alternates = {
+      languages: Object.fromEntries(
+        available.map((l) => [htmlLang[l], `${site.url}${localePath(r.path, l)}`]),
+      ),
+    };
+    return available.map((locale) => ({
+      url: `${site.url}${localePath(r.path, locale)}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      // The English page stays the primary one. A translation of the home page
+      // is not a second 1.0-priority page on the site.
+      priority: r.path === "/" ? (locale === "en" ? 1 : 0.9) : 0.8,
+      alternates,
+    }));
+  });
 
   // Each article carries its own real lastModified, not the build time — a news
   // page whose date moves on every deploy teaches a crawler to ignore the date.

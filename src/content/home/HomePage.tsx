@@ -1,43 +1,21 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import { navRoutes } from "@/lib/site";
+import { localePath, type Locale } from "@/lib/i18n";
+import { localisedNavRoutes } from "@/lib/site";
 import { programmes } from "@/lib/data/programmes";
 import { CATEGORY_LABEL, insightPath } from "@/lib/data/insights";
 import { publishedInsights } from "@/lib/insights";
 import { reviewDate } from "@/lib/format";
 import { images } from "@/lib/images";
 import { Figure } from "@/components/Figure";
-
-// Title and description come from the layout default (the home page is the one
-// page that should carry the full sitewide title). Canonical is set explicitly
-// so the apex has a self-reference like every other route.
-export const metadata: Metadata = {
-  alternates: { canonical: "/" },
-};
-
-/** One-line descriptor per route, shown on the home cards. */
-const BLURB: Record<string, string> = {
-  "/visas/pvip/": "20-year residence, full work rights, the premium tier.",
-  "/visas/mm2h/": "Silver, Gold and Platinum — the deposit-based classic.",
-  "/visas/sarawak-mm2h/": "The cheapest serious long-stay route, via Sarawak.",
-  "/visas/de-rantau/": "The nomad pass for remote, foreign-paid workers.",
-  "/visas/employment-pass/": "For a job with a Malaysian employer.",
-  "/visas/student-pass/": "For enrolment at a Malaysian institution.",
-};
+import type { HomeCopy } from "./types";
 
 /**
- * The single serif word set in cobalt on each card — the reference's
- * "Settlement / Family / Lifestyle" device. One word, no punctuation: it is a
- * mood label for the route, not its name.
+ * The home page layout, shared by all three locales.
+ *
+ * Everything here is structure — the grid, the cards, the icons, the sticky
+ * source list. Every word comes in through `copy`. See ./types.ts for why the
+ * copy is JSX rather than a string dictionary.
  */
-const DISPLAY_WORD: Record<string, string> = {
-  "/visas/pvip/": "Premium",
-  "/visas/mm2h/": "Classic",
-  "/visas/sarawak-mm2h/": "Value",
-  "/visas/de-rantau/": "Remote",
-  "/visas/employment-pass/": "Work",
-  "/visas/student-pass/": "Study",
-};
 
 const ICON: Record<string, IconName> = {
   "/visas/pvip/": "spark",
@@ -47,22 +25,6 @@ const ICON: Record<string, IconName> = {
   "/visas/employment-pass/": "square",
   "/visas/student-pass/": "swap",
 };
-
-/** The hero card's numbered rows — what this site does, in three lines. */
-const PROMISES = [
-  {
-    title: "Every figure checked against its official source",
-    body: "Fees, thresholds and tenures are traced to the government page that sets them, with the date we last looked.",
-  },
-  {
-    title: "PVIP and MM2H compared side by side",
-    body: "The same fields, the same units, one table — so the trade-offs are visible instead of buried in prose.",
-  },
-  {
-    title: "Written to inform, not to close a sale",
-    body: "Where a programme is the wrong fit, the guide says so. The commercial relationship is disclosed on every page.",
-  },
-];
 
 const lastReviewed = programmes
   .map((p) => p.lastVerified)
@@ -75,6 +37,11 @@ const lastReviewed = programmes
  * Derived from the programme data rather than written out again here, so a
  * source that is corrected in one place cannot leave a stale duplicate on the
  * home page. Deduped by URL because several programmes share one document.
+ *
+ * NOT translated, and that is deliberate: these are the names of government
+ * bodies as they appear on the documents themselves, and a reader who follows
+ * the link lands on an English or Malay page. Renaming them in Chinese would
+ * make the authority harder to verify, which is the opposite of the point.
  */
 const officialSources = [
   ...new Map(
@@ -82,10 +49,22 @@ const officialSources = [
   ).values(),
 ].sort((a, b) => a.authority.localeCompare(b.authority));
 
-export default async function Home() {
+export async function HomePage({
+  locale,
+  copy,
+}: {
+  locale: Locale;
+  copy: HomeCopy;
+}) {
   // Read at build time, like /insights/ itself — `output: "export"` prerenders
   // this page, so there is no request-time fetch here.
-  const articles = await publishedInsights();
+  //
+  // Only English for now: the CMS has no locale dimension yet, so there are no
+  // Chinese articles to list. The section renders nothing rather than sending a
+  // Chinese reader to three English articles.
+  const articles = locale === "en" ? await publishedInsights() : [];
+
+  const href = (path: string) => localePath(path, locale);
 
   return (
     <div className="space-y-24">
@@ -107,32 +86,17 @@ export default async function Home() {
                 aria-hidden
                 className="size-1.5 rounded-full bg-forest-600"
               />
-              Independent · verified against official sources
+              {copy.hero.eyebrow}
             </p>
 
             <h1 className="text-display leading-[1.05]">
-              Malaysia&apos;s
-              <br />
-              long-stay visas,
-              <br />
-              <span className="font-display accent-text font-medium italic">
-                explained plainly
-              </span>
+              {copy.hero.heading}
             </h1>
 
-            <p className="max-w-xl text-ink-muted">
-              PVIP, MM2H, Sarawak MM2H and DE Rantau all let you live in Malaysia
-              long term — and they differ enormously in cost, tenure and who they
-              suit. Every figure here is checked against its official government
-              source.
-            </p>
+            <p className="max-w-xl text-ink-muted">{copy.hero.lead}</p>
 
             <ul className="flex flex-wrap gap-2.5">
-              {[
-                "Six programmes covered",
-                "Costs in full",
-                "Reviewed monthly",
-              ].map((label) => (
+              {copy.hero.chips.map((label) => (
                 <li
                   key={label}
                   className="rounded-full border border-sand-200 bg-white/70 px-4 py-1.5 text-eyebrow font-bold text-forest-700"
@@ -144,30 +108,27 @@ export default async function Home() {
 
             <div className="flex flex-wrap items-center gap-5 pt-1">
               <Link
-                href="/tools/eligibility/"
+                href={href("/tools/eligibility/")}
                 className="accent-fill rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
               >
-                Check what you qualify for
+                {copy.hero.ctaPrimary}
               </Link>
               <Link
-                href="/compare/"
+                href={href("/compare/")}
                 className="inline-flex items-center gap-1.5 border-b-2 border-forest-600/40 pb-0.5 font-bold text-forest-900 transition-colors hover:border-forest-600"
               >
-                Compare programmes <span aria-hidden>↗</span>
+                {copy.hero.ctaSecondary} <span aria-hidden>↗</span>
               </Link>
             </div>
           </div>
 
           {/* The floating promise card — the reference's hero panel. */}
           <div className="card-lux relative p-7 sm:p-9">
-            <p className="eyebrow">What this guide is</p>
-            <h2 className="mt-3 text-h3 leading-snug">
-              Not a brochure —{" "}
-              <span className="text-forest-700">a reference you can check</span>
-            </h2>
+            <p className="eyebrow">{copy.hero.cardEyebrow}</p>
+            <h2 className="mt-3 text-h3 leading-snug">{copy.hero.cardTitle}</h2>
 
             <ul className="mt-7 space-y-3">
-              {PROMISES.map((p, i) => (
+              {copy.hero.promises.map((p, i) => (
                 <li
                   key={p.title}
                   className="flex gap-4 rounded-2xl border border-sand-200/70 bg-sand-50/80 px-4 py-4"
@@ -190,52 +151,38 @@ export default async function Home() {
 
       {/* Section heading + framing paragraph, split as the reference splits it. */}
       <section className="space-y-10">
-        <SectionHead
-          eyebrow="Choose your route"
-          title={
-            <>
-              Which Malaysian visa
-              <br />
-              <span className="accent-text">actually fits you</span>
-            </>
-          }
-          body={
-            <>
-              The three long-stay programmes differ by an order of magnitude in
-              cost, and the work and study passes solve a different problem
-              entirely. Start with the one that matches{" "}
-              <strong className="font-bold text-forest-700">
-                why you are coming
-              </strong>
-              .
-            </>
-          }
-        />
+        <SectionHead {...copy.programmes} />
 
         <ul className="grid gap-6 sm:grid-cols-3">
-          {navRoutes("programmes").map((r, i) => (
-            <ProgrammeCard key={r.path} path={r.path} title={r.title} n={i + 1} />
+          {localisedNavRoutes("programmes", locale).map((r, i) => (
+            <ProgrammeCard
+              key={r.path}
+              href={r.path}
+              canonicalPath={r.canonicalPath}
+              title={r.title}
+              displayWord={copy.displayWords[r.canonicalPath]}
+              blurb={copy.blurbs[r.canonicalPath]}
+              n={i + 1}
+            />
           ))}
         </ul>
       </section>
 
       {/* Work & study — same card, smaller. */}
       <section className="space-y-8">
-        <SectionHead
-          eyebrow="Work & study"
-          title={
-            <>
-              Coming for a job,
-              <br />
-              <span className="accent-text">a course, or remote work</span>
-            </>
-          }
-          body="These are not residence programmes — they are tied to an employer, an institution, or a foreign paycheque. Different rules, different timelines."
-        />
+        <SectionHead {...copy.workStudy} />
 
         <ul className="grid gap-6 sm:grid-cols-3">
-          {navRoutes("work-study").map((r, i) => (
-            <ProgrammeCard key={r.path} path={r.path} title={r.title} n={i + 4} />
+          {localisedNavRoutes("work-study", locale).map((r, i) => (
+            <ProgrammeCard
+              key={r.path}
+              href={r.path}
+              canonicalPath={r.canonicalPath}
+              title={r.title}
+              displayWord={copy.displayWords[r.canonicalPath]}
+              blurb={copy.blurbs[r.canonicalPath]}
+              n={i + 4}
+            />
           ))}
         </ul>
       </section>
@@ -263,19 +210,11 @@ export default async function Home() {
             className="shadow-[0_24px_60px_-30px_rgb(0_20_60/0.5)]"
           />
           <div className="space-y-4">
-            <p className="eyebrow">Trust &amp; authority</p>
+            <p className="eyebrow">{copy.freshness.eyebrow}</p>
             <h2 className="text-h2">
-              Every fee and threshold
-              <br />
-              <span className="font-display accent-text font-medium italic">
-                last checked {reviewDate(lastReviewed)}
-              </span>
+              {copy.freshness.heading(reviewDate(lastReviewed))}
             </h2>
-            <p className="max-w-xl text-ink-muted">
-              Malaysian visa rules change often — and most sites quietly go stale.
-              When a figure here moves, it moves in one place, and the review date
-              tells you exactly how fresh what you are reading is.
-            </p>
+            <p className="max-w-xl text-ink-muted">{copy.freshness.body}</p>
             <div className="diamond-rule max-w-md pt-2">
               <Lozenge />
             </div>
@@ -289,68 +228,13 @@ export default async function Home() {
           evidenced, with the documents named and linked. */}
       <section className="space-y-8">
         <SectionHead
-          eyebrow="Sources"
-          title={
-            <>
-              Where these figures
-              <br />
-              <span className="accent-text">actually come from</span>
-            </>
-          }
-          body="Every number on this site is traceable to a government document. Below are the ones it is traced to — read them yourself if a figure matters to your decision."
+          eyebrow={copy.sources.eyebrow}
+          title={copy.sources.title}
+          body={copy.sources.body}
         />
 
         <div className="grid gap-10 md:grid-cols-[1.05fr_0.95fr]">
-          <div className="space-y-4 text-ink-muted">
-            <p>
-              Malaysia&apos;s long-stay visas are governed by several different
-              bodies, and that is the root of most of the confusion around them.
-              PVIP sits with the Immigration Department of Malaysia; MM2H is
-              administered through the Ministry of Tourism, Arts and Culture and
-              its One Stop Centre. Confusing the two is the single most common
-              error in secondary coverage. Sarawak MM2H is a state
-              programme with its own ministry, its own deposit and its own
-              approvals — which is why an S-MM2H figure quoted from a federal
-              page is usually wrong. DE Rantau sits with MDEC, the Employment
-              Pass with the Expatriate Services Division, and the Student Pass
-              with Immigration and EMGS.
-            </p>
-            <p>
-              When a figure is checked here, it means someone opened the
-              document in the list beside this paragraph, found the fee,
-              threshold or tenure stated in it, and recorded the date. That date
-              is published on the programme guide. Where a rule was announced by
-              press release but never written into the official document, the
-              guide says exactly that instead of quietly picking whichever
-              number reads better.
-            </p>
-            <p>
-              This matters more than it should, because these programmes are
-              revised often and the internet does not keep up. MM2H alone has
-              been restructured twice in recent years; deposit tiers, minimum
-              stay and the agent requirement all moved. Pages that were accurate
-              in 2023 still rank today, and agents restate old thresholds
-              because the old thresholds were easier to sell against. A figure
-              without a date and a source is not information you can plan around
-              — it is a claim.
-            </p>
-            <p>
-              So: read the documents. If one of them contradicts something
-              written here, that is a bug in this site, and the{" "}
-              <Link href="/contact/" className="font-semibold text-forest-700 underline">
-                contact page
-              </Link>{" "}
-              exists partly so you can say so. The{" "}
-              <Link
-                href="/editorial-policy/"
-                className="font-semibold text-forest-700 underline"
-              >
-                editorial policy
-              </Link>{" "}
-              sets out how corrections are handled and what the commercial
-              relationship behind this site is.
-            </p>
-          </div>
+          <div className="space-y-4 text-ink-muted">{copy.sources.prose}</div>
 
           {/* Sticky so the documents stay beside the prose that describes them
               — the list is much shorter than the text, and pinned to the top it
@@ -385,19 +269,12 @@ export default async function Home() {
       {/* Tools */}
       <section className="space-y-8">
         <SectionHead
-          eyebrow="Tools"
-          title={
-            <>
-              Work out{" "}
-              <span className="font-display accent-text font-medium italic">
-                where you stand
-              </span>
-            </>
-          }
-          body="Three minutes with these beats an hour of reading — they run on the same verified figures as the guides."
+          eyebrow={copy.tools.eyebrow}
+          title={copy.tools.title}
+          body={copy.tools.body}
         />
         <ul className="grid gap-4 sm:grid-cols-3">
-          {navRoutes("tools").map((r) => (
+          {localisedNavRoutes("tools", locale).map((r) => (
             <li key={r.path}>
               <Link
                 href={r.path}
@@ -416,12 +293,12 @@ export default async function Home() {
             reason to recrawl the path it was 404ing on. */}
         <p className="text-body-sm text-ink-muted">
           <Link
-            href="/tools/"
+            href={href("/tools/")}
             className="font-semibold text-forest-700 underline"
           >
-            Which tool answers which question
+            {copy.tools.indexLink}
           </Link>{" "}
-          — and why eligibility comes before cost.
+          {copy.tools.indexTail}
         </p>
       </section>
 
@@ -432,57 +309,39 @@ export default async function Home() {
           2026-08-08 Search Console had /insights/ itself in "Discovered –
           currently not indexed" with Last crawled N/A, so every article under
           it sat behind a page Google had never fetched. A direct link from the
-          home page is a crawl path that does not depend on the index. */}
-      <section className="space-y-8">
-        <SectionHead
-          eyebrow="Insights"
-          title={
-            <>
-              Written from{" "}
-              <span className="font-display accent-text font-medium italic">
-                500+ real cases
-              </span>
-            </>
-          }
-          body={
-            <>
-              The guides say what each programme is. These say which one to
-              pick, and what the paperwork is like once you have.{" "}
-              <Link
-                href="/insights/"
-                className="font-semibold text-forest-700 underline"
-              >
-                All insights
-              </Link>
-              .
-            </>
-          }
-        />
-        <ul className="grid gap-6 sm:grid-cols-3">
-          {articles.slice(0, 3).map((a) => (
-            <li key={a.slug}>
-              <Link
-                href={insightPath(a)}
-                className="card-outline flex h-full flex-col p-6 transition-transform hover:-translate-y-1"
-              >
-                <p className="eyebrow">{CATEGORY_LABEL[a.category]}</p>
-                <p className="mt-3 font-serif text-body-sm font-extrabold leading-snug text-forest-900">
-                  {a.title}
-                </p>
-                <div className="diamond-rule my-5">
-                  <Lozenge />
-                </div>
-                <p className="text-caption leading-relaxed text-ink-muted">
-                  {a.dek}
-                </p>
-                <p className="mt-auto pt-5 text-eyebrow font-bold text-forest-700">
-                  {a.readingMinutes} min read <span aria-hidden>→</span>
-                </p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
+          home page is a crawl path that does not depend on the index.
+
+          Hidden entirely when there are no articles for this locale, rather
+          than rendered as an empty grid under a heading. */}
+      {articles.length > 0 && (
+        <section className="space-y-8">
+          <SectionHead {...copy.insights} />
+          <ul className="grid gap-6 sm:grid-cols-3">
+            {articles.slice(0, 3).map((a) => (
+              <li key={a.slug}>
+                <Link
+                  href={insightPath(a)}
+                  className="card-outline flex h-full flex-col p-6 transition-transform hover:-translate-y-1"
+                >
+                  <p className="eyebrow">{CATEGORY_LABEL[a.category]}</p>
+                  <p className="mt-3 font-serif text-body-sm font-extrabold leading-snug text-forest-900">
+                    {a.title}
+                  </p>
+                  <div className="diamond-rule my-5">
+                    <Lozenge />
+                  </div>
+                  <p className="text-caption leading-relaxed text-ink-muted">
+                    {a.dek}
+                  </p>
+                  <p className="mt-auto pt-5 text-eyebrow font-bold text-forest-700">
+                    {a.readingMinutes} min read <span aria-hidden>→</span>
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Closing CTA */}
       {/* -mb-14 cancels main's bottom padding so the CTA runs straight into the
@@ -494,24 +353,15 @@ export default async function Home() {
         />
         <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 py-16 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
-            <p className="eyebrow">1:1 consultation</p>
-            <h2 className="text-h2">
-              Still not sure
-              <br />
-              <span className="font-display accent-text font-medium italic">
-                which visa fits?
-              </span>
-            </h2>
-            <p className="max-w-lg text-ink-muted">
-              Jason has handled 500+ relocations. Ask a question — no
-              obligation, and no obligation to use his agency either.
-            </p>
+            <p className="eyebrow">{copy.closing.eyebrow}</p>
+            <h2 className="text-h2">{copy.closing.heading}</h2>
+            <p className="max-w-lg text-ink-muted">{copy.closing.body}</p>
           </div>
           <Link
-            href="/contact/"
+            href={href("/contact/")}
             className="accent-fill shrink-0 rounded-full px-9 py-4 font-bold transition-transform hover:-translate-y-px"
           >
-            Ask a question
+            {copy.closing.cta}
           </Link>
         </div>
       </section>
@@ -543,18 +393,24 @@ function SectionHead({
 }
 
 function ProgrammeCard({
-  path,
+  href,
+  canonicalPath,
   title,
+  displayWord,
+  blurb,
   n,
 }: {
-  path: string;
+  href: string;
+  canonicalPath: string;
   title: string;
+  displayWord: string;
+  blurb: string;
   n: number;
 }) {
   return (
     <li>
       <Link
-        href={path}
+        href={href}
         className="card-outline group flex h-full flex-col p-6 transition-transform hover:-translate-y-1"
       >
         <div className="flex items-start justify-between gap-3">
@@ -565,21 +421,19 @@ function ProgrammeCard({
             </span>
           </div>
           <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-sand-200 bg-white text-forest-700 shadow-sm transition-colors group-hover:border-forest-300">
-            <Icon name={ICON[path]} />
+            <Icon name={ICON[canonicalPath]} />
           </span>
         </div>
 
         <p className="font-display accent-text mt-9 text-h1 font-medium">
-          {DISPLAY_WORD[path]}
+          {displayWord}
         </p>
 
         <div className="diamond-rule my-5">
           <Lozenge />
         </div>
 
-        <p className="text-caption leading-relaxed text-ink-muted">
-          {BLURB[path]}
-        </p>
+        <p className="text-caption leading-relaxed text-ink-muted">{blurb}</p>
       </Link>
     </li>
   );

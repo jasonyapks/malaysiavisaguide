@@ -4,15 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "predev": "node scripts/emit-figures.mjs && node scripts/sync-insight-routes.mjs --soft",
-    "prebuild": "node scripts/pull-images.mjs --soft && node scripts/emit-figures.mjs && node scripts/sync-insight-routes.mjs",
+    "predev": "node scripts/emit-figures.mjs && node scripts/sync-insight-routes.mjs --soft && node scripts/gen-zh-hant.mjs",
+    "prebuild": "node scripts/pull-images.mjs --soft && node scripts/emit-figures.mjs && node scripts/sync-insight-routes.mjs && node scripts/gen-zh-hant.mjs --check",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "publish:site": "node scripts/deploy-site.mjs",
     "images:pull": "node scripts/pull-images.mjs",
     "figures:emit": "node scripts/emit-figures.mjs",
-    "insights:sync": "node scripts/sync-insight-routes.mjs"
+    "insights:sync": "node scripts/sync-insight-routes.mjs",
+    "i18n:hant": "node scripts/gen-zh-hant.mjs"
   },
   "dependencies": {
     "next": "16.2.11",
@@ -26,6 +27,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.11",
+    "opencc-js": "^1.4.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

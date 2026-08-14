@@ -1,3 +1,6 @@
+import { locales, localePath, type Locale } from "./i18n";
+import { getUi } from "./ui";
+
 export const site = {
   name: "Malaysia Visa Guide",
   // Feeds canonicals, sitemap and OG tags. Switched to the real domain at the
@@ -87,6 +90,69 @@ export const routes: Route[] = [
 
 export const navRoutes = (group: Route["nav"]) =>
   routes.filter((r) => r.nav === group);
+
+/**
+ * The same route table, resolved for a locale: titles translated and paths
+ * prefixed. Every consumer that renders links — the header, the footer, the
+ * 404 — goes through this rather than touching `routes` directly, so a link on
+ * a Chinese page cannot silently point at the English page.
+ *
+ * `path` is the localised, ready-to-render href. `canonicalPath` is the
+ * unprefixed English one, kept because the sitemap and the language switcher
+ * both need to talk about "the same page in another language".
+ */
+export type LocalisedRoute = Route & { canonicalPath: string };
+
+export function localisedRoutes(locale: Locale): LocalisedRoute[] {
+  const { routeTitles } = getUi(locale);
+  return routes.map((r) => ({
+    ...r,
+    canonicalPath: r.path,
+    path: localePath(r.path, locale),
+    title: routeTitles[r.path] ?? r.title,
+  }));
+}
+
+export function localisedNavRoutes(
+  group: Route["nav"],
+  locale: Locale,
+): LocalisedRoute[] {
+  return localisedRoutes(locale).filter((r) => r.nav === group);
+}
+
+export function routeTitle(path: string, locale: Locale): string {
+  return (
+    getUi(locale).routeTitles[path] ??
+    routes.find((r) => r.path === path)?.title ??
+    path
+  );
+}
+
+/**
+ * Every route must have a title in every locale.
+ *
+ * Without this, adding a route ships it to the Chinese trees labelled in
+ * English — which nobody notices, because the English site (where it was
+ * added and tested) looks perfect. `localisedRoutes` falls back to the English
+ * title rather than crashing a reader's page, so this assertion is the thing
+ * that makes the omission loud. Called from the sitemap, which every build
+ * runs.
+ */
+export function assertRouteTitles(): void {
+  const missing: string[] = [];
+  for (const locale of locales) {
+    const titles = getUi(locale).routeTitles;
+    for (const r of routes) {
+      if (!titles[r.path]) missing.push(`${locale} → ${r.path}`);
+    }
+  }
+  if (missing.length > 0) {
+    throw new Error(
+      `Untranslated routes in src/locales/ui/*. Add a routeTitles entry for:\n` +
+        missing.map((m) => `  ${m}`).join("\n"),
+    );
+  }
+}
 
 /**
  * The categorised primary nav — SPEC.md §3. Each group is a labelled dropdown

@@ -55,9 +55,22 @@
      `--font-display` is the high-contrast serif reserved for the single
      cobalt accent word per card. The var NAMES are kept from v1, so components
      using `font-serif` get the heading face with no change. */
-  --font-serif: var(--font-heading-sans), "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-sans: var(--font-body-sans), system-ui, sans-serif;
-  --font-display: var(--font-accent-serif), "Playfair Display", Georgia, serif;
+  /* CJK faces sit BEHIND the Latin ones in every stack, never in front. The
+     Latin face has no Han glyphs and the CJK face has mediocre Latin ones, so
+     this order gets "PVIP" and "RM200,000" in Plus Jakarta while the Chinese
+     around them falls through to the platform's own CJK font. Reversed, every
+     acronym and figure on the Chinese site would render in PingFang's Latin.
+
+     Platform fonts, not a webfont: a full Simplified Chinese face is 4–8MB
+     even subsetted aggressively, which is not a defensible download for a site
+     that cares about LCP — and every device that reads Chinese already ships
+     an excellent one. Overridden per script in the html[lang] rules below. */
+  --font-cjk-sans: system-ui;
+  --font-cjk-serif: Georgia;
+
+  --font-serif: var(--font-heading-sans), "Plus Jakarta Sans", var(--font-cjk-sans), system-ui, sans-serif;
+  --font-sans: var(--font-body-sans), var(--font-cjk-sans), system-ui, sans-serif;
+  --font-display: var(--font-accent-serif), "Playfair Display", var(--font-cjk-serif), Georgia, serif;
 
   /**
    * TYPE SCALE — nine role-named steps, 2026-07-27.
@@ -92,6 +105,57 @@
   --text-base: var(--text-body);
 
   --radius-card: 1.5rem; /* 24px — the reference's card corner */
+}
+
+/**
+ * CJK type, selected off `<html lang>` — which is why i18n.ts insists that
+ * attribute is set correctly per tree rather than left at "en".
+ *
+ * The two scripts get different stacks because the same Han character is drawn
+ * differently in each regional standard, and the fonts encode that: 骨 and 直
+ * have visibly different forms in PingFang SC vs TC. Serving a Traditional
+ * reader a Simplified face is not just a preference — it is the wrong glyph.
+ *
+ * Order within each stack is Apple, then Windows, then the Linux/Android
+ * Noto and Source Han families. `sans-serif` last so there is always an answer.
+ *
+ * These sit outside @theme so they land in a plain rule: an @theme token is
+ * emitted on `:root` (specificity 0,1,0) and `html[lang^=…]` is 0,1,1, so
+ * these win. Inside @theme they would tie and lose to source order.
+ */
+html[lang="zh-Hans"] {
+  --font-cjk-sans:
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC",
+    "Source Han Sans SC", "WenQuanYi Micro Hei", sans-serif;
+  --font-cjk-serif:
+    "Songti SC", "SimSun", "Noto Serif CJK SC", "Source Han Serif SC", serif;
+}
+
+html[lang="zh-Hant"] {
+  --font-cjk-sans:
+    "PingFang TC", "Hiragino Sans CNS", "Microsoft JhengHei", "Noto Sans CJK TC",
+    "Source Han Sans TC", sans-serif;
+  --font-cjk-serif:
+    "Songti TC", "PMingLiU", "Noto Serif CJK TC", "Source Han Serif TC", serif;
+}
+
+/**
+ * Chinese text has no ascenders or descenders and fills its em box, so a line
+ * height tuned for Latin reads cramped — and it carries no inter-word spaces,
+ * so a justified/tight measure has fewer break opportunities. Loosen both.
+ *
+ * `text-wrap: pretty` is left alone; the balancing it does is word-based.
+ */
+html[lang^="zh"] body {
+  line-height: 1.8;
+  /* Latin italic is a real style; CJK "italic" is a synthesised slant that
+     looks like a rendering fault. The display face is only ever used for the
+     single accent word, which in Chinese should simply be upright. */
+  font-synthesis: none;
+}
+
+html[lang^="zh"] .font-display {
+  font-style: normal;
 }
 
 @layer base {

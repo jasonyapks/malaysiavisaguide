@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { navGroups, navRoutes } from "@/lib/site";
 
 /**
  * Primary navigation — SPEC.md §3. The programmes were previously listed flat
@@ -11,17 +10,39 @@ import { navGroups, navRoutes } from "@/lib/site";
  * header reads as tidy categories: long-stay visas, work & study, tools,
  * insights & news.
  *
- * Entirely data-driven: every group and every link comes from `navGroups` and
- * `routes` in lib/site.ts, and this component names no route. News used to be
- * the exception — a hardcoded link written twice, desktop and mobile — which is
- * why /insights/ could launch without anyone noticing it had no header slot.
- * Adding a section should mean editing the route table and nothing else.
+ * Entirely data-driven: every group and every link is handed in as `groups`,
+ * built from `navGroups` and `routes` in lib/site.ts, and this component names
+ * no route. News used to be the exception — a hardcoded link written twice,
+ * desktop and mobile — which is why /insights/ could launch without anyone
+ * noticing it had no header slot. Adding a section should mean editing the
+ * route table and nothing else.
+ *
+ * The groups arrive already localised: labels translated and hrefs prefixed by
+ * `localisedNavRoutes()`. That is why they are props rather than an import —
+ * this is a client component, and importing the route table would pull all
+ * three locales' chrome into the browser bundle. It also means `isActive`'s
+ * prefix matching works unchanged on a Chinese page, because the paths it
+ * compares are the prefixed ones the reader is actually on.
  *
  * Client component because dropdowns need hover, keyboard (Escape), outside-click
  * and a mobile toggle. Desktop shows dropdowns; below `sm` it collapses to a
  * single Menu button opening a grouped panel.
  */
-export function SiteNav() {
+export type NavGroup = {
+  key: string;
+  label: string;
+  items: { path: string; title: string }[];
+};
+
+export function SiteNav({
+  groups,
+  menuLabel,
+  ariaPrimary,
+}: {
+  groups: NavGroup[];
+  menuLabel: string;
+  ariaPrimary: string;
+}) {
   const pathname = usePathname();
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -104,9 +125,15 @@ export function SiteNav() {
    * does not begin with /compare/, and the `path !== "/"` guard keeps home from
    * matching everything. There *is* a /tools/ index route as of 2026-08-08, and
    * it would over-match both tools underneath it — which is exactly why it
-   * carries no `nav` group. This function only ever sees routes returned by
-   * `navRoutes()`, so a route with no group never reaches it. Give /tools/ a
-   * nav group and two dropdown items light up at once.
+   * carries no `nav` group. This function only ever sees the paths inside
+   * `groups`, which come from `localisedNavRoutes()`, so a route with no group
+   * never reaches it. Give /tools/ a nav group and two dropdown items light up
+   * at once.
+   *
+   * Home is the other route this would over-match — on a Chinese page its path
+   * is "/zh-hans/", which passes the `!== "/"` guard and prefixes every URL in
+   * the tree. It is safe for the same reason: home carries no `nav` group
+   * either, so it is never in `groups`.
    */
   const isActive = (path: string) =>
     pathname === path || (path !== "/" && pathname.startsWith(path));
@@ -115,11 +142,11 @@ export function SiteNav() {
     <div ref={ref} className="flex flex-1 items-center justify-end gap-2">
       {/* Desktop — labelled dropdowns */}
       <nav
-        aria-label="Primary"
+        aria-label={ariaPrimary}
         className="hidden flex-1 items-center gap-x-1 lg:flex"
       >
-        {navGroups.map((group) => {
-          const items = navRoutes(group.key);
+        {groups.map((group) => {
+          const items = group.items;
           const isOpen = openGroup === group.key;
           const hasActive = items.some((r) => isActive(r.path));
           return (
@@ -178,7 +205,7 @@ export function SiteNav() {
         onClick={() => setMobileOpen((v) => !v)}
         className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-forest-700 hover:text-forest-900 lg:hidden"
       >
-        <span className="text-caption font-medium">Menu</span>
+        <span className="text-caption font-medium">{menuLabel}</span>
         <Burger open={mobileOpen} />
       </button>
 
@@ -191,13 +218,13 @@ export function SiteNav() {
           className="absolute inset-x-0 top-full z-30 overflow-y-auto overscroll-contain border-b border-sand-200 bg-white shadow-lg shadow-forest-900/10 lg:hidden"
         >
           <div className="mx-auto max-w-6xl space-y-5 px-6 py-5">
-            {navGroups.map((group) => (
+            {groups.map((group) => (
               <div key={group.key}>
                 <p className="mb-1.5 text-eyebrow font-semibold uppercase tracking-[0.16em] text-ink-muted">
                   {group.label}
                 </p>
                 <ul className="space-y-0.5">
-                  {navRoutes(group.key).map((r) => (
+                  {group.items.map((r) => (
                     <li key={r.path}>
                       <Link
                         href={r.path}
