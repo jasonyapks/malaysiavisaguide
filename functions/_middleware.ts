@@ -53,15 +53,26 @@ type PagesContext = {
  * ENGLISH payload for the same path, get a 200, and soft-navigate a reader on
  * cn. into English content with the Chinese URL still in the address bar.
  *
- * Everything else — `/_next/static/*`, `/images/*`, `/og.png`, `/favicon.ico`,
- * `/robots.txt`, `/sitemap.xml` — is shared across all three hosts and passes
- * through to the root of the tree, which is where the build puts it.
+ * `sitemap.xml` is per-host too: each Chinese host serves a sitemap of its own
+ * URLs, so indexing does not depend on Search Console cross-submission. See the
+ * header of `src/lib/sitemap-entries.ts`.
+ *
+ * Everything else — `/_next/static/*`, `/images/*`, `/og.png`, `/favicon.ico`
+ * and `/robots.txt`, which is one shared file naming all three sitemaps — is
+ * shared across all three hosts and passes through to the root of the tree,
+ * which is where the build puts it.
  */
+const PER_HOST_FILES = new Set(["sitemap.xml"]);
+
 function isLocalised(pathname: string): boolean {
   if (pathname.startsWith("/_next/")) return false;
   if (pathname.endsWith("/")) return true;
   const segment = pathname.slice(pathname.lastIndexOf("/") + 1);
-  return segment === "index.txt" || segment.startsWith("__next.");
+  return (
+    segment === "index.txt" ||
+    segment.startsWith("__next.") ||
+    PER_HOST_FILES.has(segment)
+  );
 }
 
 const PREFIXES = Object.values(buildPrefix).filter(Boolean);
