@@ -45,6 +45,9 @@ export type ProgrammeProse = {
   sponsorShort?: string;
   renewalLimit?: string;
   withdrawable?: string;
+  propertyStateFloorNote?: string;
+  /** The tier table's agency-fee footnote, which is three prose fields. */
+  agencyFee?: { note?: string; includes?: string[]; paymentTerms?: string };
   dependants?: string[];
 };
 
@@ -69,14 +72,89 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   "mm2h-silver": {
     name: "MM2H 白银级",
     authority: "旅游、艺术及文化部（MOTAC，MM2H 一站式中心）",
+    superseded: {
+      changedOn: "2026 年 8 月 3 日",
+      attributionBy: "MYPVIP 的实务操作",
+      whatChanged: [
+        "定期存款 50% 的提取窗口，在房产购置完成之后才打开，而不是在申请获批之时。因此它不能用来支付这笔购房款，而且购置住宅也已不在获准的用途之列 —— 在马来西亚的教育、医疗和旅游支出仍然可以。",
+        "受养子女的资格上限为 34 岁，也就是在 35 岁生日之前。官方指南写的「最高至 35 岁」，比实际执行的口径宽了一年。",
+      ],
+    },
+    minStayPerYear:
+      "25 至 49 岁每年 90 天，可由主申请人和／或配偶及家属合并计算。50 岁起没有最低居住天数要求。",
+    minStayShort: "90 天（25–49 岁）",
+    withdrawable:
+      "在计划中满六个月后，最多可提取 50% —— 2026 年新条款把原本的一年缩短为六个月。",
+    propertyStateFloorNote:
+      "这是全国最低标准。买房所在的州属会为外国买家另设自己的门槛，通常更高 —— 雪兰莪 RM2,000,000，吉隆坡 RM1,000,000 —— 真正约束这笔交易的是州属的那一个。",
+    agencyFee: {
+      note: "由政府固定，不由代理机构订定 —— 这里没有议价空间；报价高于这个数字的，是报错了，而不是比较贵。",
+      includes: [
+        "主申请人的手续费",
+        "主申请人前五年的准证费",
+        "主申请人前五年的签证费",
+        "主申请人的保证金",
+      ],
+      paymentTerms: "递交时付 20%，批准后付其余 80%。",
+    },
   },
   "mm2h-gold": {
     name: "MM2H 黄金级",
     authority: "旅游、艺术及文化部（MOTAC，MM2H 一站式中心）",
+    superseded: {
+      changedOn: "2026 年 8 月 3 日",
+      attributionBy: "MYPVIP 的实务操作",
+      whatChanged: [
+        "定期存款 50% 的提取窗口，在房产购置完成之后才打开，而不是在申请获批之时。因此它不能用来支付这笔购房款，而且购置住宅也已不在获准的用途之列 —— 在马来西亚的教育、医疗和旅游支出仍然可以。",
+        "受养子女的资格上限为 34 岁，也就是在 35 岁生日之前。官方指南写的「最高至 35 岁」，比实际执行的口径宽了一年。",
+      ],
+    },
+    minStayPerYear:
+      "25 至 49 岁每年 90 天，可由主申请人和／或配偶及家属合并计算。50 岁起没有最低居住天数要求。",
+    minStayShort: "90 天（25–49 岁）",
+    withdrawable:
+      "在计划中满六个月后，最多可提取 50% —— 2026 年新条款把原本的一年缩短为六个月。",
+    propertyStateFloorNote:
+      "这是全国最低标准。买房所在的州属会为外国买家另设自己的门槛，通常更高 —— 雪兰莪 RM2,000,000，吉隆坡 RM1,000,000 —— 真正约束这笔交易的是州属的那一个。",
+    agencyFee: {
+      note: "由政府固定，不由代理机构订定 —— 这里没有议价空间；报价高于这个数字的，是报错了，而不是比较贵。",
+      includes: [
+        "主申请人的手续费",
+        "主申请人前五年的准证费",
+        "主申请人前五年的签证费",
+        "主申请人的保证金",
+      ],
+      paymentTerms: "递交时付 20%，批准后付其余 80%。",
+    },
   },
   "mm2h-platinum": {
     name: "MM2H 白金级",
     authority: "旅游、艺术及文化部（MOTAC，MM2H 一站式中心）",
+    superseded: {
+      changedOn: "2026 年 8 月 3 日",
+      attributionBy: "MYPVIP 的实务操作",
+      whatChanged: [
+        "定期存款 50% 的提取窗口，在房产购置完成之后才打开，而不是在申请获批之时。因此它不能用来支付这笔购房款，而且购置住宅也已不在获准的用途之列 —— 在马来西亚的教育、医疗和旅游支出仍然可以。",
+        "受养子女的资格上限为 34 岁，也就是在 35 岁生日之前。官方指南写的「最高至 35 岁」，比实际执行的口径宽了一年。",
+      ],
+    },
+    minStayPerYear:
+      "25 至 49 岁每年 90 天，可由主申请人和／或配偶及家属合并计算。50 岁起没有最低居住天数要求。",
+    minStayShort: "90 天（25–49 岁）",
+    withdrawable:
+      "在计划中满六个月后，最多可提取 50% —— 2026 年新条款把原本的一年缩短为六个月。",
+    propertyStateFloorNote:
+      "这是全国最低标准。买房所在的州属会为外国买家另设自己的门槛，通常更高 —— 雪兰莪 RM2,000,000，吉隆坡 RM1,000,000 —— 真正约束这笔交易的是州属的那一个。",
+    agencyFee: {
+      note: "由政府固定，不由代理机构订定 —— 这里没有议价空间；报价高于这个数字的，是报错了，而不是比较贵。",
+      includes: [
+        "主申请人的手续费",
+        "主申请人前五年的准证费",
+        "主申请人前五年的签证费",
+        "主申请人的保证金",
+      ],
+      paymentTerms: "递交时付 20%，批准后付其余 80%。",
+    },
   },
 
   smm2h: {

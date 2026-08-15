@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import { GuideLayout } from "@/components/GuideLayout";
+import { TierTable } from "@/components/TierTable";
 import { getProgramme, type ProgrammeSlug } from "@/lib/data/programmes";
 import { localiseProgramme } from "@/lib/programme-locale";
 import { localePath, type Locale } from "@/lib/i18n";
@@ -20,16 +20,28 @@ export function VisaGuide({
   locale,
   copy,
   hero,
-  facts,
+  tierSlugs,
 }: {
   slug: ProgrammeSlug;
   locale: Locale;
   copy: GuideCopy;
   hero?: SiteImage;
-  /** Replaces the key-facts card — MM2H passes its tier table here. */
-  facts?: ReactNode;
+  /**
+   * Show a tier table instead of the key-facts card. MM2H is one programme
+   * with three tiers, so a single card cannot represent it. Passing the slugs
+   * rather than a built element keeps `localiseProgramme` applied to every
+   * tier — hand in a ready-made <TierTable> and its rows quietly stay English.
+   */
+  tierSlugs?: ProgrammeSlug[];
 }) {
   const programme = localiseProgramme(getProgramme(slug)!, locale);
+  const facts = tierSlugs ? (
+    <TierTable
+      tiers={tierSlugs.map((s) => localiseProgramme(getProgramme(s)!, locale))}
+      caption={copy.tierCaption}
+      locale={locale}
+    />
+  ) : undefined;
   const href = (path: string) => localePath(path, locale);
 
   return (

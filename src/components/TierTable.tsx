@@ -1,6 +1,8 @@
 import { DataTable, noteCollector } from "@/components/DataTable";
 import type { Programme } from "@/lib/data/programmes";
-import { money, years } from "@/lib/format";
+import { money, moneyPer, years } from "@/lib/format";
+import type { Locale } from "@/lib/i18n";
+import { getUi } from "@/lib/ui";
 
 type Row = {
   label: string;
@@ -23,10 +25,14 @@ type Row = {
 export function TierTable({
   tiers,
   caption,
+  locale = "en",
   variant = "long-stay",
 }: {
   tiers: Programme[];
   caption?: string;
+  /** Defaults to English so the comparison page and the calculator, which are
+   *  not translated yet, keep working unchanged. */
+  locale?: Locale;
   /**
    * Work/study passes have no deposit and no property minimum, so comparing
    * them on those rows would print a column of dashes. They get their own row
@@ -34,9 +40,12 @@ export function TierTable({
    */
   variant?: "long-stay" | "work-study";
 }) {
+  const t = getUi(locale).guide.tiers;
+  const g = getUi(locale).guide;
+
   const longStayRows: Row[] = [
     {
-      label: "Fixed deposit",
+      label: t.fixedDeposit,
       cell: (p) => (p.fixedDeposit ? money(p.fixedDeposit) : "—"),
       // The withdrawal rule was carried in the data but rendered nowhere, so a
       // reader saw the deposit as wholly locked. It is half the point of the
@@ -44,17 +53,20 @@ export function TierTable({
       note: (p) => p.fixedDeposit?.withdrawable ?? null,
     },
     {
-      label: "Property purchase",
+      label: t.propertyPurchase,
       cell: (p) =>
-        p.propertyPurchaseMin ? `From ${money(p.propertyPurchaseMin)}` : "Optional",
+        p.propertyPurchaseMin ? g.facts.from(money(p.propertyPurchaseMin)) : t.optional,
       // "From RM600,000" read alone is the most expensive misreading on the
       // site: the state's foreign-buyer floor is usually the higher of the two
       // and is the one that binds. The figure cannot ship without it.
       note: (p) => p.propertyStateFloorNote ?? null,
     },
-    { label: "Term", cell: (p) => `${years(p.tenureYears)}, renewable` },
     {
-      label: "Participation fee",
+      label: t.term,
+      cell: (p) => `${years(p.tenureYears, locale)}${t.renewableSuffix}`,
+    },
+    {
+      label: t.participationFee,
       cell: (p) =>
         p.participationFee
           ? money({
@@ -68,76 +80,82 @@ export function TierTable({
     // PVIP it is commercial and unpublished. Omitting it flattered MM2H by tens
     // of thousands of ringgit.
     {
-      label: "Agency fee",
+      label: t.agencyFee,
       cell: (p) => {
         const fee = p.governmentExtras?.agencyFee;
         if (fee) return money({ amount: fee.principal, currency: fee.currency });
-        return "Not government-set";
+        return t.notGovernmentSet;
       },
       note: (p) => {
         const fee = p.governmentExtras?.agencyFee;
         return fee
-          ? `${fee.note} Covers ${fee.includes.join("; ").toLowerCase()}. ${fee.paymentTerms}`
-          : "Set commercially by the agency and published nowhere official. Get the figure in writing before committing.";
+          ? t.agencyFeeCovers(
+              fee.note,
+              fee.includes.join("; ").toLowerCase(),
+              fee.paymentTerms,
+            )
+          : t.agencyFeeCommercialNote;
       },
     },
     {
-      label: "Processing fee",
+      label: t.processingFee,
       cell: (p) =>
         p.processingFee
-          ? `${money({ amount: p.processingFee.principal, currency: p.processingFee.currency })} principal`
+          ? t.processingFeePrincipal(money({ amount: p.processingFee.principal, currency: p.processingFee.currency }))
           : "—",
       note: (p) =>
         p.governmentExtras?.agencyFee?.absorbsPrincipalProcessingFee
-          ? "Already inside the agency fee above — it should not appear twice on a quote."
+          ? t.processingFeeAbsorbed
           : null,
     },
-    { label: "Minimum age", cell: (p) => (p.minAge ? `${p.minAge}` : "None") },
+    { label: t.minAge, cell: (p) => (p.minAge ? `${p.minAge}` : g.facts.none) },
     {
-      label: "Minimum stay",
-      cell: (p) => p.minStayShort ?? "None",
+      label: t.minStay,
+      cell: (p) => p.minStayShort ?? g.facts.none,
       note: (p) => (p.minStayShort ? p.minStayPerYear : null),
     },
     // Work rights vary between tiers of the same programme — Platinum carries
     // them, Silver and Gold do not — so the comparison has to show the row or
     // the difference is invisible on the one page where the tiers sit together.
     {
-      label: "Work rights",
+      label: t.workRights,
       cell: (p) =>
-        ({ full: "Yes", restricted: "Restricted", none: "No" })[p.workRights],
+        ({ full: t.workYes, restricted: t.workRestricted, none: t.workNo })[
+          p.workRights
+        ],
       note: (p) =>
         p.workRights === "full"
-          ? "May work and run a business."
+          ? t.workFullNote
           : p.workRights === "restricted"
-            ? "Conditions apply."
+            ? t.workRestrictedNote
             : null,
     },
   ];
 
   const workStudyRows: Row[] = [
     {
-      label: "Sponsor",
+      label: t.sponsor,
       cell: (p) => p.sponsorShort ?? p.sponsor ?? "—",
       note: (p) => (p.sponsorShort ? p.sponsor : null),
     },
     {
-      label: "Income floor",
+      label: t.incomeFloor,
       cell: (p) => {
-        if (p.salaryFloor) return `${money(p.salaryFloor)} a month`;
+        if (p.salaryFloor) return g.facts.aMonth(money(p.salaryFloor));
         if (p.incomeRequirement)
-          return `${money(p.incomeRequirement)} a ${p.incomeRequirement.period}`;
-        return "None stated";
+          return moneyPer(p.incomeRequirement, locale);
+        return t.noneStated;
       },
     },
     {
-      label: "Maximum term",
+      label: t.maximumTerm,
       cell: (p) =>
         p.renewable
-          ? `${years(p.tenureYears)}, renewable${p.renewalLimit ? ` — ${p.renewalLimit}` : ""}`
-          : years(p.tenureYears),
+          ? `${years(p.tenureYears, locale)}${t.renewableSuffix}${p.renewalLimit ? ` — ${p.renewalLimit}` : ""}`
+          : years(p.tenureYears, locale),
     },
     {
-      label: "Government fee",
+      label: t.governmentFee,
       cell: (p) =>
         p.processingFee
           ? money({
@@ -147,8 +165,8 @@ export function TierTable({
           : "—",
     },
     {
-      label: "Dependants",
-      cell: (p) => (p.dependants.length ? "Permitted" : "Not permitted"),
+      label: t.dependants,
+      cell: (p) => (p.dependants.length ? t.permitted : t.notPermitted),
     },
   ];
 
@@ -167,6 +185,7 @@ export function TierTable({
       rows={body}
       notes={notes}
       idPrefix={`tt-${variant}`}
+      locale={locale}
     />
   );
 }

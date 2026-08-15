@@ -66,6 +66,26 @@ export function localiseProgramme(p: Programme, locale: Locale): Programme {
           },
         }
       : {}),
+    ...(overlay.propertyStateFloorNote
+      ? { propertyStateFloorNote: overlay.propertyStateFloorNote }
+      : {}),
+    ...(overlay.agencyFee && p.governmentExtras?.agencyFee
+      ? {
+          governmentExtras: {
+            ...p.governmentExtras,
+            agencyFee: {
+              ...p.governmentExtras.agencyFee,
+              ...(overlay.agencyFee.note ? { note: overlay.agencyFee.note } : {}),
+              ...(overlay.agencyFee.includes
+                ? { includes: overlay.agencyFee.includes }
+                : {}),
+              ...(overlay.agencyFee.paymentTerms
+                ? { paymentTerms: overlay.agencyFee.paymentTerms }
+                : {}),
+            },
+          },
+        }
+      : {}),
     ...(overlay.withdrawable && p.fixedDeposit
       ? { fixedDeposit: { ...p.fixedDeposit, withdrawable: overlay.withdrawable } }
       : {}),

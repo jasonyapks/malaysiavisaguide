@@ -22,6 +22,9 @@ export type GuideCopy = {
   /** Page metadata. `title` here is the SERP title, which is usually not the
    *  same sentence as the h1. */
   meta: { title: string; description: string };
+  /** Caption for the tier table, on the guides that show one instead of the
+   *  key-facts card. */
+  tierCaption?: string;
   /** The guide's own <Section> blocks. */
   sections: (href: (path: string) => string) => ReactNode;
 };

@@ -30,6 +30,7 @@ import { prefixedLocales, type Locale } from "./i18n";
 export const translatedRoutes = new Set<string>([
   "/",
   "/visas/pvip/",
+  "/visas/mm2h/",
 ]);
 
 export function isTranslated(canonicalPath: string): boolean {

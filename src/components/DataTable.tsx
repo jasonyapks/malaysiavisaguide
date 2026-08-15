@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import type { Locale } from "@/lib/i18n";
+import { getUi } from "@/lib/ui";
 
 /**
  * The one table on this site.
@@ -44,6 +46,7 @@ export function DataTable({
   notes = [],
   /** Prefix for footnote anchor ids — must be unique per table on a page. */
   idPrefix = "note",
+  locale = "en",
 }: {
   caption?: string;
   head: string[];
@@ -63,7 +66,11 @@ export function DataTable({
    */
   notes?: ReactNode[];
   idPrefix?: string;
+  /** Defaults to English; the comparison page and the calculator are not
+   *  translated yet and pass nothing. */
+  locale?: Locale;
 }) {
+  const t = getUi(locale).guide.tiers;
   return (
     <figure className="space-y-3">
       <div className="overflow-x-auto rounded-xl border border-sand-200 bg-white">
@@ -88,7 +95,7 @@ export function DataTable({
                       : "sticky top-0 z-10 min-w-[9rem] bg-white px-4 py-3 text-left font-serif text-body-sm font-semibold text-forest-900 sm:px-6 sm:text-lead"
                   }
                 >
-                  {h || <span className="sr-only">Attribute</span>}
+                  {h || <span className="sr-only">{t.attributeColumn}</span>}
                 </th>
               ))}
             </tr>
@@ -108,7 +115,7 @@ export function DataTable({
                     {c.note && (
                       <sup className="ml-0.5 font-normal text-forest-700">
                         <a href={`#${idPrefix}-${c.note}`}>
-                          <span className="sr-only">See note </span>
+                          <span className="sr-only">{t.seeNote}</span>
                           {c.note}
                         </a>
                       </sup>

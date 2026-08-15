@@ -68,6 +68,41 @@ export type UiStrings = {
     bylineMid: string;
     bylineAfter: string;
     bylineLastReviewed: (date: string) => string;
+    /** The tier comparison table — components/TierTable.tsx. */
+    tiers: {
+      fixedDeposit: string;
+      propertyPurchase: string;
+      optional: string;
+      term: string;
+      participationFee: string;
+      agencyFee: string;
+      notGovernmentSet: string;
+      agencyFeeCommercialNote: string;
+      agencyFeeCovers: (note: string, includes: string, terms: string) => string;
+      processingFee: string;
+      processingFeePrincipal: (amount: string) => string;
+      processingFeeAbsorbed: string;
+      minAge: string;
+      minStay: string;
+      workRights: string;
+      workYes: string;
+      workRestricted: string;
+      workNo: string;
+      workFullNote: string;
+      workRestrictedNote: string;
+      sponsor: string;
+      incomeFloor: string;
+      noneStated: string;
+      maximumTerm: string;
+      governmentFee: string;
+      dependants: string;
+      permitted: string;
+      notPermitted: string;
+      renewableSuffix: string;
+      /** Screen-reader-only labels in the table shell. */
+      attributeColumn: string;
+      seeNote: string;
+    };
     /** The correction banner — components/SupersededNotice.tsx. */
     superseded: {
       termsChangedOn: (programme: string, date: string) => string;
@@ -203,6 +238,42 @@ export const ui: UiStrings = {
     bylineMid: ", Managing Director of ",
     bylineAfter: "",
     bylineLastReviewed: (date) => `Last reviewed ${date}.`,
+    tiers: {
+      fixedDeposit: "Fixed deposit",
+      propertyPurchase: "Property purchase",
+      optional: "Optional",
+      term: "Term",
+      participationFee: "Participation fee",
+      agencyFee: "Agency fee",
+      notGovernmentSet: "Not government-set",
+      agencyFeeCommercialNote:
+        "Set commercially by the agency and published nowhere official. Get the figure in writing before committing.",
+      agencyFeeCovers: (note, includes, terms) =>
+        `${note} Covers ${includes}. ${terms}`,
+      processingFee: "Processing fee",
+      processingFeePrincipal: (amount) => `${amount} principal`,
+      processingFeeAbsorbed:
+        "Already inside the agency fee above — it should not appear twice on a quote.",
+      minAge: "Minimum age",
+      minStay: "Minimum stay",
+      workRights: "Work rights",
+      workYes: "Yes",
+      workRestricted: "Restricted",
+      workNo: "No",
+      workFullNote: "May work and run a business.",
+      workRestrictedNote: "Conditions apply.",
+      sponsor: "Sponsor",
+      incomeFloor: "Income floor",
+      noneStated: "None stated",
+      maximumTerm: "Maximum term",
+      governmentFee: "Government fee",
+      dependants: "Dependants",
+      permitted: "Permitted",
+      notPermitted: "Not permitted",
+      renewableSuffix: ", renewable",
+      attributeColumn: "Attribute",
+      seeNote: "See note ",
+    },
     superseded: {
       termsChangedOn: (programme, date) => `${programme} terms changed on ${date}`,
       figuresArePrevious: " — the figures below are the previous ones",
