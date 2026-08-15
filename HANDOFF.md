@@ -8,15 +8,26 @@ Traditional at `/zh-hant/` — because Hong Kong and Taiwan (Traditional) and
 Singapore/mainland (Simplified) are all named source markets. English stays
 unprefixed at the domain root so no indexed URL moves.
 
-Branch: `i18n/chinese-site`, 7 commits on top of `1c28238`. **Not pushed** — a
-push to `main` deploys, which is an approval gate. This branch is stacked on
-`seo/gsc-indexing-fixes`, which is itself unmerged (1 commit ahead of `main`).
+Branch: `i18n/chinese-site`, 8 commits on top of `1c28238`, pushed to origin.
+A merge to `main` deploys, which is an approval gate — that has NOT happened.
+
+**Not yet done outside the repo:** the two subdomains do not exist. Until
+`cn.` and `tw.` are added as custom domains on the `malaysiavisaguide` Pages
+project (and DNS records created), the Chinese site is unreachable in
+production and the hreflang tags point at hosts that do not resolve. See
+"Before this can go live" below.
 
 ## Done
 
 - **Routing.** `app/(en)/` (unprefixed) + `app/[locale]/` (generates `zh-hans`
   and `zh-hant` from one tree). Two root layouts, because `<html lang>` can only
   be set where `<html>` is rendered.
+- **One locale, one hostname.** English on the apex, Simplified on `cn.`,
+  Traditional on `tw.`. Paths are identical on all three — `/about/` everywhere.
+  **Read the header comment in `src/lib/i18n.ts` before touching any URL code:**
+  a page has a *build path* (`out/zh-hans/about/`, what Next emits) and a
+  *public URL* (`https://cn.…/about/`), and every bug in this area is the two
+  being confused. `functions/_middleware.ts` is the join between them.
 - **`app/global-not-found.tsx`** behind `experimental.globalNotFound` — the
   root-layout split silently broke `out/404.html` back to Next's default page.
 - **Traditional is generated, never hand-written.** `scripts/gen-zh-hant.mjs`
@@ -40,6 +51,21 @@ push to `main` deploys, which is an approval gate. This branch is stacked on
 - **Lint down to 3 errors in `src/`** — all pre-existing `setState`-in-effect
   (CookieConsent, CookiePreferences, SiteNav). Not caused by this work.
 
+## Before this can go live
+
+1. Add `cn.malaysiavisaguide.com` and `tw.malaysiavisaguide.com` as custom
+   domains on the `malaysiavisaguide` Pages project, and create the DNS
+   records. Nothing in the repo can do this. Until then the Chinese hosts do
+   not resolve and the hreflang tags are dangling.
+2. Verify both subdomains in Search Console. The sitemap is a single file at
+   the apex listing all three hosts' URLs, which Google only accepts as
+   cross-submission when every host is verified.
+3. `scripts/deploy-site.mjs` runs `wrangler pages deploy out` — a direct upload
+   from `out/`. Confirm it still picks up the root `functions/` directory, or
+   the break-glass path will publish a build with **no host routing at all**:
+   the apex would keep working and both Chinese subdomains would serve English.
+   The normal git build is unaffected.
+
 ## Remaining
 
 - Translate: `/compare/`, `/tools/`, `/tools/eligibility/`,
@@ -54,6 +80,8 @@ push to `main` deploys, which is an approval gate. This branch is stacked on
   for `locale === "en"`, so Chinese home pages hide it rather than linking out
   to English.
 - News (19 items) is out of scope — Jason chose "static pages + the 4 insights".
+- `og:image` is the same English card on all three hosts. Fine for now; a
+  Chinese card would need `scripts/` work and a second asset.
 
 ## Files & Folders Touched
 
@@ -147,6 +175,32 @@ Both are cheap and both have already caught real bugs:
   `[A-Za-z]{4,}` words. On `/about/` the only survivors are `Jason`, programme
   names, company names and bracketed authority names — anything else is a
   missed string.
+
+### Checking the host routing
+
+`npm run build`, then serve the real output and drive it by `Host` header —
+this is how the RSC-payload bug below was caught:
+
+```sh
+npx wrangler pages dev out --port 8788 --compatibility-date=2026-07-28
+curl -sI -H "Host: cn.malaysiavisaguide.com" http://localhost:8788/about/
+```
+
+Cover all of: each host serves the right `<html lang>`; `/zh-hans/*` 301s to
+`cn.` from the apex and to a bare path on `cn.` itself; an untranslated page
+302s to English; `robots.txt`, `sitemap.xml` and `og.png` pass through; an
+unknown host falls through to the raw prefixed tree.
+
+**Also check the RSC payloads**, not just the HTML — `/about/index.txt` and the
+`__next.*` files beside it must come back in the host's language. If they fall
+through to English the client router gets a 200 of the wrong language and
+soft-navigates a Chinese reader into English content with the Chinese URL still
+in the address bar. Silent, and invisible on a hard refresh.
+
+Two dev-server artefacts that are NOT bugs: wrangler rewrites a redirect
+`Location` to `http://` when the target host equals the request host, and
+firing probes in a tight loop can 500 before reaching the Worker (no line in
+the wrangler log — that is how you tell).
 
 ### A trap in the diff script itself
 
