@@ -159,6 +159,10 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
 
   smm2h: {
     name: "砂拉越 MM2H（S-MM2H）",
+    authority:
+      "砂拉越旅游、创意产业及表演艺术部（Ministry of Tourism, Creative Industry and Performing Arts Sarawak, MTCP）",
+    minStayPerYear: "每年在砂拉越累计 30 天，仅主申请人须符合。",
+    minStayShort: "30 天（仅主申请人）",
   },
 
   "de-rantau": {
@@ -179,5 +183,7 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   "student-pass": {
     name: "学生准证（Student Pass）",
     authority: "移民局／EMGS",
+    sponsor: "就读的院校，并经 EMGS 审核",
+    sponsorShort: "就读院校",
   },
 };

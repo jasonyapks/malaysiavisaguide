@@ -31,6 +31,10 @@ export const translatedRoutes = new Set<string>([
   "/",
   "/visas/pvip/",
   "/visas/mm2h/",
+  "/visas/sarawak-mm2h/",
+  "/visas/de-rantau/",
+  "/visas/employment-pass/",
+  "/visas/student-pass/",
 ]);
 
 export function isTranslated(canonicalPath: string): boolean {
