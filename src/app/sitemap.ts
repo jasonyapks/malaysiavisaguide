@@ -6,7 +6,7 @@ import {
 import { liveInsightCategories, publishedInsights } from "@/lib/insights";
 import { categoryPath, getCategoryIndex, getNewsIndex } from "@/lib/news";
 import { assertRouteTitles, routes, site } from "@/lib/site";
-import { htmlLang, localePath } from "@/lib/i18n";
+import { htmlLang, localeUrl } from "@/lib/i18n";
 import { availableLocales } from "@/lib/translated";
 
 /** Generated from the route table in src/lib/site.ts — SPEC.md §4.4. */
@@ -32,11 +32,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const available = availableLocales(r.path);
     const alternates = {
       languages: Object.fromEntries(
-        available.map((l) => [htmlLang[l], `${site.url}${localePath(r.path, l)}`]),
+        available.map((l) => [htmlLang[l], localeUrl(r.path, l)]),
       ),
     };
     return available.map((locale) => ({
-      url: `${site.url}${localePath(r.path, locale)}`,
+      url: localeUrl(r.path, locale),
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       // The English page stays the primary one. A translation of the home page

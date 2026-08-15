@@ -7,8 +7,8 @@ import {
   locales,
   localeLabel,
   localeName,
-  localePath,
-  stripLocale,
+  localeUrl,
+  publicPath,
   type Locale,
 } from "@/lib/i18n";
 import { isTranslated } from "@/lib/translated";
@@ -20,9 +20,9 @@ import { isTranslated } from "@/lib/translated";
  *
  * A switcher that dumps the reader on the Chinese home page makes them find
  * their page again, in a language they were already struggling with. This one
- * reads the current pathname, strips whatever locale prefix it has, and
- * re-prefixes it for each target — so /visas/pvip/ goes to /zh-hans/visas/pvip/
- * and back again.
+ * reads the current pathname and re-hosts it for each target — so
+ * /visas/pvip/ on the apex goes to cn.…/visas/pvip/ and back again. The path is
+ * identical across hosts, which is what makes that a one-line move.
  *
  * ## Why the whole set renders as links rather than a dropdown
  *
@@ -52,8 +52,10 @@ export function LanguageSwitcher({
   locale: Locale;
   label: string;
 }) {
-  const pathname = usePathname();
-  const { path } = stripLocale(pathname);
+  // `usePathname()` reports the BUILD path, which on a Chinese page is
+  // `/zh-hans/about/` — the reader's address bar says `cn.…/about/`. Strip the
+  // prefix or every "EN" link points at the internal path on the apex.
+  const path = publicPath(usePathname());
   const translated = isTranslated(path);
 
   return (
@@ -80,10 +82,12 @@ export function LanguageSwitcher({
             // English is the fallback for everything, so a target that is not
             // the default locale and has no translation of this page goes to
             // that language's home instead of a URL that does not exist.
+            // Absolute, always: every target is a different hostname now, so
+            // there is no such thing as a relative link to another language.
             href={
               translated || target === "en"
-                ? localePath(path, target)
-                : localePath("/", target)
+                ? localeUrl(path, target)
+                : localeUrl("/", target)
             }
             // The BCP-47 tag, not our internal locale id: `hreflang` is a
             // language tag and "zh-hans" is not one. Only set when the link

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { htmlLang, localePath, type Locale } from "./i18n";
+import { htmlLang, localeUrl, type Locale } from "./i18n";
 import { availableLocales } from "./translated";
 
 /**
@@ -36,15 +36,15 @@ export function pageMetadata({
 }): Metadata {
   const languages: Record<string, string> = {};
   for (const l of availableLocales(canonicalPath)) {
-    languages[htmlLang[l]] = localePath(canonicalPath, l);
+    languages[htmlLang[l]] = localeUrl(canonicalPath, l);
   }
-  languages["x-default"] = canonicalPath;
+  languages["x-default"] = localeUrl(canonicalPath, "en");
 
   return {
     ...(title ? { title } : {}),
     ...(description ? { description } : {}),
     alternates: {
-      canonical: localePath(canonicalPath, locale),
+      canonical: localeUrl(canonicalPath, locale),
       languages,
     },
   };

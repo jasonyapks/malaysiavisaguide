@@ -3,7 +3,7 @@ import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import "@/app/globals.css";
-import { htmlLang, ogLocale, type Locale } from "@/lib/i18n";
+import { htmlLang, localeOrigin, ogLocale, type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
 import { localisedNavRoutes, site } from "@/lib/site";
 import { getUi } from "@/lib/ui";
@@ -62,7 +62,7 @@ const accent = Playfair_Display({
 export function shellMetadata(locale: Locale): Metadata {
   const ui = getUi(locale);
   return {
-    metadataBase: new URL(site.url),
+    metadataBase: new URL(localeOrigin[locale]),
     title: {
       // Kept under ~580px rendered, which is where Google truncates a title in
       // the SERP. The previous version ran to 654px, so "explained" — the one

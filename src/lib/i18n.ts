@@ -1,14 +1,38 @@
 /**
  * Locales — SPEC.md §2 ("Chinese comes first when localisation lands").
  *
- * ## Why English has no prefix
+ * ## One locale, one hostname
  *
- * English was indexed first and every URL in Search Console points at an
- * unprefixed path (`/visas/pvip/`). Moving it to `/en/visas/pvip/` would mean
- * redirecting the entire indexed surface of a site that only recently got
- * crawled properly, to buy nothing but symmetry. So English stays at the root
- * and the translations sit under a prefix. `localePath()` is the only place
- * that knows this, so a future decision to prefix English is one edit here.
+ * English stays on the apex — it was indexed first and every URL in Search
+ * Console points at an unprefixed path, so moving it would redirect the whole
+ * indexed surface of a site that only recently got crawled properly. Chinese
+ * is served from its own subdomain instead: `cn.` for Simplified, `tw.` for
+ * Traditional.
+ *
+ * The tradeoff was made knowingly. Google treats a subdomain as a largely
+ * separate site, so neither Chinese host inherits much of the apex's
+ * authority and each has to earn its own. What it buys is clean separation
+ * and per-host targeting in Search Console. No indexed URL moved, because the
+ * Chinese trees had never been deployed when the decision was taken.
+ *
+ * ## Public URL vs build path — do not confuse them
+ *
+ * These are two different things and every bug in this area comes from
+ * treating them as one:
+ *
+ *   - **Build path** is where a page lands in `out/`. Next decides it from the
+ *     route tree, so the Chinese pages are written to `out/zh-hans/about/`.
+ *     `buildPrefix` records it. Nothing in the app should link to it.
+ *   - **Public URL** is what the reader and Google see:
+ *     `https://cn.malaysiavisaguide.com/about/`. `localeOrigin` and
+ *     `localeUrl()` own it.
+ *
+ * `functions/_middleware.ts` is the join between them: it maps an incoming
+ * hostname to a build prefix and serves the file from there. So a link on a
+ * Chinese page is a bare path (`/about/`) that resolves against whichever
+ * Chinese host the reader is already on — never `/zh-hans/about/`, which is an
+ * internal detail, and never a hardcoded origin, which would send a `tw.`
+ * reader to `cn.`.
  *
  * ## Why two Chinese trees rather than one
  *
@@ -46,12 +70,41 @@ export function isLocale(value: string): value is Locale {
   return (locales as readonly string[]).includes(value);
 }
 
-/** URL prefix per locale. The default locale's is the empty string. */
-const prefixes: Record<Locale, string> = {
+/**
+ * The public origin each locale is served from. One locale, one hostname.
+ *
+ * `cn.` and `tw.` were chosen over `zh-hans.`/`zh-hant.` for readability. The
+ * cost is that `tw.` names a country while the Traditional tree deliberately
+ * serves Hong Kong too — the generator uses OpenCC `to.tw`, not `to.twp`,
+ * precisely so the vocabulary stays neutral between the two. The hostname is
+ * the only place that neutrality is broken, and it is broken in wording only:
+ * `hreflang` still declares `zh-Hant`, not `zh-TW`, so Google keeps serving
+ * this host to Hong Kong searchers.
+ */
+export const localeOrigin: Record<Locale, string> = {
+  en: "https://malaysiavisaguide.com",
+  "zh-hans": "https://cn.malaysiavisaguide.com",
+  "zh-hant": "https://tw.malaysiavisaguide.com",
+};
+
+/**
+ * Where each locale's pages physically live inside `out/` — an artifact of the
+ * `app/[locale]/` route tree, not a URL anyone should ever see.
+ *
+ * Read by `functions/_middleware.ts`, which imports this module so the two
+ * cannot drift. Nothing else in the app has any business with it: a link built
+ * from a build prefix is the bug this file's header comment is about.
+ */
+export const buildPrefix: Record<Locale, string> = {
   en: "",
   "zh-hans": "/zh-hans",
   "zh-hant": "/zh-hant",
 };
+
+/** Hostname → locale, derived so it cannot disagree with `localeOrigin`. */
+export const localeByHost: Record<string, Locale> = Object.fromEntries(
+  locales.map((l) => [new URL(localeOrigin[l]).hostname, l]),
+) as Record<string, Locale>;
 
 /**
  * The BCP-47 tag that goes in `<html lang>`, `hreflang` and `og:locale`.
@@ -96,39 +149,47 @@ export const localeName: Record<Locale, string> = {
 };
 
 /**
- * Prefix a site-root-relative path for a locale.
+ * The absolute public URL of a page, in a locale.
  *
- *   localePath("/visas/pvip/", "en")       → "/visas/pvip/"
- *   localePath("/visas/pvip/", "zh-hans")  → "/zh-hans/visas/pvip/"
- *   localePath("/", "zh-hant")             → "/zh-hant/"
+ *   localeUrl("/visas/pvip/", "en")       → "https://malaysiavisaguide.com/visas/pvip/"
+ *   localeUrl("/visas/pvip/", "zh-hans")  → "https://cn.malaysiavisaguide.com/visas/pvip/"
+ *   localeUrl("/", "zh-hant")             → "https://tw.malaysiavisaguide.com/"
  *
- * Every internal link on a translated page has to go through this or it drops
- * the reader back into English mid-journey, which is the single easiest way to
- * ruin a localised site. Absolute URLs and anchors pass through untouched so
- * that `localePath("https://mypvip.com")` is a harmless no-op.
+ * The path is the same on every host — the locale is carried by the origin, not
+ * by a prefix. That is the whole point of the subdomain layout, and it is why
+ * this returns an absolute URL: crossing locales now crosses origins, so a path
+ * on its own can no longer express "the Chinese version of this page".
+ *
+ * Use this for canonicals, `hreflang`, the sitemap and the language switcher —
+ * anywhere the URL must be unambiguous about which host it means. For ordinary
+ * internal links use `linkPath()` in lib/translated.ts, which keeps same-locale
+ * links relative so a reader on `cn.` stays on `cn.`.
+ *
+ * Anchors and off-site URLs pass through untouched, so a stray call is a no-op
+ * rather than a mangled `https://cn.malaysiavisaguide.com#faq`.
  */
-export function localePath(path: string, locale: Locale): string {
+export function localeUrl(path: string, locale: Locale): string {
   if (!path.startsWith("/")) return path;
-  const prefix = prefixes[locale];
-  if (!prefix) return path;
-  // "/" must not become "/zh-hans" — trailingSlash: true expects "/zh-hans/".
-  return path === "/" ? `${prefix}/` : `${prefix}${path}`;
+  return `${localeOrigin[locale]}${path}`;
 }
 
 /**
- * Strip a locale prefix back off a pathname, returning the canonical English
- * path. The inverse of `localePath`, used by the language switcher to answer
- * "where is the reader, and what is this page called in the other language?".
+ * Turn a build path back into the public path — `/zh-hans/about/` → `/about/`.
+ *
+ * Needed because `usePathname()` reports where a page was *built*, not where it
+ * is *served*. Under `output: "export"` the value is baked in at build time
+ * from the route tree, so on a Chinese page it is `/zh-hans/about/` even though
+ * the reader's address bar says `cn.malaysiavisaguide.com/about/`. Anything
+ * deriving a URL from `usePathname()` has to strip the prefix first or it emits
+ * the internal path into a public link — which is how the language switcher
+ * came to offer `https://malaysiavisaguide.com/zh-hans/` as "English".
  */
-export function stripLocale(pathname: string): {
-  locale: Locale;
-  path: string;
-} {
+export function publicPath(pathname: string): string {
   for (const locale of prefixedLocales) {
-    const prefix = prefixes[locale];
+    const prefix = buildPrefix[locale];
     if (pathname === prefix || pathname.startsWith(`${prefix}/`)) {
-      return { locale, path: pathname.slice(prefix.length) || "/" };
+      return pathname.slice(prefix.length) || "/";
     }
   }
-  return { locale: "en", path: pathname };
+  return pathname;
 }

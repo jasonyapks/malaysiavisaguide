@@ -1,4 +1,4 @@
-import { locales, type Locale } from "./i18n";
+import { locales, localeOrigin, type Locale } from "./i18n";
 import { linkPath } from "./translated";
 import { getUi } from "./ui";
 
@@ -6,7 +6,7 @@ export const site = {
   name: "Malaysia Visa Guide",
   // Feeds canonicals, sitemap and OG tags. Switched to the real domain at the
   // cutover (SPEC.md §10e, 2026-07-25).
-  url: "https://malaysiavisaguide.com",
+  url: localeOrigin.en,
   description:
     "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
   // Public read-only endpoint of the news Worker (worker/). Read at BUILD time —

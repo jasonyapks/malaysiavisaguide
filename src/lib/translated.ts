@@ -1,4 +1,4 @@
-import { localePath, prefixedLocales, type Locale } from "./i18n";
+import { localeUrl, prefixedLocales, type Locale } from "./i18n";
 
 /**
  * Which routes exist in the translated trees.
@@ -45,31 +45,37 @@ export function isTranslated(canonicalPath: string): boolean {
 /**
  * The href for an internal link, rendered on a page in `locale`.
  *
- * **Every internal link goes through this, not through `localePath`.**
+ * **Every internal link goes through this, not through `localeUrl`.**
  *
- * `localePath` is mechanical: give it a path and a locale and it prefixes,
- * because canonical URLs and hreflang have to name `/zh-hans/about/` whether or
- * not that page has been built yet. A link is the opposite — it may only name a
- * page that exists. Prefixing a route the Chinese tree does not have yet
- * produces a 404, and because the header, the footer and the 404 page all
- * render the full route table, that is not one dead link but every untranslated
- * route dead on every Chinese page at once.
+ * Two cases, and the difference is the whole function:
  *
- * So an untranslated target falls back to the English URL. A Chinese reader who
- * clicks "Privacy" gets the English privacy page — which is the honest outcome,
- * and the language switcher on it will say the page has no Chinese counterpart.
- * The alternative, hiding the link, hides the privacy policy.
+ *   - **The target exists in this locale** → a bare path (`/about/`). Relative
+ *     on purpose: it resolves against whichever host the reader is already on,
+ *     so a `tw.` reader stays on `tw.` and the same built HTML is correct on
+ *     every hostname. Hardcoding an origin here would pin the Traditional pages
+ *     to `cn.` the moment someone got the locale wrong.
+ *   - **It does not** → the absolute English URL. Under the subdomain layout a
+ *     relative link would resolve to `cn.malaysiavisaguide.com/privacy/`, which
+ *     is not just a 404 but a 404 on the wrong host. Crossing to a page that
+ *     only exists in English means crossing origins, so the link has to say so.
  *
- * Paths that are not canonical routes — anchors, external URLs, news slugs —
- * are not in the set either, so they fall through to English untouched. That is
- * correct today because nothing under `/news/` or `/insights/` is translated;
- * when that changes, those trees need their own check here rather than a
- * blanket prefix.
+ * A Chinese reader who clicks "Privacy" therefore lands on the English privacy
+ * page. That is the honest outcome — the alternative, hiding the link, hides
+ * the privacy policy — and the switcher there will show the page has no Chinese
+ * counterpart.
+ *
+ * This matters more than it sounds. The header, footer and 404 all render the
+ * full route table, so getting it wrong is not one dead link but every
+ * untranslated route dead on every Chinese page at once.
+ *
+ * Paths that are not canonical routes — anchors, off-site URLs, news slugs —
+ * are not in the set, so they resolve to English. Correct today because nothing
+ * under `/news/` or `/insights/` is translated; when that changes, those trees
+ * need their own check here.
  */
 export function linkPath(canonicalPath: string, locale: Locale): string {
-  return isTranslated(canonicalPath)
-    ? localePath(canonicalPath, locale)
-    : canonicalPath;
+  if (locale === "en" || isTranslated(canonicalPath)) return canonicalPath;
+  return localeUrl(canonicalPath, "en");
 }
 
 /**
