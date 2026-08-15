@@ -8,19 +8,13 @@ Traditional at `/zh-hant/` — because Hong Kong and Taiwan (Traditional) and
 Singapore/mainland (Simplified) are all named source markets. English stays
 unprefixed at the domain root so no indexed URL moves.
 
-Branch: `i18n/chinese-site`, 8 commits on top of `1c28238`, pushed to origin.
-A merge to `main` deploys, which is an approval gate — that has NOT happened.
+**Shipped 2026-08-15.** Merged to `main` (fast-forward, 13 commits) and
+deployed — production is `1e7a698`. English on the apex, Simplified on
+`cn.malaysiavisaguide.com`, Traditional on `tw.malaysiavisaguide.com`, all three
+verified live.
 
-**Infrastructure is done** (2026-08-15): `cn.` and `tw.` are attached to the
-`malaysiavisaguide` Pages project and both are `active`, with proxied CNAMEs to
-`malaysiavisaguide.pages.dev` matching the apex/www pattern. Mail records were
-not touched.
-
-**But production still serves English on all three hosts**, because the live
-deployment is built from `main` and the middleware only exists on this branch.
-Every page carries `canonical → malaysiavisaguide.com/…`, so the duplicate is
-consolidated to the apex and the exposure is cosmetic — but it does not resolve
-until this branch is merged. See "Before this can go live" below.
+`i18n/chinese-site` still exists on origin and is now identical to `main`; it
+can be deleted.
 
 ## Done
 
@@ -56,22 +50,19 @@ until this branch is merged. See "Before this can go live" below.
 - **Lint down to 3 errors in `src/`** — all pre-existing `setState`-in-effect
   (CookieConsent, CookiePreferences, SiteNav). Not caused by this work.
 
-## Before this can go live
+## Still outstanding
 
-1. ~~Add the custom domains and DNS.~~ **Done 2026-08-15.** Both `active`.
-   Attaching via `POST /accounts/{id}/pages/projects/{project}/domains` does
-   **not** write DNS — the CNAMEs had to be created separately, as
-   [[avoid-pages-custom-domain-apex-not-rewritten]] predicted.
-2. **Merge to `main`** so the deployed build contains `functions/_middleware.ts`.
-   Until then `cn.` and `tw.` serve the English site. This is the approval gate.
-3. Verify both subdomains in Search Console. The sitemap is a single file at
-   the apex listing all three hosts' URLs, which Google only accepts as
-   cross-submission when every host is verified.
-4. `scripts/deploy-site.mjs` runs `wrangler pages deploy out` — a direct upload
-   from `out/`. Confirm it still picks up the root `functions/` directory, or
-   the break-glass path will publish a build with **no host routing at all**:
-   the apex would keep working and both Chinese subdomains would serve English.
-   The normal git build is unaffected.
+- **Search Console.** Add and verify `cn.` and `tw.` as properties. The sitemap
+  is a single file at the apex listing all three hosts' URLs, and Google only
+  accepts that as cross-submission once every host is verified. Until then the
+  Chinese URLs are discoverable only by crawling.
+- **`scripts/deploy-site.mjs` is unverified under the new layout.** It runs
+  `wrangler pages deploy out`, a direct upload from `out/`. The git build is
+  fine — its log says `Found Functions directory at /functions. Uploading.` —
+  but if the direct-upload path does not pick up the root `functions/`
+  directory, a break-glass deploy would publish with **no host routing**: the
+  apex would look perfect and both Chinese subdomains would silently serve
+  English. Test it before relying on it.
 
 ## Remaining
 
