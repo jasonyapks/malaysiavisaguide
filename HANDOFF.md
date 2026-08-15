@@ -8,7 +8,7 @@ Traditional at `/zh-hant/` — because Hong Kong and Taiwan (Traditional) and
 Singapore/mainland (Simplified) are all named source markets. English stays
 unprefixed at the domain root so no indexed URL moves.
 
-Branch: `i18n/chinese-site`, 5 commits on top of `1c28238`. **Not pushed** — a
+Branch: `i18n/chinese-site`, 7 commits on top of `1c28238`. **Not pushed** — a
 push to `main` deploys, which is an approval gate. This branch is stacked on
 `seo/gsc-indexing-fixes`, which is itself unmerged (1 commit ahead of `main`).
 
@@ -29,14 +29,21 @@ push to `main` deploys, which is an approval gate. This branch is stacked on
   sarawak-mm2h, de-rantau, employment-pass, student-pass.
 - **Chrome localised**: header, footer, nav, cookie banner, 404, GuideLayout,
   KeyFacts, Faq, Byline, SupersededNotice, TierTable, DataTable, `format.ts`.
+- **Translated static pages:** `/about/` (`src/content/about/`, same shape as
+  `src/content/home/`).
+- **`linkPath()` in `src/lib/translated.ts`** — internal links to untranslated
+  routes fall back to the English URL. Before this, every Chinese page shipped
+  eleven dead links, because the header, footer and 404 render the whole route
+  table through `localePath`, which prefixes unconditionally. **Use `linkPath`
+  for every link; `localePath` only for canonical URLs, hreflang and the
+  sitemap.**
 - **Lint down to 3 errors in `src/`** — all pre-existing `setState`-in-effect
   (CookieConsent, CookiePreferences, SiteNav). Not caused by this work.
 
 ## Remaining
 
 - Translate: `/compare/`, `/tools/`, `/tools/eligibility/`,
-  `/tools/cost-calculator/`, `/about/`, `/editorial-policy/`, `/privacy/`,
-  `/contact/`.
+  `/tools/cost-calculator/`, `/editorial-policy/`, `/privacy/`, `/contact/`.
   - **The two tool pages are client components** (`EligibilityQuiz.tsx`,
     `CostCalculator.tsx`). Pass strings in as props — do NOT import `getUi`
     there, or all three locales' dictionaries ship to every browser.
@@ -113,10 +120,38 @@ authority names.
 
 ## Next Step
 
-Translate `/about/` — the smallest remaining page with real prose (139 lines,
-`src/app/(en)/about/page.tsx`). Create `src/content/about/{en,zh-hans}.tsx`
-following the `src/content/home/` pattern (shared body component + per-locale
-copy), make `src/app/(en)/about/page.tsx` a thin wrapper, add
-`src/app/[locale]/about/page.tsx`, add `"/about/"` to `translatedRoutes` in
-`src/lib/translated.ts`, run `npm run i18n:hant`, then run the baseline diff
-above to confirm English is unchanged.
+Translate `/editorial-policy/`, then `/privacy/` and `/contact/` — prose-only
+pages, same recipe as `/about/`:
+
+1. `src/content/<page>/{types.ts,<Page>.tsx,en.tsx,zh-hans.tsx}` — shared body
+   component, per-locale copy, English transcribed *exactly* so the baseline
+   diff stays clean.
+2. Make `src/app/(en)/<page>/page.tsx` a thin wrapper using `pageMetadata()`.
+3. Add `src/app/[locale]/<page>/page.tsx`.
+4. Add the path to `translatedRoutes` in `src/lib/translated.ts` **in the same
+   commit**.
+5. `npm run i18n:hant`, then the baseline diff and the two sweeps below.
+
+Leave `/compare/` and the two tool pages until last — `/compare/` is table-heavy
+and the tools are client components (see the note above about passing strings in
+as props).
+
+### Two sweeps to run alongside the baseline diff
+
+Both are cheap and both have already caught real bugs:
+
+- **Link integrity.** Every `href="/zh-han[st]/…"` in `out/**/*.html` must
+  resolve to a built `index.html`. Expect zero misses. This is what surfaced the
+  eleven dead links `linkPath` now prevents.
+- **English leaks.** Strip tags from each new Chinese page and count
+  `[A-Za-z]{4,}` words. On `/about/` the only survivors are `Jason`, programme
+  names, company names and bracketed authority names — anything else is a
+  missed string.
+
+### A trap in the diff script itself
+
+React separates adjacent text nodes with an empty `<!-- -->` comment. If your
+comparator replaces comments with a space, a locale change that merges three
+text nodes into one interpolated string reads as a whitespace diff on 32 pages
+(`2026 .` → `2026.`) and looks like a sitewide regression. Strip `<!-- -->` to
+the empty string, other comments to a space.
