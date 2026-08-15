@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Lozenge } from "@/components/GuideHead";
-import { localePath, type Locale } from "@/lib/i18n";
+import { type Locale } from "@/lib/i18n";
+import { linkPath } from "@/lib/translated";
 import { localisedNavRoutes } from "@/lib/site";
 import { getUi } from "@/lib/ui";
 
@@ -66,14 +67,14 @@ export function NotFoundContent({ locale }: { locale: Locale }) {
       <p className="rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
         {ui.notFound.tailBefore}
         <Link
-          href={localePath("/news/", locale)}
+          href={linkPath("/news/", locale)}
           className="font-semibold underline"
         >
           {ui.notFound.tailNews}
         </Link>
         {ui.notFound.tailBetween}
         <Link
-          href={localePath("/contact/", locale)}
+          href={linkPath("/contact/", locale)}
           className="font-semibold underline"
         >
           {ui.notFound.tailContact}

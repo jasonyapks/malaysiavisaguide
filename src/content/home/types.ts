@@ -54,9 +54,18 @@ export type HomeCopy = {
     heading: (date: string) => ReactNode;
     body: string;
   };
-  sources: SectionCopy & { prose: ReactNode };
+  /**
+   * `prose` and `insights.body` take `href()` for the same reason `GuideCopy`'s
+   * `sections` does: they contain internal links, and a link written as a
+   * literal is a link that is either wrong in English or wrong in Chinese. It
+   * has to be built per locale — and via `linkPath`, so a route the Chinese
+   * tree does not have yet resolves to English rather than to a 404.
+   */
+  sources: SectionCopy & { prose: (href: (path: string) => string) => ReactNode };
   tools: SectionCopy & { indexLink: string; indexTail: string };
-  insights: SectionCopy;
+  insights: Omit<SectionCopy, "body"> & {
+    body: (href: (path: string) => string) => ReactNode;
+  };
   closing: {
     eyebrow: string;
     heading: ReactNode;

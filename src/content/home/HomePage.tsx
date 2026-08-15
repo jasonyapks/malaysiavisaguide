@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { localePath, type Locale } from "@/lib/i18n";
+import { type Locale } from "@/lib/i18n";
+import { linkPath } from "@/lib/translated";
 import { localisedNavRoutes } from "@/lib/site";
 import { programmes } from "@/lib/data/programmes";
 import { CATEGORY_LABEL, insightPath } from "@/lib/data/insights";
@@ -64,7 +65,7 @@ export async function HomePage({
   // Chinese reader to three English articles.
   const articles = locale === "en" ? await publishedInsights() : [];
 
-  const href = (path: string) => localePath(path, locale);
+  const href = (path: string) => linkPath(path, locale);
 
   return (
     <div className="space-y-24">
@@ -234,7 +235,9 @@ export async function HomePage({
         />
 
         <div className="grid gap-10 md:grid-cols-[1.05fr_0.95fr]">
-          <div className="space-y-4 text-ink-muted">{copy.sources.prose}</div>
+          <div className="space-y-4 text-ink-muted">
+            {copy.sources.prose(href)}
+          </div>
 
           {/* Sticky so the documents stay beside the prose that describes them
               — the list is much shorter than the text, and pinned to the top it
@@ -315,7 +318,7 @@ export async function HomePage({
           than rendered as an empty grid under a heading. */}
       {articles.length > 0 && (
         <section className="space-y-8">
-          <SectionHead {...copy.insights} />
+          <SectionHead {...copy.insights} body={copy.insights.body(href)} />
           <ul className="grid gap-6 sm:grid-cols-3">
             {articles.slice(0, 3).map((a) => (
               <li key={a.slug}>

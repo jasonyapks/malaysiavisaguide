@@ -3,7 +3,8 @@ import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import "@/app/globals.css";
-import { localePath, htmlLang, ogLocale, type Locale } from "@/lib/i18n";
+import { htmlLang, ogLocale, type Locale } from "@/lib/i18n";
+import { linkPath } from "@/lib/translated";
 import { localisedNavRoutes, site } from "@/lib/site";
 import { getUi } from "@/lib/ui";
 import { SiteNav } from "@/components/SiteNav";
@@ -97,8 +98,8 @@ export function RootShell({
   children,
 }: Readonly<{ locale: Locale; children: React.ReactNode }>) {
   const ui = getUi(locale);
-  const home = localePath("/", locale);
-  const contact = localePath("/contact/", locale);
+  const home = linkPath("/", locale);
+  const contact = linkPath("/contact/", locale);
 
   // SPEC.md §4.4 — Organization schema sitewide. `name` follows the locale so a
   // Chinese SERP shows the Chinese publisher name.
@@ -239,7 +240,7 @@ export function RootShell({
                 </a>
                 {ui.footer.disclosureBetween}
                 <Link
-                  href={localePath("/about/", locale)}
+                  href={linkPath("/about/", locale)}
                   className="font-semibold text-forest-700 underline underline-offset-2"
                 >
                   {ui.footer.disclosureAbout}
@@ -305,7 +306,7 @@ document.head.appendChild(s);`,
         />
         <CookieConsent
           strings={ui.consent}
-          privacyHref={localePath("/privacy/", locale)}
+          privacyHref={linkPath("/privacy/", locale)}
         />
       </body>
     </html>

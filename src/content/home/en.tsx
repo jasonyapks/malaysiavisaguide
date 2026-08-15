@@ -117,7 +117,7 @@ export const copy: HomeCopy = {
       </>
     ),
     body: "Every number on this site is traceable to a government document. Below are the ones it is traced to — read them yourself if a figure matters to your decision.",
-    prose: (
+    prose: (href) => (
       <>
         <p>
           Malaysia&apos;s long-stay visas are governed by several different
@@ -152,14 +152,14 @@ export const copy: HomeCopy = {
           So: read the documents. If one of them contradicts something written
           here, that is a bug in this site, and the{" "}
           <Link
-            href="/contact/"
+            href={href("/contact/")}
             className="font-semibold text-forest-700 underline"
           >
             contact page
           </Link>{" "}
           exists partly so you can say so. The{" "}
           <Link
-            href="/editorial-policy/"
+            href={href("/editorial-policy/")}
             className="font-semibold text-forest-700 underline"
           >
             editorial policy
@@ -196,12 +196,12 @@ export const copy: HomeCopy = {
         </span>
       </>
     ),
-    body: (
+    body: (href) => (
       <>
         The guides say what each programme is. These say which one to pick, and
         what the paperwork is like once you have.{" "}
         <Link
-          href="/insights/"
+          href={href("/insights/")}
           className="font-semibold text-forest-700 underline"
         >
           All insights

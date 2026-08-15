@@ -1,4 +1,5 @@
-import { locales, localePath, type Locale } from "./i18n";
+import { locales, type Locale } from "./i18n";
+import { linkPath } from "./translated";
 import { getUi } from "./ui";
 
 export const site = {
@@ -108,7 +109,7 @@ export function localisedRoutes(locale: Locale): LocalisedRoute[] {
   return routes.map((r) => ({
     ...r,
     canonicalPath: r.path,
-    path: localePath(r.path, locale),
+    path: linkPath(r.path, locale),
     title: routeTitles[r.path] ?? r.title,
   }));
 }

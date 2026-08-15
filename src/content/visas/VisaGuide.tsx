@@ -2,7 +2,8 @@ import { GuideLayout } from "@/components/GuideLayout";
 import { TierTable } from "@/components/TierTable";
 import { getProgramme, type ProgrammeSlug } from "@/lib/data/programmes";
 import { localiseProgramme } from "@/lib/programme-locale";
-import { localePath, type Locale } from "@/lib/i18n";
+import { type Locale } from "@/lib/i18n";
+import { linkPath } from "@/lib/translated";
 import type { SiteImage } from "@/lib/images";
 import type { GuideCopy } from "./types";
 
@@ -42,7 +43,7 @@ export function VisaGuide({
       locale={locale}
     />
   ) : undefined;
-  const href = (path: string) => localePath(path, locale);
+  const href = (path: string) => linkPath(path, locale);
 
   return (
     <GuideLayout

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { reviewDate } from "@/lib/format";
-import { localePath, type Locale } from "@/lib/i18n";
+import { type Locale } from "@/lib/i18n";
+import { linkPath } from "@/lib/translated";
 import { getUi } from "@/lib/ui";
 
 /**
@@ -33,7 +34,7 @@ export function Byline({
       <p className="text-body-sm leading-relaxed text-ink-muted">
         {g.bylineBefore}
         <Link
-          href={localePath("/about/", locale)}
+          href={linkPath("/about/", locale)}
           className="font-semibold text-forest-700 underline"
         >
           Jason Yap

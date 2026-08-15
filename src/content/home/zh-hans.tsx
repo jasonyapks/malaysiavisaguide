@@ -129,7 +129,7 @@ export const copy: HomeCopy = {
       </>
     ),
     body: "本站的每一个数字都能追溯到一份政府文件。下面就是它们所依据的文件 —— 如果某个数字对你的决定很重要，请自己读一遍。",
-    prose: (
+    prose: (href) => (
       <>
         <p>
           马来西亚的长期居留签证由好几个不同的机构管辖，这正是大部分混乱的根源。PVIP
@@ -150,14 +150,14 @@ export const copy: HomeCopy = {
         <p>
           所以：去读原始文件。如果其中某一份和本站写的内容相抵触，那就是本站的错误，
           <Link
-            href="/zh-hans/contact/"
+            href={href("/contact/")}
             className="font-semibold text-forest-700 underline"
           >
             联系页面
           </Link>
           的存在，有一部分正是为了让你能指出来。
           <Link
-            href="/zh-hans/editorial-policy/"
+            href={href("/editorial-policy/")}
             className="font-semibold text-forest-700 underline"
           >
             编辑方针
@@ -193,11 +193,11 @@ export const copy: HomeCopy = {
         </span>
       </>
     ),
-    body: (
+    body: (href) => (
       <>
         指南讲的是每个计划「是什么」。这些文章讲的是该选哪一个，以及选定之后要办的材料到底是什么样子。{" "}
         <Link
-          href="/zh-hans/insights/"
+          href={href("/insights/")}
           className="font-semibold text-forest-700 underline"
         >
           全部观点
