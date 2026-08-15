@@ -1,100 +1,122 @@
 # Handoff
 
 ## What & Why
-Work on malaysiavisaguide.com — the contact form, the Access-gated news dashboard, and the
-news sweep behind it. Goal: get enquiries actually arriving, move the dashboard onto the real
-domain, and stop the news pipeline surfacing stale or unwritable stories.
 
-(Supersedes the previous handoff, which covered the completed domain cutover — see SPEC.md §10.)
+Building a Chinese version of malaysiavisaguide.com with the same content as the
+English site. Jason chose **both** scripts — Simplified at `/zh-hans/` and
+Traditional at `/zh-hant/` — because Hong Kong and Taiwan (Traditional) and
+Singapore/mainland (Simplified) are all named source markets. English stays
+unprefixed at the domain root so no indexed URL moves.
+
+Branch: `i18n/chinese-site`, 5 commits on top of `1c28238`. **Not pushed** — a
+push to `main` deploys, which is an approval gate. This branch is stacked on
+`seo/gsc-indexing-fixes`, which is itself unmerged (1 commit ahead of `main`).
 
 ## Done
-- **Contact form is live and verified.** `NEXT_PUBLIC_WEB3FORMS_KEY` set in `.env.local`;
-  test submission delivered (SPEC §8.4 — real delivery, not just "form submitted").
-- Fixed a real bug: handler tested `res.status === 200` and read `json.message`. Web3Forms
-  reports outcome in `json.success`, reason in `json.body.message` — so every failure showed
-  the generic fallback, and a `success:false` 200 would have read as sent.
-- Submit button had no visible focus state; added `focus-visible` ring + `aria-busy`.
-  Error text was colour-only; added a `⚠` glyph.
-- **Dashboard now at `https://malaysiavisaguide.com/dashboard`** (was workers.dev only).
-  Zone *routes*, not a Custom Domain. Cloudflare Access extended to
-  `malaysiavisaguide.com/dashboard` + `/api/admin/*` on the existing app, so the AUD is
-  unchanged and `POLICY_AUD` needed no edit. Verified logged in: both admin API calls 200,
-  no console errors. Public site confirmed unaffected.
-- **News age gate**: nothing published before the current calendar year enters the queue.
-  Both sectors. Also rejects future-dated items.
-- **New "world" sector** — 9 feeds for other countries' long-stay/retirement/investor visas.
-  Per-sector budgets (malaysia 20, world 8). Stricter editorial brief. `en-US` market for
-  world feeds. Renders as "Other countries", links to `/compare/`. Live and verified.
-- **Alternate-source fallback**: when a source can't be read (paywall / bot block / JS shell),
-  the headline is searched and other outlets carrying the same story are tried. Citation
-  follows the source actually read. Verified live: zawya.com 400 → found Sin Chew → article
-  written → `[article] citation reassigned: Zawya → sinchew`.
-- All committed and pushed (`9a4d00c`). Worker `25fabe31`; Pages deployed; site verified live.
+
+- **Routing.** `app/(en)/` (unprefixed) + `app/[locale]/` (generates `zh-hans`
+  and `zh-hant` from one tree). Two root layouts, because `<html lang>` can only
+  be set where `<html>` is rendered.
+- **`app/global-not-found.tsx`** behind `experimental.globalNotFound` — the
+  root-layout split silently broke `out/404.html` back to Next's default page.
+- **Traditional is generated, never hand-written.** `scripts/gen-zh-hant.mjs`
+  converts every `zh-hans.*` under `src/` via OpenCC. `prebuild` runs `--check`
+  and fails on drift. `npm run i18n:hant` regenerates.
+- **hreflang / sitemap / language switcher** all read `src/lib/translated.ts`.
+- **CJK fonts**: platform fonts, Latin *ahead* of CJK in each stack; separate
+  stacks for Hans/Hant (same character, different regional glyph).
+- **Translated pages (both scripts):** home + all 6 visa guides — pvip, mm2h,
+  sarawak-mm2h, de-rantau, employment-pass, student-pass.
+- **Chrome localised**: header, footer, nav, cookie banner, 404, GuideLayout,
+  KeyFacts, Faq, Byline, SupersededNotice, TierTable, DataTable, `format.ts`.
+- **Lint down to 3 errors in `src/`** — all pre-existing `setState`-in-effect
+  (CookieConsent, CookiePreferences, SiteNav). Not caused by this work.
 
 ## Remaining
-- **The Star (`thestar.com.my`) blocks Worker egress** — 403 from the Worker, 200 with
-  6,081 chars from a residential IP. Two items still unwritten. Needs Cloudflare Browser
-  Rendering (Workers Paid; plan unconfirmed) or a fetch proxy such as `r.jina.ai`. Its
-  opinion columns have no alternate by definition, so the fallback cannot help them.
-- **World relevance filter too soft** — ~4 of 8 queued items are rankings, SEO guides or
-  law-firm advisories the brief was written to reject. Likely the model
-  (`SUMMARY_MODEL` = `llama-3.2-3b`) rather than the wording. Sharpen the prompt first;
-  routing world items to a larger model is the fallback.
-- **Two articles over a year old are live** — Jason's call whether to retire them:
-  - `/news/sarawak-mm2h-records-over-800-approvals-education-drives-growth` (415 days)
-  - `/news/xpats-gateway-adds-myfuturejobs-eppax-to-speed-employment-pass` (384 days)
-- **2022 PVIP item deliberately held back** (id `ebd2ace9-2bb3-4372-8237-e30938ba7874`),
-  approved but unwritten. Its Bernama alternate scores 0.86 so it would now write cleanly.
-- **Contact form inbox unresolved.** Enquiries land in `jason@mypvip.com` (the address the
-  Web3Forms key is registered to). `SPEC.md:123`, `:412` and the form's fallback text all say
-  `admin@malaysiavisaguide.com`. Switching means a new key, not a text edit.
-- **`SITE_ORIGIN` is stale** in `worker/wrangler.jsonc` — `https://malaysiavisaguide.pages.dev`.
-  Harmless (news API is read at build time, server-side) but wrong, and it is passed into the
-  dashboard HTML.
-- `CF_ANALYTICS_TOKEN` still unset, so the dashboard traffic panel is dark. Jason's to do
-  (a credential).
+
+- Translate: `/compare/`, `/tools/`, `/tools/eligibility/`,
+  `/tools/cost-calculator/`, `/about/`, `/editorial-policy/`, `/privacy/`,
+  `/contact/`.
+  - **The two tool pages are client components** (`EligibilityQuiz.tsx`,
+    `CostCalculator.tsx`). Pass strings in as props — do NOT import `getUi`
+    there, or all three locales' dictionaries ship to every browser.
+- CMS locale work: add a locale dimension to `cms_documents` in the `mvg-news`
+  Worker D1, expose translated bodies via the insights API, teach the
+  `/dashboard` editor to author a translation, then translate the 4 existing
+  insights articles. `HomePage.tsx` currently renders the insights section only
+  for `locale === "en"`, so Chinese home pages hide it rather than linking out
+  to English.
+- News (19 items) is out of scope — Jason chose "static pages + the 4 insights".
 
 ## Files & Folders Touched
-- `src/components/ContactForm.tsx` — Web3Forms response handling, focus state, error icon.
-- `.env.local` — created, gitignored, holds the Web3Forms key. Machine-local only: a fresh
-  clone builds the dead-fallback page with no error.
-- `worker/wrangler.jsonc` — zone routes + `workers_dev: true`. Stale `SITE_ORIGIN` lives here.
-- `worker/src/news.ts` — sectors, per-sector budgets, `isRecent`, `findAlternateSources`,
-  headline-overlap matching, `UNREADABLE_HOSTS`.
-- `worker/src/article.ts` — alternate-source fallback in `writeArticle`; `WrittenArticle`
-  gained `sourceUrl`/`sourceName`; `generateAndStore` persists the reassigned citation.
-- `worker/src/extract.ts` — read only. `MIN_USABLE_CHARS = 400` is what flags a JS shell.
-- `src/lib/news.ts` — `NewsCategory`, `CATEGORY_LABEL`, `CATEGORY_GUIDE` gained `world`.
-- `SPEC.md` — read only; §7 "Still needs Jason", §8 verification steps.
+
+- `src/lib/i18n.ts` — locales, `localePath()`, `stripLocale()`, `htmlLang`. Read this first.
+- `src/lib/translated.ts` — **the list of which routes exist in Chinese.** Add a path here in the same commit as the route file.
+- `src/lib/metadata.ts` — `pageMetadata()` builds canonical + hreflang per page.
+- `src/lib/ui.ts` + `src/locales/ui/{en,zh-hans,zh-hant}.ts` — chrome strings. `en.ts` is the type of record.
+- `src/locales/programmes/{zh-hans,zh-hant}.ts` — Chinese for the *prose* fields of `programmes.ts`. **No numbers here, ever.**
+- `src/lib/programme-locale.ts` — merges that overlay onto a `Programme`.
+- `src/components/RootShell.tsx` — everything both root layouts share.
+- `src/app/(en)/layout.tsx`, `src/app/[locale]/layout.tsx` — the two root layouts.
+- `src/components/LanguageSwitcher.tsx` — replaced the old fake EN/中文 pill.
+- `src/content/home/` — `HomePage.tsx` + `types.ts` + per-locale copy. Pattern for whole-page extraction.
+- `src/content/visas/` — `VisaGuide.tsx`, `types.ts`, and `<slug>/{en,zh-hans,zh-hant}.tsx` for all 6 guides. Pattern for guide extraction.
+- `scripts/gen-zh-hant.mjs` — the Simplified→Traditional generator + terminology overrides.
+- `src/app/globals.css` — `--font-cjk-*` vars and the `html[lang^="zh"]` rules.
+- `src/lib/format.ts` — `money`/`moneyPer`/`reviewDate`/`years` now take a locale. **Type-only import of `Locale`** — `scripts/emit-figures.mjs` imports this file under plain Node where `@/` does not resolve.
+- `next.config.ts` — added `experimental.globalNotFound`.
 
 ## Decisions Made
-- **Routes, not a Custom Domain**, for `/dashboard`. A Custom Domain claims every path on the
-  hostname and would take the Pages site down. Pages cannot serve non-root routes at all.
-- **Access scoped to exact paths**, never the bare apex — that would put the public site
-  behind a login. Added to the existing app to keep the AUD stable.
-- **`workers_dev: true` must stay explicit.** Adding `routes` makes wrangler default it to
-  `false`, which silently killed the workers.dev host that `site.newsApi` still fetches at
-  build time. Caught on the deploy warning; commented in the config.
-- **Calendar year, not a rolling window**, at Jason's request. Known cliff: on 1 Jan the queue
-  goes silent. A rolling 365-day window is equivalent for the rest of 2026 with no cliff —
-  offered twice, not taken. Recorded in the commit body.
-- **Citation follows the source actually read.** Non-negotiable: attributing a quote to a
-  publication we never opened is a fabricated citation.
-- **Headline overlap ≥ 0.55** gates alternates, measured against the shorter headline. Strict
-  on purpose — writing about a different story than the one approved is worse than publishing
-  nothing. Verified it correctly *refuses* on one of three test cases.
-- **MSN/Yahoo/Flipboard excluded as alternates but kept at ingest** — JS shells (~3 chars) so
-  unreadable, but fine pointers to a readable outlet.
-- **Age gate is not retroactive** — guards ingest only; already-published stale articles are
-  untouched by design.
-- Observability MCP tool cannot deserialize this Worker's logs (its own schema bug). Query
-  `POST /accounts/{id}/workers/observability/telemetry/query` via the Cloudflare API tool
-  instead — that works.
+
+- **English unprefixed at root.** Moving it to `/en/` would redirect the whole
+  indexed surface to buy nothing but symmetry.
+- **OpenCC `to.tw`, not `to.twp`.** One Traditional tree serves both HK and
+  Taiwan, and `twp` swaps exactly the vocabulary those two disagree on.
+- **Digits never localised.** `RM1,000,000`, not `RM100万`. The reader is
+  comparing against a bank form and an Immigration page that both say
+  `RM1,000,000`. Only the *words* around figures are translated.
+- **Programme prose lives in an overlay, not in `programmes.ts`.** SPEC.md §4.1
+  makes that file the sole source of every figure; three language copies of each
+  record would invite the exact drift the rule prevents.
+- **Latin kept on Chinese pages** for programme names (PVIP, MM2H, DE Rantau),
+  authority names in brackets after the Chinese, and quoted official document
+  titles — a reader verifying a claim lands on an English/Malay page.
+- **`VisaGuide` takes `tierSlugs`, not a built `<TierTable>`** — passing an
+  element skips `localiseProgramme` on the other tiers and renders English
+  columns beside a translated one.
+- **Untranslated pages don't get a Chinese URL at all.** No stub pages; the
+  switcher sends you to that language's home instead, and hreflang omits it.
+
+## Verification Method (use this — it caught two real bugs)
+
+English output must not change. Build a baseline from before the work, then diff
+visible text on every page:
+
+```sh
+git stash -u                      # if you have local changes
+git checkout 1c28238 && npm run build && cp -R out /tmp/mvg-baseline
+git checkout i18n/chinese-site && npm run build
+```
+
+Then compare: strip `<script>`/`<style>`/comments/tags from each `out/**/*.html`
+and diff against `/tmp/mvg-baseline`. **Expected diff, sitewide: only the
+language pill (`中文` → `简体 繁體`), plus the 404's `<title>`.** Anything else
+is a regression.
+
+This caught (a) the custom 404 silently reverting to Next's default, and (b) the
+guide contents rail rendering empty because `Children.toArray` does not descend
+into the fragment that `copy.sections()` returns.
+
+Also check each new Chinese page for English leaks — strip tags and grep for
+`[A-Za-z][a-z]{4,}`. Expect only: `Jason`, programme names, and bracketed
+authority names.
 
 ## Next Step
-Decide The Star fix: check whether the Cloudflare account has Workers Paid / Browser
-Rendering (`/accounts/{id}/browser-rendering/limits` and `/workers/subscription` were not
-routable with the MCP token). If yes, add a Browser Rendering fallback in
-`worker/src/extract.ts` for the 403 and JS-shell cases; if no, trial `r.jina.ai` as a free
-text-extraction proxy. Then re-run `POST /api/admin/write-next` for the two unwritten Star
-items.
+
+Translate `/about/` — the smallest remaining page with real prose (139 lines,
+`src/app/(en)/about/page.tsx`). Create `src/content/about/{en,zh-hans}.tsx`
+following the `src/content/home/` pattern (shared body component + per-locale
+copy), make `src/app/(en)/about/page.tsx` a thin wrapper, add
+`src/app/[locale]/about/page.tsx`, add `"/about/"` to `translatedRoutes` in
+`src/lib/translated.ts`, run `npm run i18n:hant`, then run the baseline diff
+above to confirm English is unchanged.
