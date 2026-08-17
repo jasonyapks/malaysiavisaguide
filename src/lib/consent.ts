@@ -27,11 +27,24 @@ export type ConsentRegion = "strict" | "open";
 
 declare global {
   interface Window {
-    gtag?: (
-      command: "consent",
-      action: "update",
-      params: { analytics_storage: Choice },
-    ) => void;
+    /**
+     * Declared as overloads rather than one signature: `gtag` is variadic in a
+     * way TypeScript cannot express usefully, so each call shape this app makes
+     * is spelled out. Anything else is a type error, which is the point — the
+     * real gtag would accept it silently and drop it.
+     */
+    gtag?: {
+      (
+        command: "consent",
+        action: "update",
+        params: { analytics_storage: Choice },
+      ): void;
+      (
+        command: "event",
+        name: "page_view",
+        params: { page_location: string; page_title: string },
+      ): void;
+    };
     __mvgConsentRegion?: ConsentRegion;
   }
 }
@@ -68,12 +81,51 @@ export function readStoredChoice(): Choice | null {
  * ad_* signals stay denied for everyone, consented or not.
  */
 export function applyChoice(choice: Choice) {
+  // Read this BEFORE the write below changes the answer.
+  //
+  // True means every page_view fired so far in this page's life went out under
+  // denied consent — no stored choice, and a region whose default is denied, so
+  // there has been nothing else it could have been. See the recovery below.
+  const unmeasured =
+    readStoredChoice() === null && regionDefault(readRegion()) === "denied";
+
   try {
     localStorage.setItem(STORAGE_KEY, choice);
   } catch {
     // If we can't persist it, still honour the choice for this page view.
   }
   window.gtag?.("consent", "update", { analytics_storage: choice });
+
+  /**
+   * Re-send the page_view for the page they are standing on.
+   *
+   * Consent Mode's `wait_for_update: 500` holds the opening page_view for half
+   * a second in case a consent decision is about to arrive from a CMP. Nobody
+   * reads a banner and clicks in 500ms, so for a human visitor that window has
+   * always closed: the page_view has already gone out as a `gcs=G100` cookieless
+   * ping, GA4 bins it below its modelling thresholds, and consenting does not
+   * retroactively rescue it. The result was that the EEA, UK and Swiss readers
+   * who explicitly agreed to be measured were the ones GA4 never showed —
+   * the landing page, the one that says how they found the site, was always the
+   * page that went missing.
+   *
+   * Gated on `unmeasured`, which is the narrow provable case: no stored choice
+   * plus a denied-by-default region. It cannot double-count. Somebody in an
+   * opt-out country accepting the banner had a consented page_view already and
+   * gets nothing extra here, and a second grant can never satisfy the condition
+   * because the first one wrote the key.
+   *
+   * `page_location` and `page_title` are passed explicitly. A manual page_view
+   * does not inherit them, and after a client-side navigation the tag's own
+   * config still holds the URL of whichever page was loaded first.
+   */
+  if (choice === "granted" && unmeasured) {
+    window.gtag?.("event", "page_view", {
+      page_location: window.location.href,
+      page_title: document.title,
+    });
+  }
+
   for (const listener of listeners) listener();
 }
 
