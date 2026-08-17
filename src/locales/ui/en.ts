@@ -146,6 +146,7 @@ export type UiStrings = {
   consent: {
     heading: string;
     body: string;
+    bodyOptOut: string;
     privacyLink: string;
     decline: string;
     accept: string;
@@ -320,6 +321,7 @@ export const ui: UiStrings = {
   consent: {
     heading: "Cookies on this site",
     body: "Analytics cookies help us see which guides get read. They are off until you turn them on, and the site works exactly the same either way.",
+    bodyOptOut: "Analytics cookies help us see which guides get read. They are on unless you turn them off, and the site works exactly the same either way.",
     privacyLink: "Privacy policy",
     decline: "Decline",
     accept: "Accept",

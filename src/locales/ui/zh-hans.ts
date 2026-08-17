@@ -168,6 +168,7 @@ export const ui: UiStrings = {
   consent: {
     heading: "本站使用的 Cookie",
     body: "分析类 Cookie 让我们知道哪些指南有人读。你不开启，它就不会启用；开不开启，网站的功能完全一样。",
+    bodyOptOut: "分析类 Cookie 让我们知道哪些指南有人读。它已经开启，你随时可以关掉；开不开启，网站的功能完全一样。",
     privacyLink: "隐私政策",
     decline: "拒绝",
     accept: "接受",

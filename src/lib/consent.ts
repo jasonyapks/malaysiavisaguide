@@ -14,6 +14,17 @@ export const STORAGE_KEY = "mvg-consent";
 
 export type Choice = "granted" | "denied";
 
+/**
+ * Which consent regime the visitor falls under, decided at the edge.
+ *
+ * "strict" — EEA, UK, Switzerland: analytics stays off until they say yes.
+ * "open"  — everywhere else: analytics is on, and the banner is how they say no.
+ *
+ * Set on <head> by functions/_middleware.ts, which is the only layer that knows
+ * the country: the site is a static export, so the HTML itself cannot.
+ */
+export type ConsentRegion = "strict" | "open";
+
 declare global {
   interface Window {
     gtag?: (
@@ -21,7 +32,22 @@ declare global {
       action: "update",
       params: { analytics_storage: Choice },
     ) => void;
+    __mvgConsentRegion?: ConsentRegion;
   }
+}
+
+/**
+ * Anything but the literal "open" means strict. Same defensive read as the
+ * bootstrap script in RootShell.tsx — if the marker is missing because a file
+ * was served without the Function in front of it, the safe answer is opt-in.
+ */
+export function readRegion(): ConsentRegion {
+  return window.__mvgConsentRegion === "open" ? "open" : "strict";
+}
+
+/** What analytics_storage is set to for someone who has not answered yet. */
+export function regionDefault(region: ConsentRegion): Choice {
+  return region === "open" ? "granted" : "denied";
 }
 
 /** The visitor's recorded choice, or null if they have not answered yet. */

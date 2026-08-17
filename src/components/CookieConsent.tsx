@@ -2,20 +2,31 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { applyChoice, readStoredChoice, type Choice } from "@/lib/consent";
+import {
+  applyChoice,
+  readRegion,
+  readStoredChoice,
+  type Choice,
+  type ConsentRegion,
+} from "@/lib/consent";
 
 /**
  * Cookie consent banner — the UI half of Google Consent Mode v2.
  *
  * The other half lives in `src/components/RootShell.tsx`, in the inline script
- * that runs BEFORE gtag.js loads. That script sets every consent signal to "denied" by
- * default and re-grants immediately if this component previously stored a
- * "granted" choice. That ordering is the whole point: it means GA4 sets no
- * cookies until a visitor opts in, rather than setting them and apologising in
- * a banner afterwards.
+ * that runs BEFORE gtag.js loads. That script replays a stored choice if there is
+ * one, and otherwise applies the visitor's regional default. That ordering is the
+ * whole point: in the EEA, UK and Switzerland it means GA4 sets no cookies until
+ * a visitor opts in, rather than setting them and apologising in a banner
+ * afterwards.
  *
  * This component therefore only ever does two things — write the stored choice
  * and push a `consent update` into the dataLayer for the current page view.
+ *
+ * What changes by region is only the copy. The banner shows to everyone who has
+ * not answered, and both buttons do the same thing everywhere; a reader in Kuala
+ * Lumpur is being told analytics is already on and offered the off switch, not
+ * asked a question that was silently answered for them.
  */
 
 /**
@@ -26,7 +37,10 @@ import { applyChoice, readStoredChoice, type Choice } from "@/lib/consent";
  */
 export type ConsentStrings = {
   heading: string;
+  /** Opt-in regions: analytics is off, the banner asks permission. */
   body: string;
+  /** Opt-out regions: analytics is on, the banner offers the switch. */
+  bodyOptOut: string;
   privacyLink: string;
   decline: string;
   accept: string;
@@ -41,19 +55,21 @@ export default function CookieConsent({
 }) {
   // Never render on the server: the banner's visibility depends on
   // localStorage, and prerendering it would flash the banner at every visitor
-  // who has already answered — on every page of a static export.
-  const [visible, setVisible] = useState(false);
+  // who has already answered — on every page of a static export. The region is
+  // read in the same effect for the same reason: it is stamped onto the
+  // document per request, so it is not knowable at build time either.
+  const [region, setRegion] = useState<ConsentRegion | null>(null);
 
   useEffect(() => {
-    if (readStoredChoice() === null) setVisible(true);
+    if (readStoredChoice() === null) setRegion(readRegion());
   }, []);
 
   function choose(choice: Choice) {
     applyChoice(choice);
-    setVisible(false);
+    setRegion(null);
   }
 
-  if (!visible) return null;
+  if (region === null) return null;
 
   return (
     <div
@@ -72,7 +88,7 @@ export default function CookieConsent({
             {strings.heading}
           </h2>
           <p className="text-caption leading-relaxed text-ink-muted">
-            {strings.body}{" "}
+            {region === "open" ? strings.bodyOptOut : strings.body}{" "}
             <Link
               href={privacyHref}
               className="text-forest-700 underline underline-offset-2 hover:text-forest-900 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700"

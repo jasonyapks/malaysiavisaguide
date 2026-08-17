@@ -24,7 +24,8 @@ export default function Page() {
           This site sells nothing, runs no advertising, and has no login. The
           only things it collects are a count of which pages get read and, if you
           send an enquiry, the details you type into the form. Analytics cookies
-          stay off until you switch them on.
+          default to off in the EEA, the UK and Switzerland, and to on everywhere
+          else. Either way, the switch below is yours to change.
         </p>
       </header>
 
@@ -59,13 +60,15 @@ export default function Page() {
           switch for it.
         </p>
         <p>
-          <strong>Google Analytics 4</strong> runs <em>only</em> if you accept
-          it. It sets cookies in your browser and sends Google the pages you
-          viewed, an approximate location derived from your IP address, and your
-          device and browser type. Google does not store your IP address itself,
-          but it is the one thing here that involves a third party building a
-          picture of a visit, which is exactly why it is behind a switch. Google
-          handles that data under its{" "}
+          <strong>Google Analytics 4</strong> is on by default everywhere except
+          the EEA, the UK and Switzerland, where it stays off until you accept
+          it — and wherever you are, the switch below always overrides that
+          default. It sets cookies in your browser and sends Google the pages
+          you viewed, an approximate location derived from your IP address, and
+          your device and browser type. Google does not store your IP address
+          itself, but it is the one thing here that involves a third party
+          building a picture of a visit, which is exactly why there is a switch
+          for it. Google handles that data under its{" "}
           <a
             href="https://policies.google.com/privacy"
             rel="noopener noreferrer"
@@ -76,9 +79,12 @@ export default function Page() {
           .
         </p>
         <p>
-          Until you accept, the Google tag loads in a consent-denied state: it
-          writes no cookies and sends no measurement. Declining is not a
-          preference we act on later — it is enforced before the tag runs.
+          With analytics off, the Google tag still loads, and it still sends one
+          cookieless signal per page carrying the address and title of the page
+          you are on. What it does not do is write a cookie or store anything on
+          your device, so there is no identifier joining one page to the next or
+          one visit to the next. Signals sent in that state do not appear in this
+          site&apos;s reports.
         </p>
       </section>
 
@@ -122,7 +128,10 @@ export default function Page() {
                   Google Analytics. Distinguishes one browser from another so
                   repeat visits are not counted as new people.
                 </td>
-                <td className="py-3 align-top">Only if you accept</td>
+                <td className="py-3 align-top">
+                  Off by default in the EEA, UK &amp; Switzerland; on by
+                  default elsewhere
+                </td>
               </tr>
             </tbody>
           </table>

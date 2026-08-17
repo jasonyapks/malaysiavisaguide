@@ -271,10 +271,31 @@ export function RootShell({
 
         {/* Google Analytics 4 (gtag.js) behind Consent Mode v2. Unlike the
             edge-injected Cloudflare beacon, this sets first-party cookies and shares
-            data with Google, so it stays denied until the visitor opts in via
-            <CookieConsent />. Pageviews on client-side navigation are handled by GA's
-            own Enhanced measurement ("page changes based on browser history events"),
-            not by this snippet.
+            data with Google, so a stored choice from <CookieConsent /> always wins
+            and a visitor who has not answered gets their region's default. Pageviews
+            on client-side navigation are handled by GA's own Enhanced measurement
+            ("page changes based on browser history events"), not by this snippet.
+
+            ## Why the default is not simply "denied"
+
+            It was, everywhere, until 2026-08-17 — and GA4 reported almost nothing
+            while Cloudflare Web Analytics showed real traffic. Denied does not mean
+            "no hit": gtag still POSTs to /g/collect with gcs=G100, and GA4 bins
+            those cookieless pings unless behavioural modelling is active, which
+            needs roughly 1,000 denied events AND 1,000 consented users a day for a
+            week. This site is nowhere near that, so every unanswered banner was a
+            visit measured by nobody.
+
+            `window.__mvgConsentRegion` is stamped into <head> per request by
+            functions/_middleware.ts — "strict" for the EEA, UK and Switzerland,
+            "open" everywhere else, "strict" whenever the country is unknown. Opt-in
+            is a GDPR/PECR requirement, not a global one; the readers it actually
+            binds still get it. See the header comment on OPT_IN_COUNTRIES.
+
+            The value is read defensively: anything other than the literal 'open' —
+            undefined because a static file was served without the Function in front
+            of it, a typo, a preview host — falls through to denied. The failure mode
+            of this line is under-measuring, never under-consenting.
 
             ORDER MATTERS, and this block loads gtag.js itself rather than sitting
             next to a <script src> tag for it. React 19 hoists src-bearing scripts
@@ -287,8 +308,11 @@ export function RootShell({
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
-var c = 'denied';
-try { if (localStorage.getItem('mvg-consent') === 'granted') c = 'granted'; } catch (e) {}
+var stored = null;
+try { stored = localStorage.getItem('mvg-consent'); } catch (e) {}
+var c = stored === 'granted' || stored === 'denied'
+  ? stored
+  : (window.__mvgConsentRegion === 'open' ? 'granted' : 'denied');
 gtag('consent', 'default', {
   ad_storage: 'denied',
   ad_user_data: 'denied',
