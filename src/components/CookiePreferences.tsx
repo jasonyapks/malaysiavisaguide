@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { applyChoice, readStoredChoice, type Choice } from "@/lib/consent";
+import { useState, useSyncExternalStore } from "react";
+import {
+  applyChoice,
+  effectiveChoice,
+  readStoredChoice,
+  subscribeToChoice,
+  type Choice,
+} from "@/lib/consent";
 
 /**
  * Change-your-mind control for /privacy/.
@@ -16,17 +22,24 @@ import { applyChoice, readStoredChoice, type Choice } from "@/lib/consent";
 export function CookiePreferences() {
   // `undefined` = not read yet (server render and first paint). Distinguishing
   // it from `null` (read, no choice recorded) keeps the status line honest
-  // instead of flashing "not chosen" at everyone.
-  const [choice, setChoice] = useState<Choice | null | undefined>(undefined);
+  // instead of flashing "not chosen" at everyone. Read through the store rather
+  // than mirrored into state — see the comment on subscribeToChoice.
+  const choice = useSyncExternalStore(
+    subscribeToChoice,
+    readStoredChoice,
+    () => undefined,
+  );
   const [saved, setSaved] = useState(false);
 
-  useEffect(() => {
-    setChoice(readStoredChoice());
-  }, []);
+  // What analytics is actually doing, which is NOT the same as what the visitor
+  // chose: someone outside the EEA, UK and Switzerland who has never answered
+  // the banner has analytics ON. Every piece of state below reads from this
+  // rather than from `choice`, so the dot, the buttons and the sentence cannot
+  // disagree with the tag.
+  const effective = choice === undefined ? undefined : effectiveChoice();
 
   function set(next: Choice) {
     applyChoice(next);
-    setChoice(next);
     setSaved(true);
   }
 
@@ -37,7 +50,9 @@ export function CookiePreferences() {
         ? "Analytics cookies are ON for this browser."
         : choice === "denied"
           ? "Analytics cookies are OFF for this browser."
-          : "You haven't chosen yet, so analytics cookies are off.";
+          : effective === "granted"
+            ? "You haven't chosen yet. Analytics cookies are on by default where you are — turning them off is one click."
+            : "You haven't chosen yet, so analytics cookies are off.";
 
   return (
     <div className="rounded-xl border border-sand-200 bg-sand-100 p-6">
@@ -50,8 +65,8 @@ export function CookiePreferences() {
         className="mt-2 flex items-start gap-2 text-body-sm leading-relaxed text-ink-muted"
       >
         {/* Symbol as well as wording — state must not rest on colour alone. */}
-        {choice !== undefined && (
-          <span aria-hidden>{choice === "granted" ? "●" : "○"}</span>
+        {effective !== undefined && (
+          <span aria-hidden>{effective === "granted" ? "●" : "○"}</span>
         )}
         <span>
           {status}
@@ -63,7 +78,7 @@ export function CookiePreferences() {
         <button
           type="button"
           onClick={() => set("denied")}
-          disabled={choice === "denied"}
+          disabled={effective === "denied"}
           className="min-h-11 rounded-full border-2 border-forest-700 px-7 py-2.5 text-body-sm font-bold text-forest-700 transition-[background-color,transform] duration-150 hover:bg-forest-50 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:border-sand-400 disabled:text-ink-muted disabled:opacity-100 disabled:hover:bg-transparent"
         >
           Turn off
@@ -71,17 +86,20 @@ export function CookiePreferences() {
         <button
           type="button"
           onClick={() => set("granted")}
-          disabled={choice === "granted"}
+          disabled={effective === "granted"}
           className="min-h-11 rounded-full border-2 border-forest-700 bg-forest-700 px-7 py-2.5 text-body-sm font-bold text-sand-50 transition-[background-color,transform] duration-150 hover:border-forest-900 hover:bg-forest-900 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:border-sand-400 disabled:bg-sand-400 disabled:opacity-100"
         >
           Turn on
         </button>
       </div>
 
-      {/* A disabled button should say why it's disabled, not just grey out. */}
-      {choice !== undefined && choice !== null && (
+      {/* A disabled button should say why it's disabled, not just grey out. Keyed
+          to `effective`, so the explanation appears for the visitor whose
+          analytics are on by regional default and who has chosen nothing —
+          previously that person saw a greyed button with no reason given. */}
+      {effective !== undefined && (
         <p className="mt-3 text-caption text-ink-muted">
-          {choice === "granted"
+          {effective === "granted"
             ? "“Turn on” is inactive because analytics are already on."
             : "“Turn off” is inactive because analytics are already off."}
         </p>

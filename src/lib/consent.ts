@@ -74,4 +74,52 @@ export function applyChoice(choice: Choice) {
     // If we can't persist it, still honour the choice for this page view.
   }
   window.gtag?.("consent", "update", { analytics_storage: choice });
+  for (const listener of listeners) listener();
+}
+
+const listeners = new Set<() => void>();
+
+/**
+ * Subscribe to changes in the stored choice.
+ *
+ * Both consent controls render straight from localStorage via
+ * `useSyncExternalStore` rather than mirroring it into component state. That is
+ * not ceremony: localStorage does not exist during the static prerender, so the
+ * value genuinely cannot be known until after hydration, and reading it in an
+ * effect and calling setState is the cascading-render pattern
+ * `react-hooks/set-state-in-effect` exists to stop. useSyncExternalStore is
+ * built for this shape — a server snapshot for the prerender, a live one after.
+ *
+ * Only `applyChoice` notifies, because it is the only thing in the app that
+ * writes the key. A second tab writing it does not fire `storage` listeners
+ * here by design: retroactively hiding a banner someone is mid-read of, in a
+ * tab they are not looking at, is worse than leaving it alone.
+ */
+export function subscribeToChoice(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+/**
+ * Which region's banner copy to show, or null for no banner at all.
+ *
+ * The banner is for people who have not answered. Once they have, the control
+ * on /privacy/ is the way back.
+ */
+export function bannerRegion(): ConsentRegion | null {
+  return readStoredChoice() === null ? readRegion() : null;
+}
+
+/**
+ * What analytics is actually doing for this visitor right now — their stored
+ * choice if they made one, otherwise their region's default.
+ *
+ * The distinction from `readStoredChoice` matters to the copy on /privacy/:
+ * "you have not chosen" and "analytics is off" stopped being the same sentence
+ * the moment the default became regional.
+ */
+export function effectiveChoice(): Choice {
+  return readStoredChoice() ?? regionDefault(readRegion());
 }

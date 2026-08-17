@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import {
   applyChoice,
-  readRegion,
-  readStoredChoice,
+  bannerRegion,
+  subscribeToChoice,
   type Choice,
-  type ConsentRegion,
 } from "@/lib/consent";
 
 /**
@@ -53,20 +52,18 @@ export default function CookieConsent({
   strings: ConsentStrings;
   privacyHref: string;
 }) {
-  // Never render on the server: the banner's visibility depends on
-  // localStorage, and prerendering it would flash the banner at every visitor
-  // who has already answered — on every page of a static export. The region is
-  // read in the same effect for the same reason: it is stamped onto the
-  // document per request, so it is not knowable at build time either.
-  const [region, setRegion] = useState<ConsentRegion | null>(null);
-
-  useEffect(() => {
-    if (readStoredChoice() === null) setRegion(readRegion());
-  }, []);
+  // The server snapshot is always null, so the banner is never prerendered:
+  // its visibility depends on localStorage, and baking it into the HTML would
+  // flash it at every visitor who has already answered, on every page of a
+  // static export. The region is unknowable at build time for the same kind of
+  // reason — it is stamped onto the document per request.
+  //
+  // `choose` needs no setState: writing the choice notifies the store, the
+  // snapshot goes null, and the banner unmounts.
+  const region = useSyncExternalStore(subscribeToChoice, bannerRegion, () => null);
 
   function choose(choice: Choice) {
     applyChoice(choice);
-    setRegion(null);
   }
 
   if (region === null) return null;
