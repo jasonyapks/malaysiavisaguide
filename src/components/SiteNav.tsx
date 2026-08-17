@@ -51,10 +51,20 @@ export function SiteNav({
   const [panelMaxHeight, setPanelMaxHeight] = useState<number | undefined>();
 
   // Any navigation closes every menu.
-  useEffect(() => {
+  //
+  // Adjusted during render against the previous pathname rather than in an
+  // effect. React documents this as the way to reset state when a prop changes:
+  // the setters run before the component's children render, so the closed menu
+  // is what gets painted. The effect version rendered the new page with the menu
+  // still open, then immediately re-rendered it closed — a visible flash of the
+  // old menu over the new page on a slow phone, and the cascading-render pattern
+  // `react-hooks/set-state-in-effect` exists to catch.
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (lastPathname !== pathname) {
+    setLastPathname(pathname);
     setOpenGroup(null);
     setMobileOpen(false);
-  }, [pathname]);
+  }
 
   // Outside click and Escape close the menus.
   useEffect(() => {
