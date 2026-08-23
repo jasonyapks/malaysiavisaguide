@@ -1,8 +1,8 @@
 ---
-title: "Employment Pass Tier 1/2/3 vs. Residence Pass-Talent (RP-T)"
+title: "Malaysia Employment Pass Category I/II/III vs Residence Pass-Talent (RP-T)"
 category: comparisons
 slug: employment-pass-vs-residence-pass-talent
-draft: true
+draft: false
 description: "Since 1 June 2026 your Employment Pass is time-boxed and comes with a plan to hand your job to a local. The RP-T is the way out — and its salary bar is lower than the one you already cleared."
 published: 2026-08-23
 reviewed: 2026-08-23
