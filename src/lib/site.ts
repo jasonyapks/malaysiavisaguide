@@ -24,17 +24,25 @@ export const site = {
   // Google Analytics 4 measurement ID. Public by design (ships in the page HTML).
   // Unlike the Cloudflare beacon this one sets first-party cookies.
   //
-  // Corrected 2026-07-31. The previous value, G-VRPMB0841V, belonged to no GA4
-  // property in any account Jason owns — the tag fired on every page from
-  // 2026-07-26 and the data went nowhere, so five days of "we have Google
-  // Analytics now" collected nothing. Cloudflare Web Analytics was the only
-  // working source that whole time, which is the reason it is still here.
+  // Set back to G-VRPMB0841V on 2026-08-18 at Jason's instruction, replacing
+  // G-PXKCPDWJET (property 547981147, "malaysiavisaguide.com" under
+  // jason@mypvip.com).
   //
-  // This one is property 547981147 ("malaysiavisaguide.com", account "Malaysia
-  // Visa Guide" under jason@mypvip.com) — the same property the Worker's traffic
-  // panel queries via GA_PROPERTY_ID. If you change one, change both, or the
-  // dashboard will report on a property the site is not tagged with.
-  gaMeasurementId: "G-PXKCPDWJET",
+  // READ THIS BEFORE TRUSTING ANY GA4 NUMBER FROM THIS SITE. This same ID was
+  // removed on 2026-07-31 because it resolved to no GA4 property in any account
+  // Jason owned at the time: it fired on every page from 2026-07-26, and five
+  // days of data went nowhere while Cloudflare Web Analytics was the only source
+  // actually recording anything. A tag ID in the HTML is not evidence a property
+  // is receiving hits. If Realtime in GA4 does not show this site, the ID is
+  // wrong again, not the site.
+  //
+  // Two things now point at the OLD property and were deliberately not changed:
+  //   - GA_PROPERTY_ID on the mvg-news Worker, which the dashboard traffic panel
+  //     queries. It still reads 547981147, so the dashboard now reports on a
+  //     property this site is no longer tagged with.
+  //   - Any GA4 key-event/conversion config living on 547981147.
+  // Point both at whatever property G-VRPMB0841V belongs to, or move the tag back.
+  gaMeasurementId: "G-VRPMB0841V",
 } as const;
 
 /**

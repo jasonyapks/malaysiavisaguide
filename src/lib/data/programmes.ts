@@ -328,18 +328,23 @@ const MM2H_COMMON = {
   // both of the fields below, so they rest on named, dated practice rather than
   // on `source`. `lastVerified` stays at the date the guide was checked — it
   // dates the document, not our departures from it. See §4.1 of SPEC.md.
+  //
+  // `changedOn` stays at 3 August — the date the terms themselves changed.
+  // `asAt` moved to 23 August, when Jason restated the withdrawal item and
+  // struck the permitted-use claim it used to carry; the age-34 item below is
+  // unchanged from 3 August and was not re-confirmed on that date.
   superseded: {
     changedOn: "3 August 2026",
-    attribution: { by: "MYPVIP practice", asAt: "2026-08-03" },
+    attribution: { by: "MYPVIP practice", asAt: "2026-08-23" },
     whatChanged: [
-      "The 50% fixed-deposit withdrawal opens once the property purchase completes, not on approval of the application. It therefore cannot be used to fund that purchase, and buying a residence is no longer among its permitted uses — education, medical and tourism in Malaysia remain.",
+      "The 50% fixed-deposit withdrawal opens once the property purchase completes, not on approval of the application. On Silver, Gold and Platinum the purchase follows approval, so the sequence is approval, then purchase, then withdrawal. The purchase itself remains a permitted use, alongside education, medical and tourism in Malaysia. SEZ and SFZ run the other way round: the in-zone purchase is a condition of approval rather than a step after it.",
       "Dependent children qualify up to age 34, meaning before the 35th birthday. The guide's \"up to age 35\" reads a year wider than the counter applies.",
     ],
     figuresPending: false,
   },
 };
 
-// Corrected twice, and the second correction reverses part of the first.
+// Corrected three times. This string covers Silver, Gold and Platinum only.
 //
 // The per-category pages (pp.28, 33, 37) read as though the withdrawal right
 // opens on approval; the summary page (p.18) adds a "second year onwards"
@@ -347,15 +352,23 @@ const MM2H_COMMON = {
 // it with "from approval". On 2026-08-03 he corrected it again: in practice the
 // window opens once the property purchase completes.
 //
-// That reversal forces "purchasing a residence" off the permitted-use list. The
-// two cannot both hold — if completion is what unlocks the money, the money
-// cannot have funded the completion. The old string asserted both, which is why
-// the error survived a review: each half reads fine on its own.
+// Between 2026-08-03 and 2026-08-23 this string also asserted that purchasing a
+// residence had dropped off the permitted-use list, reasoning that money
+// released by completion cannot have funded that completion. Jason struck that
+// on 2026-08-23: the purchase IS a permitted use — the withdrawal reimburses a
+// completed purchase rather than funding one. Timing and permitted use are two
+// separate questions, and the deleted sentence answered the second by deducing
+// it from the first.
+//
+// The order on these three tiers is approval → purchase → withdrawal. SEZ/SFZ
+// inverts the first two — the in-zone purchase is a condition of approval, not
+// something that follows it — so this string does not describe SEZ, and the
+// SEZ withdrawal trigger is deliberately unstated until Jason confirms it.
 //
 // MOTAC's guide still reads the old way, so this rests on attribution rather
 // than on `source` — see the `superseded` block on MM2H_COMMON.
 export const MM2H_FD_WITHDRAWAL =
-  "Up to 50% of the principal may be withdrawn once the property purchase completes, for education, medical or tourism activities in Malaysia.";
+  "Up to 50% of the principal may be withdrawn once the property purchase completes, which on Silver, Gold and Platinum follows approval of the application. It may go towards the property purchase itself, or towards education, medical or tourism activities in Malaysia.";
 
 /**
  * The state-law floor that sits on top of every MM2H property minimum.

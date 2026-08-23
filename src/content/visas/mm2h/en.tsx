@@ -69,7 +69,7 @@ export const copy: GuideCopy = {
         },
         {
           q: "Can I withdraw the fixed deposit?",
-          a: `${MM2H_FD_WITHDRAWAL} Note what that timing rules out: because the window opens on completion of the purchase, the deposit cannot be the source of your down payment. Budget the deposit and the property as two separate sums.`,
+          a: `${MM2H_FD_WITHDRAWAL} Note what that timing rules out: the window opens on completion, so the deposit cannot be the source of your down payment. It can reimburse a purchase you have already completed; it cannot finance one. Budget the deposit and the property as two sums you must have available at the same time. On SEZ and SFZ the in-zone purchase comes before approval rather than after it, so treat the timing above as describing Silver, Gold and Platinum only.`,
         },
         {
           q: "Do I need a licensed agent to apply for MM2H?",
@@ -248,6 +248,16 @@ export const copy: GuideCopy = {
           require property purchase at the price set for the relevant SEZ
           development. The agency fee schedule prices them with Silver, at{" "}
           {money({ amount: 40_000, currency: "MYR" })}.
+        </p>
+        <p>
+          One structural difference matters more than the price. On Silver, Gold
+          and Platinum the application is approved first and the property is
+          bought afterwards. On SEZ and SFZ the order is reversed: you must
+          complete a purchase inside the designated zone, and approval follows
+          that purchase rather than preceding it. So the commitment is made
+          before you hold an approval, which is a materially different risk from
+          the three main tiers — and the fixed-deposit withdrawal timing
+          described in the FAQ above does not carry across to these two.
         </p>
         <p>
           These are materially cheaper than Silver and are the least-discussed
