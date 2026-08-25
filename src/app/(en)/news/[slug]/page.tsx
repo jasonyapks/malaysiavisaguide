@@ -5,7 +5,11 @@ import { Byline } from "@/components/Byline";
 import { Figure } from "@/components/Figure";
 import { GuideHead, Lozenge } from "@/components/GuideHead";
 import { CategoryChip } from "@/components/NewsCard";
-import { articleImage, articleOgImage, newsImageKey } from "@/lib/articleImages";
+import {
+  articleImage,
+  articleOgImage,
+  newsImageKey,
+} from "@/lib/articleImages";
 import {
   CATEGORY_GUIDE,
   CATEGORY_LABEL,
@@ -116,7 +120,10 @@ export default async function Page({
           News
         </Link>
         <span aria-hidden> › </span>
-        <Link href={categoryPath(article.category)} className="text-forest-700 underline">
+        <Link
+          href={categoryPath(article.category)}
+          className="text-forest-700 underline"
+        >
           {CATEGORY_LABEL[article.category]}
         </Link>
       </nav>
@@ -129,14 +136,16 @@ export default async function Page({
               {published}
             </time>
           )}
-          <span className="text-ink-muted">{article.readingMinutes} min read</span>
+          <span className="text-ink-muted">
+            {article.readingMinutes} min read
+          </span>
         </div>
 
-        <h1 className="text-h1 font-extrabold leading-tight">
-          {article.headline}
-        </h1>
+        <h1 className="text-h1 font-bold leading-tight">{article.headline}</h1>
 
-        <p className="text-lead leading-relaxed text-ink-muted">{article.dek}</p>
+        <p className="text-lead leading-relaxed text-ink-muted">
+          {article.dek}
+        </p>
       </header>
 
       {/* The hero, when one has been generated. It sits under the standfirst
@@ -152,10 +161,7 @@ export default async function Page({
           aria-labelledby="key-points"
           className="card-flat border-l-4 border-l-forest-600 px-7 py-6"
         >
-          <h2
-            id="key-points"
-            className="font-serif text-eyebrow font-bold uppercase tracking-[0.22em] text-forest-700"
-          >
+          <h2 id="key-points" className="eyebrow">
             The short version
           </h2>
           <ul className="mt-4 space-y-3 text-body-sm text-forest-900">
@@ -163,7 +169,7 @@ export default async function Page({
               <li key={p} className="flex gap-3">
                 <span
                   aria-hidden
-                  className="mt-2.5 size-1.5 shrink-0 rotate-45 rounded-[1px] bg-forest-600/70"
+                  className="mt-2.5 size-1.5 shrink-0 rotate-45 rounded-[1px] bg-gold-500"
                 />
                 <span>{p}</span>
               </li>
@@ -175,9 +181,12 @@ export default async function Page({
       <div className="space-y-9">
         {article.body.sections.map((s) => (
           <section key={s.heading} className="space-y-4">
-            <h2 className="font-serif text-h3 font-extrabold">{s.heading}</h2>
+            <h2 className="font-serif text-h3 font-bold">{s.heading}</h2>
             {s.paragraphs.map((p) => (
-              <p key={p} className="text-body-sm leading-relaxed text-ink-muted">
+              <p
+                key={p}
+                className="text-body-sm leading-relaxed text-ink-muted"
+              >
                 {p}
               </p>
             ))}
@@ -226,7 +235,7 @@ export default async function Page({
               <li key={p} className="flex gap-3">
                 <span
                   aria-hidden
-                  className="mt-2.5 size-1.5 shrink-0 rotate-45 rounded-[1px] bg-[#82c8e5]"
+                  className="mt-2.5 size-1.5 shrink-0 rotate-45 rounded-[1px] bg-[#d4a017]"
                 />
                 <span className="text-sand-50/90">{p}</span>
               </li>
@@ -239,9 +248,7 @@ export default async function Page({
           is only credible if the news pages are equally explicit about what is
           ours and what is the publisher's. */}
       <section className="rounded-xl border border-sand-200 bg-sand-50 px-6 py-5 text-body-sm leading-relaxed text-ink-muted">
-        <h2 className="font-serif text-eyebrow font-bold uppercase tracking-[0.22em] text-forest-700">
-          Source
-        </h2>
+        <h2 className="eyebrow">Source</h2>
         <p className="mt-3">
           This article was written by Malaysia Visa Guide, based on reporting by{" "}
           <a
@@ -262,15 +269,20 @@ export default async function Page({
       </section>
 
       <Byline
-        lastVerified={(article.updatedAt ?? article.publishedAt)?.slice(0, 10) ?? null}
+        lastVerified={
+          (article.updatedAt ?? article.publishedAt)?.slice(0, 10) ?? null
+        }
         locale="en"
       />
 
       {/* One CTA, pointing at the guide that actually answers the question the
           news raised. Also the internal link that keeps the blog from being a
           crawl dead end. */}
-      <section className="relative overflow-hidden rounded-2xl border border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#dce8f6] px-7 py-7">
-        <div aria-hidden className="ring-decor -right-24 -bottom-32 size-[22rem] opacity-70" />
+      <section className="relative overflow-hidden rounded-2xl border border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#e9edf4] px-7 py-7">
+        <div
+          aria-hidden
+          className="compass-arc [--arc-spin:80deg] -right-24 -bottom-32 size-[22rem] opacity-70"
+        />
         <div className="relative space-y-4">
           <div className="diamond-rule max-w-xs">
             <Lozenge />
@@ -281,11 +293,17 @@ export default async function Page({
           <p className="text-ink-muted">
             For what this means in your own case, the verified figures live in{" "}
             {guide ? (
-              <Link href={guide.path} className="font-semibold text-forest-700 underline">
+              <Link
+                href={guide.path}
+                className="font-semibold text-forest-700 underline"
+              >
                 {guide.title}
               </Link>
             ) : (
-              <Link href="/compare/" className="font-semibold text-forest-700 underline">
+              <Link
+                href="/compare/"
+                className="font-semibold text-forest-700 underline"
+              >
                 the programme comparison
               </Link>
             )}
@@ -358,7 +376,12 @@ function Schemas({ article }: { article: FullNewsArticle }) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${site.url}/` },
-      { "@type": "ListItem", position: 2, name: "News", item: `${site.url}/news/` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "News",
+        item: `${site.url}/news/`,
+      },
       { "@type": "ListItem", position: 3, name: article.headline, item: url },
     ],
   };

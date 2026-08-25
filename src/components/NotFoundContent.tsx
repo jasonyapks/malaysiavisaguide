@@ -28,7 +28,7 @@ export function NotFoundContent({ locale }: { locale: Locale }) {
     <div className="space-y-10 py-6">
       <header className="space-y-4">
         <p className="eyebrow">{ui.notFound.eyebrow}</p>
-        <h1 className="text-h1 font-extrabold">
+        <h1 className="text-h1 font-bold">
           {ui.notFound.heading}{" "}
           <span className="font-display accent-text font-medium italic">
             {ui.notFound.headingAccent}

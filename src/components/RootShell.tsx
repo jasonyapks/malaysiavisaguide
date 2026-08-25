@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
-import Image from "next/image";
+import { DM_Serif_Display, Inter, Poppins } from "next/font/google";
 import Link from "next/link";
 import "@/app/globals.css";
 import { htmlLang, localeOrigin, ogLocale, type Locale } from "@/lib/i18n";
@@ -10,6 +9,7 @@ import { getUi } from "@/lib/ui";
 import { SiteNav } from "@/components/SiteNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import CookieConsent from "@/components/CookieConsent";
+import { BrandMark } from "@/components/BrandMark";
 
 /**
  * The document shell — `<html>` down to `</body>`, shared by every root layout.
@@ -26,28 +26,47 @@ import CookieConsent from "@/components/CookieConsent";
  * lives here.
  */
 
-// Heavy geometric-humanist sans for headings and UI — the Latin equivalent of
-// the reference's Pretendard 800.
-const heading = Plus_Jakarta_Sans({
+/**
+ * The three brand faces — branding template §4.
+ *
+ * Headlines: Poppins SemiBold/Bold. A static face, so the weights have to be
+ * enumerated; 500 is in the list because the header wordmark and several card
+ * titles sit below heading size and would otherwise synthesise it.
+ */
+const heading = Poppins({
   variable: "--font-heading-sans",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
-// Body text. Same family at text weights keeps the page to one voice.
-const sans = Plus_Jakarta_Sans({
+/**
+ * Body: Inter Regular/Medium.
+ *
+ * No `weight` — Inter is variable in Next's font data, so this ships one file
+ * covering the whole 100–900 range rather than the four static cuts the v4
+ * body face needed. Every weight the site uses is therefore available, and the
+ * download is smaller than the two it replaces.
+ */
+const sans = Inter({
   variable: "--font-body-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-// High-contrast serif, used ONLY for the single cobalt accent word on a card.
-const accent = Playfair_Display({
+/**
+ * The editorial face: DM Serif Display, used ONLY for the single gold accent
+ * word on a card — "sparingly", per §4.
+ *
+ * It has exactly one weight, and `italic` is loaded because the accent word is
+ * set in italic on the English pages. Both are real cuts here; see the
+ * `.font-display` rule in globals.css for why no call site may ask for 500.
+ */
+const accent = DM_Serif_Display({
   variable: "--font-accent-serif",
   subsets: ["latin"],
-  weight: ["500", "700"],
+  weight: "400",
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -146,7 +165,7 @@ export function RootShell({
             <Link href={home} className="flex shrink-0 items-center gap-3">
               <Mark />
               <span className="leading-tight">
-                <span className="block whitespace-nowrap font-serif text-body-sm font-extrabold tracking-tight text-forest-900">
+                <span className="block whitespace-nowrap font-serif text-body-sm font-bold tracking-tight text-forest-900">
                   {ui.siteName}
                 </span>
                 {/* Stacked, not run on one line: as a single 45-character row
@@ -188,17 +207,17 @@ export function RootShell({
           {children}
         </main>
 
-        {/* Ice-blue footer with the entity card and a cobalt pill, mirroring the
+        {/* Mist footer with the entity card and a gold pill, mirroring the
             reference's closing block. */}
-        <footer className="relative overflow-hidden border-t border-sand-200 bg-linear-to-b from-sand-100 to-[#dbe6f4]">
+        <footer className="relative overflow-hidden border-t border-sand-200 bg-linear-to-b from-sand-100 to-[#dfe3e9]">
           <div
             aria-hidden
-            className="ring-decor -right-24 -top-40 size-[26rem] opacity-70"
+            className="compass-arc [--arc-spin:250deg] -right-24 -top-40 size-[26rem] opacity-70"
           />
           <div className="relative mx-auto max-w-6xl space-y-8 px-6 py-14 text-body-sm">
             <div className="space-y-3">
               <p className="eyebrow">{ui.siteName}</p>
-              <h2 className="max-w-2xl text-h2 font-extrabold">
+              <h2 className="max-w-2xl text-h2 font-bold">
                 {ui.footer.heading}{" "}
                 <span className="font-display accent-text font-medium italic">
                   {ui.footer.headingAccent}
@@ -360,36 +379,21 @@ function navGroupsFor(locale: Locale) {
 }
 
 /**
- * Our own mark — the towers from the Malaysia Visa Guide logo, never the
- * government crest.
+ * Our own mark — the Guided Passport, never the government crest.
  *
- * Only the icon is used here: the supplied logo is a vertical lockup whose
- * wordmark would duplicate the site name rendered beside it, and stacked type
- * does not fit a horizontal header bar. The full lockup lives at
- * `/logo-full.png` for social and print use.
+ * Only the icon is used here, and the wordmark beside it is real text: the
+ * template's primary lockup is `[ICON] MALAYSIA / VISA GUIDE` (§2), which is
+ * exactly this arrangement, and setting the words as text rather than baking
+ * them into the image is what lets the Chinese trees render their own site
+ * name in the same slot.
  *
- * `priority` because it sits in the header of every page — it is always in the
- * initial viewport, so lazy-loading it only delays the LCP region.
+ * Square, not the tall 27×56 the towers occupied — a passport is a portrait
+ * rectangle inside a square frame, so at `size-12` it reads at the same
+ * optical weight as the old mark while sitting shorter. The stacked name and
+ * two-line strapline beside it still set the header's height, unchanged.
+ *
+ * See BrandMark.tsx for why this is inline SVG rather than a preloaded image.
  */
 function Mark() {
-  return (
-    <Image
-      // WebP at 80×168, not the 126×264 PNG that used to be here. This mark is
-      // preloaded on every page — `priority` below — so its weight sits on the
-      // critical path sitewide, and 24KB of lossless PNG bought nothing: the
-      // slot renders at roughly 27×56 CSS px, so even a 3× display is served
-      // more pixels than it can use. 6.6KB now, visually identical at this size.
-      src="/logo-mark.webp"
-      alt=""
-      aria-hidden
-      width={80}
-      height={168}
-      priority
-      // h-14 matches the height of the stacked name + two-line strapline beside
-      // it, so the towers start and finish with the text block instead of
-      // floating short against it. Header height is unchanged — the text block
-      // was already the taller of the two.
-      className="h-14 w-auto shrink-0"
-    />
-  );
+  return <BrandMark className="h-12 w-auto shrink-0" />;
 }

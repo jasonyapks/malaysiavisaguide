@@ -288,7 +288,15 @@ export function InsightStrip({
             }
           >
             {CATEGORY_LABEL[category]}
-            <span className="text-ink-muted"> ({articles.length})</span>
+            {/* The count has to follow the pill it sits in. `text-ink-muted` was
+                unconditional, which put dark grey on the current pill's navy at
+                2.6:1 — invisible, and a failure since this component shipped.
+                Found by the SPEC §8 sweep, not by looking. CategoryStrip.tsx
+                already does it this way; this is the copy that drifted. */}
+            <span className={isCurrent ? "text-sand-50/70" : "text-ink-muted"}>
+              {" "}
+              ({articles.length})
+            </span>
           </Link>
         );
       })}

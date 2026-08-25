@@ -28,10 +28,21 @@
   Cache-Control: public, max-age=2592000
 
 # The brand assets live at the root rather than under /images/, so the rule
-# above misses them — and logo-mark.webp is the one file preloaded on every
-# page. Same 30 days for the same reason: stable paths, replaced in place.
-# figures.json is deliberately absent; it is regenerated on every build from
-# the programme data and a stale copy would state a wrong fee.
+# above misses them. Same 30 days for the same reason: stable paths, replaced
+# in place. figures.json is deliberately absent; it is regenerated on every
+# build from the programme data and a stale copy would state a wrong fee.
+#
+# NOTHING here is on the critical path any more. The header mark used to be a
+# preloaded logo-mark.webp; v5 renders it as inline SVG from BrandMark.tsx, so
+# the site itself now requests none of these. logo-mark.svg is for use outside
+# React — email, print, the CMS.
+/logo-mark.svg
+  Cache-Control: public, max-age=2592000
+
+# The three v4 files: the Petronas Towers mark, retired by the v5 rebrand.
+# Kept and still cached because they are Jason's assets and may be in use off
+# the site; nothing in this repo references them. Delete on his say-so, not
+# before.
 /logo-mark.webp
   Cache-Control: public, max-age=2592000
 

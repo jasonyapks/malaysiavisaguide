@@ -42,7 +42,7 @@ export function Faq({ items, locale }: { items: FaqItem[]; locale: Locale }) {
             INSIDE the <dt>, and the <dd> is indented to match by padding. */}
         {items.map((i, n) => (
           <div key={i.q} className="card-flat p-6">
-            <dt className="flex items-center gap-5 font-serif font-extrabold text-forest-900">
+            <dt className="flex items-center gap-5 font-serif font-bold text-forest-900">
               <span
                 aria-hidden
                 className="accent-fill grid size-9 shrink-0 place-items-center rounded-full text-eyebrow"

@@ -27,12 +27,12 @@ export function GuideHead({
   );
 }
 
-/** The small sky-blue diamond that sits at the centre of a hairline rule. */
+/** The small gold diamond that sits at the centre of a hairline rule. */
 export function Lozenge() {
   return (
     <span
       aria-hidden
-      className="size-1.5 shrink-0 rotate-45 rounded-[1px] bg-forest-600/70"
+      className="size-1.5 shrink-0 rotate-45 rounded-[1px] bg-gold-500"
     />
   );
 }

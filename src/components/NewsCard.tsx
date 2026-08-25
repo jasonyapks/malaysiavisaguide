@@ -44,7 +44,7 @@ export function NewsLeadCard({
         </Link>
       )}
       <NewsMeta article={article} showCategory={showCategory} />
-      <h2 className="mt-3 text-h2 font-extrabold leading-tight">
+      <h2 className="mt-3 text-h2 font-bold leading-tight">
         <Link href={`/news/${article.slug}/`} className="hover:text-forest-700">
           {article.headline}
         </Link>

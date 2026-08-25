@@ -153,7 +153,7 @@ export function GuideLayout({
       <div className="relative overflow-clip bg-linear-to-b from-sand-50 via-sand-50 to-sand-100">
         <div
           aria-hidden
-          className="ring-decor -right-64 top-40 size-[44rem] opacity-60"
+          className="compass-arc [--arc-spin:40deg] -right-64 top-40 size-[44rem] opacity-60"
         />
 
         <div className="relative mx-auto max-w-6xl px-6 py-12 sm:py-20">
@@ -226,10 +226,10 @@ export function GuideLayout({
       </div>
 
       {/* 9 — one CTA, in the closing ice-blue band the whole site ends on. */}
-      <section className="relative overflow-hidden border-t border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#dce8f6]">
+      <section className="relative overflow-hidden border-t border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#e9edf4]">
         <div
           aria-hidden
-          className="ring-decor -left-40 -bottom-48 size-[34rem] opacity-70"
+          className="compass-arc [--arc-spin:160deg] -left-40 -bottom-48 size-[34rem] opacity-70"
         />
         <div className="relative mx-auto flex max-w-5xl flex-col items-start gap-6 px-6 py-14 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-xl text-lead font-semibold text-forest-900">
@@ -290,18 +290,18 @@ function GuideHero({
           them. Keep the upper stops light. */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-linear-to-t from-[#000a2e]/92 via-[#000a2e]/45 to-[#000a2e]/15"
+        className="absolute inset-0 bg-linear-to-t from-[#04122a]/92 via-[#04122a]/45 to-[#04122a]/15"
       />
       <div
         aria-hidden
-        className="absolute inset-0 bg-[#16305c] mix-blend-multiply opacity-15"
+        className="absolute inset-0 bg-[#102a4d] mix-blend-multiply opacity-15"
       />
 
       {/* The shadow is what lets the scrim stay light: it guarantees the type
           separates from whatever happens to be behind it — bright foliage on
           the DE Rantau shot, sky on Sarawak's — without darkening the photo. */}
       <div className="relative mx-auto w-full max-w-5xl px-6 pb-14 pt-24 text-center [text-shadow:0_2px_16px_rgb(0_6_26/0.6)] sm:pb-20">
-        <p className="eyebrow !text-[#a8d4ec]">{authority}</p>
+        <p className="eyebrow !text-[#e8bf4d]">{authority}</p>
         <h1 className="mx-auto mt-4 max-w-3xl text-display !text-white">
           {title}
         </h1>
@@ -337,7 +337,7 @@ function SuitList({
         >
           {tone === "good" ? "✓" : "✕"}
         </span>
-        <h3 className="font-serif text-lead font-extrabold">{heading}</h3>
+        <h3 className="font-serif text-lead font-bold">{heading}</h3>
       </div>
       <ul className="mt-4 space-y-3 text-body-sm">
         {items.map((i) => (
@@ -434,7 +434,7 @@ export function Section({
 }) {
   return (
     <section id={sectionId(title)} className="card-outline scroll-mt-24 p-7 sm:p-9">
-      <h2 className="font-serif text-h3 font-extrabold">
+      <h2 className="font-serif text-h3 font-bold">
         {title}
       </h2>
       <div className="diamond-rule my-5 max-w-sm">

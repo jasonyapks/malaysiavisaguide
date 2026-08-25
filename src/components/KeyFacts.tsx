@@ -94,7 +94,7 @@ export function KeyFacts({
       className="card-lux mx-auto max-w-3xl p-7 sm:p-9"
     >
       <p className="eyebrow">{getUi(locale).guide.atAGlance}</p>
-      <h2 className="mt-2 font-serif text-h3 font-extrabold">
+      <h2 className="mt-2 font-serif text-h3 font-bold">
         {getUi(locale).guide.keyFactsHeading}
       </h2>
       <dl className="mt-5 divide-y divide-sand-200 text-body-sm">

@@ -19,19 +19,32 @@
 @source not "../../public/admin";
 
 /**
- * Design tokens — v4 "Cobalt sky", 2026-07-26.
+ * Design tokens — v5 "Guided Passport", 2026-08-25.
  *
- * Restyled from the v3 champagne-and-gold direction to a cool cobalt palette:
- * a near-white page, cobalt accents, navy display type, sky blue for the light
- * touches and slate for the neutral lines. SPEC.md §4.3 is stale.
+ * Implements malaysiavisaguide_branding_template.md §3–§4. Replaces the v4
+ * cobalt-sky palette with the brand's navy-and-gold system: navy authority,
+ * royal blue for digital UI, gold as a rationed accent, and off-white/mist
+ * surfaces. SPEC.md §4.3 is stale (it described v3).
  *
- * The four brand colours, used at their strongest roles:
- *   #0047AB cobalt → forest-700, links and the CTA
- *   #000080 navy   → forest-900, headings and the dark panels
- *   #82C8E5 sky    → forest-300, hover borders and accents on photography
- *   #6D8196 slate  → sand-400, muted lines and form borders
+ * The five brand colours, at the roles the template assigns them:
+ *   #0B1D3A Primary Navy    → forest-900, headings and the dark panels (board)
+ *   #124E9E Royal Blue      → forest-700, links and secondary headings
+ *   #D4A017 Signature Gold  → gold-500, accents, arcs, CTA fill
+ *   #E6E8EB Mist            → sand-100, bands, nav, muted fills
+ *   #F7F7F9 Off White       → sand-50, the page
  *
- * IMPORTANT: cobalt-and-navy must not be mistaken for a government skin. This
+ * ## The gold rule — read this before using gold anywhere
+ *
+ * Signature Gold is 2.2:1 on Off White. It is NOT a text colour on the page.
+ * It carries text only on navy (7.1:1), and on light it appears as fills,
+ * arcs, rules and borders — never as words. Where the template asks for gold
+ * on an important *number* on a light background, use `--color-gold-700`
+ * (#8A6508, 4.9:1), which is the same hue run dark enough to read.
+ *
+ * That split is also what keeps gold to the template's 10%: it is physically
+ * unavailable for the body copy that would otherwise soak it up.
+ *
+ * IMPORTANT: navy-and-gold must not be mistaken for a government skin. This
  * site is an INDEPENDENT resource — never the Immigration Department crest,
  * never the CONNECT IN ASIA or MYPVIP wordmark, never the word "official".
  * See SPEC.md §1.
@@ -39,43 +52,70 @@
  * The token NAMES are inherited from v1 (forest-*, sand-*, hibiscus-*) so every
  * guide, table, quiz and calculator component reskins without edits. Read them
  * by ROLE, not by hue:
- *   forest-*   → cobalt primary, deepening to navy for headings
- *   sand-*     → cool white and ice surfaces
- *   hibiscus-* → the cobalt CTA
+ *   forest-*   → royal blue primary, deepening to navy for headings
+ *   sand-*     → off-white and mist surfaces
+ *   hibiscus-* → the royal-blue solid button (white text — see below)
+ *   gold-*     → the signature accent
  */
 
 @theme {
-  /* Sky → cobalt → navy — primary (headings, links, dark panels) */
-  --color-forest-50: #eef4fd; /* palest cobalt tint — inset panels */
-  --color-forest-100: #dce9f9; /* cobalt-tinted band */
-  --color-forest-300: #82c8e5; /* sky — hover borders */
-  --color-forest-600: #1a63c9; /* live cobalt — progress bars, active rules */
-  --color-forest-700: #0047ab; /* cobalt — links, secondary headings (8.4:1) */
-  --color-forest-900: #000080; /* navy — headings and the dark note panels */
+  /* Royal blue → navy — primary (headings, links, dark panels) */
+  --color-forest-50: #edf1f8; /* palest navy tint — inset panels */
+  --color-forest-100: #dce4f0; /* navy-tinted band */
+  /* Gold, aliased under the inherited name so the eleven existing
+     `border-forest-300` / hover-border call sites become gold with no edit.
+     Every one of them is a BORDER — see the gold rule above. */
+  --color-forest-300: var(--color-gold-500);
+  --color-forest-600: #2e6dc2; /* royal blue, lifted — progress bars, active rules */
+  --color-forest-700: #124e9e; /* Royal Blue — links, secondary headings (7.4:1) */
+  /* Primary Navy — headings, dark panels (15.8:1).
+     TWO SOURCES DISAGREE and this takes the board's: MVG_branding_board.png
+     labels its navy swatch #0B1D3A, malaysiavisaguide_branding_template.md §3
+     says #071D3A. Three points apart, indistinguishable on screen, and both
+     land on the same contrast ratio to two decimals — but the mark is drawn
+     from the board, so the page follows the board too rather than shipping two
+     navies. Jason to confirm which document is canonical. */
+  --color-forest-900: #0b1d3a;
 
-  /* Cool white / ice — surfaces and bands */
-  --color-sand-50: #fbfcfe; /* page background, and light text on navy */
-  --color-sand-100: #edf3fa; /* ice: bands, nav, muted fills */
-  --color-sand-200: #d9e4f0; /* hairline borders */
-  --color-sand-400: #6d8196; /* slate — muted lines, form borders */
+  /* Off white / mist — surfaces and bands */
+  --color-sand-50: #f7f7f9; /* Off White — page background, and light text on navy */
+  --color-sand-100: #e6e8eb; /* Mist — bands, nav, muted fills */
+  --color-sand-200: #d3d8df; /* hairline borders — Mist, one step down so an edge reads */
+  /* Neutral slate — muted lines, form borders, and the ONE place a sand-* token
+     is a fill behind text: the disabled consent toggle on /privacy/, which is
+     `bg-sand-400` under `text-sand-50`. Picked at 4.8:1 for that pairing rather
+     than by eye. The v4 slate was 3.9:1 there and had been since v1; the sweep
+     in SPEC §8 is what found it. Do not lighten this without re-running it. */
+  --color-sand-400: #646f7e;
 
-  /* Cobalt — the CTA. Flat token for fills that can't take a gradient. */
-  --color-hibiscus-500: #0047ab;
-  --color-hibiscus-600: #003a8c;
+  /* Signature Gold. `gold-500` is the true brand value and is for FILLS, arcs,
+     rules and borders. `gold-700` is the same hue darkened to 4.9:1 on the
+     page, and is the only one of the two that may carry text on light. */
+  --color-gold-500: #d4a017;
+  --color-gold-700: #8a6508;
+
+  /* Royal blue — the solid button. Flat token for fills that can't take a
+     gradient, and it stays BLUE rather than gold because its call site pairs
+     it with white text, which gold cannot carry (2.4:1). The gold CTA is
+     `accent-fill`, which sets navy text to go with it. */
+  --color-hibiscus-500: #124e9e;
+  --color-hibiscus-600: #0d3b78;
 
   /* Errors keep a true red — it has to read as alarm, not as brand. */
   --color-alert-600: #b3261e;
 
-  --color-ink: #0e1622;
-  --color-ink-muted: #57697d;
+  --color-ink: #0f1823;
+  --color-ink-muted: #55606e;
 
-  /* Display type is a heavy geometric sans (the reference's Pretendard 800);
-     `--font-display` is the high-contrast serif reserved for the single
-     cobalt accent word per card. The var NAMES are kept from v1, so components
-     using `font-serif` get the heading face with no change. */
+  /* Branding template §4. Headlines are Poppins SemiBold/Bold — a geometric
+     sans; body is Inter; `--font-display` is DM Serif Display, used sparingly
+     for the single accent word per card. The var NAMES are kept from v1, so
+     components using `font-serif` get the heading face with no change.
+     `font-serif` is therefore a lie about the face and true about the ROLE —
+     it has meant "the heading font" since v1. */
   /* CJK faces sit BEHIND the Latin ones in every stack, never in front. The
      Latin face has no Han glyphs and the CJK face has mediocre Latin ones, so
-     this order gets "PVIP" and "RM200,000" in Plus Jakarta while the Chinese
+     this order gets "PVIP" and "RM200,000" in Inter while the Chinese
      around them falls through to the platform's own CJK font. Reversed, every
      acronym and figure on the Chinese site would render in PingFang's Latin.
 
@@ -86,9 +126,9 @@
   --font-cjk-sans: system-ui;
   --font-cjk-serif: Georgia;
 
-  --font-serif: var(--font-heading-sans), "Plus Jakarta Sans", var(--font-cjk-sans), system-ui, sans-serif;
-  --font-sans: var(--font-body-sans), var(--font-cjk-sans), system-ui, sans-serif;
-  --font-display: var(--font-accent-serif), "Playfair Display", var(--font-cjk-serif), Georgia, serif;
+  --font-serif: var(--font-heading-sans), "Poppins", var(--font-cjk-sans), system-ui, sans-serif;
+  --font-sans: var(--font-body-sans), "Inter", var(--font-cjk-sans), system-ui, sans-serif;
+  --font-display: var(--font-accent-serif), "DM Serif Display", var(--font-cjk-serif), Georgia, serif;
 
   /**
    * TYPE SCALE — nine role-named steps, 2026-07-27.
@@ -177,31 +217,40 @@ html[lang^="zh"] .font-display {
 }
 
 @layer base {
-  /* The cobalt sweep, in two calibrations. Not @theme tokens — they are
+  /* The gold sweep, in two calibrations. Not @theme tokens — they are
      gradients, not colours, so they generate no utilities.
 
-     `--gradient-accent` lights a FILL (pill, badge) that carries WHITE text, so
-     its brightest stop is capped at #1f6ac4 — 5.4:1 against white, safe right
-     across the sweep. `--gradient-accent-text` lights TEXT on the near-white
-     page, where the ends have to run dark instead; its lightest stop is 4.7:1.
+     `--gradient-accent` lights a FILL (pill, badge). Under v4 that fill was
+     cobalt and its text was white; under v5 the fill is Signature Gold, and
+     gold cannot carry white (2.4:1) — so `accent-fill` sets NAVY text and this
+     sweep is capped at its DARK end (#B8860B, 5.2:1 against navy) rather than
+     its light one. Inverting that pairing is the single easiest way to ship an
+     illegible CTA.
+
+     `--gradient-accent-text` lights TEXT on the off-white page, where gold has
+     to run dark throughout: it sweeps 8.6:1 → 4.9:1, so even the brightest
+     stop clears AA at the h3 sizes this is used at. The visible effect is a
+     subtle burnish rather than a glint — which is the restraint the template
+     asks for. The glint version lives in `on-navy`, where it is affordable.
+
      Keep them separate — swapping them is what makes either one illegible. */
   :root {
     --gradient-accent: linear-gradient(
       100deg,
-      #002a73 0%,
-      #0b4fae 32%,
-      #1f6ac4 52%,
-      #0a4aa3 74%,
-      #002a73 100%
+      #b8860b 0%,
+      #d4a017 30%,
+      #efc44a 52%,
+      #d4a017 74%,
+      #b8860b 100%
     );
 
     --gradient-accent-text: linear-gradient(
       100deg,
-      #001a5c 0%,
-      #0047ab 26%,
-      #2b74c9 48%,
-      #0043a2 72%,
-      #001a5c 100%
+      #5c4406 0%,
+      #7a5a07 26%,
+      #8a6508 48%,
+      #7a5a07 72%,
+      #5c4406 100%
     );
   }
 
@@ -225,11 +274,32 @@ html[lang^="zh"] .font-display {
   h3 {
     font-family: var(--font-serif);
     color: var(--color-forest-900);
-    font-weight: 800;
+    /* 700, not the v4 800: the template specifies Poppins SemiBold/Bold, and
+       Poppins at 800 is heavier per stroke than Plus Jakarta was — at 800 the
+       counters in a display-size heading start to close up. */
+    font-weight: 700;
     line-height: 1.14;
-    letter-spacing: -0.02em;
+    /* Poppins is already a wide geometric face; v4's -0.02em was tuned for
+       Plus Jakarta and reads as crowding here. */
+    letter-spacing: -0.015em;
     text-wrap: balance;
   }
+}
+
+/**
+ * DM Serif Display ships exactly one weight (400).
+ *
+ * 32 call sites set the accent word as `font-display … font-medium`, which was
+ * correct for Playfair (a variable face with a real 500) and is a request for
+ * a synthesised bolder face here — a smeared outline, not a heavier one.
+ *
+ * Unlayered on purpose: `.font-display` and `.font-medium` are both single
+ * classes, so a tie inside `@layer utilities` would be settled by source order
+ * and could flip. A rule outside every layer beats both regardless, which
+ * means no call site has to be edited and none can regress.
+ */
+.font-display {
+  font-weight: 400;
 }
 
 /* Full-bleed helper — lets a section inside the centered <main> span the whole
@@ -239,9 +309,9 @@ html[lang^="zh"] .font-display {
   margin-inline: calc(50% - 50vw);
 }
 
-/* The accent display word — "Settlement", "20 Years+". Serif, large, cobalt.
-   Named by ROLE, not hue: v3 called these "gold-*", which is exactly what made
-   this restyle touch more files than the token block. */
+/* The accent display word — "Settlement", "20 Years+". DM Serif Display,
+   large, burnished gold. Named by ROLE, not hue — which is what let v5 change
+   the hue back to gold without touching any of its 43 call sites. */
 @utility accent-text {
   background-image: var(--gradient-accent-text);
   -webkit-background-clip: text;
@@ -255,42 +325,52 @@ html[lang^="zh"] .font-display {
   line-height: 1.14;
 }
 
-/* The cobalt pill — primary CTA. White text; the inset highlight is what keeps
-   it from reading as a flat rectangle. */
+/* The gold pill — primary CTA, and the template's one licensed use of gold at
+   size. NAVY text, not white: see the gold rule in the token block. The inset
+   highlight is what keeps it from reading as a flat rectangle. */
 @utility accent-fill {
   background-image: var(--gradient-accent);
-  color: #ffffff;
+  color: var(--color-forest-900);
   box-shadow:
-    0 1px 0 rgb(255 255 255 / 0.28) inset,
-    0 10px 24px -12px rgb(0 71 171 / 0.7);
+    0 1px 0 rgb(255 255 255 / 0.4) inset,
+    0 10px 24px -12px rgb(122 90 7 / 0.75);
 }
 
 /* Put this on a navy (forest-900) panel. Both the accent gradient and the
    eyebrow are calibrated dark-on-light, so on navy they all but disappear —
-   this re-points them at the sky end of the palette for the whole subtree. */
+   this re-points them for the whole subtree.
+
+   Navy is where Signature Gold gets to be itself: #D4A017 is 7.1:1 here
+   against 2.2:1 on the page, so the sweep can run bright and the eyebrow can
+   take the undarkened brand value. This is the glint the page-level gradient
+   is not allowed. */
 @utility on-navy {
   --gradient-accent-text: linear-gradient(
     100deg,
-    #a8d4ec 0%,
-    #ffffff 30%,
-    #82c8e5 55%,
-    #ffffff 78%,
-    #a8d4ec 100%
+    #c08d12 0%,
+    #f0ce63 30%,
+    #d4a017 55%,
+    #f0ce63 78%,
+    #c08d12 100%
   );
 
   & .eyebrow {
-    color: var(--color-forest-300);
+    color: var(--color-gold-500);
   }
 }
 
-/* Section eyebrow — "TRUST & AUTHORITY", "OFFICE INFORMATION". */
+/* Section eyebrow — "TRUST & AUTHORITY", "OFFICE INFORMATION".
+   Gold, not blue: the template treats the category label as the place gold
+   earns its 10% (§11), and at 12px uppercase across 92 call sites it is a lot
+   of gold *presence* for very little gold *area*. `gold-700`, because these
+   are words on the page. */
 @utility eyebrow {
   font-family: var(--font-serif);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--color-forest-700);
+  color: var(--color-gold-700);
 }
 
 /**
@@ -318,23 +398,27 @@ html[lang^="zh"] .font-display {
   border: 1px solid var(--color-sand-200);
 }
 
-/* The signature card: generous radius, cool white face, hairline, soft lift. */
+/* The signature card: generous radius, off-white face, hairline, soft lift.
+   The lift is tinted with navy rather than neutral black — a grey shadow under
+   a navy-and-gold palette is what makes a premium layout look printed on the
+   wrong stock. */
 @utility card-lux {
   border-radius: var(--radius-card);
   background: linear-gradient(
     170deg,
     #ffffff 0%,
     var(--color-sand-50) 55%,
-    #eef4fb 100%
+    #eef1f6 100%
   );
   border: 1px solid var(--color-sand-200);
   box-shadow:
-    0 1px 2px rgb(0 20 60 / 0.04),
-    0 18px 40px -24px rgb(0 20 60 / 0.26);
+    0 1px 2px rgb(7 29 58 / 0.05),
+    0 18px 40px -24px rgb(7 29 58 / 0.28);
 }
 
-/* Hairline with a small slate lozenge at its centre — the divider under each
-   card's display word. */
+/* Hairline divider under each card's display word — now a thin gold rule,
+   the smallest member of the Compass Arc family (§7). Gold is legal here
+   because a 1px rule carries no text. */
 @utility diamond-rule {
   display: flex;
   align-items: center;
@@ -348,17 +432,63 @@ html[lang^="zh"] .font-display {
     background: linear-gradient(
       to right,
       transparent,
-      var(--color-sand-400),
+      var(--color-gold-500),
       transparent
     );
   }
 }
 
-/* Faint concentric outlines drifting behind the hero and the closing CTA. */
+/**
+ * THE COMPASS ARC — the brand's signature device (§7).
+ *
+ * A thin gold arc suggesting a compass trajectory, drifting behind the hero,
+ * the closing CTA and the footer.
+ *
+ * Drawn as a circle with two of its four borders transparent, which yields a
+ * true 180° arc with a hairline weight that does not scale with the element —
+ * a 26rem and a 42rem arc are both exactly 1px. An SVG would need a viewBox
+ * per size and a `vector-effect` to hold that, and a conic-gradient mask
+ * cannot produce a 1px stroke at all.
+ *
+ * `--arc-spin` lets a call site aim the opening without a `rotate-*` utility
+ * fighting the positioning transforms already on these elements.
+ */
+@utility compass-arc {
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  border-top-color: var(--color-gold-500);
+  border-right-color: var(--color-gold-500);
+  rotate: var(--arc-spin, 0deg);
+  pointer-events: none;
+}
+
+/* The v4 ring, kept for the places that want a closed circle rather than an
+   arc. Retuned from a cool hairline to a faint gold one so the two devices
+   read as one family. */
 @utility ring-decor {
   position: absolute;
   border-radius: 9999px;
-  border: 1px solid var(--color-sand-200);
+  border: 1px solid color-mix(in srgb, var(--color-gold-500) 34%, transparent);
+  pointer-events: none;
+}
+
+/**
+ * DIRECTIONAL LINES — the secondary device (§7): thin diagonal gold lines
+ * reading as movement → direction → progress.
+ *
+ * Deliberately very faint. The template's note on this device is "keep them
+ * subtle", and at anything above ~8% these stop being a texture and start
+ * being a pattern that competes with the copy sitting on it.
+ */
+@utility directional-lines {
+  background-image: repeating-linear-gradient(
+    45deg,
+    color-mix(in srgb, var(--color-gold-500) 7%, transparent) 0px,
+    color-mix(in srgb, var(--color-gold-500) 7%, transparent) 1px,
+    transparent 1px,
+    transparent 14px
+  );
   pointer-events: none;
 }
 

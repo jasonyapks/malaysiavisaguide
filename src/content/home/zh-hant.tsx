@@ -22,19 +22,22 @@ import type { HomeCopy } from "./types";
 export const copy: HomeCopy = {
   hero: {
     eyebrow: "獨立運營 · 每項數據都核對官方來源",
+    // 品牌模板 §9：Your Guide. Your Future. Malaysia.
+    // 英文原句是三個短句，中文拆成三行會各只有四個字，在 display 字號下顯得
+    // 單薄；合併成兩行，重音仍落在「馬來西亞」——那是這句話真正的落點。
     heading: (
       <>
-        馬來西亞長期居留簽證
+        你的指南，你的未來
         <br />
         <span className="font-display accent-text font-medium">
-          把話說清楚
+          馬來西亞
         </span>
       </>
     ),
-    lead: "PVIP、MM2H、砂拉越 MM2H 和 DE Rantau 都能讓你長期住在馬來西亞 —— 但它們在費用、年限和適合的人群上差別極大。本站的每一個數字，都核對過官方來源。",
+    lead: "獨立、清晰、實用的馬來西亞簽證、居留與長期生活指引。本站的每一個數字，都核對過官方來源。",
     chips: ["六項計劃全覆蓋", "費用全部列明", "每月複核"],
-    ctaPrimary: "看看你符合哪一種",
-    ctaSecondary: "對比各項計劃",
+    ctaPrimary: "查看簽證選項",
+    ctaSecondary: "諮詢專家",
     cardEyebrow: "這份指南是什麼",
     cardTitle: (
       <>

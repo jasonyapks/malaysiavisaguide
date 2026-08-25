@@ -1,7 +1,7 @@
-# malaysiavisaguide.com — Build Spec (v1.4)
+# malaysiavisaguide.com — Build Spec (v1.5)
 
 **Status:** live on `https://malaysiavisaguide.com` (cut over 2026-07-25)
-**Written:** 2026-07-22 · **Revised:** 2026-07-26
+**Written:** 2026-07-22 · **Revised:** 2026-08-25
 **Audience:** Jason, and any future Claude session picking this up cold
 **Supersedes:** `WEBSITE-BLUEPRINT.md` (June 2026) *for the v1 build only*. That document
 remains the strategic north star for later phases — positioning, monetisation sequencing,
@@ -10,11 +10,38 @@ disagree on stack or v1 scope, **this file wins**, and the two disagreements are
 the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW authority site
 (v1 narrows to long-stay visas plus the two work/study passes).
 
+### What changed in v1.5 (2026-08-25)
+
+1. **§4.3 Design is on its FIFTH direction — "Guided Passport", and it is the first one
+   that is not a swatch board.** It implements two documents Jason supplied:
+   `malaysiavisaguide_branding_template.md` (the written system — colour, type, devices,
+   photography, voice, and how the brand behaves off the site) and
+   `MVG_branding_board.png` (the visual board, which is where the logo actually lives).
+   Both outrank §4.3; when they disagree with each other, see the next point.
+2. **The two brand documents disagree on Primary Navy** — the board's swatch says
+   `#0B1D3A`, the markdown says `#071D3A`. The board wins throughout, because the logo
+   comes from the board and one navy is better than two. Three hex points; nobody will
+   see it. Jason to say which document is canonical.
+3. **Gold is back, and it is NOT the gold from this file's history.** v3's champagne was
+   a *surface* treatment. §3 of the template makes Signature Gold a rationed 10% accent
+   on a navy foundation, and — critically — a colour that cannot carry body text at all.
+   See the gold rule at the top of `globals.css` before using it anywhere.
+4. **New logo.** The Petronas Towers mark is retired. `src/components/BrandMark.tsx` is a
+   **vector redraw** of the mark on the board — navy passport, gold crescent and 14-point
+   star, gold compass rose. The board is a raster mock-up with no alpha, so it could not
+   be cropped and used directly. **If the original vector artwork exists, it should
+   replace both `BrandMark.tsx` and `public/logo-mark.svg`.**
+5. **Poppins / Inter / DM Serif Display** replace Plus Jakarta Sans and Playfair Display.
+6. **`compass-arc` and `directional-lines` added** as the template's signature graphic
+   devices (§7); `ring-decor` survives for closed circles and is now gold.
+7. **Two contrast failures fixed, both pre-existing and both found by the §8 sweep** — the
+   disabled consent toggle on `/privacy/` (3.9:1 since v1) and the article count on the
+   current category pill in `InsightLayout` (2.4:1 since it shipped).
+
 ### What changed in v1.4 (2026-07-26)
 
-1. **§4.3 Design is on its FOURTH direction — "Cobalt sky".** Champagne-and-gold is dead;
-   the site is now cobalt, navy, sky blue and slate on a cool near-white page. Jason chose
-   the palette from a four-swatch board. Do not resurrect gold from this file's history.
+1. **§4.3 Design was on its FOURTH direction — "Cobalt sky".** Superseded by v1.5 above;
+   kept here only so the history reads straight.
 2. **The signature utilities were renamed `gold-*` → `accent-*`.** Hue-named utilities were
    the one part of the token system that did *not* survive a restyle for free, and they are
    the reason this change touched eight component files rather than one. Fixed at the root.
@@ -326,52 +353,81 @@ Tailwind v4 docs via Context7.
 
 ### 4.3 Design
 
-**Fourth direction — "Cobalt sky" — and the three before it are dead.** v1.0 specced deep
-rainforest green + warm sand + hibiscus; 2026-07-24 replaced it with a navy/pale-cyan echo
-of the official eVISA portal; 2026-07-25 replaced *that* with champagne-and-gold after
-`connectinasia.com`; 2026-07-26 replaced that in turn with the cobalt palette Jason picked
-from a four-swatch board. None should be resurrected from this file's history. The live
-tokens in `src/app/globals.css` are the truth — this section describes them, it does not
-compete with them.
+**Fifth direction — "Guided Passport" — and the four before it are dead.** v1.0 specced
+deep rainforest green + warm sand + hibiscus; 2026-07-24 replaced it with a navy/pale-cyan
+echo of the official eVISA portal; 2026-07-25 replaced *that* with champagne-and-gold after
+`connectinasia.com`; 2026-07-26 replaced that in turn with a cobalt palette from a
+four-swatch board; 2026-08-25 replaced that with the brand system in
+**`malaysiavisaguide_branding_template.md`**. None of the first four should be resurrected
+from this file's history.
+
+**Two documents outrank this section now.** The branding template is the *intent* — it
+governs colour, type, logo, devices, photography and voice, and it covers print and social
+as well as the site. The live tokens in `src/app/globals.css` are the *implementation*, and
+they carry the contrast arithmetic the template does not. This section describes both; it
+competes with neither.
 
 **Structure** still follows `connectinasia.com` (the Korean-language MYPVIP partner site):
 the photo hero, the centred section headings, the staggered cards. Only the *colour* left.
 The identity is never borrowed — no CONNECT IN ASIA or MYPVIP wordmark, no Immigration
-Department crest, never the word "official" (§1). Cobalt-and-navy is close enough to a
+Department crest, never the word "official" (§1). Navy-and-gold is close enough to a
 government skin that the "not a government body" line under the wordmark is now doing real
 work; keep it.
 
-- **Palette — four colours, each at its strongest role:** `#0047AB` cobalt (links, CTA),
-  `#000080` navy (headings, dark panels), `#82C8E5` sky (hover borders, accents on
-  photography, and everything on a navy ground), `#6D8196` slate (muted lines, form
-  borders). Surfaces are a cool near-white through ice blue. Cool throughout; there is no
-  warm tone left on the site.
+- **Palette — five colours, each at its strongest role:** `#0B1D3A` Primary Navy
+  (headings, dark panels, foundation), `#124E9E` Royal Blue (links, digital UI),
+  `#D4A017` Signature Gold (accents, arcs, the CTA fill), `#E6E8EB` Mist (bands, nav,
+  muted fills), `#F7F7F9` Off White (the page). Ratio 60 navy/off-white, 20 royal blue,
+  10 gold, 10 neutrals.
+- **THE GOLD RULE. Signature Gold is 2.2:1 on Off White — it is not a text colour.** It
+  carries text only on navy (7.1:1); on light it appears as fills, arcs, rules and borders
+  and never as words. Where the template asks for gold on an important *number* on a light
+  ground (§10), that is `gold-700` (`#8A6508`, 4.9:1), which is the same hue run dark. This
+  split is also what keeps gold to its 10%: it is physically unavailable for body copy.
+  Every AA failure this palette can produce is a violation of this one rule.
 - **Tokens are ROLE-named, not hue-named**, and the names are inherited from v1:
-  `forest-*` is the cobalt→navy primary, `sand-*` the white/ice surfaces, `hibiscus-*` the
-  cobalt CTA. **Read them by role, never by hue.** This one convention is why three complete
-  restyles have landed without editing a single guide, table, quiz or calculator — it is the
-  design equivalent of §4.1 and worth defending just as hard. **The corollary was learned
-  the hard way:** the two utilities that *were* hue-named, `gold-text`/`gold-fill`, are the
-  only reason this restyle touched component files at all. They are now `accent-text` /
-  `accent-fill`. Never name a new one after a colour.
-- **Two accent gradients, not one.** `--gradient-accent` lights a *fill* (pill, badge) that
-  carries white text, so its brightest stop is capped at 5.4:1 against white.
-  `--gradient-accent-text` lights *type* on the near-white page, so its ends run dark
-  instead. Reusing the fill ramp on text is a mistake already made once.
+  `forest-*` is the royal-blue→navy primary, `sand-*` the off-white/mist surfaces,
+  `hibiscus-*` the solid blue button. **Read them by role, never by hue.** This one
+  convention is why four complete restyles have landed without editing a single guide,
+  table, quiz or calculator — it is the design equivalent of §4.1 and worth defending just
+  as hard. `gold-*` is the deliberate exception: it is the brand's *named* colour, the
+  template refers to it by name, and it is the one thing here that will not be re-hued.
+- **Two accent gradients, not one, and v5 inverted which end is capped.**
+  `--gradient-accent` lights a *fill* (pill, badge). Under v4 that fill was cobalt with
+  white text; it is now gold with **navy** text, so the ramp is capped at its DARK end
+  (`#B8860B`, 5.2:1 on navy) rather than its light one. `--gradient-accent-text` lights
+  *type* on the off-white page and runs 8.6:1 → 4.9:1 throughout. Reusing the fill ramp on
+  text is a mistake already made once, and swapping the gold pill back to white text is the
+  v5 version of it.
 - **`on-navy` for dark panels.** Both of the above, and `eyebrow`, are calibrated
-  dark-on-light and all but vanish on a `forest-900` panel. `on-navy` re-points them at the
-  sky end of the palette for the whole subtree — put it on any `bg-forest-900` block that
-  contains an eyebrow or an accent word.
-- **Type:** Plus Jakarta Sans throughout — body, UI, and headings at 800. Playfair Display
-  italic is reserved for the single accent word per card. The v1.0 "editorial serif
-  headlines" rule is dead: headings are the heavy sans, the serif is an accent only.
+  dark-on-light and all but vanish on a `forest-900` panel. `on-navy` re-points them for the
+  whole subtree — put it on any `bg-forest-900` block that contains an eyebrow or an accent
+  word. Navy is also the one ground where gold gets to be its undarkened self.
+- **Logo** — navy passport, gold crescent and 14-point star, gold compass rose whose long
+  axis breaks the cover's edge. Taken from `MVG_branding_board.png`, not from the
+  template's prose. `src/components/BrandMark.tsx` is what the site renders (inline SVG,
+  no request); `public/logo-mark.svg` is the same geometry for email, print and the CMS;
+  `src/app/icon.png`/`apple-icon.png`/`favicon.ico` are the same mark knocked out on a navy
+  tile. Its two hex values are the logo's own and deliberately not tokens — a logo does not
+  re-colour when a theme does. **It is a redraw off a raster board and should be replaced
+  by the original vector if that exists** — see the header comment in `BrandMark.tsx`.
+  The board's turning-page detail is deliberately omitted; it does not survive to 24px.
+- **Type:** Poppins for headings and UI (SemiBold/Bold — **never 800**, the counters close
+  up), Inter for body, DM Serif Display italic for the single accent word per card. DM
+  Serif Display ships one weight, which is why `globals.css` pins `.font-display` to 400
+  outside every layer. The v1.0 "editorial serif headlines" rule is still dead: headings are
+  the geometric sans, the serif is an accent only.
 - **19px base, high contrast, generous line height, no thin grey text.** The reader is 45+,
   wealthy, and scam-alert. Readability is a genuine competitive differentiator here —
   competitors ignore it — not decoration. **4.5:1 is a floor, and it is audited rather than
   assumed** (§8) — every restyle so far has put at least one element under it.
 - **Signature devices**, all `@utility` in `globals.css`: `accent-text`, `accent-fill`,
-  `on-navy`, `eyebrow`, `card-lux`, `diamond-rule`, `ring-decor` — plus `full-bleed` (escape
-  the centred column) and `rise` (motion-safe entrance). Compose these before inventing more.
+  `on-navy`, `eyebrow`, `card-lux`/`card-flat`/`card-outline`, `diamond-rule`,
+  **`compass-arc`** and **`directional-lines`** (template §7 — the thin gold arc and the
+  diagonal movement lines; `--arc-spin` aims an arc's opening), `ring-decor` for a closed
+  circle — plus `full-bleed` (escape the centred column) and `rise` (motion-safe entrance).
+  Compose these before inventing more. Keep `directional-lines` masked to a corner: §7's
+  "keep them subtle" is a constraint on AREA as much as on opacity.
 - **`public/og.png` is hand-built, not generated at build time.** It carries the palette into
   every share, and it is easy to forget on a restyle — it survived two of them stale. Rebuild
   it from an HTML card screenshotted at 1200×630 whenever §4.3 changes.

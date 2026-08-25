@@ -69,15 +69,24 @@ export async function HomePage({
 
   return (
     <div className="space-y-24">
-      {/* Hero — white to ice blue, drifting rings, one cobalt word. */}
-      <section className="full-bleed -mt-14 relative overflow-hidden bg-linear-to-br from-sand-50 via-sand-100 to-[#dce8f6]">
+      {/* Hero — off-white to mist, two compass arcs, one gold word.
+          Branding template §7 and §9. */}
+      <section className="full-bleed -mt-14 relative overflow-hidden bg-linear-to-br from-sand-50 via-sand-100 to-[#e9edf4]">
+        {/* Directional lines, masked to the top-right corner. Unmasked they
+            tile the whole hero and the lead paragraph ends up sitting on a
+            hatch — §7's "keep them subtle" is a constraint on AREA as much as
+            on opacity. */}
         <div
           aria-hidden
-          className="ring-decor -left-40 -top-32 size-[34rem] opacity-80"
+          className="directional-lines absolute inset-0 [mask-image:linear-gradient(215deg,#000,transparent_55%)]"
         />
         <div
           aria-hidden
-          className="ring-decor -right-56 top-10 size-[42rem] opacity-70"
+          className="compass-arc [--arc-spin:200deg] -left-40 -top-32 size-[34rem] opacity-80"
+        />
+        <div
+          aria-hidden
+          className="compass-arc [--arc-spin:20deg] -right-56 top-10 size-[42rem] opacity-70"
         />
 
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-[1.05fr_0.95fr] md:py-28">
@@ -85,7 +94,7 @@ export async function HomePage({
             <p className="eyebrow flex items-center gap-2">
               <span
                 aria-hidden
-                className="size-1.5 rounded-full bg-forest-600"
+                className="size-1.5 rounded-full bg-gold-500"
               />
               {copy.hero.eyebrow}
             </p>
@@ -107,15 +116,24 @@ export async function HomePage({
               ))}
             </ul>
 
+            {/* Branding template §9 names these two and only these two:
+                "Explore Visa Options" primary, "Talk to an Expert" secondary.
+                The destinations follow the labels — /compare/ is the page that
+                lays the options side by side, and an expert is reached at
+                /contact/.
+
+                NOTE: this displaces the eligibility quiz, which held the
+                primary slot until v5. It is still linked from /tools/ and from
+                the Tools nav group, but it no longer has a home-page CTA. */}
             <div className="flex flex-wrap items-center gap-5 pt-1">
               <Link
-                href={href("/tools/eligibility/")}
+                href={href("/compare/")}
                 className="accent-fill rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
               >
                 {copy.hero.ctaPrimary}
               </Link>
               <Link
-                href={href("/compare/")}
+                href={href("/contact/")}
                 className="inline-flex items-center gap-1.5 border-b-2 border-forest-600/40 pb-0.5 font-bold text-forest-900 transition-colors hover:border-forest-600"
               >
                 {copy.hero.ctaSecondary} <span aria-hidden>↗</span>
@@ -189,10 +207,10 @@ export async function HomePage({
       </section>
 
       {/* Freshness band — ice blue, full-bleed, with the review photo. */}
-      <section className="full-bleed relative overflow-hidden border-y border-sand-200 bg-linear-to-b from-sand-100 to-[#e0eaf7]">
+      <section className="full-bleed relative overflow-hidden border-y border-sand-200 bg-linear-to-b from-sand-100 to-[#dfe3e9]">
         <div
           aria-hidden
-          className="ring-decor -right-32 -top-24 size-[30rem] opacity-70"
+          className="compass-arc [--arc-spin:300deg] -right-32 -top-24 size-[30rem] opacity-70"
         />
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-6 py-16 md:grid-cols-[0.9fr_1.1fr]">
           <Figure
@@ -327,7 +345,7 @@ export async function HomePage({
                   className="card-outline flex h-full flex-col p-6 transition-transform hover:-translate-y-1"
                 >
                   <p className="eyebrow">{CATEGORY_LABEL[a.category]}</p>
-                  <p className="mt-3 font-serif text-body-sm font-extrabold leading-snug text-forest-900">
+                  <p className="mt-3 font-serif text-body-sm font-bold leading-snug text-forest-900">
                     {a.title}
                   </p>
                   <div className="diamond-rule my-5">
@@ -349,10 +367,10 @@ export async function HomePage({
       {/* Closing CTA */}
       {/* -mb-14 cancels main's bottom padding so the CTA runs straight into the
           footer rather than leaving a white seam between two ice-blue bands. */}
-      <section className="full-bleed -mb-14 relative overflow-hidden border-t border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#dce8f6]">
+      <section className="full-bleed -mb-14 relative overflow-hidden border-t border-sand-200 bg-linear-to-br from-sand-100 via-sand-50 to-[#e9edf4]">
         <div
           aria-hidden
-          className="ring-decor -left-40 -bottom-48 size-[36rem] opacity-70"
+          className="compass-arc [--arc-spin:120deg] -left-40 -bottom-48 size-[36rem] opacity-70"
         />
         <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 py-16 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
@@ -419,7 +437,7 @@ function ProgrammeCard({
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <NumberBadge n={n} />
-            <span className="font-serif text-body-sm font-extrabold leading-tight text-forest-900">
+            <span className="font-serif text-body-sm font-bold leading-tight text-forest-900">
               {title}
             </span>
           </div>
@@ -460,24 +478,24 @@ function sourceHost(url: string): string {
   }
 }
 
-/** The cobalt 01 / 02 / 03 disc. */
+/** The gold 01 / 02 / 03 disc. */
 function NumberBadge({ n }: { n: number }) {
   return (
     <span
       aria-hidden
-      className="accent-fill grid size-9 shrink-0 place-items-center rounded-full font-serif text-eyebrow font-extrabold tracking-wide"
+      className="accent-fill grid size-9 shrink-0 place-items-center rounded-full font-serif text-eyebrow font-bold tracking-wide"
     >
       {String(n).padStart(2, "0")}
     </span>
   );
 }
 
-/** The small sky-blue diamond that sits at the centre of a hairline rule. */
+/** The small gold diamond that sits at the centre of a hairline rule. */
 function Lozenge() {
   return (
     <span
       aria-hidden
-      className="size-1.5 rotate-45 bg-forest-600/70"
+      className="size-1.5 rotate-45 bg-gold-500"
       style={{ borderRadius: "1px" }}
     />
   );

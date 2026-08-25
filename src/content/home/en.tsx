@@ -5,21 +5,24 @@ import type { HomeCopy } from "./types";
 export const copy: HomeCopy = {
   hero: {
     eyebrow: "Independent · verified against official sources",
+    // Branding template §9, verbatim. "Malaysia" takes the display face and the
+    // gold, because the template's brand equation puts the destination — not
+    // the paperwork — at the end of the sentence (§14, §16).
     heading: (
       <>
-        Malaysia&apos;s
+        Your Guide.
         <br />
-        long-stay visas,
+        Your Future.
         <br />
         <span className="font-display accent-text font-medium italic">
-          explained plainly
+          Malaysia.
         </span>
       </>
     ),
-    lead: "PVIP, MM2H, Sarawak MM2H and DE Rantau all let you live in Malaysia long term — and they differ enormously in cost, tenure and who they suit. Every figure here is checked against its official government source.",
+    lead: "Independent, clear and practical guidance on Malaysian visas, residency and long-term living. Every figure here is checked against its official government source.",
     chips: ["Six programmes covered", "Costs in full", "Reviewed monthly"],
-    ctaPrimary: "Check what you qualify for",
-    ctaSecondary: "Compare programmes",
+    ctaPrimary: "Explore Visa Options",
+    ctaSecondary: "Talk to an Expert",
     cardEyebrow: "What this guide is",
     cardTitle: (
       <>

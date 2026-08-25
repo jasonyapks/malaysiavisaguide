@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
  *
  * Almost every heading on this page carries markup that is part of the design,
  * not the sentence: a hard `<br/>` that controls where a two-line display
- * heading breaks, and one `<span>` that sets a single word in the cobalt
+ * heading breaks, and one `<span>` that sets a single word in the gold
  * display face. Flattening that to strings would either lose the design or
  * force a templating syntax to put it back. And the break point is genuinely
  * per-language — "Malaysia's / long-stay visas, / explained plainly" breaks
@@ -40,7 +40,7 @@ export type HomeCopy = {
   /** One line per programme route, keyed by canonical path. */
   blurbs: Record<string, string>;
   /**
-   * The single serif word set in cobalt on each card — the reference's
+   * The single serif word set in gold on each card — the reference's
    * "Settlement / Family / Lifestyle" device. One word, no punctuation: it is a
    * mood label for the route, not its name. Two characters in Chinese, where a
    * transliteration of the English word would be meaningless.
