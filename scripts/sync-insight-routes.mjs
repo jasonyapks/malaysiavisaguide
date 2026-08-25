@@ -5,29 +5,33 @@
  * Writes two booleans to .insight-routes.json; `next.config.ts` reads them and
  * composes `pageExtensions` from them. The long explanation of why the routes
  * have to be switchable at all — `output: "export"` hard-fails a dynamic route
- * that yields zero paths, and Phase 4 ships with zero CMS articles — is in
- * next.config.ts, next to the code that acts on it.
+ * that yields zero paths — is in next.config.ts, next to the code that acts on
+ * it.
  *
  * ## What decides
  *
- *   article   — the CMS has at least one document, drafts included. A draft is
+ *   article   — there is at least one document, drafts included. A draft is
  *               reviewed at its real URL, noindex and unlisted, so it needs a
  *               page even though nothing links to it.
  *   category  — at least one category with a PUBLISHED article has no literal
  *               folder in the repo. Drafts do not open a category index: an
- *               index over nothing is the thin content Search Console flags,
- *               and `comparisons` already has its own literal page.
+ *               index over nothing is the thin content Search Console flags.
  *
- * ## Failure policy
+ * ## It reads through src/lib/insights.ts, on purpose
  *
- * Hard, matching src/lib/insights.ts and the news pipeline before it. An
- * unreachable CMS must fail the build rather than quietly switching the routes
- * off — that would delete every article path from the export, and Cloudflare
- * Pages then serves the deleted paths from the edge for up to seven days, so the
- * mistake outlives the fix by a week. A failed build costs a minute.
+ * This script and the build have to agree about what counts as a document. They
+ * used to agree by coincidence — both called the same endpoint and each parsed
+ * the answer its own way — and a disagreement would have been near-invisible:
+ * the routes switched off while the build still had articles to render, or on
+ * while it had none. Importing the reader makes agreement structural.
  *
- * `--soft` downgrades it to a warning and leaves the previous answer in place.
- * That is for `npm run dev` only, so the site is still workable offline.
+ * It also means every file is parsed and validated here, in prebuild, so a
+ * malformed article fails before Next starts rather than midway through an
+ * export.
+ *
+ * The old `--soft` flag is gone with the fetch it protected. It existed so
+ * `npm run dev` still worked with the CMS unreachable; the content is on disk
+ * now, and a missing content/ directory is a real problem in dev too.
  */
 
 import { writeFile } from "node:fs/promises";
@@ -35,40 +39,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { insights as authored } from "../src/lib/data/insights.ts";
+import { getCmsIndex } from "../src/lib/insights.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const MARKER = path.join(ROOT, ".insight-routes.json");
-const SOFT = process.argv.includes("--soft");
 
-const API =
-  process.env.INSIGHTS_API_URL ??
-  "https://mvg-news.jason-6bf.workers.dev/api/cms/insights";
-
-let items;
-try {
-  const res = await fetch(`${API}?b=${Date.now().toString(36)}`, {
-    headers: { accept: "application/json" },
-  });
-  if (!res.ok) throw new Error(`status ${res.status}`);
-  const data = await res.json();
-  // The assertion pull-images.mjs learned the hard way: a 200 carrying an
-  // unexpected body must never be read as "nothing published".
-  if (!Array.isArray(data?.items)) throw new Error("response has no `items` array");
-  items = data.items;
-} catch (err) {
-  const msg = `[insight-routes] could not read the CMS index from ${API} — ${err}`;
-  if (SOFT) {
-    console.warn(`${msg} — leaving .insight-routes.json as it is (dev only).`);
-    process.exit(0);
-  }
-  console.error(
-    `${msg}\n\nThe build is stopping on purpose. Carrying on would switch the ` +
-      `/insights/ routes off and remove every article page from the export, and ` +
-      `Pages serves deleted paths from the edge for up to seven days afterwards. ` +
-      `Check the mvg-news Worker is up, then rebuild.`,
-  );
-  process.exit(1);
-}
+// Throws, with the file named, if anything under content/insights/ is missing
+// or will not parse. That is the intended behaviour — see the header.
+const items = await getCmsIndex();
 
 const published = items.filter((it) => !it.draft);
 const authoredCategories = new Set(authored.map((a) => a.category));

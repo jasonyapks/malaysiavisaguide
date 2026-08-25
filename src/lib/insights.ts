@@ -1,56 +1,54 @@
-import type { InsightDoc, InsightSummary } from "@shared/insight";
+import { readdir, readFile } from "node:fs/promises";
+import path from "node:path";
+
+import type { InsightDoc } from "@shared/insight";
+import { splitContentFile } from "@shared/frontmatter";
+import { parseBody } from "@shared/markdown";
 import { validateInsightDoc } from "@shared/validate";
 import {
   insights as authored,
   type Insight,
   type InsightCategory,
 } from "@/lib/data/insights";
-import { site } from "@/lib/site";
 
 /**
  * Build-time data layer for /insights/ — the half that comes from the CMS.
  *
- * This is `src/lib/news.ts` applied to a second content type, and it copies its
- * policies rather than reinventing them: a module-level promise memo, a
- * per-build cache-buster on the URL, and a `getJson()` that **throws in a
- * production build**. Read the header comments in news.ts for why each of those
- * is the way it is; the reasoning transfers unchanged.
+ * Articles are markdown files under content/insights/<category>/<slug>.md.
+ * They used to be rows in D1, fetched over HTTP at build; the fetch is gone and
+ * the reasoning it carried is not.
  *
- * One thing is genuinely different and worth stating. The blog degrades badly
- * when the API is down; /insights degrades *worse*. These are the evergreen,
- * meant-to-be-cited pages, and an unreachable API answering with an empty list
- * would not merely publish an empty index — it would delete every article path
- * from the export. Cloudflare Pages then holds those deleted paths at the edge
- * for up to seven days, serving 200s for pages that no longer exist, so even a
- * corrected redeploy does not put them back for a reader or a crawler. A failed
- * build costs a minute. That is the entire argument for the throw.
+ * **The empty case still throws.** These are the evergreen, meant-to-be-cited
+ * pages, and a build that read zero articles would not merely publish an empty
+ * index — it would delete every article path from the export. Cloudflare Pages
+ * then holds those deleted paths at the edge for up to seven days, serving 200s
+ * for pages that no longer exist, so even a corrected redeploy does not put them
+ * back for a reader or a crawler. A missing directory or an empty one is a
+ * mistake, never an intention. A failed build costs a minute.
+ *
+ * What changes is which mistakes are possible. An unreachable Worker, a 200
+ * carrying the wrong body, a stale cache and a two-step publish all stop being
+ * failure modes, because the content is on disk next to the code that renders
+ * it and arrives in the same commit.
  *
  * ## Authored articles and CMS articles are the same thing
  *
- * The two hand-written articles under src/app/insights/ stay exactly where they
- * are for now (Phase 5 transcribes them). Everything that lists articles — the
- * index, the category pages, the sitemap, the browse strip — reads the merged
- * list from here, so an article's origin is invisible to every consumer. That
- * is what makes the migration a data move rather than a rewrite.
+ * `src/lib/data/insights.ts` is the registry of articles written as literal
+ * `.tsx` folders. It is empty and meant to stay that way. Everything that lists
+ * articles — the index, the category pages, the sitemap, the browse strip —
+ * reads the merged list from here, so an article's origin is invisible to every
+ * consumer. That is what let the content move twice without a consumer changing.
  */
 
 /**
- * Where to read CMS articles from.
+ * Where the articles live.
  *
- * `INSIGHTS_API_URL` overrides it so the site can be built against a local
- * `wrangler dev`, exactly as `NEWS_API_URL` does:
- *
- *   cd worker && npx wrangler dev
- *   INSIGHTS_API_URL=http://localhost:8787/api/cms/insights npm run build
+ * Resolved from `process.cwd()` rather than from `import.meta.url`, because
+ * this module is bundled before it runs and the bundle's location is a build
+ * detail. Next runs the build from the project root, which is where content/
+ * sits.
  */
-const INSIGHTS_API = process.env.INSIGHTS_API_URL ?? site.insightsApi;
-
-/** Per-build cache-buster. See the long comment on BUILD_ID in news.ts. */
-const BUILD_ID = Date.now().toString(36);
-
-function withBuildId(url: string): string {
-  return `${url}${url.includes("?") ? "&" : "?"}b=${BUILD_ID}`;
-}
+const CONTENT_DIR = path.join(process.cwd(), "content", "insights");
 
 /**
  * The article paths the repo owns — one per folder under src/app/insights/.
@@ -83,23 +81,128 @@ export function hasAuthoredIndex(category: InsightCategory): boolean {
 
 // --- The CMS index ---------------------------------------------------------
 
-let indexPromise: Promise<Insight[]> | null = null;
+let docsPromise: Promise<InsightDoc[]> | null = null;
 
-/** Every CMS article, drafts included, in the order the API returned them. */
-export function getCmsIndex(): Promise<Insight[]> {
-  indexPromise ??= fetchCmsIndex();
-  return indexPromise;
+/**
+ * Every article on disk, drafts included, read once per build.
+ *
+ * One read serves the index, every article page and the sitemap. The old shape
+ * had an index endpoint and a per-document endpoint and a cache for each; a
+ * directory is small enough that reading all of it is simpler and cannot get
+ * the two out of step.
+ */
+function getDocs(): Promise<InsightDoc[]> {
+  docsPromise ??= readDocs();
+  return docsPromise;
 }
 
-async function fetchCmsIndex(): Promise<Insight[]> {
-  const data = await getJson<{ items: InsightSummary[] }>(
-    INSIGHTS_API,
-    "the insights index",
-  );
-  if (!data) return [];
-  const items = (data.items ?? []).filter((it) => it.slug && it.category);
-  assertNoCollisions(items);
-  return items.map(toInsight);
+/** Every CMS article, drafts included, ordered by category then slug. */
+export async function getCmsIndex(): Promise<Insight[]> {
+  return (await getDocs()).map(toInsight);
+}
+
+async function readDocs(): Promise<InsightDoc[]> {
+  let categories: string[];
+  try {
+    const entries = await readdir(CONTENT_DIR, { withFileTypes: true });
+    categories = entries
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name)
+      .sort();
+  } catch (err) {
+    throw new Error(
+      `[insights] could not read ${CONTENT_DIR} — ${String(err)}\n\n` +
+        `That directory holds every article on the site. The build is stopping ` +
+        `rather than\nexporting a site with no /insights/ pages — see the header ` +
+        `of this file for what\nPages does with paths that disappear from an ` +
+        `export.`,
+    );
+  }
+
+  const docs: InsightDoc[] = [];
+  for (const category of categories) {
+    const dir = path.join(CONTENT_DIR, category);
+    const files = (await readdir(dir)).filter((f) => f.endsWith(".md")).sort();
+    for (const file of files) docs.push(await readDoc(category, file));
+  }
+
+  if (docs.length === 0) {
+    throw new Error(
+      `[insights] ${CONTENT_DIR} contains no articles.\n\n` +
+        `An empty section is never the intention here, and shipping one would ` +
+        `delete every\narticle path from the export. Restore the files, or ` +
+        `revert whatever removed them.`,
+    );
+  }
+
+  assertNoCollisions(docs);
+  return docs;
+}
+
+// --- One file --------------------------------------------------------------
+
+function str(v: unknown): string {
+  return typeof v === "string" ? v : v === undefined ? "" : String(v);
+}
+
+function num(v: unknown): number {
+  return typeof v === "number" ? v : Number(v) || 0;
+}
+
+/** A frontmatter list of flat mappings, or nothing if the key was absent. */
+function mappings(v: unknown): Record<string, unknown>[] {
+  return Array.isArray(v)
+    ? v.filter((x): x is Record<string, unknown> => !!x && typeof x === "object")
+    : [];
+}
+
+/**
+ * Read one file into an `InsightDoc`, and validate it.
+ *
+ * The validation is not belt-and-braces. A file can be hand-edited, written by
+ * an editor against an older schema, or land in a merge nobody rebuilt — and
+ * unlike the news pipeline, which skips an unreadable body and carries on, a
+ * broken insight article is a page Jason believes is live. Fail the build and
+ * name the file and what is wrong with it.
+ */
+async function readDoc(category: string, file: string): Promise<InsightDoc> {
+  const rel = path.posix.join("content", "insights", category, file);
+  const raw = await readFile(path.join(CONTENT_DIR, category, file), "utf8");
+  const { data, body } = splitContentFile(raw);
+
+  const doc = {
+    slug: file.replace(/\.md$/, ""),
+    category,
+    title: str(data.title),
+    dek: str(data.dek),
+    published: str(data.published),
+    reviewed: str(data.reviewed),
+    readingMinutes: num(data.readingMinutes),
+    relatedGuides: mappings(data.relatedGuides).map((g) => ({
+      path: str(g.path),
+      title: str(g.title),
+    })),
+    ...(data.draft === true && { draft: true }),
+    blocks: parseBody(body),
+    faq: mappings(data.faq).map((f) => ({ q: str(f.q), a: str(f.a) })),
+    sources: mappings(data.sources).map((x) => ({
+      label: str(x.label),
+      url: str(x.url),
+      verified: str(x.verified),
+    })),
+  } as InsightDoc;
+
+  const errors = validateInsightDoc(doc);
+  if (errors.length > 0) {
+    throw new Error(
+      `[insights] ${rel} is not a valid article:\n` +
+        errors.map((e) => `  \u2022 ${e}`).join("\n") +
+        `\n\nThe build is stopping on purpose. Publishing a half-rendered ` +
+        `article is worse than\nnot publishing it: the page would go live ` +
+        `missing whatever the broken block was\ncarrying.`,
+    );
+  }
+  return doc;
 }
 
 /**
@@ -131,8 +234,8 @@ function assertNoCollisions(items: { category: string; slug: string }[]): void {
   );
 }
 
-/** An API row in the shape every consumer already understands. */
-function toInsight(it: InsightSummary): Insight {
+/** A document in the summary shape every consumer already understands. */
+function toInsight(it: InsightDoc): Insight {
   return {
     slug: it.slug,
     category: it.category as InsightCategory,
@@ -203,100 +306,16 @@ export async function cmsOnlyCategories(): Promise<InsightCategory[]> {
 
 // --- One document ----------------------------------------------------------
 
-const docCache = new Map<string, Promise<InsightDoc | null>>();
-
-export function getInsightDoc(
-  category: string,
-  slug: string,
-): Promise<InsightDoc | null> {
-  const key = `${category}/${slug}`;
-  let p = docCache.get(key);
-  if (!p) {
-    p = fetchDoc(category, slug);
-    docCache.set(key, p);
-  }
-  return p;
-}
-
-async function fetchDoc(
-  category: string,
-  slug: string,
-): Promise<InsightDoc | null> {
-  const data = await getJson<{ item: InsightDoc }>(
-    `${INSIGHTS_API}/${encodeURIComponent(category)}/${encodeURIComponent(slug)}`,
-    `the insight "${category}/${slug}"`,
-    true,
-  );
-  const doc = data?.item;
-  if (!doc) return null;
-
-  /**
-   * Validate again here, even though the Worker validated on save.
-   *
-   * The row can predate the current schema, or have been written by a script,
-   * or by a Worker deployed before shared/validate.ts last changed. This is the
-   * last moment anything can be checked and the moment before a reader sees it
-   * — and unlike the news pipeline, which skips an unreadable body and carries
-   * on, a broken insight article is a page Jason believes is live. Fail the
-   * build and say which article and what is wrong with it.
-   */
-  const errors = validateInsightDoc(doc);
-  if (errors.length > 0) {
-    throw new Error(
-      `[insights] the stored document for /insights/${category}/${slug}/ is not valid:\n` +
-        errors.map((e) => `  • ${e}`).join("\n") +
-        `\n\nThe build is stopping on purpose. Publishing a half-rendered article ` +
-        `is worse than not publishing it: the page would go live missing whatever ` +
-        `the broken block was carrying. Fix it in the dashboard and publish again.`,
-    );
-  }
-
-  return doc;
-}
-
 /**
- * Fetch JSON, and decide loudly what an unreachable API means.
+ * One article, or null if that path has no file.
  *
- * Copied from news.ts:getJson, deliberately and without softening — see the
- * header of this file for why /insights needs it more than /news does, not
- * less.
+ * Null is reachable only through a stale link — `generateStaticParams` builds
+ * its list from the same read — so it stays a 404 rather than a throw.
  */
-async function getJson<T>(
-  url: string,
-  what: string,
-  /**
-   * Whether a 404 is a legitimate answer. It is for one article — the slug may
-   * have been unpublished since the index was read. It is NOT for the index
-   * itself: a 404 there means the endpoint is wrong, and treating that as "no
-   * articles yet" would turn a misconfiguration into a silently empty section.
-   */
-  notFoundIsEmpty = false,
-): Promise<T | null> {
-  const isProdBuild = process.env.NODE_ENV === "production";
-  try {
-    const res = await fetch(withBuildId(url), {
-      headers: { accept: "application/json" },
-    });
-    if (res.status === 404 && notFoundIsEmpty) return null;
-    if (!res.ok) throw new Error(`status ${res.status}`);
-    return (await res.json()) as T;
-  } catch (err) {
-    // Next signals its own control flow — static-generation bailouts, notFound,
-    // redirects — by throwing tagged errors. Swallowing one and reporting it as
-    // an unreachable API sends the reader of the message in exactly the wrong
-    // direction. Anything carrying a digest is the framework's, not ours.
-    if (err && typeof err === "object" && "digest" in err) throw err;
-
-    const msg = `[insights] could not fetch ${what} from ${url} — ${String(err)}`;
-    if (isProdBuild) {
-      throw new Error(
-        `${msg}\n\nThe build is stopping on purpose. Publishing without the CMS ` +
-          `would remove every /insights/ article page from the export, and ` +
-          `Cloudflare Pages then serves those deleted paths from the edge for up ` +
-          `to seven days. Check the mvg-news Worker is up, then rebuild.`,
-      );
-    }
-    console.warn(`${msg} — continuing with no CMS articles (dev only).`);
-    return null;
-  }
+export async function getInsightDoc(
+  category: string,
+  slug: string,
+): Promise<InsightDoc | null> {
+  const docs = await getDocs();
+  return docs.find((d) => d.category === category && d.slug === slug) ?? null;
 }

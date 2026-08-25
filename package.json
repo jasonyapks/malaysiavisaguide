@@ -4,16 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "predev": "node scripts/emit-figures.mjs && node scripts/sync-insight-routes.mjs --soft && node scripts/gen-zh-hant.mjs",
-    "prebuild": "node scripts/pull-images.mjs --soft && node scripts/emit-figures.mjs && node scripts/sync-insight-routes.mjs && node scripts/gen-zh-hant.mjs --check",
+    "predev": "node scripts/emit-figures.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/sync-insight-routes.mjs && node scripts/gen-zh-hant.mjs",
+    "prebuild": "node scripts/pull-images.mjs --soft && node scripts/emit-figures.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/sync-insight-routes.mjs && node scripts/gen-zh-hant.mjs --check",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "publish:site": "node scripts/deploy-site.mjs",
     "images:pull": "node scripts/pull-images.mjs",
     "figures:emit": "node scripts/emit-figures.mjs",
-    "insights:sync": "node scripts/sync-insight-routes.mjs",
-    "i18n:hant": "node scripts/gen-zh-hant.mjs"
+    "insights:sync": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/sync-insight-routes.mjs",
+    "content:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/check-content.mjs",
+    "i18n:hant": "node scripts/gen-zh-hant.mjs",
+    "test:markdown": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/test-markdown.mjs",
+    "migrate:cms": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/migrate-cms-to-files.mjs"
   },
   "dependencies": {
     "next": "16.2.11",

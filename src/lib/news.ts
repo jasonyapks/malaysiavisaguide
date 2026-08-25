@@ -1,4 +1,8 @@
-import { site } from "@/lib/site";
+import { readdir, readFile } from "node:fs/promises";
+import path from "node:path";
+
+import { splitContentFile } from "@shared/frontmatter";
+import { parseNewsSections } from "@shared/newsbody";
 
 /**
  * Build-time data layer for the news blog.
@@ -31,24 +35,6 @@ export interface ArticleBody {
   whatItMeans: string[];
 }
 
-/** One row as the API returns it. Snake_case because it is SQLite columns. */
-interface ApiItem {
-  id: string;
-  slug: string;
-  headline: string | null;
-  title: string;
-  dek: string | null;
-  summary: string;
-  category: string;
-  source_name: string;
-  source_url: string;
-  published_at: string | null;
-  reading_minutes: number | null;
-  updated_at: string | null;
-  body?: string | null;
-  source_excerpt?: string | null;
-}
-
 /** An article in the shape the pages actually want. */
 export interface NewsArticle {
   slug: string;
@@ -70,43 +56,19 @@ export interface FullNewsArticle extends NewsArticle {
 }
 
 /**
- * Where to read the articles from.
+ * Where the articles live.
  *
- * `site.newsApi` is the deployed Worker. NEWS_API_URL overrides it so the blog
- * can be built and inspected against a local `wrangler dev` before anything is
- * deployed:
+ * One markdown file per article, committed to the repo, so the build reads them
+ * off disk. The cron Worker still sweeps and still triages in D1 — the pending
+ * queue is a queue, not content — but an *approved* article becomes a file.
  *
- *   NEWS_API_URL=http://localhost:8787/api/news npm run build
- *
- * The override lives here rather than in lib/site.ts because site.ts is imported
- * by client components, and a server-only env var read has no business being
- * evaluated in a browser bundle.
+ * That retires the cache-buster this file used to carry, and the failure it
+ * existed for. Serving yesterday's list out of Next's persistent fetch cache is
+ * not reachable any more, and neither is the two-step publish behind it: the
+ * symptom "I approved it and it isn't live" had its cause in a D1 write that no
+ * build had seen yet. A commit is the trigger now, so approving is publishing.
  */
-const NEWS_API = process.env.NEWS_API_URL ?? site.newsApi;
-
-/**
- * Per-build cache-buster.
- *
- * Freshness here is not optional: a rebuild that serves yesterday's article list
- * from Next's persistent fetch cache in `.next/cache` would deploy a site that
- * silently lags the dashboard, and the symptom — "I approved it and it isn't
- * live" — points nowhere near the cause.
- *
- * The obvious fix, `cache: "no-store"`, is not available. It marks the route as
- * dynamically rendered, and `output: "export"` then refuses to build it at all.
- * So instead the URL itself changes every build, which moves the cache key
- * rather than fighting the cache. The Worker matches on pathname and ignores the
- * parameter.
- *
- * Next builds pages across several worker processes, so this evaluates once per
- * process rather than once per build — a handful of requests instead of one, and
- * every one of them current.
- */
-const BUILD_ID = Date.now().toString(36);
-
-function withBuildId(url: string): string {
-  return `${url}${url.includes("?") ? "&" : "?"}b=${BUILD_ID}`;
-}
+const CONTENT_DIR = path.join(process.cwd(), "content", "news");
 
 export const CATEGORY_LABEL: Record<NewsCategory, string> = {
   pvip: "PVIP",
@@ -188,18 +150,35 @@ function asCategory(v: string): NewsCategory {
   return v in CATEGORY_LABEL ? (v as NewsCategory) : "general";
 }
 
-function toArticle(it: ApiItem): NewsArticle {
+/**
+ * Drop the body, leaving the shape every listing wants.
+ *
+ * The row used to carry `headline`/`title` and `dek`/`summary` — ours and the
+ * publisher's, one falling back to the other. A file has one field for each:
+ * the fallback was resolved once, during the migration, and does not need
+ * resolving again on every read.
+ */
+function toSummary(a: FullNewsArticle): NewsArticle {
   return {
-    slug: it.slug,
-    headline: it.headline?.trim() || it.title,
-    dek: it.dek?.trim() || it.summary,
-    category: asCategory(it.category),
-    sourceName: it.source_name,
-    sourceUrl: it.source_url,
-    publishedAt: toIso(it.published_at),
-    updatedAt: toIso(it.updated_at),
-    readingMinutes: it.reading_minutes ?? 3,
+    slug: a.slug,
+    headline: a.headline,
+    dek: a.dek,
+    category: a.category,
+    sourceName: a.sourceName,
+    sourceUrl: a.sourceUrl,
+    publishedAt: a.publishedAt,
+    updatedAt: a.updatedAt,
+    readingMinutes: a.readingMinutes,
   };
+}
+
+function str(v: unknown): string {
+  return typeof v === "string" ? v : v === undefined ? "" : String(v);
+}
+
+/** A frontmatter list of plain strings — `keyPoints`, `whatItMeans`. */
+function strings(v: unknown): string[] {
+  return Array.isArray(v) ? v.map(str) : [];
 }
 
 /**
@@ -231,17 +210,100 @@ function toIso(v: string | null): string | null {
  * semantics, which have changed between Next majors and would be an invisible
  * dependency if relied on here.
  */
-let indexPromise: Promise<NewsArticle[]> | null = null;
+let articlesPromise: Promise<FullNewsArticle[]> | null = null;
 
-export function getNewsIndex(): Promise<NewsArticle[]> {
-  indexPromise ??= fetchIndex();
-  return indexPromise;
+/** Every article on disk, read once per build. */
+function getArticles(): Promise<FullNewsArticle[]> {
+  articlesPromise ??= readArticles();
+  return articlesPromise;
 }
 
-async function fetchIndex(): Promise<NewsArticle[]> {
-  const data = await getJson<{ items: ApiItem[] }>(NEWS_API, "the news index");
-  if (!data) return [];
-  return (data.items ?? []).filter((it) => it.slug).map(toArticle);
+export async function getNewsIndex(): Promise<NewsArticle[]> {
+  return (await getArticles()).map(toSummary);
+}
+
+/**
+ * Newest first, ties broken by slug.
+ *
+ * The tie-break is the part worth stating: two articles can share a
+ * `publishedAt` to the second, and without a second key their order would come
+ * out of whatever `readdir` happened to return. That would reshuffle two cards
+ * between builds for no reason a reader could perceive — the same argument
+ * `getCategoryIndex` makes a few lines down.
+ */
+async function readArticles(): Promise<FullNewsArticle[]> {
+  let files: string[];
+  try {
+    files = (await readdir(CONTENT_DIR)).filter((f) => f.endsWith(".md"));
+  } catch (err) {
+    throw new Error(
+      `[news] could not read ${CONTENT_DIR} — ${String(err)}\n\n` +
+        `The build is stopping rather than exporting a site with no /news/ ` +
+        `pages. Pages\nserves paths that vanish from an export for up to seven ` +
+        `days afterwards, so the\nmistake would outlive the fix by a week.`,
+    );
+  }
+
+  const articles: FullNewsArticle[] = [];
+  for (const file of files.sort()) {
+    const article = await readArticle(file);
+    if (article) articles.push(article);
+  }
+
+  if (articles.length === 0) {
+    throw new Error(
+      `[news] ${CONTENT_DIR} contains no readable articles.\n\n` +
+        `An empty blog is never the intention, and shipping one would delete ` +
+        `every article\npath from the export. Restore the files, or revert ` +
+        `whatever removed them.`,
+    );
+  }
+
+  return articles.sort(
+    (a, b) =>
+      (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "") ||
+      a.slug.localeCompare(b.slug),
+  );
+}
+
+/**
+ * Read one file.
+ *
+ * A file with no prose is skipped with a warning rather than failing the build,
+ * which is the policy the fetch had: the blog fills from a cron and an approval
+ * click, and one malformed article should not stop the other nineteen from
+ * publishing. /insights takes the opposite line, and the header of
+ * src/lib/insights.ts says why.
+ */
+async function readArticle(file: string): Promise<FullNewsArticle | null> {
+  const raw = await readFile(path.join(CONTENT_DIR, file), "utf8");
+  const { data, body } = splitContentFile(raw);
+  const sections = parseNewsSections(body);
+
+  if (sections.length === 0) {
+    console.warn(`[news] content/news/${file} has no body — skipping it.`);
+    return null;
+  }
+
+  return {
+    slug: file.replace(/\.md$/, ""),
+    headline: str(data.headline),
+    dek: str(data.dek),
+    category: asCategory(str(data.category)),
+    sourceName: str(data.sourceName),
+    sourceUrl: str(data.sourceUrl),
+    publishedAt: toIso(str(data.publishedAt) || null),
+    updatedAt: toIso(str(data.updatedAt) || null),
+    readingMinutes:
+      typeof data.readingMinutes === "number" ? data.readingMinutes : 3,
+    body: {
+      keyPoints: strings(data.keyPoints),
+      sections,
+      whatItMeans: strings(data.whatItMeans),
+    },
+    sourceExcerpt:
+      typeof data.sourceExcerpt === "string" ? data.sourceExcerpt : null,
+  };
 }
 
 /**
@@ -277,94 +339,9 @@ export async function getCategoryIndex(): Promise<
     );
 }
 
-const articleCache = new Map<string, Promise<FullNewsArticle | null>>();
-
-export function getArticle(slug: string): Promise<FullNewsArticle | null> {
-  let p = articleCache.get(slug);
-  if (!p) {
-    p = fetchArticle(slug);
-    articleCache.set(slug, p);
-  }
-  return p;
-}
-
-async function fetchArticle(slug: string): Promise<FullNewsArticle | null> {
-  const data = await getJson<{ item: ApiItem }>(
-    `${NEWS_API}/${encodeURIComponent(slug)}`,
-    `the article "${slug}"`,
-    true,
-  );
-  const it = data?.item;
-  if (!it?.slug) return null;
-
-  // A row that reached the index but whose body will not parse is a bug, not a
-  // reason to publish a headline with nothing under it.
-  let body: ArticleBody;
-  try {
-    const parsed = JSON.parse(it.body ?? "") as ArticleBody;
-    if (!Array.isArray(parsed?.sections) || parsed.sections.length === 0) return null;
-    body = {
-      keyPoints: parsed.keyPoints ?? [],
-      sections: parsed.sections,
-      whatItMeans: parsed.whatItMeans ?? [],
-    };
-  } catch {
-    console.warn(`[news] article "${slug}" has an unreadable body — skipping it.`);
-    return null;
-  }
-
-  return { ...toArticle(it), body, sourceExcerpt: it.source_excerpt ?? null };
-}
-
-/**
- * Fetch JSON, and decide loudly what an unreachable API means.
- *
- * In a production build it throws. The tempting alternative — carry on with an
- * empty list — would build a site whose /news index is empty and whose article
- * pages have vanished, and deploying that de-indexes every article the blog has
- * earned. A failed build is recoverable in a minute; a silent de-index is not,
- * and Pages holds deleted paths at the edge for up to seven days on top.
- *
- * In `next dev` it warns and returns null, so the rest of the site is still
- * workable offline.
- */
-async function getJson<T>(
-  url: string,
-  what: string,
-  /**
-   * Whether a 404 is a legitimate answer. It is for one article — the slug may
-   * have been unpublished since the index was read. It is NOT for the index
-   * itself: a 404 there means the endpoint is wrong, and treating that as "no
-   * articles yet" would turn a misconfiguration into a silently empty blog.
-   */
-  notFoundIsEmpty = false,
-): Promise<T | null> {
-  const isProdBuild = process.env.NODE_ENV === "production";
-  try {
-    const res = await fetch(withBuildId(url), {
-      headers: { accept: "application/json" },
-    });
-    if (res.status === 404 && notFoundIsEmpty) return null;
-    if (!res.ok) throw new Error(`status ${res.status}`);
-    return (await res.json()) as T;
-  } catch (err) {
-    // Next signals its own control flow — static-generation bailouts, notFound,
-    // redirects — by throwing tagged errors. Swallowing one and reporting it as
-    // an unreachable API sends the reader of the message in exactly the wrong
-    // direction. Anything carrying a digest is the framework's, not ours.
-    if (err && typeof err === "object" && "digest" in err) throw err;
-
-    const msg = `[news] could not fetch ${what} from ${url} — ${String(err)}`;
-    if (isProdBuild) {
-      throw new Error(
-        `${msg}\n\nThe build is stopping on purpose. Publishing without the news ` +
-          `API would ship an empty /news and remove every article page. Check the ` +
-          `mvg-news Worker is up, then rebuild.`,
-      );
-    }
-    console.warn(`${msg} — continuing with no news (dev only).`);
-    return null;
-  }
+export async function getArticle(slug: string): Promise<FullNewsArticle | null> {
+  const articles = await getArticles();
+  return articles.find((a) => a.slug === slug) ?? null;
 }
 
 /** "23 July 2026" — matches reviewDate() in lib/format.ts. */
