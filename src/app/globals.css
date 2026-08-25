@@ -181,19 +181,45 @@
  * these win. Inside @theme they would tie and lose to source order.
  */
 html[lang="zh-Hans"] {
+  /* Noto Sans SC, served by us (RootShell), first — Jason specified Noto Sans
+     CJK and this is the only way to actually deliver it: PingFang exists only
+     on Apple, YaHei only on Windows, and the locally-installed "Noto Sans CJK
+     SC" only on Android and most Linux. The platform faces stay behind it as
+     the fallback for the seconds before the webfont resolves, and for anyone
+     who blocks webfonts. */
   --font-cjk-sans:
-    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC",
-    "Source Han Sans SC", "WenQuanYi Micro Hei", sans-serif;
+    var(--font-noto-sc), "Noto Sans CJK SC", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Source Han Sans SC", "WenQuanYi Micro Hei", sans-serif;
   --font-cjk-serif:
     "Songti SC", "SimSun", "Noto Serif CJK SC", "Source Han Serif SC", serif;
 }
 
 html[lang="zh-Hant"] {
   --font-cjk-sans:
-    "PingFang TC", "Hiragino Sans CNS", "Microsoft JhengHei", "Noto Sans CJK TC",
-    "Source Han Sans TC", sans-serif;
+    var(--font-noto-tc), "Noto Sans CJK TC", "PingFang TC", "Hiragino Sans CNS",
+    "Microsoft JhengHei", "Source Han Sans TC", sans-serif;
   --font-cjk-serif:
     "Songti TC", "PMingLiU", "Noto Serif CJK TC", "Source Han Serif TC", serif;
+}
+
+/**
+ * THE CJK WEIGHT SCALE — headings 700, body 400, small labels 500.
+ *
+ * Only the third differs from the Latin side, and it has to: the eyebrow is
+ * 700 at 12px with 0.22em of tracking, which is right for a Latin small-cap
+ * label and too dense in Han, where every glyph is already carrying eight to
+ * twenty strokes inside that same 12px box. 500 keeps the label reading as a
+ * label without the strokes filling in.
+ *
+ * Headings are 700 and body is 400 in both scripts, so those need no override
+ * and none is written — a rule that restates the inherited value is a rule
+ * someone later has to prove is redundant.
+ */
+html[lang^="zh"] .eyebrow {
+  font-weight: 500;
+  /* 0.22em of tracking pulls Han apart into unrelated characters rather than
+     reading as one label. Latin small caps need the air; Han does not. */
+  letter-spacing: 0.08em;
 }
 
 /**

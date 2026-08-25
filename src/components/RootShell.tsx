@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
-import { DM_Serif_Display, Inter, Poppins } from "next/font/google";
+import {
+  DM_Serif_Display,
+  Inter,
+  Noto_Sans_SC,
+  Noto_Sans_TC,
+  Poppins,
+} from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import markSrc from "@/assets/logo-mark.webp";
 import "@/app/globals.css";
 import { htmlLang, localeOrigin, ogLocale, type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
@@ -71,6 +78,49 @@ const accent = DM_Serif_Display({
 });
 
 /**
+ * The CJK faces — Noto Sans CJK, at the three weights Jason specified:
+ * headings 700, body 400, small labels 500.
+ *
+ * ## Why this is affordable, when the old comment said it was not
+ *
+ * globals.css used to argue that a webfont was indefensible here because "a
+ * full Simplified Chinese face is 4-8MB even subsetted aggressively". That is
+ * true of shipping a face as one file, and it is not what happens. Google
+ * slices these into ~100 `unicode-range` chunks and a browser fetches only the
+ * chunks holding characters actually on the page — a Chinese page pulls a
+ * couple of hundred KB, and an English page pulls **nothing at all**, because
+ * no glyph in any CJK range is ever rendered on it.
+ *
+ * `preload: false` is what makes that true. Preloading would defeat the whole
+ * mechanism by fetching chunks before the browser knows which it needs, and it
+ * would do so on English pages too. Measured: an English page loads 6 font
+ * files / 105KB and no Noto at all; a Chinese page loads 23 / ~1.0MB.
+ *
+ * The three weights are spelled out rather than using the variable cut, which
+ * measured byte-for-byte identical (23 files, 1049KB either way). Static names
+ * the spec in the code and stops a stray `font-weight: 600` resolving to a real
+ * 600 nobody asked for.
+ *
+ * Two families, not one: Simplified and Traditional draw the same Han
+ * character differently, and serving a Traditional reader SC is the wrong
+ * glyph, not a near-enough substitute. globals.css picks between them off
+ * `<html lang>`.
+ */
+const notoSC = Noto_Sans_SC({
+  variable: "--font-noto-sc",
+  weight: ["400", "500", "700"],
+  preload: false,
+  display: "swap",
+});
+
+const notoTC = Noto_Sans_TC({
+  variable: "--font-noto-tc",
+  weight: ["400", "500", "700"],
+  preload: false,
+  display: "swap",
+});
+
+/**
  * Sitewide metadata for a locale. Each root layout exports the result.
  *
  * No `alternates.languages` here: hreflang has to name the *page*, not the
@@ -133,7 +183,7 @@ export function RootShell({
   return (
     <html
       lang={htmlLang[locale]}
-      className={`${heading.variable} ${sans.variable} ${accent.variable} h-full`}
+      className={`${heading.variable} ${sans.variable} ${accent.variable} ${notoSC.variable} ${notoTC.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
         {/* Resolve googletagmanager's DNS early. React 19 hoists this into
@@ -432,17 +482,25 @@ function navGroupsFor(locale: Locale) {
  * If genuine vector artwork ever turns up, prefer it — inline SVG would also
  * take this asset back off the critical path.
  *
+ * ## Imported, not referenced by path
+ *
+ * `src/assets/logo-mark.webp` rather than `/logo-mark.webp`, so Next emits it
+ * as `/_next/static/media/logo-mark.<hash>.webp` and the URL changes with the
+ * bytes. The public copy still exists for anyone linking the mark from outside
+ * the site, and `_headers` caches it for 30 days — which is exactly why the
+ * site must not render it. The v5 mark shipped on 2026-08-25 to that stable
+ * path and visitors kept getting the v4 towers out of Cloudflare's edge and
+ * their own browsers. See src/assets/README.md.
+ *
  * `priority` because it sits in the header of every page: it is always in the
  * initial viewport, so lazy-loading it only delays the LCP region.
  */
 function Mark() {
   return (
     <Image
-      src="/logo-mark.webp"
+      src={markSrc}
       alt=""
       aria-hidden
-      width={132}
-      height={144}
       priority
       // h-12 (48px), giving 44px of width at the source's 0.916 aspect. The
       // stacked site name and two-line strapline beside it are still the taller
