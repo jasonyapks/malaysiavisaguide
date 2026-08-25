@@ -30,10 +30,11 @@
  * ## Colour
  *
  * Hardcoded hex, deliberately, not the palette tokens: a logo does not
- * re-colour when a theme does. Navy here is the board's `#0B1D3A`, which is
- * the same value the palette uses for `forest-900` — the markdown template says
- * `#071D3A` instead. The board wins for both, so the mark and the page share
- * one navy. See the note on `--color-forest-900` in globals.css.
+ * re-colour when a theme does. Navy is `#071D3A` — the value in
+ * malaysiavisaguide_branding_template.md §3, which Jason confirmed on
+ * 2026-08-25 is canonical over the `#0B1D3A` printed on the board this mark
+ * was drawn from. It matches `--color-forest-900`, so the mark and the page
+ * share one navy.
  */
 export function BrandMark({ className }: { className?: string }) {
   return (
@@ -49,14 +50,14 @@ export function BrandMark({ className }: { className?: string }) {
       <path
         d="M16 10.5 L48.5 5.5 A3 3 0 0 1 52 8.5 V50 A3 3 0 0 1 49.5 53 L20 57"
         fill="none"
-        stroke="#0B1D3A"
+        stroke="#071D3A"
         strokeWidth="2.2"
         strokeLinejoin="round"
         strokeLinecap="round"
       />
 
       {/* The front cover. */}
-      <rect x="7" y="8" width="34" height="49" rx="4.5" fill="#0B1D3A" />
+      <rect x="7" y="8" width="34" height="49" rx="4.5" fill="#071D3A" />
 
       {/* Crescent — two arcs between the same pair of horns, so the inner edge
           is a true concave sweep rather than a second shape laid on top. */}

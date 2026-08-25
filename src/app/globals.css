@@ -27,7 +27,7 @@
  * surfaces. SPEC.md §4.3 is stale (it described v3).
  *
  * The five brand colours, at the roles the template assigns them:
- *   #0B1D3A Primary Navy    → forest-900, headings and the dark panels (board)
+ *   #071D3A Primary Navy    → forest-900, headings and the dark panels
  *   #124E9E Royal Blue      → forest-700, links and secondary headings
  *   #D4A017 Signature Gold  → gold-500, accents, arcs, CTA fill
  *   #E6E8EB Mist            → sand-100, bands, nav, muted fills
@@ -69,13 +69,12 @@
   --color-forest-600: #2e6dc2; /* royal blue, lifted — progress bars, active rules */
   --color-forest-700: #124e9e; /* Royal Blue — links, secondary headings (7.4:1) */
   /* Primary Navy — headings, dark panels (15.8:1).
-     TWO SOURCES DISAGREE and this takes the board's: MVG_branding_board.png
-     labels its navy swatch #0B1D3A, malaysiavisaguide_branding_template.md §3
-     says #071D3A. Three points apart, indistinguishable on screen, and both
-     land on the same contrast ratio to two decimals — but the mark is drawn
-     from the board, so the page follows the board too rather than shipping two
-     navies. Jason to confirm which document is canonical. */
-  --color-forest-900: #0b1d3a;
+     The two brand documents disagree here: malaysiavisaguide_branding_template.md
+     §3 says #071D3A, MVG_branding_board.png labels its navy swatch #0B1D3A.
+     Jason settled it on 2026-08-25 — the markdown is canonical. That is this
+     value, and it is also the navy the logo is drawn in, so the page and the
+     mark share one. Do not reintroduce the board's value from the file history. */
+  --color-forest-900: #071d3a;
 
   /* Off white / mist — surfaces and bands */
   --color-sand-50: #f7f7f9; /* Off White — page background, and light text on navy */

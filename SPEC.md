@@ -18,10 +18,10 @@ the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW autho
    photography, voice, and how the brand behaves off the site) and
    `MVG_branding_board.png` (the visual board, which is where the logo actually lives).
    Both outrank §4.3; when they disagree with each other, see the next point.
-2. **The two brand documents disagree on Primary Navy** — the board's swatch says
-   `#0B1D3A`, the markdown says `#071D3A`. The board wins throughout, because the logo
-   comes from the board and one navy is better than two. Three hex points; nobody will
-   see it. Jason to say which document is canonical.
+2. **The two brand documents disagree on Primary Navy** — the markdown says `#071D3A`,
+   the board's swatch says `#0B1D3A`. **Jason settled it: the markdown is canonical**, and
+   `#071D3A` is used throughout, the logo included, so the page and the mark share one
+   navy. Where the two documents differ on anything else, ask rather than pick.
 3. **Gold is back, and it is NOT the gold from this file's history.** v3's champagne was
    a *surface* treatment. §3 of the template makes Signature Gold a rationed 10% accent
    on a navy foundation, and — critically — a colour that cannot carry body text at all.
@@ -386,7 +386,7 @@ Department crest, never the word "official" (§1). Navy-and-gold is close enough
 government skin that the "not a government body" line under the wordmark is now doing real
 work; keep it.
 
-- **Palette — five colours, each at its strongest role:** `#0B1D3A` Primary Navy
+- **Palette — five colours, each at its strongest role:** `#071D3A` Primary Navy
   (headings, dark panels, foundation), `#124E9E` Royal Blue (links, digital UI),
   `#D4A017` Signature Gold (accents, arcs, the CTA fill), `#E6E8EB` Mist (bands, nav,
   muted fills), `#F7F7F9` Off White (the page). Ratio 60 navy/off-white, 20 royal blue,
