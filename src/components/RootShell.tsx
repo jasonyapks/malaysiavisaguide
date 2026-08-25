@@ -158,10 +158,36 @@ export function RootShell({
         {/* One white sticky bar — brand left, nav centre, language and CTA right,
             as the reference does it. Our own identity, never a government crest. */}
         <header className="sticky top-0 z-20 border-b border-sand-200 bg-white/92 backdrop-blur">
-          {/* SiteNav is `flex-1` (basis 0), so in a wrapping row it swallows all
-              free space and shunts the right-hand group onto a second line.
-              Stop wrapping once there is room for one row. */}
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-6 py-4 lg:flex-nowrap">
+          {/**
+           * SiteNav is `flex-1` (basis 0), so in a wrapping row it swallows all
+           * free space and shunts the right-hand group onto a second line. Stop
+           * wrapping once there is room for one row.
+           *
+           * ## What has to fit, and what gives way
+           *
+           * Measured at 1024px: brand block 222 + nav 574 + language switcher
+           * and CTA 291 + two 24px gaps = 1135, against 976 of content width.
+           * The row was set to stop wrapping at `lg` (1024) anyway, so from
+           * 1024 to roughly 1180 the right-hand group was pushed off the edge
+           * and silently clipped by the `overflow-x: clip` on <body>. The CTA
+           * was invisible on a very common laptop width, with no scrollbar to
+           * hint at it. Pre-existing; the v5 mark is 18px wider than the towers
+           * it replaced and made it slightly worse.
+           *
+           * Nothing here compresses enough to fix it — the nav alone is 574px.
+           * So two things stand down between `lg` and `xl`, cheapest first: the
+           * strapline (166px) and the CTA pill. Between those widths the header
+           * is mark + wordmark + full nav + language switcher, on one row, all
+           * of it visible. The CTA is still in the footer of every page and
+           * reachable from the nav.
+           *
+           * The row gap also drops 24 -> 16 across that band, which is the last
+           * 16px needed to clear the padding at exactly 1024.
+           *
+           * If you add anything to this row, re-measure. The budget at 1024 is
+           * 976px and it is already spent.
+           */}
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-6 py-4 lg:flex-nowrap lg:gap-x-4 xl:gap-x-6">
             <Link href={home} className="flex shrink-0 items-center gap-3">
               <Mark />
               <span className="leading-tight">
@@ -170,10 +196,13 @@ export function RootShell({
                 </span>
                 {/* Stacked, not run on one line: as a single 45-character row
                     this strapline set the width of the whole brand block and
-                    pushed the nav onto a second row. Broken in two it is half as
-                    wide, which is what lets it appear from `lg` rather than only
-                    at `xl`. The mid-dot separator goes with the line break. */}
-                <span className="hidden text-eyebrow leading-snug tracking-wide text-ink-muted lg:block">
+                    pushed the nav onto a second row. The mid-dot separator goes
+                    with the line break.
+
+                    `xl`, not `lg` — see the note on the row above. It is the
+                    least load-bearing thing in the header and so it is the
+                    first to go when the row will not fit. */}
+                <span className="hidden text-eyebrow leading-snug tracking-wide text-ink-muted xl:block">
                   <span className="block whitespace-nowrap">
                     {ui.strapline[0]}
                   </span>
@@ -192,7 +221,7 @@ export function RootShell({
               <LanguageSwitcher locale={locale} label={ui.ariaLanguage} />
               <Link
                 href={contact}
-                className="accent-fill hidden rounded-full px-5 py-2 text-caption font-bold transition-transform hover:-translate-y-px lg:inline-block"
+                className="accent-fill hidden rounded-full px-5 py-2 text-caption font-bold transition-transform hover:-translate-y-px xl:inline-block"
               >
                 {ui.askQuestion}
               </Link>

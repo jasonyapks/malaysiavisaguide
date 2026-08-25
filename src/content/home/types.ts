@@ -33,6 +33,14 @@ export type HomeCopy = {
     chips: string[];
     ctaPrimary: string;
     ctaSecondary: string;
+    /**
+     * The eligibility checker. A third link rather than a third button: the
+     * branding template §9 names two CTAs and giving the quiz equal weight
+     * would make it a fourth thing competing at the same volume. It held the
+     * primary slot before v5 and is the site's main lead magnet, so it does
+     * not go back to being nav-only.
+     */
+    ctaTertiary: string;
     cardEyebrow: string;
     cardTitle: ReactNode;
     promises: { title: string; body: string }[];

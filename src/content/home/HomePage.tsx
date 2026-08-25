@@ -116,27 +116,40 @@ export async function HomePage({
               ))}
             </ul>
 
-            {/* Branding template §9 names these two and only these two:
-                "Explore Visa Options" primary, "Talk to an Expert" secondary.
-                The destinations follow the labels — /compare/ is the page that
-                lays the options side by side, and an expert is reached at
-                /contact/.
+            {/* Branding template §9 names the first two: "Explore Visa Options"
+                primary, "Talk to an Expert" secondary. The destinations follow
+                the labels — /compare/ lays the options side by side, an expert
+                is reached at /contact/.
 
-                NOTE: this displaces the eligibility quiz, which held the
-                primary slot until v5. It is still linked from /tools/ and from
-                the Tools nav group, but it no longer has a home-page CTA. */}
-            <div className="flex flex-wrap items-center gap-5 pt-1">
+                The eligibility checker is third, and quieter. It held the
+                primary slot until v5, and it is the site's main lead magnet, so
+                nav-only was too far down; but promoting it back to a button
+                would put three equal-weight controls in a hero the template
+                specs with two. A link at body weight, on its own line from
+                `sm`, is the compromise: present, findable, not competing. */}
+            <div className="space-y-4 pt-1">
+              <div className="flex flex-wrap items-center gap-5">
+                <Link
+                  href={href("/compare/")}
+                  className="accent-fill rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
+                >
+                  {copy.hero.ctaPrimary}
+                </Link>
+                <Link
+                  href={href("/contact/")}
+                  className="inline-flex items-center gap-1.5 border-b-2 border-forest-600/40 pb-0.5 font-bold text-forest-900 transition-colors hover:border-forest-600"
+                >
+                  {copy.hero.ctaSecondary} <span aria-hidden>↗</span>
+                </Link>
+              </div>
               <Link
-                href={href("/compare/")}
-                className="accent-fill rounded-full px-8 py-3.5 font-bold transition-transform hover:-translate-y-px"
+                href={href("/tools/eligibility/")}
+                className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-forest-700 underline decoration-forest-600/35 underline-offset-4 transition-colors hover:decoration-forest-600"
               >
-                {copy.hero.ctaPrimary}
-              </Link>
-              <Link
-                href={href("/contact/")}
-                className="inline-flex items-center gap-1.5 border-b-2 border-forest-600/40 pb-0.5 font-bold text-forest-900 transition-colors hover:border-forest-600"
-              >
-                {copy.hero.ctaSecondary} <span aria-hidden>↗</span>
+                <span aria-hidden className="text-gold-700">
+                  ◆
+                </span>
+                {copy.hero.ctaTertiary}
               </Link>
             </div>
           </div>
@@ -169,7 +182,7 @@ export async function HomePage({
       </section>
 
       {/* Section heading + framing paragraph, split as the reference splits it. */}
-      <section className="space-y-10">
+      <Wide space="space-y-10">
         <SectionHead {...copy.programmes} />
 
         <ul className="grid gap-6 sm:grid-cols-3">
@@ -185,10 +198,10 @@ export async function HomePage({
             />
           ))}
         </ul>
-      </section>
+      </Wide>
 
       {/* Work & study — same card, smaller. */}
-      <section className="space-y-8">
+      <Wide space="space-y-8">
         <SectionHead {...copy.workStudy} />
 
         <ul className="grid gap-6 sm:grid-cols-3">
@@ -204,7 +217,7 @@ export async function HomePage({
             />
           ))}
         </ul>
-      </section>
+      </Wide>
 
       {/* Freshness band — ice blue, full-bleed, with the review photo. */}
       <section className="full-bleed relative overflow-hidden border-y border-sand-200 bg-linear-to-b from-sand-100 to-[#dfe3e9]">
@@ -245,7 +258,7 @@ export async function HomePage({
           well as its outbound linking: the claim "verified against official
           sources" is made in the hero, and this is where it is actually
           evidenced, with the documents named and linked. */}
-      <section className="space-y-8">
+      <Wide space="space-y-8">
         <SectionHead
           eyebrow={copy.sources.eyebrow}
           title={copy.sources.title}
@@ -285,10 +298,10 @@ export async function HomePage({
             ))}
           </ul>
         </div>
-      </section>
+      </Wide>
 
       {/* Tools */}
-      <section className="space-y-8">
+      <Wide space="space-y-8">
         <SectionHead
           eyebrow={copy.tools.eyebrow}
           title={copy.tools.title}
@@ -321,7 +334,7 @@ export async function HomePage({
           </Link>{" "}
           {copy.tools.indexTail}
         </p>
-      </section>
+      </Wide>
 
       {/* Insights.
 
@@ -335,7 +348,7 @@ export async function HomePage({
           Hidden entirely when there are no articles for this locale, rather
           than rendered as an empty grid under a heading. */}
       {articles.length > 0 && (
-        <section className="space-y-8">
+        <Wide space="space-y-8">
           <SectionHead {...copy.insights} body={copy.insights.body(href)} />
           <ul className="grid gap-6 sm:grid-cols-3">
             {articles.slice(0, 3).map((a) => (
@@ -361,7 +374,7 @@ export async function HomePage({
               </li>
             ))}
           </ul>
-        </section>
+        </Wide>
       )}
 
       {/* Closing CTA */}
@@ -476,6 +489,40 @@ function sourceHost(url: string): string {
   } catch {
     return url;
   }
+}
+
+/**
+ * A content section on the home page's wide column.
+ *
+ * The hero, the freshness band and the closing CTA are all `full-bleed` with an
+ * inner `max-w-6xl px-6`. The sections between them were plain `<section>`s, so
+ * they inherited <main>'s 3xl reading column instead — 768px against the hero's
+ * 1152px, on the same screen, with a left edge 192px further in. The programme
+ * cards were the visible symptom: three cards in 768px, with "Coming for a job,
+ * a course, or remote work" breaking across three lines beside them.
+ *
+ * This gives them the same escape and the same inner container, so every band
+ * on the page shares one left edge. Padding sits on the inner div rather than
+ * the section, exactly as the hero does it — put it on the section and the
+ * content lands 24px off the hero's edge.
+ *
+ * Deliberately local to this file. It is not a general layout primitive: the
+ * reading pages genuinely want the 3xl measure, and <main> is still the right
+ * default for them. See RootShell.
+ */
+function Wide({
+  space,
+  children,
+}: {
+  /** The vertical rhythm between this section's own children. */
+  space: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="full-bleed">
+      <div className={`mx-auto max-w-6xl px-6 ${space}`}>{children}</div>
+    </section>
+  );
 }
 
 /** The gold 01 / 02 / 03 disc. */

@@ -34,22 +34,10 @@
 #
 # NOTHING here is on the critical path any more. The header mark used to be a
 # preloaded logo-mark.webp; v5 renders it as inline SVG from BrandMark.tsx, so
-# the site itself now requests none of these. logo-mark.svg is for use outside
-# React — email, print, the CMS.
+# the site itself requests neither of these. logo-mark.svg is for use outside
+# React — email, print, the CMS. The three v4 Petronas Towers files that used
+# to be listed here were deleted with the rebrand.
 /logo-mark.svg
-  Cache-Control: public, max-age=2592000
-
-# The three v4 files: the Petronas Towers mark, retired by the v5 rebrand.
-# Kept and still cached because they are Jason's assets and may be in use off
-# the site; nothing in this repo references them. Delete on his say-so, not
-# before.
-/logo-mark.webp
-  Cache-Control: public, max-age=2592000
-
-/logo-mark.png
-  Cache-Control: public, max-age=2592000
-
-/logo-full.png
   Cache-Control: public, max-age=2592000
 
 /og.png

@@ -37,6 +37,18 @@ the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW autho
 7. **Two contrast failures fixed, both pre-existing and both found by the §8 sweep** — the
    disabled consent toggle on `/privacy/` (3.9:1 since v1) and the article count on the
    current category pill in `InsightLayout` (2.4:1 since it shipped).
+8. **The home page's middle sections now sit on the wide column**, matching its own hero.
+   They were the only bands on the page still inheriting `<main>`'s 3xl reading measure —
+   768px against the hero's 1152px, with a left edge 192px further in. `<main>` itself is
+   unchanged and still 3xl: guides and `/compare/` were already escaping it with
+   `full-bleed`, and every reading page genuinely wants the measure. See `Wide` in
+   `HomePage.tsx`.
+9. **The header no longer clips its own CTA between 1024 and ~1180px.** The row stopped
+   wrapping at `lg` but did not fit until roughly `xl`, so the "Ask a question" pill was
+   pushed past the edge and hidden by `overflow-x: clip` — invisible, with no scrollbar to
+   hint at it. Pre-existing; the v5 mark is 18px wider and made it slightly worse. The
+   strapline and the CTA now stand down between `lg` and `xl`. Budget is documented in
+   `RootShell.tsx`: **re-measure before adding anything to that row.**
 
 ### What changed in v1.4 (2026-07-26)
 
