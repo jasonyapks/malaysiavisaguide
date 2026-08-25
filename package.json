@@ -16,7 +16,8 @@
     "content:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/check-content.mjs",
     "i18n:hant": "node scripts/gen-zh-hant.mjs",
     "test:markdown": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/test-markdown.mjs",
-    "migrate:cms": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/migrate-cms-to-files.mjs"
+    "migrate:cms": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/migrate-cms-to-files.mjs",
+    "test:worker-render": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/test-worker-render.mjs"
   },
   "dependencies": {
     "next": "16.2.11",

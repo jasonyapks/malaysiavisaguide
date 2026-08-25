@@ -15,8 +15,14 @@ anything. `AGENTS.md` carries a warning about Next.js 16 that is load-bearing.
 Next.js 16 (App Router) · React 19 · Tailwind v4 · TypeScript · fully static export ·
 Cloudflare Pages.
 
-No server, no database, no CMS. Every page is real HTML on disk — which is the point, for
-both search engines and AI crawlers.
+Every page is real HTML on disk — which is the point, for both search engines and AI
+crawlers. Nothing is fetched at runtime and there is no server in front of a reader.
+
+Articles are markdown in `content/`, edited in [Sveltia CMS](https://sveltiacms.app/) at
+`/admin/` and compiled into the typed block AST in `shared/blocks.ts` at build time. A
+save is a commit, and a push to `main` is a deploy. The `worker/` directory is a separate
+Cloudflare Worker that runs the news sweep and its triage queue — it is not in the request
+path of the public site.
 
 ## Develop
 

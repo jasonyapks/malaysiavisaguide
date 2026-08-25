@@ -137,17 +137,42 @@ the Pages site (the usual `wrangler pages deploy out`). Also set the Worker's
 ---
 
 ## Daily use
-1. Open `https://mvg-news.<sub>.workers.dev/dashboard` (Access logs you in).
-2. **News queue** → *Pending*: read each AI summary, **Approve** the good ones
-   (they go live on `/news` immediately) or **Reject**. **Fetch latest now** runs a
-   sweep on demand; the cron does it automatically every day at 09:00 MYT.
-   Paste any article URL into the box to add it manually.
-3. **Publish** → *Publish site*: rebuilds and deploys the Pages site, which is what
-   makes everything approved above visible to a reader.
 
-Nothing on `/news` changes until the site is rebuilt and deployed. Approving
-writes to D1; `npm run build && wrangler pages deploy out --project-name=malaysiavisaguide`
-is what publishes.
+**Approving is publishing.** That is the one thing to know, and it is new.
+
+1. Open `https://malaysiavisaguide.com/dashboard` (Access logs you in).
+2. **News queue** → *Pending*: read each AI summary, **Approve** the good ones or
+   **Reject**. **Fetch latest now** runs a sweep on demand; the cron does it
+   automatically every day at 09:00 MYT. Paste any article URL into the box to
+   add it manually.
+
+Approving commissions the article (one large-model call, 20–60 seconds), stores
+it in D1, and then **commits `content/news/<slug>.md` to `main`** — which is a
+Pages deploy. There is no *Publish site* button any more and no
+`CF_PAGES_TOKEN`: the commit is the trigger.
+
+If the commit fails — an expired `GITHUB_TOKEN`, GitHub down — the approval
+still succeeds and the response carries a `warning` saying so. The prose is
+saved, so retrying is free: `POST /api/admin/publish` with `{ "id": "<item id>" }`.
+It does not re-run the model.
+
+To take a published article down, `POST /api/admin/items/<id>/retire`. That
+deletes the file, which removes the page on the next build. Note Cloudflare
+Pages serves a path that has vanished from an export from the edge for up to
+seven days, so it is not instant for a reader who has already been there.
+
+### Insight articles are not edited here any more
+
+`/insights` moved to [Sveltia CMS](https://sveltiacms.app/) at
+`https://malaysiavisaguide.com/admin/`. The articles are markdown files in the
+repo; saving in Sveltia commits and deploys in one step, exactly as approving a
+news item does.
+
+The insight endpoints on this Worker answer **410 Gone** rather than writing.
+That is deliberate: the site build reads `content/insights/**` off disk, so a
+save that still wrote `cms_documents` would report success and change nothing a
+reader could see. The `cms_documents` table itself is still there, unread, until
+the migration has a few weeks behind it.
 
 ---
 
@@ -217,7 +242,8 @@ build, so the button stages and `npm run publish:site` publishes.
 | `TRIAGE_MODEL_WORLD` | Larger model, world-sector triage only — the 3B could not tell a fee change from a listicle |
 | `ARTICLE_MODEL` | Workers AI model that writes the article, and runs the humanize pass |
 | `NEWS_API_ORIGIN` | This Worker's workers.dev origin, for dashboard image previews |
-| `CF_PAGES_TOKEN` | **secret** — API token, Pages: Edit; the only secret this Worker holds |
+| `CF_PAGES_TOKEN` | **secret** — API token, Pages: Edit. Only `getDeployStatus`/`getBuildLog` still use it, for the read-only build panel; publishing no longer does. Safe to drop once that panel goes |
+| `GITHUB_TOKEN` | **secret** — fine-grained GitHub PAT, *Contents: read and write* on `jasonyapks/malaysiavisaguide` and nothing else. This is what publishes: approving an article commits `content/news/<slug>.md`. Set it with `wrangler secret put GITHUB_TOKEN`. Mint it from the **jasonyapks** account — a token from another GitHub identity authenticates fine and then 404s on the repo, which reads like a bad path rather than a bad token |
 
 ## Bindings
 | Binding | What |

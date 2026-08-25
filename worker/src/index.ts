@@ -3,15 +3,14 @@ import { requireAccess } from "./access";
 import { runNewsSweep, submitUrl, submitManual, VALID_CATEGORIES } from "./news";
 import { generateAndStore } from "./article";
 import { humanizeStored } from "./humanize";
-import { triggerPublish, getDeployStatus, getBuildLog } from "./publish";
+import { publishNewsFile, unpublishNewsFile } from "./publish-file";
+import { getDeployStatus, getBuildLog } from "./publish";
 import { runWatch, listWatch, acknowledgeEvent, promoteEvent } from "./watch";
 import {
-  deleteInsightDoc,
   getInsight,
   getInsightById,
   listInsights,
   listInsightsAdmin,
-  saveInsightDoc,
 } from "./cms";
 import {
   commitAsset,
@@ -285,7 +284,34 @@ export default {
       )
         .bind(id)
         .run();
-      return json({ ok: true, slug: result.slug });
+
+      /**
+       * Commit the file. THIS is what publishes now.
+       *
+       * The D1 write above is no longer what a reader sees — the site build
+       * reads content/news/*.md off disk — so an approval that stopped here
+       * would look like it worked and change nothing. The commit is the
+       * publish, and a push to main is the deploy.
+       *
+       * A failed commit is reported but does NOT roll the row back to pending.
+       * The expensive part is done: the prose is written and stored, and the
+       * fix is to press Publish again once the token is sorted, not to pay for
+       * a second large-model call.
+       */
+      const committed = await publishNewsFile(env, id);
+      return json({
+        ok: true,
+        slug: result.slug,
+        committed: committed.ok,
+        ...(committed.ok
+          ? { commit: committed.sha }
+          : {
+              warning:
+                `The article was written and approved, but committing ` +
+                `content/news/${result.slug}.md failed, so it is not live. ` +
+                `${committed.error} Press Publish to retry — the prose is saved.`,
+            }),
+      });
     }
 
     // PATCH /api/admin/items/:id — Jason's manual corrections.
@@ -401,11 +427,31 @@ export default {
       return json(await res.json());
     }
 
+    /**
+     * Writing an insight through this dashboard is over. Sveltia CMS owns it.
+     *
+     * A 410 rather than a silent success, and this is the important part: the
+     * site build reads content/insights/**.md off disk now, so a save that
+     * still wrote `cms_documents` would report success, change a D1 row, and
+     * change nothing a reader could ever see. That is the exact failure this
+     * whole migration was meant to remove, and leaving the endpoint working
+     * would reintroduce it on the insights side while fixing it on news.
+     *
+     * The GET below still answers, so the panel can list what is in D1 while
+     * the table is still there. Only writing is closed.
+     */
     if (pathname === "/api/admin/insights" && request.method === "POST") {
-      const doc = await request.json().catch(() => null);
-      if (doc === null) return json({ ok: false, error: "Bad JSON" }, 400);
-      const outcome = await saveInsightDoc(env, doc, null);
-      return json(outcome, outcome.ok ? 201 : outcome.status);
+      return json(
+        {
+          ok: false,
+          error:
+            "Insight articles are edited at /admin/ (Sveltia CMS) now — they " +
+            "are markdown files in the repo, and saving there commits and " +
+            "deploys in one step. Saving here would write a database row that " +
+            "nothing reads.",
+        },
+        410,
+      );
     }
 
     const cmsAdmin = pathname.match(/^\/api\/admin\/insights\/([^/]+)$/);
@@ -418,17 +464,21 @@ export default {
         return json({ item });
       }
 
-      if (request.method === "PUT") {
-        const doc = await request.json().catch(() => null);
-        if (doc === null) return json({ ok: false, error: "Bad JSON" }, 400);
-        const outcome = await saveInsightDoc(env, doc, id);
-        return json(outcome, outcome.ok ? 200 : outcome.status);
+      // Closed for the same reason as POST above: a write here would succeed
+      // and change nothing a reader sees.
+      if (request.method === "PUT" || request.method === "DELETE") {
+        return json(
+          {
+            ok: false,
+            error:
+              "Insight articles live in the repo now and are edited at " +
+              "/admin/ (Sveltia CMS). This endpoint would write a database " +
+              "row that the site no longer reads.",
+          },
+          410,
+        );
       }
 
-      if (request.method === "DELETE") {
-        const gone = await deleteInsightDoc(env, id);
-        return json({ ok: gone }, gone ? 200 : 404);
-      }
     }
 
     if (pathname === "/api/admin/assets" && request.method === "GET") {
@@ -607,13 +657,55 @@ export default {
     // Collection on the site is untouched — only the second-hand panel is gone,
     // and with it the need for this Worker to hold an analytics credential.
 
-    // POST /api/admin/publish — build and deploy the site.
+    // POST /api/admin/publish — retry the commit for one approved article.
     //
-    // This is the step that makes an approved article visible. Everything else
-    // in this dashboard writes to D1; a reader sees none of it until a build
-    // runs. Refuses while a build is already in flight — see publish.ts.
+    // Used to ask the Pages API to start a build, because a reader saw nothing
+    // until one ran. That is no longer how publishing works: approving commits
+    // content/news/<slug>.md, and the push to main IS the deploy. What remains
+    // is the retry, for the case where the commit failed and the prose is
+    // already paid for and stored.
+    //
+    // Kept at the same path so the dashboard's Publish button still has
+    // something to call. It now takes an item id rather than nothing.
     if (pathname === "/api/admin/publish" && request.method === "POST") {
-      const result = await triggerPublish(env);
+      const payload = (await request.json().catch(() => null)) as {
+        id?: string;
+      } | null;
+
+      if (!payload?.id) {
+        return json(
+          {
+            ok: false,
+            error:
+              "Publishing is per-article now: pass the item id. There is no " +
+              "site-wide build to start any more — a commit to main is the " +
+              "deploy, and approving an article makes that commit.",
+          },
+          400,
+        );
+      }
+
+      const result = await publishNewsFile(env, payload.id);
+      return json(result, result.ok ? 200 : 422);
+    }
+
+    // POST /api/admin/items/:id/retire — take a published article off the site.
+    //
+    // Deleting the file is what removes the page; the row stays, so the item
+    // keeps its place in the queue's history and nothing has to be re-triaged.
+    // Note Pages serves a path that vanishes from an export from the edge for
+    // up to seven days, so this is not instant for a reader who has been there.
+    const retire = pathname.match(/^\/api\/admin\/items\/([^/]+)\/retire$/);
+    if (retire && request.method === "POST") {
+      const row = await env.DB.prepare(
+        "SELECT slug FROM news_items WHERE id = ?",
+      )
+        .bind(retire[1])
+        .first<{ slug: string | null }>();
+
+      if (!row?.slug) return json({ ok: false, error: "No such article." }, 404);
+
+      const result = await unpublishNewsFile(env, row.slug);
       return json(result, result.ok ? 200 : 422);
     }
 

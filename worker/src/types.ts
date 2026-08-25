@@ -27,6 +27,13 @@ export interface Env {
    * rather than breaking the dashboard.
    */
   CF_PAGES_TOKEN: string;
+  /**
+   * Secret — fine-grained GitHub PAT, Contents: read and write on
+   * jasonyapks/malaysiavisaguide and nothing else. Approving an article commits
+   * a file with it; see github.ts. Absent, approval still writes D1 and the
+   * dashboard says the commit did not happen, rather than failing silently.
+   */
+  GITHUB_TOKEN: string;
 }
 
 export interface NewsItem {
