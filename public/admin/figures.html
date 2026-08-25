@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Tokens &amp; assets — Malaysia Visa Guide</title>
+    <!--
+      A reference sheet for the two things you cannot type from memory: the live
+      figure tokens, and the asset ids.
+
+      Deliberately NOT a Sveltia field type. A custom widget would have to be a
+      React control registered through CMS.registerFieldType, which means
+      unverifiable browser code in the critical path of the editor, and a field
+      that stores nothing still tends to leave a stray key in every file's front
+      matter. A separate page opened in a second tab does the same job — find
+      the token, copy it, paste it — with nothing to go wrong in the editor.
+
+      Both sources are already public and already used by the build:
+      /figures.json is regenerated on every deploy by scripts/emit-figures.mjs,
+      and /api/images is what scripts/pull-images.mjs reads.
+
+      A figure that will not resolve fails the build (src/lib/figures.ts), which
+      is the real guarantee. This page is how you avoid finding out that way.
+    -->
+    <style>
+      :root {
+        --ink: #1f2933;
+        --muted: #5a6b7b;
+        --line: #dde5ec;
+        --bg: #fbfdff;
+        --accent: #0047ab;
+        --navy: #000080;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 2rem 1.5rem 6rem;
+        background: var(--bg);
+        color: var(--ink);
+        font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main { max-width: 62rem; margin: 0 auto; }
+      h1 { font-size: 1.35rem; margin: 0 0 0.25rem; color: var(--navy); }
+      h2 {
+        font-size: 1rem;
+        margin: 2.5rem 0 0.75rem;
+        color: var(--navy);
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 0.4rem;
+      }
+      p.lede { color: var(--muted); margin: 0 0 1.5rem; }
+      input[type="search"] {
+        width: 100%;
+        padding: 0.6rem 0.8rem;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font: inherit;
+        background: #fff;
+      }
+      table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+      th, td {
+        text-align: left;
+        padding: 0.45rem 0.6rem;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th { color: var(--muted); font-weight: 600; font-size: 0.8rem; }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.85em;
+      }
+      button.tok {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.82rem;
+        background: #eef3fb;
+        border: 1px solid #cfdcf1;
+        color: var(--accent);
+        border-radius: 4px;
+        padding: 0.2rem 0.45rem;
+        cursor: pointer;
+        text-align: left;
+      }
+      button.tok:hover { background: #e2ebf9; }
+      button.tok.copied { background: #dff3e4; border-color: #a9dcb8; color: #1d6b34; }
+      .val { color: var(--muted); }
+      .note { color: var(--muted); font-size: 0.85rem; margin: 0.5rem 0 0; }
+      .thumb {
+        width: 84px; height: 52px; object-fit: cover;
+        border-radius: 4px; border: 1px solid var(--line); background: #eef2f6;
+      }
+      .err { color: #a4262c; }
+      @media (prefers-color-scheme: dark) {
+        :root { --ink: #e8eef4; --muted: #9fb0c0; --line: #2b3947; --bg: #121a22; }
+        body { background: var(--bg); color: var(--ink); }
+        h1, h2 { color: #9ec5ff; }
+        input[type="search"] { background: #1b2530; color: var(--ink); }
+        button.tok { background: #1c2c44; border-color: #2f4463; color: #9ec5ff; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Tokens &amp; assets</h1>
+      <p class="lede">
+        Click any token to copy it. Figures resolve at build from
+        <code>programmes.ts</code>, so the value shown here is the value the page
+        will print.
+      </p>
+
+      <input
+        type="search"
+        id="q"
+        placeholder="Filter by programme, field or value…"
+        autocomplete="off"
+      />
+
+      <h2>Live figures — <code>{{programme:field:fmt}}</code></h2>
+      <div id="figures">Loading…</div>
+
+      <h2>Assets — <code>{% figure asset="…" %}</code></h2>
+      <div id="assets">Loading…</div>
+      <p class="note">
+        Images live in R2, not in the repo. Upload one in the dashboard; this
+        list is what the build can already see.
+      </p>
+    </main>
+
+    <script>
+      /**
+       * Assets come from the SAME ORIGIN, not the workers.dev host.
+       *
+       * /api/admin/* is a Worker route on malaysiavisaguide.com (see
+       * worker/wrangler.jsonc), so this is a same-origin request and the
+       * Cloudflare Access cookie rides along with it. The public
+       * mvg-news.jason-6bf.workers.dev/api/images endpoint would be the obvious
+       * choice and does not work here: it sends no CORS headers, because its
+       * only consumer until now was scripts/pull-images.mjs running server-side.
+       *
+       * The consequence is that this half of the page only fills in production.
+       * On `wrangler pages dev` there is no Worker in front, so it says so
+       * rather than looking broken.
+       */
+      const ASSETS_URL = '/api/admin/assets';
+
+      function copyButton(text) {
+        const b = document.createElement('button');
+        b.className = 'tok';
+        b.type = 'button';
+        b.textContent = text;
+        b.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(text);
+          } catch {
+            // Clipboard is permission-gated; select it instead so ⌘C works.
+            const r = document.createRange();
+            r.selectNodeContents(b);
+            const s = getSelection();
+            s.removeAllRanges();
+            s.addRange(r);
+          }
+          b.classList.add('copied');
+          setTimeout(() => b.classList.remove('copied'), 900);
+        });
+        return b;
+      }
+
+      function table(head, rows) {
+        const t = document.createElement('table');
+        const thead = t.createTHead().insertRow();
+        for (const h of head) {
+          const th = document.createElement('th');
+          th.textContent = h;
+          thead.append(th);
+        }
+        const tb = t.createTBody();
+        for (const cells of rows) {
+          const tr = tb.insertRow();
+          tr.dataset.search = cells
+            .map((c) => (typeof c === 'string' ? c : c.search ?? ''))
+            .join(' ')
+            .toLowerCase();
+          for (const c of cells) {
+            const td = tr.insertCell();
+            if (typeof c === 'string') td.textContent = c;
+            else td.append(c.node);
+          }
+        }
+        return t;
+      }
+
+      async function loadFigures() {
+        const host = document.getElementById('figures');
+        try {
+          const data = await fetch('/figures.json').then((r) => {
+            if (!r.ok) throw new Error(`figures.json answered ${r.status}`);
+            return r.json();
+          });
+
+          const labels = Object.fromEntries(
+            (data.fields ?? []).map((f) => [f.id, f.label]),
+          );
+          const rows = [];
+
+          for (const programme of Object.values(data.programmes ?? {})) {
+            for (const [field, formats] of Object.entries(programme.values ?? {})) {
+              for (const [fmt, value] of Object.entries(formats ?? {})) {
+                const token = `{{${programme.id}:${field}:${fmt}}}`;
+                rows.push([
+                  programme.name,
+                  labels[field] ?? field,
+                  { node: copyButton(token), search: token },
+                  { node: valueCell(value), search: String(value) },
+                ]);
+              }
+            }
+          }
+
+          host.replaceChildren(
+            table(['Programme', 'Field', 'Token', 'Renders as'], rows),
+          );
+        } catch (err) {
+          host.innerHTML = `<p class="err">Could not read /figures.json — ${err.message}</p>`;
+        }
+      }
+
+      function valueCell(value) {
+        const span = document.createElement('span');
+        span.className = 'val';
+        const text = String(value);
+        span.textContent = text.length > 140 ? `${text.slice(0, 140)}…` : text;
+        return span;
+      }
+
+      async function loadAssets() {
+        const host = document.getElementById('assets');
+        try {
+          const data = await fetch(ASSETS_URL).then((r) => {
+            if (!r.ok) throw new Error(`${ASSETS_URL} answered ${r.status}`);
+            return r.json();
+          });
+
+          const rows = (data.assets ?? []).map((asset) => {
+            const thumb = document.createElement('img');
+            thumb.className = 'thumb';
+            thumb.loading = 'lazy';
+            thumb.alt = asset.alt ?? '';
+            thumb.src = `/api/admin/assets/${asset.id}/hero`;
+            return [
+              { node: thumb, search: '' },
+              asset.slot ?? '',
+              { node: copyButton(asset.id), search: asset.id },
+              asset.alt ?? '',
+            ];
+          });
+
+          host.replaceChildren(
+            table(['', 'Slot', 'Asset id', 'Alt text'], rows),
+          );
+        } catch (err) {
+          host.innerHTML =
+            `<p class="err">Could not read ${ASSETS_URL} — ${err.message}</p>` +
+            `<p class="note">Expected on a local preview: /api/admin/* is a Worker ` +
+            `route that only exists on malaysiavisaguide.com. The figures above ` +
+            `are unaffected.</p>`;
+        }
+      }
+
+      document.getElementById('q').addEventListener('input', (e) => {
+        const q = e.target.value.trim().toLowerCase();
+        for (const tr of document.querySelectorAll('tbody tr')) {
+          tr.hidden = q !== '' && !tr.dataset.search.includes(q);
+        }
+      });
+
+      loadFigures();
+      loadAssets();
+    </script>
+  </body>
+</html>

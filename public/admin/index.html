@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+      Belt to the _headers braces. The header is what a crawler actually obeys
+      for a non-HTML fetch, but this is free and covers the case where the file
+      is served from somewhere the _headers rule does not reach.
+    -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Malaysia Visa Guide — content</title>
+    <link rel="icon" href="/favicon.ico" />
+    <style>
+      /* Shown until the CMS boots, and if it never does. */
+      .boot {
+        font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, sans-serif;
+        max-width: 34rem;
+        margin: 12vh auto;
+        padding: 0 1.5rem;
+        color: #1f2933;
+      }
+      .boot h1 {
+        font-size: 1.1rem;
+        margin: 0 0 0.75rem;
+      }
+      .boot code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.9em;
+        background: #f0f4f8;
+        padding: 0.1em 0.35em;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="boot" id="boot">
+      <h1>Loading the editor…</h1>
+      <p>
+        If this message stays, the CMS bundle did not load. It is vendored at
+        <code>/admin/sveltia-cms.js</code> — check it deployed.
+      </p>
+    </div>
+
+    <!--
+      Vendored, not loaded from a CDN.
+
+      Same instinct as the note in worker/wrangler.jsonc that refuses an
+      unbranded third-party origin for image bytes: this script has full commit
+      access to the repo once Jason signs in, so it should not be fetched from a
+      host we do not control and cannot pin. The copy here is @sveltia/cms
+      0.200.0. Upgrading is a deliberate act — re-download, diff the config
+      against the current docs, and commit the new bundle.
+    -->
+    <script src="/admin/sveltia-cms.js"></script>
+    <script>
+      // The bundle replaces the page once it mounts; if it never loads, the
+      // boot message stays and says so.
+      if (window.CMS) document.getElementById('boot').remove();
+    </script>
+  </body>
+</html>

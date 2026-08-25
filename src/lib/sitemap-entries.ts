@@ -163,10 +163,21 @@ export async function sitemapEntries(
 export function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: "*", allow: "/" },
+      /**
+       * `/admin/` is the Sveltia CMS editor — a tool, not a page.
+       *
+       * It is already `X-Robots-Tag: noindex` in public/_headers and carries a
+       * robots meta tag of its own, both of which are stronger than this: a
+       * disallow only stops the crawl, and a URL that is linked from elsewhere
+       * can still be indexed from the link alone. This is here to stop the
+       * 1.9 MB bundle being fetched on every crawl, which is a bandwidth
+       * argument rather than an indexing one.
+       */
+      { userAgent: "*", allow: "/", disallow: "/admin/" },
       {
         userAgent: ["GPTBot", "ClaudeBot", "PerplexityBot", "Google-Extended"],
         allow: "/",
+        disallow: "/admin/",
       },
     ],
     sitemap: locales.map((l) => localeUrl("/sitemap.xml", l)),

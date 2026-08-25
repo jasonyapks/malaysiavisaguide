@@ -1,6 +1,24 @@
 @import "tailwindcss";
 
 /**
+ * Keep the vendored CMS bundle out of the class scan.
+ *
+ * Tailwind v4 detects its own sources, and public/admin/sveltia-cms.js is 1.9 MB
+ * of third-party JavaScript full of ordinary CSS keywords — `blur`, `capitalize`,
+ * `collapse`, `flex-grow`, `line-through`, `table-cell`, `transform`. Every one of
+ * those is also a utility name, so scanning the file added a dozen utilities no
+ * page uses and grew the stylesheet every reader downloads by about 1 KB.
+ *
+ * Caught by diffing the built CSS against a pre-migration baseline: the bundle
+ * hash moved when nothing about the site's own styles had changed.
+ *
+ * The whole directory is excluded rather than the one file — /admin is an
+ * application with its own inline styles, and none of it should ever contribute
+ * a class to the site's stylesheet.
+ */
+@source not "../../public/admin";
+
+/**
  * Design tokens — v4 "Cobalt sky", 2026-07-26.
  *
  * Restyled from the v3 champagne-and-gold direction to a cool cobalt palette:

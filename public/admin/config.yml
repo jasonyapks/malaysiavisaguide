@@ -1,0 +1,298 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms@0.200.0/schema/sveltia-cms.json
+#
+# That line is not decoration: this file is validated against Sveltia's own
+# JSON schema, and the schema is what caught `media_library` being wrong here.
+# To re-check after an edit:
+#
+#   npx js-yaml public/admin/config.yml > /tmp/cfg.json
+#   npx ajv-cli@5 validate --spec=draft7 --strict=false \
+#     -s <(curl -sL https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json) -d /tmp/cfg.json
+#
+# Sveltia CMS — the editor for /insights and /news.
+#
+# The content itself lives in content/ as markdown. This file only describes it
+# to the editor; nothing here is read at build time, and the site would render
+# identically if this directory were deleted. shared/markdown.ts is the
+# authority on what a body may contain, and shared/validate.ts is what actually
+# rejects a bad one.
+#
+# ## Authentication
+#
+# `auth_methods: [token]` — Jason signs in with a fine-grained GitHub personal
+# access token, generated from a link on the login screen and kept in the
+# browser's local storage.
+#
+# The alternative is the authorization code flow, which needs a GitHub OAuth App
+# plus an OAuth client server (the Sveltia CMS Authenticator, deployed as
+# another Worker). Sveltia's own docs recommend the token for an individual or a
+# small team and the OAuth flow for several or non-technical users. This is one
+# person. Two moving parts fewer, and no third service to keep running.
+#
+# The token needs Contents: read and write on jasonyapks/malaysiavisaguide and
+# nothing else. Note the repo is owned by the `jasonyapks` GitHub identity, not
+# jason@mypvip.com — see SPEC.md.
+#
+# ## Saving is publishing
+#
+# The backend commits straight to `main`, and a push to main is a Pages deploy.
+# There is no separate publish step and no CF_PAGES_TOKEN any more: the two-step
+# publish that produced "I approved it and it isn't live" cannot happen, because
+# there is only one step.
+#
+# `publish_mode` is deliberately NOT set to editorial_workflow. That mode opens a
+# pull request per entry, which for a single author is a second inbox to forget
+# about. Drafts are a field on the document instead — `draft: true` is noindex,
+# out of the sitemap and out of every listing, reviewable at its real URL.
+
+backend:
+  name: github
+  repo: jasonyapks/malaysiavisaguide
+  branch: main
+  auth_methods: [token]
+  commit_messages:
+    create: 'content: add {{collection}} "{{slug}}"'
+    update: 'content: update {{collection}} "{{slug}}"'
+    delete: 'content: remove {{collection}} "{{slug}}"'
+
+# Images are NOT in the repo. They live in R2 and are pulled into public/ at
+# build time by scripts/pull-images.mjs, keyed through
+# src/lib/data/article-images.json. Sveltia's own media library is therefore
+# pointed at nothing: uploading here would put megabytes of binaries into git
+# history and give an article two sources for its picture.
+# `media_library` is deliberately absent. It requires a `name` naming a storage
+# provider, and there is no provider to name — every option would be wrong in a
+# way that only shows up the first time someone drags an image in.
+media_folder: ''
+public_folder: ''
+
+# One locale. The articles are English-only today — the Chinese hosts cover the
+# home page, the six programme guides and /about/, and translating articles is
+# its own job. Left declared so adding `zh-hans` later is a config change rather
+# than a migration.
+i18n:
+  structure: single_file
+  locales: [en]
+  default_locale: en
+
+collections:
+  # --- Insights ------------------------------------------------------------
+  #
+  # Jason's own authored articles. The folder is content/insights, and the
+  # category is a FOLDER, not a field: path/`{{category}}` puts it in the
+  # address, which is where /insights/<category>/<slug>/ already carries it.
+  # A field would let the address and the frontmatter disagree.
+  #
+  # Changing an article's category therefore moves the file, and moving the file
+  # changes the URL. That is Jason's own rule and it is deliberate — see
+  # SPEC.md. It is also the reason `category` is a select over a closed list
+  # rather than free text: a typo would silently create a fifth category.
+  - name: insights
+    label: Insights
+    label_singular: Insight article
+    folder: content/insights
+    path: '{{fields.category}}/{{slug}}'
+    media_folder: ''
+    public_folder: ''
+    create: true
+    slug: '{{slug}}'
+    preview_path: 'insights/{{fields.category}}/{{slug}}'
+    summary: '{{title}}'
+    sortable_fields: [published, reviewed, title]
+    view_filters:
+      - { label: Drafts, field: draft, pattern: true }
+      - { label: Published, field: draft, pattern: false }
+    fields:
+      - name: title
+        label: Title
+        widget: string
+        hint: The h1 and the card title.
+
+      - name: category
+        label: Category
+        widget: select
+        options:
+          - { label: Comparisons, value: comparisons }
+          - { label: By nationality, value: by-nationality }
+          - { label: Expat living, value: expat-living }
+          - { label: Perspective, value: perspective }
+          - { label: How to, value: how-to }
+        hint: >-
+          This is the folder, and it is in the URL. Changing it moves the
+          article to a new address.
+
+      - name: dek
+        label: Standfirst
+        widget: text
+        hint: >-
+          Also the meta description, so it has to stand alone in a search
+          result — no "as we saw above".
+
+      - name: published
+        label: Published
+        widget: datetime
+        format: 'YYYY-MM-DD'
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+        picker_utc: true
+
+      - name: reviewed
+        label: Last reviewed
+        widget: datetime
+        format: 'YYYY-MM-DD'
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+        picker_utc: true
+        hint: Drives the byline. Move it when you have actually re-checked the figures.
+
+      - name: readingMinutes
+        label: Reading minutes
+        widget: number
+        value_type: int
+        min: 1
+
+      - name: draft
+        label: Draft
+        widget: boolean
+        default: true
+        hint: >-
+          Noindex, out of the sitemap and every listing, but live at its real
+          URL so it can be read before launch.
+
+      - name: relatedGuides
+        label: Related guides
+        widget: list
+        label_singular: guide
+        summary: '{{fields.title}}'
+        hint: Where the article hands the reader on. At least one.
+        fields:
+          - { name: path, label: Path, widget: string, hint: 'e.g. /visas/pvip/' }
+          - { name: title, label: Link text, widget: string }
+
+      # Fields, not blocks, and not movable. The FAQ emits FAQPage JSON-LD from
+      # the same array it renders — that is what keeps the structured data from
+      # drifting from what the reader sees. The sources block backs the sentence
+      # InsightLayout prints about every figure tracing to an official document,
+      # and that sentence is only true while the block sits below everything.
+      # shared/insight.ts argues both at length.
+      - name: faq
+        label: FAQ
+        widget: list
+        required: false
+        label_singular: question
+        summary: '{{fields.q}}'
+        fields:
+          - { name: q, label: Question, widget: string }
+          - { name: a, label: Answer, widget: text }
+
+      - name: sources
+        label: Sources
+        widget: list
+        required: false
+        label_singular: source
+        summary: '{{fields.label}}'
+        hint: Every figure above has to trace to one of these.
+        fields:
+          - { name: label, label: Label, widget: string }
+          - { name: url, label: URL, widget: string }
+          - name: verified
+            label: Verified on
+            widget: datetime
+            format: 'YYYY-MM-DD'
+            date_format: 'YYYY-MM-DD'
+            time_format: false
+            picker_utc: true
+
+      # Raw markdown, not rich text.
+      #
+      # The rich-text mode parses the body into its own model and writes it back
+      # out, which would rewrite the `{% … %}` block shortcodes and the inline
+      # `((caveat))` and `{{figure}}` tokens into something shared/markdown.ts
+      # no longer recognises. Raw mode leaves the text alone. It is also how
+      # Jason already writes — drafts/*.md are exactly this syntax.
+      - name: body
+        label: Body
+        widget: markdown
+        modes: [raw]
+        hint: >-
+          **bold**, _italic_, [label](/path/), ((caveat)), and
+          {{programme:field:fmt}} for a live figure. Blocks are {% figure %},
+          {% callout %}, {% cta %}, {% keyFacts %}, {% tierTable %},
+          {% programmeNotice %}. Tokens and asset ids: /admin/figures.html
+
+  # --- News ----------------------------------------------------------------
+  #
+  # Written by the pipeline, not by hand: the cron sweep queues candidates in
+  # D1, and approving one in the dashboard commits a file here. This collection
+  # exists to CORRECT an approved article — fix a headline, drop a bad
+  # paragraph, retire one — rather than to write from scratch. `create` is on
+  # anyway, because occasionally something has to be written by hand.
+  #
+  # No category folder here: /news/<slug>/ is flat, and the category is a facet
+  # rather than part of the address.
+  - name: news
+    label: News
+    label_singular: News article
+    folder: content/news
+    media_folder: ''
+    public_folder: ''
+    create: true
+    slug: '{{slug}}'
+    preview_path: 'news/{{slug}}'
+    summary: '{{headline}}'
+    sortable_fields: [publishedAt, headline]
+    fields:
+      - { name: headline, label: Headline, widget: string }
+      - name: dek
+        label: Standfirst
+        widget: text
+        hint: Also the meta description.
+      - name: category
+        label: Category
+        widget: select
+        options:
+          - { label: PVIP, value: pvip }
+          - { label: MM2H, value: mm2h }
+          - { label: Sarawak MM2H, value: sarawak-mm2h }
+          - { label: DE Rantau, value: de-rantau }
+          - { label: Employment Pass, value: employment-pass }
+          - { label: Student Pass, value: student-pass }
+          - { label: Immigration, value: general }
+          - { label: Other countries, value: world }
+      - { name: sourceName, label: Source name, widget: string }
+      - { name: sourceUrl, label: Source URL, widget: string }
+      - name: publishedAt
+        label: Published at
+        widget: datetime
+        picker_utc: true
+        hint: >-
+          The source's publication time, not ours. Ordering on /news/ is this
+          field, descending.
+      - name: updatedAt
+        label: Updated at
+        widget: datetime
+        required: false
+        picker_utc: true
+      - { name: readingMinutes, label: Reading minutes, widget: number, value_type: int, min: 1 }
+      - name: keyPoints
+        label: Key points
+        widget: list
+        required: false
+        field: { name: point, label: Point, widget: string }
+      - name: whatItMeans
+        label: What it means
+        widget: list
+        required: false
+        hint: The part that is ours rather than the source's.
+        field: { name: point, label: Point, widget: string }
+      - name: sourceExcerpt
+        label: Source excerpt
+        widget: text
+        required: false
+        hint: Quoted from the original, for provenance. Not rendered as ours.
+      - name: body
+        label: Body
+        widget: markdown
+        modes: [raw]
+        hint: >-
+          Plain prose under `## ` headings. No links, no live figures — a news
+          body is deliberately narrower than an insight body.

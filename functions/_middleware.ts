@@ -172,6 +172,11 @@ const PER_HOST_FILES = new Set(["sitemap.xml"]);
 
 function isLocalised(pathname: string): boolean {
   if (pathname.startsWith("/_next/")) return false;
+  // The CMS editor is one app at one address, not content with a Chinese
+  // counterpart. Without this it would be rewritten to /zh-hans/admin/ on cn.,
+  // 404, and bounce to the apex — which works, but by accident and via two
+  // extra round trips.
+  if (pathname.startsWith("/admin/")) return false;
   if (pathname.endsWith("/")) return true;
   const segment = pathname.slice(pathname.lastIndexOf("/") + 1);
   return (

@@ -43,3 +43,27 @@
 
 /og.png
   Cache-Control: public, max-age=2592000
+
+# The Sveltia CMS editor. Never indexed, on any host.
+#
+# The header is what a crawler obeys; /admin/index.html carries a robots meta
+# tag as well, because the two cost nothing together and the failure mode — the
+# editor turning up in a search result for "malaysiavisaguide admin" — is the
+# kind you only notice months later.
+#
+# Both patterns are listed on purpose. A prefix rule matches what is UNDER the
+# prefix, and the editor's own URL is the directory itself, so `/admin/*` alone
+# would leave the one page that matters uncovered. That trap has already been
+# paid for once here with the root brand assets.
+/admin/
+  X-Robots-Tag: noindex, nofollow
+
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+
+# The CMS bundle is 1.9 MB and its path is stable, so it is not content-hashed
+# and cannot be immutable. A week is long enough to matter for a tool opened
+# most days, and short enough that an upgrade lands without anyone clearing a
+# cache.
+/admin/sveltia-cms.js
+  Cache-Control: public, max-age=604800
