@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Inter, Poppins } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import "@/app/globals.css";
 import { htmlLang, localeOrigin, ogLocale, type Locale } from "@/lib/i18n";
@@ -9,7 +10,6 @@ import { getUi } from "@/lib/ui";
 import { SiteNav } from "@/components/SiteNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import CookieConsent from "@/components/CookieConsent";
-import { BrandMark } from "@/components/BrandMark";
 
 /**
  * The document shell — `<html>` down to `</body>`, shared by every root layout.
@@ -408,21 +408,46 @@ function navGroupsFor(locale: Locale) {
 }
 
 /**
- * Our own mark — the Guided Passport, never the government crest.
+ * Our own mark — never the government crest.
  *
- * Only the icon is used here, and the wordmark beside it is real text: the
- * template's primary lockup is `[ICON] MALAYSIA / VISA GUIDE` (§2), which is
- * exactly this arrangement, and setting the words as text rather than baking
- * them into the image is what lets the Chinese trees render their own site
- * name in the same slot.
+ * This is the real logo. `MVG_logo.png` in the repo root is the master Jason
+ * supplied: 2172×724 RGBA, icon plus wordmark plus tagline. The icon is cropped
+ * out of it at x154 y23, 614×670 — a box measured off the alpha channel, not by
+ * eye; there is a 30px fully transparent gutter at x768–797 separating the icon
+ * from the wordmark. `/logo-mark.webp` is that crop at 132×144, which is 3× the
+ * 44×48 it renders at.
  *
- * Square, not the tall 27×56 the towers occupied — a passport is a portrait
- * rectangle inside a square frame, so at `size-12` it reads at the same
- * optical weight as the old mark while sitting shorter. The stacked name and
- * two-line strapline beside it still set the header's height, unchanged.
+ * ## Why only the icon, with the words set as text beside it
  *
- * See BrandMark.tsx for why this is inline SVG rather than a preloaded image.
+ * The template's primary lockup is `[ICON] MALAYSIA / VISA GUIDE` (§2), which
+ * is exactly this arrangement — and the words have to be text, not baked into
+ * the image, because the two Chinese trees render 马来西亚签证指南 in this slot.
+ * A raster wordmark would be English-only on every page of both.
+ *
+ * ## Why a raster and not a vector
+ *
+ * There is no vector. The artwork has gradients, soft drop shadows and a
+ * fourteen-point star; a hand redraw shipped here briefly and was replaced by
+ * this the moment the real file arrived. A redraw of a logo is a wrong logo.
+ * If genuine vector artwork ever turns up, prefer it — inline SVG would also
+ * take this asset back off the critical path.
+ *
+ * `priority` because it sits in the header of every page: it is always in the
+ * initial viewport, so lazy-loading it only delays the LCP region.
  */
 function Mark() {
-  return <BrandMark className="h-12 w-auto shrink-0" />;
+  return (
+    <Image
+      src="/logo-mark.webp"
+      alt=""
+      aria-hidden
+      width={132}
+      height={144}
+      priority
+      // h-12 (48px), giving 44px of width at the source's 0.916 aspect. The
+      // stacked site name and two-line strapline beside it are still the taller
+      // of the two, so the header's height is set by them, not by this.
+      className="h-12 w-auto shrink-0"
+    />
+  );
 }

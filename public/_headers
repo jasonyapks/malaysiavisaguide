@@ -32,12 +32,14 @@
 # in place. figures.json is deliberately absent; it is regenerated on every
 # build from the programme data and a stale copy would state a wrong fee.
 #
-# NOTHING here is on the critical path any more. The header mark used to be a
-# preloaded logo-mark.webp; v5 renders it as inline SVG from BrandMark.tsx, so
-# the site itself requests neither of these. logo-mark.svg is for use outside
-# React — email, print, the CMS. The three v4 Petronas Towers files that used
-# to be listed here were deleted with the rebrand.
-/logo-mark.svg
+# logo-mark.webp is the one file preloaded on every page — it is the header
+# mark, cropped from the master artwork at MVG_logo.png. logo-mark.png is the
+# same crop at 256px for email, print and the CMS, and is not requested by any
+# page. Same 30 days for the same reason: stable paths, replaced in place.
+/logo-mark.webp
+  Cache-Control: public, max-age=2592000
+
+/logo-mark.png
   Cache-Control: public, max-age=2592000
 
 /og.png

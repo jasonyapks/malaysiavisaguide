@@ -26,11 +26,11 @@ the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW autho
    a *surface* treatment. §3 of the template makes Signature Gold a rationed 10% accent
    on a navy foundation, and — critically — a colour that cannot carry body text at all.
    See the gold rule at the top of `globals.css` before using it anywhere.
-4. **New logo.** The Petronas Towers mark is retired. `src/components/BrandMark.tsx` is a
-   **vector redraw** of the mark on the board — navy passport, gold crescent and 14-point
-   star, gold compass rose. The board is a raster mock-up with no alpha, so it could not
-   be cropped and used directly. **If the original vector artwork exists, it should
-   replace both `BrandMark.tsx` and `public/logo-mark.svg`.**
+4. **New logo.** The Petronas Towers mark is retired. The master artwork is
+   **`MVG_logo.png`** in the repo root — 2172×724 RGBA, icon + wordmark + tagline, supplied
+   by Jason. Every logo asset on the site is cut from it; nothing is drawn by hand. A
+   vector redraw shipped for about an hour before the real file arrived and has been
+   deleted — do not resurrect `BrandMark.tsx` or `logo-mark.svg` from the history.
 5. **Poppins / Inter / DM Serif Display** replace Plus Jakarta Sans and Playfair Display.
 6. **`compass-arc` and `directional-lines` added** as the template's signature graphic
    devices (§7); `ring-decor` survives for closed circles and is now gold.
@@ -415,15 +415,20 @@ work; keep it.
   dark-on-light and all but vanish on a `forest-900` panel. `on-navy` re-points them for the
   whole subtree — put it on any `bg-forest-900` block that contains an eyebrow or an accent
   word. Navy is also the one ground where gold gets to be its undarkened self.
-- **Logo** — navy passport, gold crescent and 14-point star, gold compass rose whose long
-  axis breaks the cover's edge. Taken from `MVG_branding_board.png`, not from the
-  template's prose. `src/components/BrandMark.tsx` is what the site renders (inline SVG,
-  no request); `public/logo-mark.svg` is the same geometry for email, print and the CMS;
-  `src/app/icon.png`/`apple-icon.png`/`favicon.ico` are the same mark knocked out on a navy
-  tile. Its two hex values are the logo's own and deliberately not tokens — a logo does not
-  re-colour when a theme does. **It is a redraw off a raster board and should be replaced
-  by the original vector if that exists** — see the header comment in `BrandMark.tsx`.
-  The board's turning-page detail is deliberately omitted; it does not survive to 24px.
+- **Logo — `MVG_logo.png` in the repo root is the master.** Navy passport, gold crescent
+  and 14-point star, gold compass rose whose long axis breaks the cover's edge. Every
+  shipped asset is a crop of it, at boxes measured off the **alpha channel**, not by eye:
+  the icon is `x154 y23 614×670`, the wordmark `x798 y112 1231×527`, separated by a 30px
+  transparent gutter at `x768–797`. Re-measure if the master is ever replaced.
+  - `public/logo-mark.webp` — the icon at 132×144, 3× the 44×48 the header renders it at.
+    The only logo file on the critical path.
+  - `public/logo-mark.png` — the same crop at 256px for email, print and the CMS.
+  - `src/app/icon.png` / `apple-icon.png` / `favicon.ico` — the icon on an **Off White**
+    rounded tile. Not navy: the book cover in the artwork *is* navy, so a navy tile eats
+    the silhouette and leaves a white shard with two gold shapes on it. Checked at 6×.
+  - `public/og.png` — uses the tiled mark for the same reason; the card ground is navy.
+  There is **no vector**, and a hand redraw is a wrong logo — if genuine vector artwork
+  ever turns up, prefer it and take the header mark off the critical path with inline SVG.
 - **Type:** Poppins for headings and UI (SemiBold/Bold — **never 800**, the counters close
   up), Inter for body, DM Serif Display italic for the single accent word per card. DM
   Serif Display ships one weight, which is why `globals.css` pins `.font-display` to 400
