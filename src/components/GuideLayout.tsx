@@ -440,7 +440,11 @@ export function Section({
       <div className="diamond-rule my-5 max-w-sm">
         <Lozenge />
       </div>
-      <div className="space-y-4 text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_li]:ml-5 [&_li]:list-disc [&_strong]:font-bold [&_strong]:text-forest-900">
+      {/* `[&_ol>li]:list-decimal` is the higher-specificity selector of the two,
+          so an ordered list numbers itself wherever a section uses one — a
+          sequence of application steps is an <ol>, and it used to render as
+          four indistinguishable bullets. */}
+      <div className="space-y-4 text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_li]:ml-5 [&_li]:list-disc [&_ol>li]:list-decimal [&_strong]:font-bold [&_strong]:text-forest-900">
         {children}
       </div>
     </section>

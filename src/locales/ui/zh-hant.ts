@@ -185,7 +185,7 @@ export const ui: UiStrings = {
       confirmedByAfter: (date) => `，截至 ${date} 仍然有效。`,
       officialDocument: (authority) => `${authority} 的官方文件`,
       notYetUpdated:
-        "尚未更新，因此這些條款無法引用政府來源作為依據。",
+        "尚未更新，因此上述數字無法與該文件核對。",
       treatAsUnconfirmed:
         "在官方更新之前，請把本頁的每一個數字都視為需要另行確認後才可據以行動。",
     },

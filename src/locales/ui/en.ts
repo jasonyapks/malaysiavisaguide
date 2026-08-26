@@ -417,8 +417,14 @@ export const ui: UiStrings = {
       confirmedByBefore: "Confirmed by ",
       confirmedByAfter: (date) => `, current as at ${date}. The `,
       officialDocument: (authority) => `official ${authority} document`,
+      /* "cannot be cited to a government source" was true while every
+         superseded block rested on an agency's practice. PVIP's now rests on a
+         government guideline with no public URL, so the honest limit is that
+         the reader cannot check us against the linked document — not that no
+         document exists. Still true of the MM2H notices, which is why one
+         string covers both. */
       notYetUpdated:
-        " has not yet been updated, so these terms cannot be cited to a government source. ",
+        " has not yet been updated, so the figures above cannot be checked against it. ",
       treatAsUnconfirmed:
         "Until it is, treat every figure on this page as needing confirmation before you act on it.",
     },

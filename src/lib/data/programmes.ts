@@ -452,6 +452,12 @@ export const MM2H_AGENCY_FEE_ATTRIBUTION: Attribution = {
  * The superseded notice on the guide page covers the terms; this covers the
  * fee schedule specifically, so the section that introduces it can say whose
  * word it is on without borrowing the notice's.
+ *
+ * Corroborated 2026-08-26 by the Immigration Department guideline behind the
+ * superseded block below: it states the RM2,000 pass fee and reproduces both
+ * nationality schedules. The fields are unchanged — a second document agreeing
+ * with the first is a reason to trust the figures, not a reason to restate who
+ * asserted them or when.
  */
 export const PVIP_GOVERNMENT_FEE_ATTRIBUTION: Attribution = {
   by: "MYPVIP, from the Immigration Department fee schedules",
@@ -527,7 +533,7 @@ export const programmes: Programme[] = [
       amount: 1_000_000,
       currency: "MYR",
       withdrawable:
-        "Up to 50% may be withdrawn after six months in the programme — reduced from one year under the 2026 terms.",
+        "Up to 50% may be withdrawn after six months in the programme — reduced from one year under the 2026 terms. The withdrawal is restricted to medical costs, education costs or a property purchase, and is paid on a reimbursement basis against receipts.",
     },
     // RM480,000 a year, and broader on both axes than most write-ups suggest.
     // Not restricted to salary: realised investment gains, rental income and
@@ -554,11 +560,15 @@ export const programmes: Programme[] = [
     minStayPerYear: null,
     minStayShort: null,
     workRights: "full",
+    // Per the PVIP management guidelines §1.3. "Children" alone was too loose:
+    // the age ceiling is 25 and a child who reaches it has to move to another
+    // pass, which is a planning fact for a family with teenagers, not a
+    // footnote. Parents-in-law are sponsorable and the site did not say so.
     dependants: [
       "Spouse",
-      "Children",
-      "Parents",
-      "Foreign domestic helpers",
+      "Children under 25 (no age limit if disabled)",
+      "Parents and parents-in-law",
+      "One foreign domestic helper",
     ],
     sponsor: null,
     sponsorShort: null,
@@ -596,9 +606,21 @@ export const programmes: Programme[] = [
     // Immigration's FAQ still shows the 2022 launch terms, so they rest on
     // attribution rather than on `source` — which is exactly what the notice
     // above the figures tells the reader. See §4.1 of SPEC.md.
+    //
+    // 2026-08-26: the attribution strengthened. Every term below is now stated
+    // by an Immigration Department guideline Jason holds — the income, the
+    // deposit, the six-month 50% withdrawal, the two dependant terms and the
+    // pass fee — so the assertion is no longer one agency's practice but a
+    // government document. It has no public URL, so it cannot become `source`,
+    // and Jason's instruction on 2026-08-26 was to name it without describing
+    // it. `asAt` moves to the day he supplied it; `changedOn` stays at the date
+    // the terms themselves changed.
     superseded: {
       changedOn: "2026-03-16",
-      attribution: { by: "MYPVIP practice", asAt: "2026-07-27" },
+      attribution: {
+        by: "an Immigration Department guideline, supplied by MYPVIP",
+        asAt: "2026-08-26",
+      },
       whatChanged: [
         "The fixed deposit becomes withdrawable after six months rather than one year. The ceiling is unchanged at 50% of the amount pledged.",
         "A dependant may now elect a 10-year term at RM50,000, half the price of the unchanged 20-year term at RM100,000. The principal's term is fixed at 20 years and has no such option.",
@@ -815,17 +837,22 @@ export const UNVERIFIED: { slug: ProgrammeSlug; question: string }[] = [
   {
     slug: "pvip",
     question:
-      "Is qualification by NET WORTH actually available, and at what threshold? Reported for 16 March 2026; Jason set it aside on 2026-07-27 as not yet confirmed. Nothing about net worth is published anywhere on the site — keep it that way until there is a figure and a basis for it.",
+      "Qualification by NET ASSETS is confirmed to exist — the PVIP management guidelines §2.1 offer it as an alternative to the RM40,000 monthly income — but the threshold as transcribed reads RM1,000,000,000 (one billion ringgit), which is 2,083 times the annual income it substitutes for and would make the route theoretical. Is that a digit-count error for RM1,000,000 or RM100,000,000, or is the billion real? Nothing about net assets is published on the site until the figure is settled.",
   },
   {
     slug: "pvip",
     question:
-      "Is there any citable document for the 2026 terms — circular, gazette, or an updated Immigration FAQ? Everything above currently rests on attribution to MYPVIP practice, which is declared on the page but is a weaker source than a government PDF. Swap it the moment one exists.",
+      "Answered in part on 2026-08-26: a government document does now state the 2026 terms, and the attribution above names it. What is still missing is a public URL — it is not on imigresen-online.imi.gov.my and no copy is findable. Until one exists it cannot become `source`, and the notice keeps pointing at the unrevised FAQ. Ask again whenever Immigration republishes.",
   },
   {
     slug: "pvip",
     question:
-      "Is the multiple-entry visa fee charged per year of the approved term, or once at issuance? The MM2H schedule marks the equivalent line 'per annum', and the calculator prices PVIP the same way on that basis. The amounts are small (RM6–RM50), so the answer changes very little — but it should be confirmed rather than inferred from the neighbouring programme.",
+      "Does a retiree, or anyone else without a fixed salary, have to show RM5,000,000 in savings ON TOP of the RM40,000 a month? The document checklist for a new application asks a non-fixed-income applicant for 12 months of bank statements plus proof of RM5,000,000 in savings, marked as strictly required for retirees. Read as an eligibility bar that removes most of the retirees the guide page currently tells they qualify; read as a supporting-document convention it changes nothing. Jason held it on 2026-08-26 pending his own check — nothing about it is published until he settles which it is. This is the single largest open question on the programme.",
+  },
+  {
+    slug: "pvip",
+    question:
+      "Is the multiple-entry visa fee charged per year of the approved term, or once at issuance? Still open after the guidelines: Lampiran L(1) prints one flat rate per country with no 'per annum' marking, while the MM2H schedule marks its equivalent line per annum, and the calculator prices PVIP the same way on that basis. The amounts are small (RM6–RM50), so the answer changes very little — but the guidelines' silence is not a confirmation.",
   },
   {
     slug: "mm2h-silver",

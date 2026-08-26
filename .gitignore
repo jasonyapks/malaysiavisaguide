@@ -89,3 +89,10 @@ next-env.d.ts
 # The figure catalogue the dashboard's picker reads, regenerated from
 # programmes.ts on every build by scripts/emit-figures.mjs.
 /public/figures.json
+
+# Source documents Jason supplies for a content pass. This repo is public, and
+# `malaysia-pvip-guidelines.md` is an Immigration Department guideline covering
+# agency licensing as well as participant terms — the site cites it, it does not
+# republish it. Read it in place, put the figures in programmes.ts, leave the
+# document out of the history.
+/malaysia-pvip-guidelines.md

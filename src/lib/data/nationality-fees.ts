@@ -18,6 +18,15 @@
  * The schedules are not published on an Immigration URL, so every figure here
  * carries the attribution below rather than a `source` link. Same standard as
  * any other attributed figure on this site: named, dated, and rendered.
+ *
+ * **Corroborated 2026-08-26.** The Immigration Department's PVIP management
+ * guidelines reproduce both schedules as Lampiran L(1) and L(2), and every
+ * country they name matches this table to the sen, including both defaults.
+ * They are not a full reproduction: L(2) as supplied names about twenty
+ * countries and then "all other countries — RM1,500", so the RM2,000 African
+ * rows below appear in the source schedule but not in the guidelines' extract.
+ * That is an omission in a shorter list, not a contradiction; nothing here
+ * changed on the strength of it.
  */
 
 import type { Attribution } from "@/lib/data/programmes";

@@ -75,10 +75,10 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
     securityBondNote:
       "一次性收取。主申請人的保證金按國籍訂定，介於 RM200 至 RM2,000；每名家屬統一為 RM10。",
     withdrawable:
-      "參加計劃滿六個月後，最多可提取 50% —— 2026 年的新條款把原本的一年縮短為六個月。",
+      "參加計劃滿六個月後，最多可提取 50% —— 2026 年的新條款把原本的一年縮短為六個月。提取用途僅限醫療、教育或購置房產，並採實報實銷制，須憑收據申請。",
     name: "高端簽證計劃（PVIP）",
     superseded: {
-      attributionBy: "MYPVIP 的實務操作",
+      attributionBy: "移民局的一份指引，由 MYPVIP 提供",
       whatChanged: [
         "定期存款改為存滿六個月後即可提取，而非原本的一年。可提取上限不變，仍為質押金額的 50%。",
         "家屬現在可以選擇 10 年期、繳 RM50,000，為 20 年期 RM100,000（價格不變）的一半。主申請人的期限固定為 20 年，沒有這個選項。",
@@ -88,7 +88,12 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
     authority: "馬來西亞移民局（Immigration Department of Malaysia）",
     minStayPerYear: "無",
     minStayShort: "無",
-    dependants: ["配偶", "子女", "父母", "外籍家庭傭工"],
+    dependants: [
+      "配偶",
+      "未滿 25 歲的子女（殘障子女不設年齡限制）",
+      "父母及配偶父母",
+      "一名外籍家庭傭工",
+    ],
   },
 
   "mm2h-silver": {
