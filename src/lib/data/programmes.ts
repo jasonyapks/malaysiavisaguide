@@ -73,7 +73,10 @@ export type Attribution = {
  * numbers rendered on the page are still the superseded ones.
  */
 export type Superseded = {
-  /** When the change took effect, in prose — "16 March 2026". */
+  /** When the change took effect, ISO. Formatted at render through
+   *  `reviewDate(_, locale)` — it used to be stored as English prose
+   *  ("16 March 2026"), which no locale could do anything with, and it read as
+   *  an English date mid-sentence on every Chinese page that showed it. */
   changedOn: string;
   attribution: Attribution;
   /** Publishable, confirmed changes. Qualitative where a figure is not yet known. */
@@ -334,7 +337,7 @@ const MM2H_COMMON = {
   // struck the permitted-use claim it used to carry; the age-34 item below is
   // unchanged from 3 August and was not re-confirmed on that date.
   superseded: {
-    changedOn: "3 August 2026",
+    changedOn: "2026-08-03",
     attribution: { by: "MYPVIP practice", asAt: "2026-08-23" },
     whatChanged: [
       "The 50% fixed-deposit withdrawal opens once the property purchase completes, not on approval of the application. On Silver, Gold and Platinum the purchase follows approval, so the sequence is approval, then purchase, then withdrawal. The purchase itself remains a permitted use, alongside education, medical and tourism in Malaysia. SEZ and SFZ run the other way round: the in-zone purchase is a condition of approval rather than a step after it.",
@@ -382,6 +385,51 @@ export const MM2H_FD_WITHDRAWAL =
  */
 const MM2H_PROPERTY_STATE_FLOOR =
   "This is the programme's national minimum, not the price you will actually be allowed to buy at. A foreign buyer must also clear the floor set by the state the property sits in, and in the two states most applicants buy in that floor is higher: RM2,000,000 in Selangor and RM1,000,000 in Kuala Lumpur. Where the state floor is the higher of the two, it is the one that binds.";
+
+/**
+ * The same two state floors as structured data.
+ *
+ * The note above is English prose and stays that way — it is the long-form
+ * caveat on a programme page. But the compare page quotes the same two figures
+ * mid-sentence, and it now does so in three languages. Three translations of a
+ * sentence with a number baked into it is three places a corrected number can
+ * fail to reach, which is the duplication SPEC.md §4.1 exists to stop.
+ *
+ * So the figures live here and the prose interpolates them. The state NAMES are
+ * not here: they are words, they need translating, and they belong in the ui
+ * dictionary keyed by these slugs.
+ */
+export const STATE_PROPERTY_FLOORS = [
+  { slug: "selangor", floor: { amount: 2_000_000, currency: "MYR" } },
+  { slug: "kuala-lumpur", floor: { amount: 1_000_000, currency: "MYR" } },
+] as const satisfies readonly { slug: string; floor: Money }[];
+
+/**
+ * Employment Pass salary floors by category.
+ *
+ * Category III is also `salaryFloor` on the programme itself, because that is
+ * the figure the tier table shows and the eligibility checker tests. I and II
+ * existed only in a code comment until the compare page needed to quote them in
+ * three languages. Policy effective 1 June 2026.
+ */
+export const EMPLOYMENT_PASS_SALARY_FLOORS = {
+  i: { amount: 20_000, currency: "MYR" },
+  ii: { amount: 10_000, currency: "MYR" },
+  iii: { amount: 5_000, currency: "MYR" },
+} as const satisfies Record<"i" | "ii" | "iii", Money>;
+
+/**
+ * DE Rantau's non-tech income floor.
+ *
+ * `incomeRequirement` on the programme is the tech-talent figure, which is the
+ * one the tables compare. Non-tech professions must show this instead — see the
+ * MDEC FAQ cited as the programme's source.
+ */
+export const DE_RANTAU_NON_TECH_INCOME = {
+  amount: 60_000,
+  currency: "USD",
+  period: "year",
+} as const;
 
 /**
  * MM2H agency fees are set by the government, not by the agency.
@@ -549,7 +597,7 @@ export const programmes: Programme[] = [
     // attribution rather than on `source` — which is exactly what the notice
     // above the figures tells the reader. See §4.1 of SPEC.md.
     superseded: {
-      changedOn: "16 March 2026",
+      changedOn: "2026-03-16",
       attribution: { by: "MYPVIP practice", asAt: "2026-07-27" },
       whatChanged: [
         "The fixed deposit becomes withdrawable after six months rather than one year. The ceiling is unchanged at 50% of the amount pledged.",

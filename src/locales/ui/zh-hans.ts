@@ -31,6 +31,19 @@ export const ui: UiStrings = {
     reading: "观点与新闻",
   },
 
+  states: {
+    selangor: "雪兰莪",
+    "kuala-lumpur": "吉隆坡",
+  },
+  gates: {
+    minAge: (age) => `最低年龄 ${age} 岁`,
+    fixedDeposit: (amount) => `${amount} 的定期存款`,
+    income: (perPeriod) => `收入达 ${perPeriod}`,
+    salaryFrom: (monthly) => `月薪 ${monthly} 起`,
+    property: (from) => `购买 ${from} 起的房产`,
+    employerSponsor: "一家获准聘用你的马来西亚雇主",
+    institutionSponsor: "一个由院校担保的学额",
+  },
   routeTitles: {
     "/": "首页",
     "/insights/": "深度观点",
@@ -124,6 +137,7 @@ export const ui: UiStrings = {
     },
     superseded: {
       termsChangedOn: (programme, date) => `${programme} 的条款已于 ${date} 变更`,
+      termsChangedLabel: (programme) => `${programme}：条款已变更`,
       figuresArePrevious: " —— 下方显示的仍是旧数字",
       showWhatChanged: "查看变更内容",
       hide: "收起",

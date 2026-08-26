@@ -18,6 +18,8 @@ import {
   type ProgrammeSlug,
 } from "@/lib/data/programmes";
 import { money, moneyPer } from "@/lib/format";
+import type { Locale } from "@/lib/i18n";
+import { getUi } from "@/lib/ui";
 
 /**
  * Indicative rate used ONLY to compare a ringgit band against a US-dollar
@@ -98,8 +100,14 @@ export type Gate = { ok: boolean; requirement: string };
 /**
  * The gates for one programme, each built from a field on the programme itself
  * so the requirement text always shows the official figure.
+ *
+ * The wording comes from the locale's `gates` dictionary and the figures from
+ * `programmes.ts`; this function only decides which gates apply and whether the
+ * answers clear them. Keeping the sentences out of here is what lets the quiz
+ * run in Chinese without a second copy of the eligibility rules.
  */
-function gatesFor(p: Programme, a: Answers): Gate[] {
+function gatesFor(p: Programme, a: Answers, locale: Locale): Gate[] {
+  const g = getUi(locale).gates;
   const gates: Gate[] = [];
 
   // Age. The Student Pass floor of 3 is not a meaningful gate for anyone
@@ -107,7 +115,7 @@ function gatesFor(p: Programme, a: Answers): Gate[] {
   if (p.minAge != null && p.minAge > 3) {
     gates.push({
       ok: (a.ageFloor ?? 0) >= p.minAge,
-      requirement: `Minimum age ${p.minAge}`,
+      requirement: g.minAge(p.minAge),
     });
   }
 
@@ -115,7 +123,7 @@ function gatesFor(p: Programme, a: Answers): Gate[] {
   if (p.fixedDeposit) {
     gates.push({
       ok: (a.capitalMYR ?? 0) >= toMYR(p.fixedDeposit),
-      requirement: `A fixed deposit of ${money(p.fixedDeposit)}`,
+      requirement: g.fixedDeposit(money(p.fixedDeposit)),
     });
   }
 
@@ -124,7 +132,7 @@ function gatesFor(p: Programme, a: Answers): Gate[] {
   if (incomeFloor != null && p.incomeRequirement) {
     gates.push({
       ok: (a.incomeMYR ?? 0) >= incomeFloor,
-      requirement: `Income of ${moneyPer(p.incomeRequirement)}`,
+      requirement: g.income(moneyPer(p.incomeRequirement, locale)),
     });
   }
 
@@ -132,7 +140,7 @@ function gatesFor(p: Programme, a: Answers): Gate[] {
   if (p.salaryFloor) {
     gates.push({
       ok: (a.incomeMYR ?? 0) >= toMYR(p.salaryFloor),
-      requirement: `A salary from ${money(p.salaryFloor)} a month`,
+      requirement: g.salaryFrom(money(p.salaryFloor)),
     });
   }
 
@@ -140,7 +148,7 @@ function gatesFor(p: Programme, a: Answers): Gate[] {
   if (p.propertyPurchaseMin) {
     gates.push({
       ok: a.buyProperty === true,
-      requirement: `Buying property from ${money(p.propertyPurchaseMin)}`,
+      requirement: g.property(money(p.propertyPurchaseMin)),
     });
   }
 
@@ -148,13 +156,13 @@ function gatesFor(p: Programme, a: Answers): Gate[] {
   if (p.slug === "employment-pass") {
     gates.push({
       ok: a.hasSponsor === true,
-      requirement: "A Malaysian employer approved to hire you",
+      requirement: g.employerSponsor,
     });
   }
   if (p.slug === "student-pass") {
     gates.push({
       ok: a.hasSponsor === true,
-      requirement: "A place at an institution to sponsor the pass",
+      requirement: g.institutionSponsor,
     });
   }
 
@@ -177,14 +185,14 @@ export type Outcome = {
   nearMiss: Result[];
 };
 
-export function evaluate(a: Answers): Outcome {
+export function evaluate(a: Answers, locale: Locale = "en"): Outcome {
   const qualified: Result[] = [];
   const nearMiss: Result[] = [];
 
   for (const slug of evaluatedSlugs(a.goal)) {
     const p = getProgramme(slug);
     if (!p) continue;
-    const gates = gatesFor(p, a);
+    const gates = gatesFor(p, a, locale);
     const blockers = gates.filter((g) => !g.ok).map((g) => g.requirement);
     const result: Result = {
       slug: p.slug,

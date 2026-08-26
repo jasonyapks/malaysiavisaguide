@@ -28,6 +28,23 @@ export type UiStrings = {
   /** Keyed by the canonical (English, unprefixed) path in lib/site.ts.
    *  `assertRouteTitles()` there checks every route is covered. */
   routeTitles: Record<string, string>;
+  /** Malaysian state and territory names, keyed by the slugs in
+   *  `STATE_PROPERTY_FLOORS`. The figures are data; the place names are words,
+   *  so they live here and the two are paired at render time. */
+  states: Record<string, string>;
+  /** The requirement lines the eligibility checker builds from programme data.
+   *  They live here rather than in the quiz's copy because `lib/eligibility.ts`
+   *  composes them while evaluating, before any copy is in scope — and each one
+   *  takes its figure already formatted, so no number is written in words. */
+  gates: {
+    minAge: (age: number) => string;
+    fixedDeposit: (amount: string) => string;
+    income: (perPeriod: string) => string;
+    salaryFrom: (monthly: string) => string;
+    property: (from: string) => string;
+    employerSponsor: string;
+    institutionSponsor: string;
+  };
   footer: {
     heading: string;
     /** The one accent word, set in the display face. */
@@ -106,6 +123,8 @@ export type UiStrings = {
     /** The correction banner — components/SupersededNotice.tsx. */
     superseded: {
       termsChangedOn: (programme: string, date: string) => string;
+      /** aria-label for the notice's landmark. */
+      termsChangedLabel: (programme: string) => string;
       figuresArePrevious: string;
       showWhatChanged: string;
       hide: string;
@@ -183,6 +202,19 @@ export const ui: UiStrings = {
     reading: "Insights & news",
   },
 
+  states: {
+    selangor: "Selangor",
+    "kuala-lumpur": "Kuala Lumpur",
+  },
+  gates: {
+    minAge: (age) => `Minimum age ${age}`,
+    fixedDeposit: (amount) => `A fixed deposit of ${amount}`,
+    income: (perPeriod) => `Income of ${perPeriod}`,
+    salaryFrom: (monthly) => `A salary from ${monthly} a month`,
+    property: (from) => `Buying property from ${from}`,
+    employerSponsor: "A Malaysian employer approved to hire you",
+    institutionSponsor: "A place at an institution to sponsor the pass",
+  },
   routeTitles: {
     "/": "Home",
     "/insights/": "Insights",
@@ -277,6 +309,7 @@ export const ui: UiStrings = {
     },
     superseded: {
       termsChangedOn: (programme, date) => `${programme} terms changed on ${date}`,
+      termsChangedLabel: (programme) => `${programme}: terms have changed`,
       figuresArePrevious: " — the figures below are the previous ones",
       showWhatChanged: "Show what changed",
       hide: "Hide",

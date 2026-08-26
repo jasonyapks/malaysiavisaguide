@@ -34,7 +34,7 @@ export function SupersededNotice({
 
   return (
     <aside
-      aria-label={`${p.name}: terms have changed`}
+      aria-label={sup.termsChangedLabel(p.name)}
       className="rounded-xl border-l-4 border-alert-600 bg-sand-100 px-6 py-5"
     >
       {/*
@@ -57,7 +57,7 @@ export function SupersededNotice({
       <details open={s.figuresPending} className="group">
         <summary className="cursor-pointer list-none text-body-sm font-semibold text-forest-900 [&::-webkit-details-marker]:hidden">
           <span className="underline decoration-alert-600 decoration-2 underline-offset-4">
-            {sup.termsChangedOn(p.name, s.changedOn)}
+            {sup.termsChangedOn(p.name, reviewDate(s.changedOn, locale))}
           </span>
           {s.figuresPending && sup.figuresArePrevious}
           <span className="ml-2 font-normal text-ink-muted group-open:hidden">
@@ -103,8 +103,14 @@ export function SupersededNotice({
  */
 export function SupersededNotices({
   programmes,
+  locale = "en",
 }: {
   programmes: Programme[];
+  /* Defaulted rather than required so the English call sites read unchanged —
+     but it must be passed on a translated page, or the one notice warning a
+     reader that a figure is out of date arrives in a language they may not
+     read. The singular below has always taken it; the plural used to drop it. */
+  locale?: Locale;
 }) {
   const affected = programmes.filter((p) => p.superseded);
   if (affected.length === 0) return null;
@@ -112,7 +118,7 @@ export function SupersededNotices({
   return (
     <div className="space-y-4">
       {affected.map((p) => (
-        <SupersededNotice key={p.slug} programme={p} />
+        <SupersededNotice key={p.slug} programme={p} locale={locale} />
       ))}
     </div>
   );

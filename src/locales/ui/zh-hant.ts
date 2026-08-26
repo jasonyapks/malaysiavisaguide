@@ -34,6 +34,19 @@ export const ui: UiStrings = {
     reading: "觀點與新聞",
   },
 
+  states: {
+    selangor: "雪蘭莪",
+    "kuala-lumpur": "吉隆坡",
+  },
+  gates: {
+    minAge: (age) => `最低年齡 ${age} 歲`,
+    fixedDeposit: (amount) => `${amount} 的定期存款`,
+    income: (perPeriod) => `收入達 ${perPeriod}`,
+    salaryFrom: (monthly) => `月薪 ${monthly} 起`,
+    property: (from) => `購買 ${from} 起的房產`,
+    employerSponsor: "一家獲准聘用你的馬來西亞僱主",
+    institutionSponsor: "一個由院校擔保的學額",
+  },
   routeTitles: {
     "/": "首頁",
     "/insights/": "深度觀點",
@@ -127,6 +140,7 @@ export const ui: UiStrings = {
     },
     superseded: {
       termsChangedOn: (programme, date) => `${programme} 的條款已於 ${date} 變更`,
+      termsChangedLabel: (programme) => `${programme}：條款已變更`,
       figuresArePrevious: " —— 下方顯示的仍是舊數字",
       showWhatChanged: "查看變更內容",
       hide: "收起",
