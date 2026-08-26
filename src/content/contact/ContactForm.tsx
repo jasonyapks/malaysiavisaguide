@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { navRoutes } from "@/lib/site";
+import { localisedNavRoutes, navRoutes } from "@/lib/site";
+import { localeName, localeOrigin, type Locale } from "@/lib/i18n";
+import { getContactCopy } from "./copy";
 
 /**
  * Contact form — SPEC.md §5 step 6. Posts client-side to Web3Forms, so a fully
@@ -17,21 +19,23 @@ const FALLBACK_EMAIL = "admin@malaysiavisaguide.com";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-export function ContactForm() {
+export function ContactForm({ locale }: { locale: Locale }) {
+  // Resolved here, not passed in: `errorNetwork` is a function. See ./copy.ts.
+  const copy = getContactCopy(locale);
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
 
   if (!ACCESS_KEY) {
     return (
       <div className="rounded-xl border border-sand-400 bg-sand-100 p-6 text-body-sm leading-relaxed text-ink-muted">
-        The enquiry form isn&apos;t connected yet. In the meantime, email{" "}
+        {copy.notConnected.before}{" "}
         <a
           href={`mailto:${FALLBACK_EMAIL}`}
           className="font-semibold text-forest-700 underline"
         >
           {FALLBACK_EMAIL}
-        </a>{" "}
-        and you&apos;ll get a reply from the same person who writes these guides.
+        </a>
+        {copy.notConnected.after}
       </div>
     );
   }
@@ -61,22 +65,15 @@ export function ContactForm() {
       // always undefined, so every failure fell back to the generic string.
       if (json?.success) {
         setStatus("success");
-        setMessage(
-          "Thanks — your message is on its way. You'll hear back at the email you gave.",
-        );
+        setMessage(copy.success);
         form.reset();
       } else {
         setStatus("error");
-        setMessage(
-          json?.body?.message ??
-            "Something went wrong. Please try again in a moment.",
-        );
+        setMessage(json?.body?.message ?? copy.errorGeneric);
       }
     } catch {
       setStatus("error");
-      setMessage(
-        `Couldn't send that. Please email ${FALLBACK_EMAIL} directly instead.`,
-      );
+      setMessage(copy.errorNetwork(FALLBACK_EMAIL));
     }
   }
 
@@ -91,16 +88,28 @@ export function ContactForm() {
     );
   }
 
-  const programmes = [...navRoutes("programmes"), ...navRoutes("work-study")];
+  /*
+   * Two lists, on purpose.
+   *
+   * The reader picks from `labels`, in their own language. What gets SUBMITTED
+   * is the English title at the same index, because this value lands in Jason's
+   * inbox and an enquiry queue where the same programme arrives under three
+   * different names is a queue nobody can filter. The locale is already flagged
+   * in the subject line, so nothing is lost by keeping the value stable.
+   *
+   * `navRoutes` and `localisedNavRoutes` walk the same `routes` array in the
+   * same order, so the indices correspond.
+   */
+  const canonical = [...navRoutes("programmes"), ...navRoutes("work-study")];
+  const labels = [
+    ...localisedNavRoutes("programmes", locale),
+    ...localisedNavRoutes("work-study", locale),
+  ];
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <input type="hidden" name="access_key" value={ACCESS_KEY} />
-      <input
-        type="hidden"
-        name="subject"
-        value="New enquiry — malaysiavisaguide.com"
-      />
+      <input type="hidden" name="subject" value={subject(locale)} />
       <input type="hidden" name="from_name" value="Malaysia Visa Guide" />
 
       {/* Honeypot — Web3Forms spam protection. Hidden from real users. */}
@@ -114,7 +123,7 @@ export function ContactForm() {
         aria-hidden
       />
 
-      <Field label="Your name" htmlFor="name">
+      <Field label={copy.fields.name} htmlFor="name">
         <input
           id="name"
           name="name"
@@ -125,7 +134,7 @@ export function ContactForm() {
         />
       </Field>
 
-      <Field label="Email" htmlFor="email">
+      <Field label={copy.fields.email} htmlFor="email">
         <input
           id="email"
           name="email"
@@ -136,23 +145,23 @@ export function ContactForm() {
         />
       </Field>
 
-      <Field label="Which programme is this about?" htmlFor="programme">
+      <Field label={copy.fields.programme} htmlFor="programme">
         <select
           id="programme"
           name="programme"
           defaultValue=""
           className={inputClass}
         >
-          <option value="">Not sure yet / general question</option>
-          {programmes.map((p) => (
+          <option value="">{copy.fields.programmeAny}</option>
+          {canonical.map((p, i) => (
             <option key={p.path} value={p.title}>
-              {p.title}
+              {labels[i]?.title ?? p.title}
             </option>
           ))}
         </select>
       </Field>
 
-      <Field label="Your question" htmlFor="message">
+      <Field label={copy.fields.message} htmlFor="message">
         <textarea
           id="message"
           name="message"
@@ -168,7 +177,7 @@ export function ContactForm() {
         aria-busy={status === "submitting"}
         className="rounded-lg bg-forest-900 px-6 py-3 font-semibold text-sand-50 transition hover:bg-forest-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest-600/50 focus-visible:ring-offset-2 disabled:opacity-60"
       >
-        {status === "submitting" ? "Sending…" : "Send enquiry"}
+        {status === "submitting" ? copy.submitting : copy.submit}
       </button>
 
       {status === "error" && (
@@ -183,10 +192,7 @@ export function ContactForm() {
         </p>
       )}
 
-      <p className="text-caption text-ink-muted">
-        Your details are used only to reply to this enquiry. This is an
-        independent guide — sending a question does not start a visa application.
-      </p>
+      <p className="text-caption text-ink-muted">{copy.privacyNote}</p>
     </form>
   );
 }
@@ -211,4 +217,25 @@ function Field({
       {children}
     </div>
   );
+}
+
+/**
+ * The Web3Forms subject line — what Jason sees in his inbox before opening
+ * anything.
+ *
+ * Derived rather than translated, for two reasons. "New enquiry" is
+ * deliberately English in every locale so the inbox sorts and filters as one
+ * stream; and the parts that do vary are facts about the locale, not prose, so
+ * they come from `i18n.ts` where they are already correct. Written into the
+ * copy files instead, the Traditional one came out of the script converter as
+ * "简体中文" turned into "簡體中文" and still pointing at cn. — right characters,
+ * wrong language, wrong host.
+ *
+ * The flag matters operationally: an enquiry written in Chinese needs a reply
+ * in Chinese, and that is worth knowing from the subject line.
+ */
+function subject(locale: Locale): string {
+  const host = new URL(localeOrigin[locale]).host;
+  if (locale === "en") return `New enquiry — ${host}`;
+  return `New enquiry (${localeName[locale]}) — ${host}`;
 }

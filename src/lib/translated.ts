@@ -40,6 +40,7 @@ export const translatedRoutes = new Set<string>([
   "/tools/",
   "/tools/eligibility/",
   "/tools/cost-calculator/",
+  "/contact/",
 ]);
 
 export function isTranslated(canonicalPath: string): boolean {

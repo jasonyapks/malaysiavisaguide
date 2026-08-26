@@ -1,26 +1,15 @@
 import type { Metadata } from "next";
-import { ContactForm } from "@/components/ContactForm";
+import { ContactPage } from "@/content/contact/ContactPage";
+import { copy } from "@/content/contact/en";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Ask a question about any of the programmes covered here, or flag a figure that needs correcting.",
-  alternates: { canonical: "/contact/" },
-};
+export const metadata: Metadata = pageMetadata({
+  canonicalPath: "/contact/",
+  locale: "en",
+  title: copy.meta.title,
+  description: copy.meta.description,
+});
 
 export default function Page() {
-  return (
-    <article className="space-y-10">
-      <header className="space-y-6">
-        <h1 className="text-h1 font-semibold">Contact</h1>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
-          A question about any of the programmes, or a figure that looks out of
-          date? Send it here. Replies come from the same person who researches
-          and reviews these guides.
-        </p>
-      </header>
-
-      <ContactForm />
-    </article>
-  );
+  return <ContactPage locale="en" copy={copy} />;
 }
