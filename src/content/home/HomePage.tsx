@@ -121,13 +121,24 @@ export async function HomePage({
                 the labels — /compare/ lays the options side by side, an expert
                 is reached at /contact/.
 
-                The eligibility checker is third, and quieter. It held the
-                primary slot until v5, and it is the site's main lead magnet, so
-                nav-only was too far down; but promoting it back to a button
-                would put three equal-weight controls in a hero the template
-                specs with two. A link at body weight, on its own line from
-                `sm`, is the compromise: present, findable, not competing. */}
-            <div className="space-y-4 pt-1">
+                The eligibility checker is the third destination and the site's
+                main lead magnet, and up to v6 it was a third *link* sitting
+                under the other two. That was the wrong shape: three controls in
+                one visual family, so the reader had to rank them, and the one
+                doing the most work read as the least important.
+
+                It is now a tool row instead — a bordered card is a different
+                affordance class from a button and a text link, so it reads as
+                "a thing that does something" rather than as a third CTA, and
+                the two-CTA hierarchy the template specs survives intact while
+                the quiz gets *more* presence, not less. It leads with the
+                reader's question rather than the tool's name (the person who
+                needs it is the one who just bounced off "Explore Visa Options"
+                because they don't know what to explore), and it prices the
+                click: the quiz page's own promise — six questions, no sign-up —
+                is the thing that removes the two objections that stop people
+                starting a quiz. Whole row is the target, not 20px of text. */}
+            <div className="space-y-5 pt-1">
               <div className="flex flex-wrap items-center gap-5">
                 <Link
                   href={href("/compare/")}
@@ -142,14 +153,31 @@ export async function HomePage({
                   {copy.hero.ctaSecondary} <span aria-hidden>↗</span>
                 </Link>
               </div>
+
               <Link
                 href={href("/tools/eligibility/")}
-                className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-forest-700 underline decoration-forest-600/35 underline-offset-4 transition-colors hover:decoration-forest-600"
+                className="group flex max-w-xl items-center gap-4 rounded-2xl border border-sand-200 bg-white/70 px-5 py-4 transition-[transform,border-color,background-color,box-shadow] hover:-translate-y-px hover:border-gold-500/60 hover:bg-white hover:shadow-[0_10px_28px_-18px_rgb(0_0_0/0.45)]"
               >
-                <span aria-hidden className="text-gold-700">
-                  ◆
+                <span
+                  aria-hidden
+                  className="grid size-11 shrink-0 place-items-center rounded-xl bg-gold-500/15 text-gold-700 ring-1 ring-gold-500/40 transition-colors group-hover:bg-gold-500/20"
+                >
+                  <Icon name="target" />
                 </span>
-                {copy.hero.ctaTertiary}
+                <span className="min-w-0 flex-1">
+                  <span className="block font-serif text-body-sm font-bold leading-snug text-forest-900">
+                    {copy.hero.quiz.prompt}
+                  </span>
+                  <span className="mt-0.5 block text-caption leading-relaxed text-ink-muted">
+                    {copy.hero.quiz.meta}
+                  </span>
+                </span>
+                <span
+                  aria-hidden
+                  className="shrink-0 text-forest-700 transition-transform group-hover:translate-x-0.5"
+                >
+                  →
+                </span>
               </Link>
             </div>
           </div>

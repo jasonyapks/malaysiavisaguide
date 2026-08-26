@@ -35,7 +35,10 @@ export const copy: HomeCopy = {
     chips: ["六项计划全覆盖", "费用全部列明", "每月复核"],
     ctaPrimary: "查看签证选项",
     ctaSecondary: "咨询专家",
-    ctaTertiary: "看看你符合哪一种",
+    quiz: {
+      prompt: "不确定哪一种适合你？",
+      meta: "看看你符合哪一种 —— 六道题，无需注册。",
+    },
     cardEyebrow: "这份指南是什么",
     cardTitle: (
       <>

@@ -34,13 +34,20 @@ export type HomeCopy = {
     ctaPrimary: string;
     ctaSecondary: string;
     /**
-     * The eligibility checker. A third link rather than a third button: the
-     * branding template §9 names two CTAs and giving the quiz equal weight
-     * would make it a fourth thing competing at the same volume. It held the
-     * primary slot before v5 and is the site's main lead magnet, so it does
-     * not go back to being nav-only.
+     * The eligibility checker, rendered as a tool row under the two CTAs —
+     * not a third button and no longer a third link. See HomePage.tsx for why
+     * the shape changed; the copy contract is two lines:
+     *
+     * `prompt` is the reader's question, not the tool's name. It has to work
+     * for someone who has not decided anything yet, so it asks rather than
+     * instructs.
+     *
+     * `meta` prices the click. It must state the two things that stop people
+     * starting a quiz — how long it takes, and whether they have to hand over
+     * an address — and it must not promise more than /tools/eligibility/
+     * actually delivers. Keep it in step with that page's own opening line.
      */
-    ctaTertiary: string;
+    quiz: { prompt: string; meta: string };
     cardEyebrow: string;
     cardTitle: ReactNode;
     promises: { title: string; body: string }[];

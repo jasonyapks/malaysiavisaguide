@@ -23,7 +23,10 @@ export const copy: HomeCopy = {
     chips: ["Six programmes covered", "Costs in full", "Reviewed monthly"],
     ctaPrimary: "Explore Visa Options",
     ctaSecondary: "Talk to an Expert",
-    ctaTertiary: "Check what you qualify for",
+    quiz: {
+      prompt: "Not sure which one fits you?",
+      meta: "Check what you qualify for — six questions, no sign-up.",
+    },
     cardEyebrow: "What this guide is",
     cardTitle: (
       <>

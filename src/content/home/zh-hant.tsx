@@ -38,7 +38,10 @@ export const copy: HomeCopy = {
     chips: ["六項計劃全覆蓋", "費用全部列明", "每月複核"],
     ctaPrimary: "查看簽證選項",
     ctaSecondary: "諮詢專家",
-    ctaTertiary: "看看你符合哪一種",
+    quiz: {
+      prompt: "不確定哪一種適合你？",
+      meta: "看看你符合哪一種 —— 六道題，無需註冊。",
+    },
     cardEyebrow: "這份指南是什麼",
     cardTitle: (
       <>
