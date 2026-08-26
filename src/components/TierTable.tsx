@@ -91,7 +91,7 @@ export function TierTable({
         return fee
           ? t.agencyFeeCovers(
               fee.note,
-              fee.includes.join("; ").toLowerCase(),
+              fee.includes.join(t.includesSeparator).toLowerCase(),
               fee.paymentTerms,
             )
           : t.agencyFeeCommercialNote;
@@ -173,6 +173,10 @@ export function TierTable({
   const rows = variant === "work-study" ? workStudyRows : longStayRows;
 
   const { notes, ref } = noteCollector();
+  // No translation here: `tiers` arrives already localised, because the caller
+  // ran each programme through `localiseProgramme`. That is the single seam
+  // where a programme's prose becomes Chinese, and adding a second one here
+  // would mean two mechanisms that can disagree.
   const body = rows.map((r) => ({
     label: r.label,
     cells: tiers.map((t) => ({ value: r.cell(t), note: ref(r.note?.(t)) })),

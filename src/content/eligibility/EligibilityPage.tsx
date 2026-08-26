@@ -1,6 +1,7 @@
 import { SupersededNotices } from "@/components/SupersededNotice";
 import { programmes } from "@/lib/data/programmes";
 import type { Locale } from "@/lib/i18n";
+import { localiseProgramme } from "@/lib/programme-locale";
 import { EligibilityQuiz } from "./EligibilityQuiz";
 import type { EligibilityCopy } from "./types";
 
@@ -24,7 +25,10 @@ export function EligibilityPage({
           a reader could act on, because the quiz's own verdict renders above
           this point — and putting it first meant a page whose single job is to
           run a quiz opened with two screens of caveat and no quiz. */}
-      <SupersededNotices programmes={programmes} locale={locale} />
+      <SupersededNotices
+        programmes={programmes.map((p) => localiseProgramme(p, locale))}
+        locale={locale}
+      />
     </div>
   );
 }

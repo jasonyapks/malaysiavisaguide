@@ -49,9 +49,6 @@ export function localiseProgramme(p: Programme, locale: Locale): Programme {
       ? {
           superseded: {
             ...p.superseded,
-            ...(overlay.superseded.changedOn
-              ? { changedOn: overlay.superseded.changedOn }
-              : {}),
             ...(overlay.superseded.whatChanged
               ? { whatChanged: overlay.superseded.whatChanged }
               : {}),

@@ -34,6 +34,41 @@ export const ui: UiStrings = {
     reading: "觀點與新聞",
   },
 
+  cost: {
+    agencyFeePrincipal: "代理費 —— 主申請人",
+    agencyFeeCovers: (note, includes) => `${note}涵蓋：${includes}。`,
+    includesSeparator: "；",
+    additionalAgencyFee: (d) => `額外代理費 —— ${d} 名家屬`,
+    additionalAgencyFeeNote: (from, included) =>
+      `自第 ${from} 名家屬起收取，因此前 ${included} 名已包含在上方的費用之內。`,
+    ordinal: (n) => `${n}`,
+    participationFee: "參與費",
+    processingFee: "政府處理費",
+    passFee: "移民準證費",
+    visaFee: "多次入境簽證費",
+    visaFeeNote: (note, nationality, amount, perYear) =>
+      `${note} ${nationality}：${amount}${perYear ? "／年" : ""}。`,
+    securityBondPrincipal: "保證金 —— 主申請人",
+    securityBondNote: (note, nationality, amount) =>
+      `${note} 按國籍訂定 —— ${nationality}：${amount}。`,
+    securityBondDependants: (d) => `保證金 —— ${d} 名家屬`,
+    fixedDeposit: "定期存款",
+    propertyPurchase: "房產購置（最低）",
+    propertyNote: (stateFloor) =>
+      stateFloor
+        ? `這是你擁有的房產，不是費用 —— 但為取得資格，這筆資金你必須投入。${stateFloor}`
+        : "這是你擁有的房產，不是費用 —— 但為取得資格，這筆資金你必須投入。",
+    forPrincipal: (label, term) => `${label} —— 主申請人${term}`,
+    forDependants: (label, count, term) => `${label} —— ${count} 名家屬${term}`,
+    forDependantsOnTerm: (label, count, years) =>
+      `${label} —— ${count} 名家屬，${years} 年期`,
+    termSuffix: (years) => (years > 1 ? `（${years} 年）` : ""),
+    each: (amount) => `每人 ${amount}。`,
+    pricedAtFullTerm: (alternatives) =>
+      `按最長年期計價。另一個可選年期是${alternatives}。`,
+    termAlternative: (years, amount) => `${years} 年，每人 ${amount}`,
+    termAlternativeSeparator: "，或 ",
+  },
   states: {
     selangor: "雪蘭莪",
     "kuala-lumpur": "吉隆坡",
@@ -112,6 +147,7 @@ export const ui: UiStrings = {
       notGovernmentSet: "非政府訂定",
       agencyFeeCommercialNote:
         "由代理機構按商業方式訂定，沒有任何官方渠道公佈。在簽約之前，請要求以書面給出金額。",
+      includesSeparator: "；",
       agencyFeeCovers: (note, includes, terms) =>
         `${note} 涵蓋${includes}。${terms}`,
       processingFee: "手續費",
@@ -139,8 +175,9 @@ export const ui: UiStrings = {
       seeNote: "見注 ",
     },
     superseded: {
-      termsChangedOn: (programme, date) => `${programme} 的條款已於 ${date} 變更`,
-      termsChangedLabel: (programme) => `${programme}：條款已變更`,
+      changedOn: (date) => `條款已於 ${date} 變更`,
+      nameSeparator: "、",
+      termsChangedLabel: (programmes) => `${programmes}：條款已變更`,
       figuresArePrevious: " —— 下方顯示的仍是舊數字",
       showWhatChanged: "查看變更內容",
       hide: "收起",

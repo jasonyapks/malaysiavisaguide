@@ -9,8 +9,10 @@ import {
   getProgramme,
   programmes,
   STATE_PROPERTY_FLOORS,
+  type Programme,
 } from "@/lib/data/programmes";
 import { money, moneyPer, reviewDate } from "@/lib/format";
+import { localiseProgramme } from "@/lib/programme-locale";
 import { linkPath } from "@/lib/translated";
 import { getUi } from "@/lib/ui";
 import type { Locale } from "@/lib/i18n";
@@ -80,6 +82,14 @@ export function ComparePage({
 }) {
   const f = figuresFor(locale);
   const href = (path: string) => linkPath(path, locale);
+  // The tables and the correction notices read prose off the programme —
+  // minimum-stay wording, sponsors, dependant lists, the agency-fee footnote,
+  // what changed. `localiseProgramme` is the one seam that swaps those for the
+  // locale's, and every figure passes through it untouched.
+  const localise = (p: Programme) => localiseProgramme(p, locale);
+  const longStayTiers = longStay.map(localise);
+  const workStudyTiers = workStudy.map(localise);
+  const allProgrammes = programmes.map(localise);
 
   return (
     /* The whole page escapes the 3xl reading column, not just the tables.
@@ -106,7 +116,7 @@ export function ComparePage({
             reader compare figures, so a superseded one has to be flagged before
             they read it. Renders nothing when every source is current. */}
         <div className="max-w-3xl">
-          <SupersededNotices programmes={programmes} locale={locale} />
+          <SupersededNotices programmes={allProgrammes} locale={locale} />
         </div>
 
         {/* Both table sections escape the 3xl reading column entirely —
@@ -117,7 +127,7 @@ export function ComparePage({
           <h2 className="font-serif text-h3 font-semibold">
             {copy.longStay.heading}
           </h2>
-          <TierTable tiers={longStay} locale={locale} />
+          <TierTable tiers={longStayTiers} locale={locale} />
           <p className="max-w-3xl text-body-sm text-ink-muted">
             {copy.longStay.note}
           </p>
@@ -128,7 +138,7 @@ export function ComparePage({
             {copy.workStudy.heading}
           </h2>
           <p className="max-w-3xl text-ink-muted">{copy.workStudy.intro}</p>
-          <TierTable tiers={workStudy} variant="work-study" locale={locale} />
+          <TierTable tiers={workStudyTiers} variant="work-study" locale={locale} />
           <p className="max-w-3xl text-body-sm text-ink-muted">
             {copy.workStudy.note(f)}
           </p>

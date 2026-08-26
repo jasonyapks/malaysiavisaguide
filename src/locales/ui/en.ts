@@ -28,6 +28,54 @@ export type UiStrings = {
   /** Keyed by the canonical (English, unprefixed) path in lib/site.ts.
    *  `assertRouteTitles()` there checks every route is covered. */
   routeTitles: Record<string, string>;
+  /** The cost calculator's line-item labels and notes.
+   *  `lib/cost.ts` composes each estimate while walking the programme data, so
+   *  the wording lives here and the figures stay in `programmes.ts`. Every
+   *  count-bearing label is a function: English pluralises, Chinese does not,
+   *  and the two disagree about where a term suffix belongs in the phrase. */
+  cost: {
+    agencyFeePrincipal: string;
+    agencyFeeCovers: (note: string, includes: string) => string;
+    includesSeparator: string;
+    additionalAgencyFee: (dependants: number) => string;
+    additionalAgencyFeeNote: (from: string, included: number) => string;
+    ordinal: (n: number) => string;
+    participationFee: string;
+    processingFee: string;
+    passFee: string;
+    visaFee: string;
+    visaFeeNote: (
+      note: string,
+      nationality: string,
+      amount: string,
+      perYear: boolean,
+    ) => string;
+    securityBondPrincipal: string;
+    securityBondNote: (
+      note: string,
+      nationality: string,
+      amount: string,
+    ) => string;
+    securityBondDependants: (dependants: number) => string;
+    fixedDeposit: string;
+    propertyPurchase: string;
+    propertyNote: (stateFloor: string | null) => string;
+    /** "<fee> — main applicant (5 years)" */
+    forPrincipal: (label: string, term: string) => string;
+    /** "<fee> — 3 dependants (5 years)" */
+    forDependants: (label: string, count: number, term: string) => string;
+    /** "<fee> — 2 dependants on the 10-year term" */
+    forDependantsOnTerm: (
+      label: string,
+      count: number,
+      years: number,
+    ) => string;
+    termSuffix: (years: number) => string;
+    each: (amount: string) => string;
+    pricedAtFullTerm: (alternatives: string) => string;
+    termAlternative: (years: number, amount: string) => string;
+    termAlternativeSeparator: string;
+  };
   /** Malaysian state and territory names, keyed by the slugs in
    *  `STATE_PROPERTY_FLOORS`. The figures are data; the place names are words,
    *  so they live here and the two are paired at render time. */
@@ -95,6 +143,8 @@ export type UiStrings = {
       agencyFee: string;
       notGovernmentSet: string;
       agencyFeeCommercialNote: string;
+      /** Joins the agency fee's inclusions inside `agencyFeeCovers`. */
+      includesSeparator: string;
       agencyFeeCovers: (note: string, includes: string, terms: string) => string;
       processingFee: string;
       processingFeePrincipal: (amount: string) => string;
@@ -122,9 +172,14 @@ export type UiStrings = {
     };
     /** The correction banner — components/SupersededNotice.tsx. */
     superseded: {
-      termsChangedOn: (programme: string, date: string) => string;
-      /** aria-label for the notice's landmark. */
-      termsChangedLabel: (programme: string) => string;
+      /** The date half of the summary. The programmes are rendered separately
+       *  and first, so this no longer takes a name. */
+      changedOn: (date: string) => string;
+      /** Joins the programme names one change applies to. Chinese enumerates
+       *  parallel nouns with 、 rather than the comma `listSeparator` uses. */
+      nameSeparator: string;
+      /** aria-label for the notice's landmark; takes the joined name list. */
+      termsChangedLabel: (programmes: string) => string;
       figuresArePrevious: string;
       showWhatChanged: string;
       hide: string;
@@ -202,6 +257,50 @@ export const ui: UiStrings = {
     reading: "Insights & news",
   },
 
+  cost: {
+    agencyFeePrincipal: "Agency fee — main applicant",
+    agencyFeeCovers: (note, includes) => `${note} Covers: ${includes}.`,
+    includesSeparator: "; ",
+    additionalAgencyFee: (d) =>
+      `Additional agency fee — ${d} dependant${d > 1 ? "s" : ""}`,
+    additionalAgencyFeeNote: (from, included) =>
+      `Charged from the ${from} dependant onwards, so the first ${included === 1 ? "one is" : `${included} are`} already inside the fee above.`,
+    ordinal: (n) => {
+      const suffix =
+        n % 100 >= 11 && n % 100 <= 13
+          ? "th"
+          : ({ 1: "st", 2: "nd", 3: "rd" }[n % 10] ?? "th");
+      return `${n}${suffix}`;
+    },
+    participationFee: "Participation fee",
+    processingFee: "Government processing fee",
+    passFee: "Immigration pass fee",
+    visaFee: "Multiple-entry visa fee",
+    visaFeeNote: (note, nationality, amount, perYear) =>
+      `${note} ${nationality}: ${amount}${perYear ? " a year" : ""}.`,
+    securityBondPrincipal: "Security bond — main applicant",
+    securityBondNote: (note, nationality, amount) =>
+      `${note} Set by nationality — ${nationality}: ${amount}.`,
+    securityBondDependants: (d) =>
+      `Security bond — ${d} dependant${d > 1 ? "s" : ""}`,
+    fixedDeposit: "Fixed deposit",
+    propertyPurchase: "Property purchase (minimum)",
+    propertyNote: (stateFloor) =>
+      stateFloor
+        ? `A property you own, not a fee — but capital you must commit to qualify. ${stateFloor}`
+        : "A property you own, not a fee — but capital you must commit to qualify.",
+    forPrincipal: (label, term) => `${label} — main applicant${term}`,
+    forDependants: (label, count, term) =>
+      `${label} — ${count} dependant${count > 1 ? "s" : ""}${term}`,
+    forDependantsOnTerm: (label, count, years) =>
+      `${label} — ${count} dependant${count > 1 ? "s" : ""} on the ${years}-year term`,
+    termSuffix: (years) => (years > 1 ? ` (${years} years)` : ""),
+    each: (amount) => `${amount} each.`,
+    pricedAtFullTerm: (alternatives) =>
+      `Priced at the full term. The other term available is ${alternatives}.`,
+    termAlternative: (years, amount) => `${years} years at ${amount} each`,
+    termAlternativeSeparator: ", or ",
+  },
   states: {
     selangor: "Selangor",
     "kuala-lumpur": "Kuala Lumpur",
@@ -281,6 +380,7 @@ export const ui: UiStrings = {
       notGovernmentSet: "Not government-set",
       agencyFeeCommercialNote:
         "Set commercially by the agency and published nowhere official. Get the figure in writing before committing.",
+      includesSeparator: "; ",
       agencyFeeCovers: (note, includes, terms) =>
         `${note} Covers ${includes}. ${terms}`,
       processingFee: "Processing fee",
@@ -308,8 +408,9 @@ export const ui: UiStrings = {
       seeNote: "See note ",
     },
     superseded: {
-      termsChangedOn: (programme, date) => `${programme} terms changed on ${date}`,
-      termsChangedLabel: (programme) => `${programme}: terms have changed`,
+      changedOn: (date) => `terms changed on ${date}`,
+      nameSeparator: ", ",
+      termsChangedLabel: (programmes) => `${programmes}: terms have changed`,
       figuresArePrevious: " — the figures below are the previous ones",
       showWhatChanged: "Show what changed",
       hide: "Hide",

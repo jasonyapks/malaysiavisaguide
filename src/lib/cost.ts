@@ -35,6 +35,9 @@ import {
   type NationalityFee,
 } from "@/lib/data/nationality-fees";
 import { money } from "@/lib/format";
+import type { Locale } from "@/lib/i18n";
+import { localiseProgramme } from "@/lib/programme-locale";
+import { getUi, type UiStrings } from "@/lib/ui";
 
 export type Kind = "fee" | "capital";
 
@@ -75,9 +78,21 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 export function estimate(
   slug: ProgrammeSlug,
   input: EstimateInput,
+  locale: Locale = "en",
 ): Estimate | null {
-  const p = getProgramme(slug);
-  if (!p) return null;
+  // Localised on the way in, so every prose field this walks — the agency
+  // fee's inclusions, a deposit's withdrawal rule, the state-floor caveat —
+  // is already in `locale`. The figures are untouched: `localiseProgramme`
+  // overlays prose only, which is what keeps one fee in one file.
+  const raw = getProgramme(slug);
+  if (!raw) return null;
+  const p = localiseProgramme(raw, locale);
+
+  // Every label and note below is composed here, while walking the programme
+  // data. The wording comes from the locale's `cost` dictionary and the prose
+  // carried on the programme goes through `programmeText`, so a Chinese
+  // estimate reads as Chinese without a second copy of any figure.
+  const c = getUi(locale).cost;
 
   const deps = Math.max(0, Math.floor(input.dependants));
   const nationality = input.nationality ?? UNLISTED_NATIONALITY;
@@ -92,38 +107,44 @@ export function estimate(
   const agency = extras?.agencyFee;
   if (agency) {
     items.push({
-      label: "Agency fee — main applicant",
+      label: c.agencyFeePrincipal,
       amount: agency.principal,
       currency: agency.currency,
       kind: "fee",
-      note: `${agency.note} Covers: ${agency.includes.join("; ").toLowerCase()}.`,
+      note: c.agencyFeeCovers(
+        agency.note,
+        agency.includes.join(c.includesSeparator).toLowerCase(),
+      ),
     });
     const chargeable = Math.max(0, deps - agency.dependantsIncluded);
     if (chargeable > 0 && agency.perDependant > 0) {
       items.push({
-        label: `Additional agency fee — ${chargeable} dependant${chargeable > 1 ? "s" : ""}`,
+        label: c.additionalAgencyFee(chargeable),
         amount: agency.perDependant * chargeable,
         currency: agency.currency,
         kind: "fee",
-        note: `Charged from the ${ordinal(agency.dependantsIncluded + 1)} dependant onwards, so the first ${agency.dependantsIncluded === 1 ? "one is" : `${agency.dependantsIncluded} are`} already inside the fee above.`,
+        note: c.additionalAgencyFeeNote(
+          c.ordinal(agency.dependantsIncluded + 1),
+          agency.dependantsIncluded,
+        ),
       });
     }
   }
 
-  addPersonFee(items, p.participationFee, "Participation fee", deps, {
+  addPersonFee(items, p.participationFee, c.participationFee, deps, c, {
     dependantTermCounts: input.dependantTermCounts,
   });
 
   // Skipped for the principal where the agency fee already contains it —
   // otherwise the same RM5,000 appears twice on an MM2H estimate.
-  addPersonFee(items, p.processingFee, "Government processing fee", deps, {
+  addPersonFee(items, p.processingFee, c.processingFee, deps, c, {
     skipPrincipal: agency?.absorbsPrincipalProcessingFee === true,
   });
 
   const pass = extras?.passFeePerYear;
   if (pass) {
-    pushPerYear(items, {
-      label: "Immigration pass fee",
+    pushPerYear(items, c, {
+      label: c.passFee,
       principal: pass.principal,
       dependant: pass.dependant,
       currency: pass.currency,
@@ -136,14 +157,19 @@ export function estimate(
   const visa = extras?.visaFee;
   if (visa) {
     const per = visa.perYear ? nationality.visaFee * years : nationality.visaFee;
-    pushPerYear(items, {
-      label: "Multiple-entry visa fee",
+    pushPerYear(items, c, {
+      label: c.visaFee,
       principal: visa.appliesTo.includes("principal") ? per : undefined,
       dependant: visa.appliesTo.includes("dependant") ? per : undefined,
       currency: "MYR",
       years: 1,
       deps,
-      note: `${visa.note} ${nationality.label}: ${money({ amount: nationality.visaFee, currency: "MYR" })}${visa.perYear ? " a year" : ""}.`,
+      note: c.visaFeeNote(
+        visa.note,
+        nationality.label,
+        money({ amount: nationality.visaFee, currency: "MYR" }),
+        visa.perYear === true,
+      ),
     });
   }
 
@@ -151,27 +177,33 @@ export function estimate(
   if (bond) {
     if (bond.principalByNationality) {
       items.push({
-        label: "Security bond — main applicant",
+        label: c.securityBondPrincipal,
         amount: nationality.securityBond,
         currency: bond.currency,
         kind: "fee",
-        note: `${bond.note} Set by nationality — ${nationality.label}: ${money({ amount: nationality.securityBond, currency: bond.currency })}.`,
+        note: c.securityBondNote(
+          bond.note,
+          nationality.label,
+          money({ amount: nationality.securityBond, currency: bond.currency }),
+        ),
       });
     }
     if (deps > 0 && bond.dependant) {
       items.push({
-        label: `Security bond — ${deps} dependant${deps > 1 ? "s" : ""}`,
+        label: c.securityBondDependants(deps),
         amount: bond.dependant * deps,
         currency: bond.currency,
         kind: "fee",
-        note: bond.principalByNationality ? undefined : bond.note,
+        note: bond.principalByNationality
+          ? undefined
+          : bond.note,
       });
     }
   }
 
   if (p.fixedDeposit) {
     items.push({
-      label: "Fixed deposit",
+      label: c.fixedDeposit,
       amount: p.fixedDeposit.amount,
       currency: p.fixedDeposit.currency,
       kind: "capital",
@@ -181,13 +213,11 @@ export function estimate(
 
   if (p.propertyPurchaseMin) {
     items.push({
-      label: "Property purchase (minimum)",
+      label: c.propertyPurchase,
       amount: p.propertyPurchaseMin.amount,
       currency: p.propertyPurchaseMin.currency,
       kind: "capital",
-      note: p.propertyStateFloorNote
-        ? `A property you own, not a fee — but capital you must commit to qualify. ${p.propertyStateFloorNote}`
-        : "A property you own, not a fee — but capital you must commit to qualify.",
+      note: c.propertyNote(p.propertyStateFloorNote ?? null),
     });
   }
 
@@ -197,17 +227,9 @@ export function estimate(
   return { items, feesByCurrency, capitalByCurrency };
 }
 
-/** "1st", "2nd", "3rd" — used for the dependant the agency fee starts at. */
-function ordinal(n: number): string {
-  const suffix =
-    n % 100 >= 11 && n % 100 <= 13
-      ? "th"
-      : ({ 1: "st", 2: "nd", 3: "rd" }[n % 10] ?? "th");
-  return `${n}${suffix}`;
-}
-
 function pushPerYear(
   items: LineItem[],
+  c: UiStrings["cost"],
   o: {
     label: string;
     principal?: number;
@@ -218,10 +240,10 @@ function pushPerYear(
     note: string;
   },
 ) {
-  const term = o.years > 1 ? ` (${o.years} years)` : "";
+  const term = c.termSuffix(o.years);
   if (o.principal) {
     items.push({
-      label: `${o.label} — main applicant${term}`,
+      label: c.forPrincipal(o.label, term),
       amount: round2(o.principal * o.years),
       currency: o.currency,
       kind: "fee",
@@ -230,7 +252,7 @@ function pushPerYear(
   }
   if (o.deps > 0 && o.dependant) {
     items.push({
-      label: `${o.label} — ${o.deps} dependant${o.deps > 1 ? "s" : ""}${term}`,
+      label: c.forDependants(o.label, o.deps, term),
       amount: round2(o.dependant * o.years * o.deps),
       currency: o.currency,
       kind: "fee",
@@ -251,6 +273,7 @@ function addPersonFee(
   } | null,
   label: string,
   deps: number,
+  c: UiStrings["cost"],
   opts: {
     skipPrincipal?: boolean;
     dependantTermCounts?: Record<number, number>;
@@ -259,7 +282,7 @@ function addPersonFee(
   if (!fee) return;
   if (fee.principal > 0 && !opts.skipPrincipal) {
     items.push({
-      label: `${label} — main applicant`,
+      label: c.forPrincipal(label, ""),
       amount: fee.principal,
       currency: fee.currency,
       kind: "fee",
@@ -280,11 +303,11 @@ function addPersonFee(
       );
       if (count <= 0 || t.amount <= 0) continue;
       items.push({
-        label: `${label} — ${count} dependant${count > 1 ? "s" : ""} on the ${t.years}-year term`,
+        label: c.forDependantsOnTerm(label, count, t.years),
         amount: t.amount * count,
         currency: fee.currency,
         kind: "fee",
-        note: `${money({ amount: t.amount, currency: fee.currency })} each.`,
+        note: c.each(money({ amount: t.amount, currency: fee.currency })),
       });
     }
     return;
@@ -297,18 +320,22 @@ function addPersonFee(
   const alternatives = (terms ?? []).filter((t) => t.amount !== fee.dependant);
 
   items.push({
-    label: `${label} — ${deps} dependant${deps > 1 ? "s" : ""}`,
+    label: c.forDependants(label, deps, ""),
     amount: fee.dependant * deps,
     currency: fee.currency,
     kind: "fee",
     note:
       alternatives.length > 0
-        ? `Priced at the full term. The other term available is ${alternatives
-            .map(
-              (t) =>
-                `${t.years} years at ${money({ amount: t.amount, currency: fee.currency })} each`,
-            )
-            .join(", or ")}.`
+        ? c.pricedAtFullTerm(
+            alternatives
+              .map((t) =>
+                c.termAlternative(
+                  t.years,
+                  money({ amount: t.amount, currency: fee.currency }),
+                ),
+              )
+              .join(c.termAlternativeSeparator),
+          )
         : undefined,
   });
 }

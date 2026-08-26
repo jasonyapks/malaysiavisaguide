@@ -19,51 +19,81 @@ import { getUi } from "@/lib/ui";
  * Renders nothing when the programme's source is current, so it can be dropped
  * into any page that shows figures without a conditional at the call site.
  */
-export function SupersededNotice({
-  programme: p,
-  locale = "en",
+
+/**
+ * One notice, for one change, covering every programme it applies to.
+ *
+ * ## Why this takes a list of names
+ *
+ * A change is a property of a *document*, not of a programme. One MOTAC guide
+ * revision changed MM2H Silver, Gold and Platinum on the same day, on the same
+ * authority, with the same two bullets — so rendering it per-programme printed
+ * the identical paragraph three times, and a page showing every tier opened
+ * with four near-identical red blocks and no hierarchy to read. Grouped, the
+ * reader gets one line per real event, with the tiers it hits named where they
+ * are actually scanned for.
+ */
+function Notice({
+  names,
+  superseded: s,
+  source,
+  authority,
+  locale,
 }: {
-  programme: Programme;
-  /** Defaults to English so the comparison table, calculator and quiz — which
-   *  are not translated yet — keep working unchanged. */
-  locale?: Locale;
+  names: string[];
+  superseded: NonNullable<Programme["superseded"]>;
+  source: string;
+  authority: string;
+  locale: Locale;
 }) {
   const sup = getUi(locale).guide.superseded;
-  const s = p.superseded;
-  if (!s) return null;
+  const nameList = joinNames(names, sup.nameSeparator);
 
+  /*
+   * URGENCY decides what shows unprompted — not the viewport.
+   *
+   * While `figuresPending` is true the numbers on the page are the superseded
+   * ones, so nothing here is optional reading: the panel starts open, and the
+   * attribution is part of what a reader needs before acting on any figure.
+   *
+   * Once the figures are corrected this becomes background, and the summary
+   * carries what a scanning reader needs — which programmes, and when. What
+   * changed, and whose word it rests on, are one tap away.
+   *
+   * The attribution used to sit outside the disclosure, always visible. That
+   * made the longest and least urgent text the permanent cost of the notice:
+   * four lines per programme, before the reader had asked for any of it.
+   * Moving it inside applies the same reasoning that collapsed the bullets in
+   * the first place — a caveat nobody scrolls past is not a caveat anyone
+   * reads — and `figuresPending` is what keeps it honest, because the case
+   * where the detail is load-bearing is exactly the case that stays open.
+   *
+   * <details>/<summary> rather than a JS toggle because it is keyboard-
+   * operable, screen-reader-announced and open by default for printing and for
+   * Find-in-page, with no state to manage.
+   */
   return (
     <aside
-      aria-label={sup.termsChangedLabel(p.name)}
-      className="rounded-xl border-l-4 border-alert-600 bg-sand-100 px-6 py-5"
+      aria-label={sup.termsChangedLabel(nameList)}
+      className="rounded-xl border-l-4 border-alert-600 bg-sand-100 px-5 py-4"
     >
-      {/*
-       * A disclosure, and URGENCY decides whether it starts open — not the
-       * viewport. While `figuresPending` is true the numbers on the page are
-       * the superseded ones, so the detail is not optional reading and the
-       * panel is open everywhere. Once the figures are corrected it becomes
-       * background: the headline and the attribution still show unprompted,
-       * and the three bullets are one tap away.
-       *
-       * That distinction is what stops this being a dark pattern. Before it
-       * was collapsed, this notice cost a full 390px screen ahead of the
-       * comparison table on the site's most important page — a caveat nobody
-       * scrolls past is not a caveat anyone reads.
-       *
-       * <details>/<summary> is used rather than a JS toggle because it is
-       * keyboard-operable, screen-reader-announced and open-by-default for
-       * printing and for Find-in-page, with no state to manage.
-       */}
       <details open={s.figuresPending} className="group">
-        <summary className="cursor-pointer list-none text-body-sm font-semibold text-forest-900 [&::-webkit-details-marker]:hidden">
-          <span className="underline decoration-alert-600 decoration-2 underline-offset-4">
-            {sup.termsChangedOn(p.name, reviewDate(s.changedOn, locale))}
+        <summary className="flex cursor-pointer list-none flex-wrap items-baseline gap-x-2 gap-y-1 text-body-sm [&::-webkit-details-marker]:hidden">
+          <span aria-hidden className="self-center text-alert-600">
+            ⚠
           </span>
-          {s.figuresPending && sup.figuresArePrevious}
-          <span className="ml-2 font-normal text-ink-muted group-open:hidden">
+          {/* The programmes first. This is the word a reader scans for — "does
+              this affect the one I am looking at?" — and it used to sit in the
+              middle of the sentence. */}
+          <span className="font-semibold text-forest-900">{nameList}</span>
+          <span className="text-ink-muted">
+            {sup.changedOn(reviewDate(s.changedOn, locale))}
+            {s.figuresPending && sup.figuresArePrevious}
+          </span>
+          <span className="ml-auto shrink-0 font-medium text-forest-700 underline decoration-alert-600 decoration-2 underline-offset-4 group-open:hidden">
             {sup.showWhatChanged}
           </span>
-          <span className="ml-2 hidden font-normal text-ink-muted group-open:inline">
+          <span className="ml-auto hidden shrink-0 font-medium text-forest-700 underline decoration-alert-600 decoration-2 underline-offset-4 group-open:inline">
             {sup.hide}
           </span>
         </summary>
@@ -75,31 +105,81 @@ export function SupersededNotice({
             </li>
           ))}
         </ul>
-      </details>
 
-      <p className="mt-4 border-t border-sand-200 pt-3 text-caption leading-relaxed text-ink-muted">
-        {sup.confirmedByBefore}
-        <strong>{s.attribution.by}</strong>
-        {sup.confirmedByAfter(reviewDate(s.attribution.asAt, locale))}
-        <a
-          href={p.source}
-          className="underline"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          {sup.officialDocument(p.authority)}
-        </a>
-        {sup.notYetUpdated}
-        {s.figuresPending && sup.treatAsUnconfirmed}
-      </p>
+        <p className="mt-4 border-t border-sand-200 pt-3 text-caption leading-relaxed text-ink-muted">
+          {sup.confirmedByBefore}
+          <strong>{s.attribution.by}</strong>
+          {sup.confirmedByAfter(reviewDate(s.attribution.asAt, locale))}
+          <a
+            href={source}
+            className="underline"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {sup.officialDocument(authority)}
+          </a>
+          {sup.notYetUpdated}
+          {s.figuresPending && sup.treatAsUnconfirmed}
+        </p>
+      </details>
     </aside>
   );
 }
 
 /**
- * The same notice for a page that shows several programmes at once — the
- * comparison table, the calculator, the quiz. Renders nothing when every
- * programme's source is current.
+ * Join the programme names, eliding a shared leading word.
+ *
+ * The three MM2H tiers grouped into one notice read "MM2H Silver, MM2H Gold,
+ * MM2H Platinum" — the prefix three times, on the line whose whole job is to be
+ * scanned. "MM2H Silver, Gold, Platinum" is how anyone would say it out loud,
+ * and it keeps the row on one line at the width the notice actually gets.
+ *
+ * Only when every name shares that first word, so a group spanning two
+ * programme families is never silently mangled into implying one.
+ */
+function joinNames(names: string[], separator: string): string {
+  if (names.length < 2) return names.join(separator);
+  const [first] = names[0].split(" ");
+  const sharesPrefix = names.every(
+    (n) => n.split(" ")[0] === first && n.split(" ").length > 1,
+  );
+  if (!sharesPrefix) return names.join(separator);
+  return [
+    names[0],
+    ...names.slice(1).map((n) => n.slice(first.length + 1)),
+  ].join(separator);
+}
+
+/** The notice for a single programme — the guide pages and the insight blocks. */
+export function SupersededNotice({
+  programme: p,
+  locale = "en",
+}: {
+  programme: Programme;
+  /** Defaults to English so untranslated call sites read unchanged. */
+  locale?: Locale;
+}) {
+  if (!p.superseded) return null;
+  return (
+    <Notice
+      names={[p.name]}
+      superseded={p.superseded}
+      source={p.source}
+      authority={p.authority}
+      locale={locale}
+    />
+  );
+}
+
+/**
+ * The notice for a page that shows several programmes at once — the comparison
+ * table, the calculator, the quiz. Renders nothing when every programme's
+ * source is current.
+ *
+ * Programmes sharing one change are merged into a single notice. The identity
+ * of a change is its date, its authority, its attribution and what it says —
+ * not the date alone, because two programmes corrected on the same day by
+ * different authorities are two events and have to stay two notices.
  */
 export function SupersededNotices({
   programmes,
@@ -109,16 +189,41 @@ export function SupersededNotices({
   /* Defaulted rather than required so the English call sites read unchanged —
      but it must be passed on a translated page, or the one notice warning a
      reader that a figure is out of date arrives in a language they may not
-     read. The singular below has always taken it; the plural used to drop it. */
+     read. The singular above has always taken it; the plural used to drop it. */
   locale?: Locale;
 }) {
-  const affected = programmes.filter((p) => p.superseded);
-  if (affected.length === 0) return null;
+  const groups = new Map<string, { names: string[]; programme: Programme }>();
+
+  for (const p of programmes) {
+    const s = p.superseded;
+    if (!s) continue;
+    const key = JSON.stringify([
+      s.changedOn,
+      s.figuresPending,
+      s.attribution.by,
+      s.attribution.asAt,
+      s.whatChanged,
+      p.authority,
+      p.source,
+    ]);
+    const existing = groups.get(key);
+    if (existing) existing.names.push(p.name);
+    else groups.set(key, { names: [p.name], programme: p });
+  }
+
+  if (groups.size === 0) return null;
 
   return (
-    <div className="space-y-4">
-      {affected.map((p) => (
-        <SupersededNotice key={p.slug} programme={p} locale={locale} />
+    <div className="space-y-3">
+      {[...groups.entries()].map(([key, g]) => (
+        <Notice
+          key={key}
+          names={g.names}
+          superseded={g.programme.superseded!}
+          source={g.programme.source}
+          authority={g.programme.authority}
+          locale={locale}
+        />
       ))}
     </div>
   );

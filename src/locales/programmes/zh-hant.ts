@@ -33,11 +33,16 @@ import type { ProgrammeSlug } from "@/lib/data/programmes";
  */
 export type ProgrammeProse = {
   name?: string;
-  /** The correction banner's prose — a date phrase, who confirmed it, and the
-   *  bullets. Numbers inside the bullets are written exactly as programmes.ts
-   *  writes them, for the same reason the guide copy does. */
+  /** The correction banner's prose — who confirmed it, and the bullets.
+   *  Numbers inside the bullets are written exactly as programmes.ts writes
+   *  them, for the same reason the guide copy does.
+   *
+   *  There is deliberately no `changedOn`. It used to be overlaid as a written
+   *  date ("2026 年 3 月 16 日") because programmes.ts stored one as English
+   *  prose. It is an ISO date now and `SupersededNotice` formats it through
+   *  `reviewDate(_, locale)`, which already produces 2026年3月16日 — an overlay
+   *  string reaching that formatter parses as Invalid Date. */
   superseded?: {
-    changedOn?: string;
     attributionBy?: string;
     whatChanged?: string[];
   };
@@ -56,9 +61,10 @@ export type ProgrammeProse = {
 
 export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   pvip: {
+    withdrawable:
+      "參加計劃滿六個月後，最多可提取 50% —— 2026 年的新條款把原本的一年縮短為六個月。",
     name: "高端簽證計劃（PVIP）",
     superseded: {
-      changedOn: "2026 年 3 月 16 日",
       attributionBy: "MYPVIP 的實務操作",
       whatChanged: [
         "定期存款改為存滿六個月後即可提取，而非原本的一年。可提取上限不變，仍為質押金額的 50%。",
@@ -73,10 +79,10 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   },
 
   "mm2h-silver": {
+    dependants: ["配偶", "34 歲以下未婚子女", "父母與配偶父母"],
     name: "MM2H 白銀級",
     authority: "旅遊、藝術及文化部（MOTAC，MM2H 一站式中心）",
     superseded: {
-      changedOn: "2026 年 8 月 3 日",
       attributionBy: "MYPVIP 的實務操作",
       whatChanged: [
         "定期存款 50% 的提取窗口，在房產購置完成之後才打開，而不是在申請獲批之時。在白銀、黃金和白金級，購置發生在獲批之後，因此順序是：先獲批，再購置，最後提取。購置住宅本身仍屬獲准用途，與在馬來西亞的教育、醫療和旅遊支出並列。SEZ 與 SFZ 則相反：區內購置是獲批的前提條件，而不是獲批之後的步驟。",
@@ -102,10 +108,10 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
     },
   },
   "mm2h-gold": {
+    dependants: ["配偶", "34 歲以下未婚子女", "父母與配偶父母"],
     name: "MM2H 黃金級",
     authority: "旅遊、藝術及文化部（MOTAC，MM2H 一站式中心）",
     superseded: {
-      changedOn: "2026 年 8 月 3 日",
       attributionBy: "MYPVIP 的實務操作",
       whatChanged: [
         "定期存款 50% 的提取窗口，在房產購置完成之後才打開，而不是在申請獲批之時。在白銀、黃金和白金級，購置發生在獲批之後，因此順序是：先獲批，再購置，最後提取。購置住宅本身仍屬獲准用途，與在馬來西亞的教育、醫療和旅遊支出並列。SEZ 與 SFZ 則相反：區內購置是獲批的前提條件，而不是獲批之後的步驟。",
@@ -131,10 +137,10 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
     },
   },
   "mm2h-platinum": {
+    dependants: ["配偶", "34 歲以下未婚子女", "父母與配偶父母"],
     name: "MM2H 白金級",
     authority: "旅遊、藝術及文化部（MOTAC，MM2H 一站式中心）",
     superseded: {
-      changedOn: "2026 年 8 月 3 日",
       attributionBy: "MYPVIP 的實務操作",
       whatChanged: [
         "定期存款 50% 的提取窗口，在房產購置完成之後才打開，而不是在申請獲批之時。在白銀、黃金和白金級，購置發生在獲批之後，因此順序是：先獲批，再購置，最後提取。購置住宅本身仍屬獲准用途，與在馬來西亞的教育、醫療和旅遊支出並列。SEZ 與 SFZ 則相反：區內購置是獲批的前提條件，而不是獲批之後的步驟。",
@@ -161,6 +167,9 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   },
 
   smm2h: {
+    withdrawable:
+      "參加計劃滿一年後，最多可提取 50%，用於在砂拉越購買住宅、汽車、支付醫療費用或子女教育費用。",
+    dependants: ["配偶", "子女", "父母"],
     name: "砂拉越 MM2H（S-MM2H）",
     authority:
       "砂拉越旅遊、創意產業及表演藝術部（Ministry of Tourism, Creative Industry and Performing Arts Sarawak, MTCP）",
@@ -169,6 +178,7 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   },
 
   "de-rantau": {
+    dependants: ["配偶", "子女", "父母（僅限主準證持有人）"],
     name: "DE Rantau 數字遊民準證",
     authority: "馬來西亞數字經濟機構（MDEC）",
     renewalLimit: "僅可續簽一次",
@@ -177,6 +187,12 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   },
 
   "employment-pass": {
+    dependants: [
+      "配偶（須月薪高於 RM5,000）",
+      "18 歲以下子女",
+      "18 歲以下合法領養子女",
+      "父母與配偶父母",
+    ],
     name: "工作準證（Employment Pass）",
     authority: "外籍人士服務局（ESD）／移民局",
     sponsor: "馬來西亞僱主，並須經外籍人士委員會批准",
@@ -184,6 +200,12 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   },
 
   "student-pass": {
+    dependants: [
+      "配偶（僅限碩士與博士生）",
+      "18 歲以下子女（僅限碩士與博士生）",
+      "殘障子女，不限年齡",
+      "父母",
+    ],
     name: "學生準證（Student Pass）",
     authority: "移民局／EMGS",
     sponsor: "就讀的院校，並經 EMGS 審核",
