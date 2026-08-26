@@ -34,6 +34,9 @@ const FIELDS = {
   dependants: (p) => (p.dependants ?? []).length > 0,
   agencyFee: (p) => p.governmentExtras?.agencyFee != null,
   superseded: (p) => p.superseded != null,
+  passFeeNote: (p) => p.governmentExtras?.passFeePerYear?.note != null,
+  visaFeeNote: (p) => p.governmentExtras?.visaFee?.note != null,
+  securityBondNote: (p) => p.governmentExtras?.securityBond?.note != null,
 };
 
 const gaps = [];

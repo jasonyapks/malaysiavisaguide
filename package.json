@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "predev": "node scripts/emit-figures.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/sync-insight-routes.mjs && node scripts/gen-zh-hant.mjs",
-    "prebuild": "node scripts/pull-images.mjs --soft && node scripts/emit-figures.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/sync-insight-routes.mjs && node scripts/gen-zh-hant.mjs --check && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/check-programme-prose.mjs",
+    "prebuild": "node scripts/pull-images.mjs --soft && node scripts/emit-figures.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/sync-insight-routes.mjs && node scripts/gen-zh-hant.mjs --check && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/check-programme-prose.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/check-countries.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -18,7 +18,8 @@
     "test:markdown": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/test-markdown.mjs",
     "migrate:cms": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/migrate-cms-to-files.mjs",
     "test:worker-render": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/test-worker-render.mjs",
-    "prose:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/check-programme-prose.mjs"
+    "prose:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/check-programme-prose.mjs",
+    "countries:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/check-countries.mjs"
   },
   "dependencies": {
     "next": "16.2.11",

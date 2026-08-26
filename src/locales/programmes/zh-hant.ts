@@ -56,11 +56,24 @@ export type ProgrammeProse = {
   propertyStateFloorNote?: string;
   /** The tier table's agency-fee footnote, which is three prose fields. */
   agencyFee?: { note?: string; includes?: string[]; paymentTerms?: string };
+  /** The cost calculator's line-item notes, which sit on `governmentExtras`
+   *  rather than on the programme itself. They render under each fee row in
+   *  the estimate, so leaving them out puts English paragraphs inside an
+   *  otherwise Chinese total. */
+  passFeeNote?: string;
+  visaFeeNote?: string;
+  securityBondNote?: string;
   dependants?: string[];
 };
 
 export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   pvip: {
+    passFeeNote:
+      "每人每年 RM2,000，於簽證簽發時按整個批准年期一次收取，續簽時再收一次。五年批准期即代表每人預先繳付 RM10,000，而不是 RM2,000。",
+    visaFeeNote:
+      "多次入境簽證費，按你的國籍訂定，而非按計劃訂定。相對其他項目金額不大，但確實是賬單上的一項。",
+    securityBondNote:
+      "一次性收取。主申請人的保證金按國籍訂定，介於 RM200 至 RM2,000；每名家屬統一為 RM10。",
     withdrawable:
       "參加計劃滿六個月後，最多可提取 50% —— 2026 年的新條款把原本的一年縮短為六個月。",
     name: "高端簽證計劃（PVIP）",
@@ -79,6 +92,12 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   },
 
   "mm2h-silver": {
+    passFeeNote:
+      "按每名家屬、每一年批准期計算，於批准階段繳付予移民局。主申請人的首五年已包含在代理費之內。",
+    visaFeeNote:
+      "按每名家屬每年計算，依該家屬的國籍訂定。主申請人的首五年已包含在代理費之內。",
+    securityBondNote:
+      "每名家屬 RM10，一次性收取。主申請人的保證金已包含在代理費之內。",
     dependants: ["配偶", "34 歲以下未婚子女", "父母與配偶父母"],
     name: "MM2H 白銀級",
     authority: "旅遊、藝術及文化部（MOTAC，MM2H 一站式中心）",
@@ -108,6 +127,12 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
     },
   },
   "mm2h-gold": {
+    passFeeNote:
+      "按每名家屬、每一年批准期計算，於批准階段繳付予移民局。主申請人的首五年已包含在代理費之內。",
+    visaFeeNote:
+      "按每名家屬每年計算，依該家屬的國籍訂定。主申請人的首五年已包含在代理費之內。",
+    securityBondNote:
+      "每名家屬 RM10，一次性收取。主申請人的保證金已包含在代理費之內。",
     dependants: ["配偶", "34 歲以下未婚子女", "父母與配偶父母"],
     name: "MM2H 黃金級",
     authority: "旅遊、藝術及文化部（MOTAC，MM2H 一站式中心）",
@@ -137,6 +162,12 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
     },
   },
   "mm2h-platinum": {
+    passFeeNote:
+      "按每名家屬、每一年批准期計算，於批准階段繳付予移民局。主申請人的首五年已包含在代理費之內。",
+    visaFeeNote:
+      "按每名家屬每年計算，依該家屬的國籍訂定。主申請人的首五年已包含在代理費之內。",
+    securityBondNote:
+      "每名家屬 RM10，一次性收取。主申請人的保證金已包含在代理費之內。",
     dependants: ["配偶", "34 歲以下未婚子女", "父母與配偶父母"],
     name: "MM2H 白金級",
     authority: "旅遊、藝術及文化部（MOTAC，MM2H 一站式中心）",

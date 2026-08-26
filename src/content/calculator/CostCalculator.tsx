@@ -22,6 +22,16 @@ import {
   type LineItem,
 } from "@/lib/cost";
 import { money, reviewDate } from "@/lib/format";
+import type { Locale } from "@/lib/i18n";
+import { localiseProgramme } from "@/lib/programme-locale";
+import { linkPath } from "@/lib/translated";
+import {
+  countryName,
+  countryNote,
+  feeAttributionName,
+} from "@/lib/countries";
+import { getCalculatorCopy } from "./copy";
+import type { CalculatorCopy } from "./types";
 
 const GUIDE_HREF: Record<ProgrammeSlug, string> = {
   pvip: "/visas/pvip/",
@@ -42,7 +52,10 @@ function currencyRows(totals: Partial<Record<Currency, number>>) {
   );
 }
 
-export function CostCalculator() {
+export function CostCalculator({ locale }: { locale: Locale }) {
+  // Resolved here, not passed in: the copy holds functions. See ./copy.ts.
+  const copy = getCalculatorCopy(locale);
+  const href = (path: string) => linkPath(path, locale);
   const [slug, setSlug] = useState<ProgrammeSlug>("pvip");
   const [dependants, setDependants] = useState(0);
   const [nationalityLabel, setNationalityLabel] = useState(
@@ -55,7 +68,10 @@ export function CostCalculator() {
   // the longer, dearer term — the calculator should never quote low by default.
   const [onLongTerm, setOnLongTerm] = useState(MAX_DEPENDANTS);
 
-  const programme = getProgramme(slug)!;
+  // Localised for display. `estimate()` localises its own copy of the record
+  // for the line items, so both sides of the page name the programme the same
+  // way and neither reads a figure from anywhere but programmes.ts.
+  const programme = localiseProgramme(getProgramme(slug)!, locale);
   const extras = programme.governmentExtras;
 
   const depTerms = dependantTermOptions(programme);
@@ -75,11 +91,11 @@ export function CostCalculator() {
   // No useMemo: the estimate is a few dozen arithmetic operations over a fixed
   // array, and hand-memoizing it defeated the React Compiler, which does the
   // job better here than an explicit dependency list built from derived values.
-  const result = estimate(slug, {
-    dependants,
-    nationality,
-    dependantTermCounts,
-  });
+  const result = estimate(
+    slug,
+    { dependants, nationality, dependantTermCounts },
+    locale,
+  );
 
   const fees = result ? currencyRows(result.feesByCurrency) : [];
   const capital = result ? currencyRows(result.capitalByCurrency) : [];
@@ -99,11 +115,13 @@ export function CostCalculator() {
       {/* Programme picker */}
       <fieldset className="space-y-3">
         <legend className="font-serif text-lead font-semibold text-forest-900">
-          1. Choose a programme
+          1. {copy.steps.programme}
         </legend>
         <div className="grid gap-2 sm:grid-cols-2">
           {CALCULATOR_ORDER.map((s) => {
-            const p = getProgramme(s)!;
+            // Localised, like the heading below it. Left raw, the picker read
+            // "MM2H Silver" while the result it selected read "MM2H 白银级".
+            const p = localiseProgramme(getProgramme(s)!, locale);
             const active = s === slug;
             return (
               <button
@@ -127,23 +145,21 @@ export function CostCalculator() {
       {/* Family size */}
       <fieldset className="space-y-3">
         <legend className="font-serif text-lead font-semibold text-forest-900">
-          {stepDependants}. How many dependants?
+          {stepDependants}. {copy.steps.dependants}
         </legend>
         <div className="flex items-center gap-4">
           <Stepper
             value={dependants}
             onChange={setDependants}
             max={MAX_DEPENDANTS}
+            label={copy.stepper.dependants}
+            copy={copy}
           />
-          <span className="text-ink-muted">
-            plus you, the main applicant
-          </span>
+          <span className="text-ink-muted">{copy.plusMainApplicant}</span>
         </div>
         {!scalesWithFamily && dependants > 0 && (
           <p className="text-caption text-ink-muted">
-            {programme.name}&apos;s published fees don&apos;t change with family
-            size — dependants are added to the pass, but no per-dependant fee is
-            listed in the official source.
+            {copy.feesDoNotScale(programme.name)}
           </p>
         )}
       </fieldset>
@@ -155,36 +171,37 @@ export function CostCalculator() {
       {depTerms && dependants > 0 && (
         <fieldset className="space-y-3">
           <legend className="font-serif text-lead font-semibold text-forest-900">
-            {stepDepTerm}. How many take the {depTerms[0].years}-year term?
+            {stepDepTerm}. {copy.steps.dependantTerm(depTerms[0].years)}
           </legend>
           <div className="flex flex-wrap items-center gap-4">
             <Stepper
               value={longCount}
               onChange={setOnLongTerm}
               max={dependants}
-              label="dependants on the longer term"
+              label={copy.stepper.dependantsOnLongerTerm}
+              copy={copy}
             />
             <span className="text-ink-muted">
-              of {dependants}
-              {shortCount > 0 && (
-                <>
-                  {" "}
-                  — the other {shortCount} take{" "}
-                  {depTerms[1].years} years
-                </>
-              )}
+              {copy.ofTotal(dependants)}
+              {shortCount > 0 &&
+                copy.othersTakeTerm(shortCount, depTerms[1].years)}
             </span>
           </div>
           <p className="text-caption text-ink-muted">
-            Each dependant chooses separately, so a family can mix the two:{" "}
-            {depTerms
-              .map(
-                (t) =>
-                  `${money({ amount: t.amount, currency: programme.participationFee!.currency })} for ${t.years} years`,
-              )
-              .join(", or ")}
-            . Your own term is fixed at {programme.tenureYears} years and is not
-            a choice.
+            {copy.termsMix(
+              depTerms
+                .map((t) =>
+                  copy.termOption(
+                    money({
+                      amount: t.amount,
+                      currency: programme.participationFee!.currency,
+                    }),
+                    t.years,
+                  ),
+                )
+                .join(copy.termOptionSeparator),
+              programme.tenureYears,
+            )}
           </p>
         </fieldset>
       )}
@@ -193,25 +210,25 @@ export function CostCalculator() {
       {byNationality && (
         <fieldset className="space-y-3">
           <legend className="font-serif text-lead font-semibold text-forest-900">
-            {stepNationality}. Which passport do you hold?
+            {stepNationality}. {copy.steps.nationality}
           </legend>
           <select
-            aria-label="Nationality"
+            aria-label={copy.nationalityAriaLabel}
             value={nationalityLabel}
             onChange={(e) => setNationalityLabel(e.target.value)}
             className="w-full max-w-md rounded-lg border border-sand-200 bg-white px-4 py-3 text-body-sm text-ink"
           >
             {NATIONALITY_OPTIONS.map((n) => (
               <option key={n.label} value={n.label}>
-                {n.label}
+                {countryName(n.label, locale)}
               </option>
             ))}
           </select>
           <p className="text-caption text-ink-muted">
-            The multiple-entry visa fee and the main applicant&apos;s security
-            bond are set by passport, not by programme — the bond alone ranges
-            from RM200 to RM2,000.
-            {nationality.note ? ` ${nationality.note}` : ""}
+            {copy.nationalityNote}
+            {nationality.note
+              ? ` ${countryNote(nationality.label, nationality.note, locale)}`
+              : ""}
           </p>
         </fieldset>
       )}
@@ -226,26 +243,22 @@ export function CostCalculator() {
             href={GUIDE_HREF[slug]}
             className="text-caption font-semibold text-forest-700 hover:text-forest-900"
           >
-            Full guide →
+            {copy.results.fullGuide} <span aria-hidden>→</span>
           </Link>
         </div>
 
         {/* Fees */}
         <div className="space-y-3">
           <h3 className="font-serif text-lead font-semibold text-forest-900">
-            Fees — money you don&apos;t get back
+            {copy.results.feesHeading}
           </h3>
           {feeItems.length > 0 ? (
             <>
               <ItemList items={feeItems} />
-              <TotalRows label="Total fees" rows={fees} strong />
+              <TotalRows label={copy.results.totalFees} rows={fees} strong />
             </>
           ) : (
-            <p className="text-ink-muted">
-              No participation or processing fee is published for this pass —
-              the cost is your sponsor&apos;s application handling and any agent
-              you engage, neither of which is a government-set figure.
-            </p>
+            <p className="text-ink-muted">{copy.results.noFeesPublished}</p>
           )}
         </div>
 
@@ -253,27 +266,28 @@ export function CostCalculator() {
         {capitalItems.length > 0 && (
           <div className="space-y-3 border-t border-sand-200 pt-5">
             <h3 className="font-serif text-lead font-semibold text-forest-900">
-              Capital — refundable, or an asset you own
+              {copy.results.capitalHeading}
             </h3>
             <p className="text-body-sm text-ink-muted">
-              This is not a cost. A fixed deposit stays your money; property
-              becomes your asset. You need it ready, but you don&apos;t spend it.
+              {copy.results.capitalLead}
             </p>
             <ItemList items={capitalItems} />
-            <TotalRows label="Total capital committed" rows={capital} />
+            <TotalRows label={copy.results.totalCapital} rows={capital} />
           </div>
         )}
 
         {/* Grand total per currency */}
         <div className="space-y-2 border-t border-sand-200 pt-5">
           <h3 className="font-serif text-lead font-semibold text-forest-900">
-            To have ready in year one
+            {copy.results.readyHeading}
           </h3>
-          <TotalRows label="Fees + capital" rows={combine(fees, capital)} strong />
+          <TotalRows
+            label={copy.results.feesPlusCapital}
+            rows={combine(fees, capital)}
+            strong
+          />
           <p className="text-caption text-ink-muted">
-            Ringgit and US-dollar figures are shown separately and never added
-            together — the exchange rate you get is itself part of the real
-            cost. MM2H is denominated in USD; PVIP and S-MM2H in ringgit.
+            {copy.results.currenciesNote}
           </p>
         </div>
       </section>
@@ -281,45 +295,33 @@ export function CostCalculator() {
       {/* Honesty footer */}
       <div className="space-y-2 text-caption text-ink-muted">
         <p>
-          <strong className="text-ink">What this leaves out:</strong>{" "}
-          {extras?.agencyFee ? (
-            <>
-              renewal fees beyond the first term, medical insurance, the medical
-              examination, and living costs. Agent fees are not among them:{" "}
-              {extras.agencyFee.paymentTerms}
-            </>
-          ) : (
-            <>
-              agent fees (not set by the government on this programme, and never
-              published — get them in writing before committing), renewal fees
-              beyond the first term, insurance, and living costs.
-            </>
-          )}{" "}
-          Every figure shown is drawn from the official source cited on the{" "}
-          <Link href={GUIDE_HREF[slug]} className="underline">
-            {programme.name} guide
+          <strong className="text-ink">{copy.footer.leavesOutLabel}</strong>{" "}
+          {extras?.agencyFee
+            ? copy.footer.leavesOutWithAgency(extras.agencyFee.paymentTerms)
+            : copy.footer.leavesOutWithoutAgency}{" "}
+          {copy.footer.everyFigureBefore}{" "}
+          <Link href={href(GUIDE_HREF[slug])} className="underline">
+            {copy.footer.guideLinkLabel(programme.name)}
           </Link>
-          .
+          {copy.footer.everyFigureAfter}
         </p>
         {extras && (
           <p>
             <strong className="text-ink">
-              Priced over a {extras.defaultTermYears}-year initial approval.
+              {copy.footer.pricedOverTerm(extras.defaultTermYears)}
             </strong>{" "}
-            The pass and visa fees are charged per person for every year of the
-            term, collected up front and again at each renewal.{" "}
+            {copy.footer.pricedOverTermBody}{" "}
             {extras.agencyFee
-              ? `${extras.defaultTermYears} years is what the agency fee is written against.`
-              : `Your approval is capped by your passport's remaining validity, so it may run shorter or longer — scale the pass fee accordingly.`}
+              ? copy.footer.agencyFeeWrittenAgainst(extras.defaultTermYears)
+              : copy.footer.passportCapped}
           </p>
         )}
         {byNationality && (
           <p>
-            Visa fee and security bond figures come from{" "}
-            {NATIONALITY_FEE_ATTRIBUTION.by}, as at{" "}
-            {reviewDate(NATIONALITY_FEE_ATTRIBUTION.asAt)}. The schedules are
-            not published at a government URL, so they carry that attribution
-            rather than a link.
+            {copy.footer.nationalityAttribution(
+              feeAttributionName(NATIONALITY_FEE_ATTRIBUTION.by, locale),
+              reviewDate(NATIONALITY_FEE_ATTRIBUTION.asAt, locale),
+            )}
           </p>
         )}
       </div>
@@ -331,19 +333,21 @@ function Stepper({
   value,
   onChange,
   max,
-  label = "dependants",
+  label,
+  copy,
 }: {
   value: number;
   onChange: (n: number) => void;
   max: number;
   /** Names what is being counted, so the two steppers don't share a label. */
-  label?: string;
+  label: string;
+  copy: CalculatorCopy;
 }) {
   return (
     <div className="inline-flex items-center rounded-lg border border-sand-200 bg-white">
       <button
         type="button"
-        aria-label={`Fewer ${label}`}
+        aria-label={copy.stepper.fewer(label)}
         disabled={value <= 0}
         onClick={() => onChange(Math.max(0, value - 1))}
         className="px-4 py-2 text-lead text-forest-700 disabled:text-sand-400"
@@ -358,7 +362,7 @@ function Stepper({
       </span>
       <button
         type="button"
-        aria-label={`More ${label}`}
+        aria-label={copy.stepper.more(label)}
         disabled={value >= max}
         onClick={() => onChange(Math.min(max, value + 1))}
         className="px-4 py-2 text-lead text-forest-700 disabled:text-sand-400"

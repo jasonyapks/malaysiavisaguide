@@ -66,20 +66,59 @@ export function localiseProgramme(p: Programme, locale: Locale): Programme {
     ...(overlay.propertyStateFloorNote
       ? { propertyStateFloorNote: overlay.propertyStateFloorNote }
       : {}),
-    ...(overlay.agencyFee && p.governmentExtras?.agencyFee
+    // One spread for everything under `governmentExtras`: the agency-fee
+    // footnote the tier table shows, and the three line-item notes the cost
+    // calculator shows. Kept together because they share a parent — two
+    // separate spreads would each rebuild `governmentExtras` from `p` and the
+    // second would discard the first.
+    ...(p.governmentExtras &&
+    (overlay.agencyFee ||
+      overlay.passFeeNote ||
+      overlay.visaFeeNote ||
+      overlay.securityBondNote)
       ? {
           governmentExtras: {
             ...p.governmentExtras,
-            agencyFee: {
-              ...p.governmentExtras.agencyFee,
-              ...(overlay.agencyFee.note ? { note: overlay.agencyFee.note } : {}),
-              ...(overlay.agencyFee.includes
-                ? { includes: overlay.agencyFee.includes }
-                : {}),
-              ...(overlay.agencyFee.paymentTerms
-                ? { paymentTerms: overlay.agencyFee.paymentTerms }
-                : {}),
-            },
+            ...(overlay.agencyFee && p.governmentExtras.agencyFee
+              ? {
+                  agencyFee: {
+                    ...p.governmentExtras.agencyFee,
+                    ...(overlay.agencyFee.note
+                      ? { note: overlay.agencyFee.note }
+                      : {}),
+                    ...(overlay.agencyFee.includes
+                      ? { includes: overlay.agencyFee.includes }
+                      : {}),
+                    ...(overlay.agencyFee.paymentTerms
+                      ? { paymentTerms: overlay.agencyFee.paymentTerms }
+                      : {}),
+                  },
+                }
+              : {}),
+            ...(overlay.passFeeNote && p.governmentExtras.passFeePerYear
+              ? {
+                  passFeePerYear: {
+                    ...p.governmentExtras.passFeePerYear,
+                    note: overlay.passFeeNote,
+                  },
+                }
+              : {}),
+            ...(overlay.visaFeeNote && p.governmentExtras.visaFee
+              ? {
+                  visaFee: {
+                    ...p.governmentExtras.visaFee,
+                    note: overlay.visaFeeNote,
+                  },
+                }
+              : {}),
+            ...(overlay.securityBondNote && p.governmentExtras.securityBond
+              ? {
+                  securityBond: {
+                    ...p.governmentExtras.securityBond,
+                    note: overlay.securityBondNote,
+                  },
+                }
+              : {}),
           },
         }
       : {}),

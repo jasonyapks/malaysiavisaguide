@@ -36,6 +36,7 @@ import {
 } from "@/lib/data/nationality-fees";
 import { money } from "@/lib/format";
 import type { Locale } from "@/lib/i18n";
+import { countryName } from "@/lib/countries";
 import { localiseProgramme } from "@/lib/programme-locale";
 import { getUi, type UiStrings } from "@/lib/ui";
 
@@ -166,7 +167,7 @@ export function estimate(
       deps,
       note: c.visaFeeNote(
         visa.note,
-        nationality.label,
+        countryName(nationality.label, locale),
         money({ amount: nationality.visaFee, currency: "MYR" }),
         visa.perYear === true,
       ),
@@ -183,7 +184,7 @@ export function estimate(
         kind: "fee",
         note: c.securityBondNote(
           bond.note,
-          nationality.label,
+          countryName(nationality.label, locale),
           money({ amount: nationality.securityBond, currency: bond.currency }),
         ),
       });
