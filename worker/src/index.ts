@@ -62,8 +62,8 @@ const ASSET_SLOT = `'news/' || news_items.slug`;
 const ADMIN_COLUMNS = `id, title, summary, category, source_name, source_url,
    published_at, status, created_at, decided_at, slug, headline, dek, body,
    source_excerpt, reading_minutes, article_model, updated_at, origin,
-   polish_state, polished_at, image_alt, image_credit, image_source,
-   image_updated_at,
+   polish_state, polished_at, committed_at, retired_at,
+   image_alt, image_credit, image_source, image_updated_at,
    (SELECT a.id FROM assets a WHERE a.slot = ${ASSET_SLOT}) AS asset_id,
    (SELECT a.alt FROM assets a WHERE a.slot = ${ASSET_SLOT}) AS asset_alt,
    (SELECT a.credit FROM assets a WHERE a.slot = ${ASSET_SLOT}) AS asset_credit,
@@ -299,6 +299,17 @@ export default {
        * a second large-model call.
        */
       const committed = await publishNewsFile(env, id);
+      if (committed.ok) {
+        // Record that this article is actually in the repo, and clear any
+        // earlier retirement — the file is back. NULL committed_at is what the
+        // stranded banner looks for, so it must only ever be set on a real
+        // commit, never on the approve alone.
+        await env.DB.prepare(
+          "UPDATE news_items SET committed_at = datetime('now'), retired_at = NULL WHERE id = ?",
+        )
+          .bind(id)
+          .run();
+      }
       return json({
         ok: true,
         slug: result.slug,
@@ -686,6 +697,13 @@ export default {
       }
 
       const result = await publishNewsFile(env, payload.id);
+      if (result.ok) {
+        await env.DB.prepare(
+          "UPDATE news_items SET committed_at = datetime('now'), retired_at = NULL WHERE id = ?",
+        )
+          .bind(payload.id)
+          .run();
+      }
       return json(result, result.ok ? 200 : 422);
     }
 
@@ -706,6 +724,17 @@ export default {
       if (!row?.slug) return json({ ok: false, error: "No such article." }, 404);
 
       const result = await unpublishNewsFile(env, row.slug);
+      if (result.ok) {
+        // Retired on purpose: the file is gone from the repo, but this is not a
+        // failure. retired_at is what keeps it out of the stranded banner, and
+        // clearing committed_at keeps the dashboard from showing a live link to
+        // a page that now 404s.
+        await env.DB.prepare(
+          "UPDATE news_items SET retired_at = datetime('now'), committed_at = NULL WHERE id = ?",
+        )
+          .bind(retire[1])
+          .run();
+      }
       return json(result, result.ok ? 200 : 422);
     }
 

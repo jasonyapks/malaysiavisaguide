@@ -118,6 +118,14 @@ export function dashboardHtml(
     padding:10px 12px; border-radius:8px; font-size:.85rem; margin-top:10px; }
   .live { font-size:.8rem; }
   .spin { color:var(--ink-muted); font-size:.85rem; }
+  /* The stranded-article bar and per-item state. Red is reserved for a genuine
+     failure — an approved article that never reached the repo. Retired is grey:
+     absent on purpose, not broken. */
+  .alertbar { background:#fef2f2; border:1px solid var(--red); color:#7f1d1d;
+    padding:12px 14px; border-radius:10px; margin-bottom:14px; font-size:.9rem;
+    font-weight:600; }
+  .notlive { font-size:.8rem; color:#b91c1c; font-weight:600; }
+  .retired { font-size:.8rem; color:var(--ink-muted); }
   /* Publish panel. The dot carries the state at a glance; the words carry the
      detail. Colour alone would fail anyone who cannot tell amber from green. */
   .deploy { display:flex; align-items:center; gap:9px; margin-top:12px;
@@ -200,14 +208,22 @@ export function dashboardHtml(
 </header>
 <main>
 
+  <!-- Loud, persistent failure bar. A commit that fails leaves an article
+       approved but not live, and the old UI said so only in a toast that the
+       list reload wiped. This sits above everything, survives reloads, and only
+       clears when there is nothing stranded. -->
+  <div id="alertBar" class="alertbar" hidden></div>
+
   <section id="publish">
     <div class="row" style="justify-content:space-between">
       <h2>Publish</h2>
-      <button class="approve" id="publishBtn">Publish site</button>
+      <button class="approve" id="publishBtn">Retry failed publishes</button>
     </div>
     <p class="muted" style="margin:6px 0 0">
-      Nothing above is visible to a reader until the site is rebuilt. Takes about
-      two minutes — one click is enough.
+      Approving an article publishes it — it commits to the repo and the site
+      redeploys on its own, live in about two minutes. Nothing to click here in
+      the normal case. If a commit failed, the article shows in Approved with its
+      own Publish (retry) button; this retries every stranded one at once.
     </p>
     <div id="deployState" class="deploy"><span class="muted">Checking…</span></div>
     <pre id="deployLog" class="deploy-log" hidden></pre>
@@ -419,34 +435,89 @@ async function pollDeploy() {
   return s;
 }
 
+// Retry every stranded article in one go. Publishing is per-article now — the
+// old site-wide build trigger is gone — so this fetches the approved list, finds
+// the ones that never committed, and re-attempts each. loadList (via showTab)
+// then recomputes the bar, so the residual count is shown without special-casing.
 $("#publishBtn").addEventListener("click", async (e) => {
   const btn = e.target;
   btn.disabled = true;
-  btn.textContent = "Publishing…";
+  btn.textContent = "Retrying…";
   try {
-    const r = await api("/api/admin/publish", { method: "POST" });
-    if (!r.ok) {
-      renderDeploy({ ok: false, error: r.error });
+    const { items } = await api("/api/admin/items?status=approved");
+    const bad = (items || []).filter(isStranded);
+    if (!bad.length) {
+      clearAlert();
+      showTab("approved");
       return;
     }
-    // A build was already running. Not an error — say so, then follow the one
-    // that is running rather than pretending a new one started.
-    if (r.queued && r.deployment) {
-      renderDeploy({ ok: true, latest: r.deployment, busy: true });
+    for (const it of bad) {
+      await api("/api/admin/publish", {
+        method: "POST", headers: {"content-type":"application/json"},
+        body: JSON.stringify({ id: it.id }),
+      });
     }
-    deployPolls = 0;
-    await pollDeploy();
+    showTab("approved");
   } finally {
     btn.disabled = false;
-    btn.textContent = "Publish site";
+    btn.textContent = "Retry failed publishes";
   }
 });
+
+// ---- Stranded-article alert ----
+// An approved article with a slug that was never committed and was not retired
+// is stranded: it looks approved and is not live. This is the single condition
+// the loud bar and the per-item badge both key off.
+function isStranded(it) {
+  return it.status === "approved" && it.slug && !it.committed_at && !it.retired_at;
+}
+function showAlert(html) {
+  const bar = $("#alertBar");
+  bar.innerHTML = html;
+  bar.hidden = false;
+}
+function clearAlert() {
+  const bar = $("#alertBar");
+  bar.hidden = true;
+  bar.innerHTML = "";
+}
+// The link line under an article's category, told from the repo state rather
+// than assumed. A slug alone used to print a green /news/ link even when the
+// page 404ed; now the link appears only when the file is actually committed.
+function liveState(it) {
+  if (!it.slug) return "";
+  if (it.retired_at) return ' <span class="retired">retired — offline</span>';
+  if (it.committed_at) {
+    return ' <a class="live" href="' + SITE + '/news/' + esc(it.slug) +
+      '/" target="_blank" rel="noopener">/news/' + esc(it.slug) + '/ ↗</a>';
+  }
+  if (isStranded(it)) return ' <span class="notlive">⚠ NOT LIVE — commit failed</span>';
+  return "";
+}
 
 // ---- News queue ----
 async function loadList() {
   const query = currentView === "polish" ? "polish=needed" : "status=" + currentView;
   const { items } = await api("/api/admin/items?" + query);
   currentItems = items || [];
+
+  // The bar reflects the approved view, where stranded articles live. On any
+  // other tab it is cleared rather than left showing a stale count.
+  if (currentView === "approved") {
+    const bad = currentItems.filter(isStranded);
+    if (bad.length) {
+      showAlert(bad.length + " approved article" + (bad.length > 1 ? "s are" : " is") +
+        " NOT live — the commit to the repo failed. Press <strong>Publish (retry)</strong> on " +
+        (bad.length > 1 ? "each" : "it") + " below. If it keeps failing, the Worker's " +
+        "GITHUB_TOKEN has most likely expired — mint a new one and " +
+        "<code>wrangler secret put GITHUB_TOKEN</code>.");
+    } else {
+      clearAlert();
+    }
+  } else {
+    clearAlert();
+  }
+
   if (!currentItems.length) {
     $("#list").innerHTML = '<div class="empty">' + (currentView === "polish"
       ? "Nothing waiting on the humanizer. Articles land here after the Worker's own pass has run over them."
@@ -468,7 +539,12 @@ function renderItem(it) {
     actions = '<button class="approve" data-act="approve" data-id="' + id + '">Write article &amp; publish</button>' +
       '<button class="reject" data-act="reject" data-id="' + id + '">Reject</button>';
   } else if (currentView === "approved") {
-    actions = edit +
+    // A stranded article leads with Publish (retry) — that is the one thing to
+    // do with it, so it is the first and loudest button.
+    actions = (isStranded(it)
+        ? '<button class="approve" data-act="publish" data-id="' + id + '">Publish (retry)</button>'
+        : "") +
+      edit +
       '<button class="ghost" data-act="regenerate" data-id="' + id + '">Rewrite</button>' +
       humanise +
       '<button class="delete" data-act="delete" data-id="' + id + '">Delete</button>';
@@ -486,7 +562,7 @@ function renderItem(it) {
     '<span class="cat">' + esc(it.category) + '</span>' +
     (it.origin === "manual" ? '<span class="chip manual">keyed in</span>' : '') +
     (it.polish_state === "needs-claude" ? '<span class="chip polish">needs /humanizer</span>' : '') +
-    (it.slug ? ' <a class="live" href="' + SITE + '/news/' + esc(it.slug) + '/" target="_blank" rel="noopener">/news/' + esc(it.slug) + '/ ↗</a>' : '') +
+    liveState(it) +
     '<h3>' + esc(it.headline || it.title) + '</h3>' +
     (it.headline ? '<div class="meta">Publisher\\'s headline: ' + esc(it.title) + '</div>' : '') +
     '<p>' + esc(it.dek || it.summary) + '</p>' +
@@ -861,6 +937,23 @@ $("#list").addEventListener("click", async (e) => {
     return;
   }
 
+  // Publish (retry): the prose is already written and stored, so this only
+  // re-attempts the commit. Fast, and safe to repeat — an unchanged file makes
+  // no commit. This is the button the stranded-article bar points at.
+  if (act === "publish") {
+    b.disabled = true; b.textContent = "Publishing…";
+    const r = await api("/api/admin/publish", {
+      method: "POST", headers: {"content-type":"application/json"},
+      body: JSON.stringify({ id }),
+    });
+    if (r.ok) { clearAlert(); loadList(); }
+    else {
+      b.disabled = false; b.textContent = "Publish (retry)";
+      if (msg) msg.innerHTML = '<div class="warn">' + esc(r.error || "The commit failed again.") + '</div>';
+    }
+    return;
+  }
+
   // approve / regenerate / humanize all make a large-model call — the first two
   // read the source first. Tell the user it will be slow instead of looking hung.
   const slow = act === "approve" || act === "regenerate" || act === "humanize";
@@ -877,6 +970,15 @@ $("#list").addEventListener("click", async (e) => {
     b.disabled = false; b.textContent = label;
     if (msg) msg.innerHTML = '<div class="warn">' + esc(r.error || "That did not work.") + '</div>';
     return;
+  }
+  // An approve can return ok:true and still not be live: committing is a second
+  // step and reports itself in the committed/warning fields, not in ok. Raise
+  // the bar — which outlives this list reload — so the article cannot slip into
+  // Approved looking published when it never reached the repo.
+  if (act === "approve" && r && r.committed === false) {
+    showAlert(esc(r.warning ||
+      "The article was approved but the commit failed, so it is not live. " +
+      "Open the Approved tab and press Publish (retry)."));
   }
   loadList();
 });
@@ -973,9 +1075,22 @@ $("#mSubmit").addEventListener("click", async () => {
   // Only clear on success, so a failure never costs a long paste.
   ["#mUrl", "#mSource", "#mTitle", "#mText", "#mDate"].forEach(s => { $(s).value = ""; });
   $("#mCount").textContent = "0 characters — 400 minimum.";
-  out.innerHTML = '<span class="muted">Written: <a href="' + SITE + '/news/' + esc(written.slug) +
+
+  if (written.committed === false) {
+    // Written and approved, but the commit failed — so it is NOT live. Say so
+    // here and raise the bar, rather than linking a page that will 404.
+    out.innerHTML = '<div class="warn">' + esc(written.warning ||
+      "Written and approved, but the commit failed, so it is not live. " +
+      "Open the Approved tab and press Publish (retry).") + '</div>';
+    showAlert("An article was just approved but its commit failed — it is not live. " +
+      "Open the Approved tab and press <strong>Publish (retry)</strong>.");
+    showTab("approved");
+    return;
+  }
+
+  out.innerHTML = '<span class="muted">Published: <a href="' + SITE + '/news/' + esc(written.slug) +
     '/" target="_blank" rel="noopener">/news/' + esc(written.slug) + '/ ↗</a>' +
-    ' — live once the site is rebuilt and deployed.</span>';
+    ' — live within about two minutes, once the deploy finishes.</span>';
   showTab("polish");
 });
 

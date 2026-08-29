@@ -75,6 +75,10 @@ export interface NewsItem {
   /** NULL | 'needs-claude' | 'claude-polished' — the /humanizer handover. */
   polish_state: string | null;
   polished_at: string | null;
+  /** Last successful commit of content/news/<slug>.md. NULL = never committed. */
+  committed_at: string | null;
+  /** When the file was deliberately retired from the repo. NULL = not retired. */
+  retired_at: string | null;
 
   // --- Added by migration 004. The hero image Jason attaches by hand. ---
   /**
