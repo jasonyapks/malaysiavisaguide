@@ -101,7 +101,6 @@ Reliefs are the reason residency is usually worth having, but the published reli
 | **Medical — self, spouse, child** | RM10,000 | Yes |
 | **Lifestyle** — books, devices, broadband, courses | RM2,500 | Yes |
 | **Education and medical insurance** — self, spouse or children | RM4,000 | Yes |
-| **Life insurance and takaful** | RM3,000 | Yes |
 | **Sports** — equipment, facilities, gym, coaching | RM1,000 | Yes |
 | **Own tuition fees** — approved courses | RM7,000 | Yes |
 | **Childcare** — child aged 12 or below | RM3,000 | Only at a JKM- or State-registered centre |
