@@ -296,7 +296,7 @@ export function CostCalculator({ locale }: { locale: Locale }) {
       <div className="space-y-2 text-caption text-ink-muted">
         <p>
           <strong className="text-ink">{copy.footer.leavesOutLabel}</strong>{" "}
-          {extras?.agencyFee
+          {extras?.agencyFee?.paymentTerms
             ? copy.footer.leavesOutWithAgency(extras.agencyFee.paymentTerms)
             : copy.footer.leavesOutWithoutAgency}{" "}
           {copy.footer.everyFigureBefore}{" "}

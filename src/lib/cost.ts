@@ -112,10 +112,14 @@ export function estimate(
       amount: agency.principal,
       currency: agency.currency,
       kind: "fee",
-      note: c.agencyFeeCovers(
-        agency.note,
-        agency.includes.join(c.includesSeparator).toLowerCase(),
-      ),
+      // Where the inclusions are not published — Sarawak — the note carries the
+      // fee's own caveat alone rather than borrowing MM2H's list.
+      note: agency.includes
+        ? c.agencyFeeCovers(
+            agency.note,
+            agency.includes.join(c.includesSeparator).toLowerCase(),
+          )
+        : agency.note,
     });
     const chargeable = Math.max(0, deps - agency.dependantsIncluded);
     if (chargeable > 0 && agency.perDependant > 0) {

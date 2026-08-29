@@ -208,6 +208,9 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
       "砂拉越旅游、创意产业及表演艺术部（Ministry of Tourism, Creative Industry and Performing Arts Sarawak, MTCP）",
     minStayPerYear: "每年在砂拉越累计 30 天，仅主申请人须符合。",
     minStayShort: "30 天（仅主申请人）",
+    agencyFee: {
+      note: "由政府固定，不由代理机构订定，且已含 8% 销售与服务税 —— 报价高于这个数字的，是报错了，而不是比较贵。RM5,000 手续费另计，须在此之外缴付。",
+    },
   },
 
   "de-rantau": {

@@ -88,13 +88,17 @@ export function TierTable({
       },
       note: (p) => {
         const fee = p.governmentExtras?.agencyFee;
-        return fee
+        if (!fee) return t.agencyFeeCommercialNote;
+        // Sarawak publishes the amount and nothing else. The note is the one
+        // part that always exists, so it stands alone rather than being padded
+        // out with MM2H's inclusions.
+        return fee.includes && fee.paymentTerms
           ? t.agencyFeeCovers(
               fee.note,
               fee.includes.join(t.includesSeparator).toLowerCase(),
               fee.paymentTerms,
             )
-          : t.agencyFeeCommercialNote;
+          : fee.note;
       },
     },
     {

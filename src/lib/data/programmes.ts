@@ -141,12 +141,19 @@ export type GovernmentExtras = {
     /** How many dependants the principal's fee already covers. */
     dependantsIncluded: number;
     currency: Currency;
-    /** What the principal's fee already contains, so nothing is double-counted. */
-    includes: string[];
+    /**
+     * What the principal's fee already contains, so nothing is double-counted.
+     *
+     * Optional because the MM2H schedule publishes it and Sarawak's does not.
+     * An empty list would read as "it covers nothing", which is a claim; absent
+     * reads as "not published", which is the truth. Same rule as PVIP's agency
+     * fee being missing entirely rather than estimated.
+     */
+    includes?: string[];
     /** True where the principal's processing fee is inside the agency fee. */
     absorbsPrincipalProcessingFee: boolean;
-    /** When each part of it falls due. */
-    paymentTerms: string;
+    /** When each part of it falls due. Absent where it is not published. */
+    paymentTerms?: string;
     note: string;
   };
   /**
@@ -714,6 +721,38 @@ export const programmes: Programme[] = [
     propertyPurchaseMin: null,
     participationFee: null,
     processingFee: { principal: 5_000, dependant: 0, currency: "MYR" },
+    // The agent's fee is set by the government, not negotiated between the
+    // applicant and the agency — the same arrangement MM2H runs under, and the
+    // reason this row must not read "not government-set".
+    //
+    // RM12,000 for the principal and RM2,000 per dependant, both before 8% SST.
+    // Stored gross, because every other SST-bearing figure in this file is:
+    // MM2H's dependant fee is the same RM2,000 and is carried here as 2,160,
+    // and DE Rantau's RM1,000 processing fee is carried as 1,080. A file that
+    // mixed net and gross would price a quote wrong by exactly one tax.
+    //
+    // What the fee covers, and when each part of it falls due, are published
+    // for MM2H and not for Sarawak. They are absent rather than filled in from
+    // the MM2H schedule, which is a different programme run by a different
+    // authority.
+    governmentExtras: {
+      agencyFee: {
+        principal: 12_960,
+        perDependant: 2_160,
+        // MM2H's principal fee already covers the first dependant. Sarawak's
+        // is charged from the first, so nothing is included.
+        dependantsIncluded: 0,
+        currency: "MYR",
+        // Unlike MM2H, where the agency fee swallows it. Sarawak's RM5,000 is
+        // billed separately and is already its own row, so absorbing it here
+        // would delete a real cost from the estimate.
+        absorbsPrincipalProcessingFee: false,
+        note: "Fixed by the government rather than by the agency, and inclusive of 8% SST — a quote above this figure is wrong rather than expensive. The RM5,000 processing fee is charged separately, on top of it.",
+      },
+      // Issued 5+5. The first approval runs five years, which is the term any
+      // per-year figure would be priced over.
+      defaultTermYears: 5,
+    },
     minStayPerYear:
       "30 cumulative days per year in Sarawak, main applicant only.",
     minStayShort: "30 days in Sarawak",
