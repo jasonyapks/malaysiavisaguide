@@ -1,3 +1,58 @@
+# Security headers for every response.
+#
+# `/*` matches everything the project serves — pages, hashed assets, the brand
+# files at the root and the CMS under /admin/ — and Pages applies every matching
+# rule cumulatively, so these stack on top of the Cache-Control blocks below
+# rather than replacing them. Verified on the wire: a hashed chunk still carries
+# `immutable` from its own block while gaining these, which also proves the
+# headers survive the functions/_middleware round trip.
+#
+# What each line buys, and why it is safe to ship enforcing:
+#
+#   Strict-Transport-Security  Pins HTTPS for a year, subdomains included, so a
+#     downgrade/strip on cn. or tw. can't happen. `preload` is set because the
+#     apex is eligible; submit it at hstspreload.org once this is live.
+#   Content-Security-Policy    ONLY the three directives that cannot break a
+#     resource load: frame-ancestors 'none' is the real clickjacking fix (the
+#     CMS holds a repo-write token once Jason signs in, so a framed /admin/ is
+#     the case that matters), base-uri locks <base>, object-src kills plugins.
+#     The full script/style/img/connect policy is shipped Report-Only below so
+#     it can be watched before it is enforced — a static export can't nonce its
+#     inline scripts, so enforcing script-src needs hashes worked out first.
+#   X-Frame-Options            Legacy twin of frame-ancestors for old browsers.
+#   Referrer-Policy            Already the site default; stated here so it is
+#     not one Pages release away from changing under us.
+#   Permissions-Policy         Nothing here uses camera/mic/geolocation, so deny
+#     them outright — a compromised script can't turn them on.
+#   Cross-Origin-Opener-Policy Severs window.opener between this and any popup.
+#   X-Content-Type-Options     Belt to the MIME sniffers.
+#
+# The Report-Only line is the full policy the site actually needs: gtag from
+# googletagmanager, the contact form POSTing to web3forms, the news/insights
+# reads to the mvg-news Worker, and GA's collect endpoints. It reports
+# violations without blocking, so a missing origin surfaces as a console note
+# and a report, not a broken page. Promote it to the enforcing header once the
+# reports are clean and the inline scripts carry hashes.
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), browsing-topics=()
+  Cross-Origin-Opener-Policy: same-origin
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy-Report-Only: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://api.web3forms.com https://mvg-news.jason-6bf.workers.dev https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com; form-action 'self' https://api.web3forms.com
+
+# The CMS origin is the one place a wildcard CORS could ever matter — it is the
+# only surface that will hold a credential (the GitHub token, in localStorage).
+# Nothing legitimately reads /admin/ cross-origin, so pin the Pages default `*`
+# down to the site itself. Both patterns are listed for the same reason the
+# X-Robots block below lists both: `/admin/*` alone misses the editor's own URL.
+/admin/
+  Access-Control-Allow-Origin: https://malaysiavisaguide.com
+/admin/*
+  Access-Control-Allow-Origin: https://malaysiavisaguide.com
+
 # Cache lifetimes for the static export.
 #
 # Next copies public/ verbatim into out/, and out/ is what gets uploaded, so
