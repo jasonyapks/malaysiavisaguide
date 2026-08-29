@@ -261,6 +261,49 @@ export function dashboardHtml(
     </div>
     <div id="docList"><div class="empty">Loading…</div></div>
     <div id="editor" class="ed" hidden></div>
+
+    <!--
+      Hero images for /insights/ articles.
+
+      Separate from the editor above, and filed against a slug typed by hand
+      rather than picked off the list, because the list is not the whole set.
+      An insight article can reach the site two ways: written here, or written
+      straight into content/insights/ in the repo. The second kind never appears
+      in #docList — it has no row in D1 — and before this panel existed it had
+      no way to get a picture at all.
+
+      The slot is the only thing that binds an image to an article:
+      scripts/pull-images.mjs matches "insights/<category>/<slug>" against the
+      article's own path and neither side has to know how the other was made.
+      That is also why nothing here validates that the article exists. It may
+      not exist yet — attaching the picture before the prose lands is a
+      legitimate order to work in — and a slot for an article that never
+      arrives costs a row nobody reads.
+    -->
+    <div class="imgbox" id="insightImages">
+      <h4>Hero images</h4>
+      <div id="insightImgList"><div class="empty">Loading…</div></div>
+      <label>Which article — category and the last part of its URL</label>
+      <div class="row">
+        <select id="iiCategory"></select>
+        <input type="text" id="iiSlug" placeholder="malaysian-tax-for-expats">
+      </div>
+      <label>Upload a file</label>
+      <input type="file" accept="image/*" id="iiFile">
+      <div class="or">or paste the address of an image already on the web</div>
+      <input type="url" id="iiUrl" placeholder="https://…/photo.jpg">
+      <label>Alt text — what the picture shows (required)</label>
+      <input type="text" id="iiAlt">
+      <label>Credit — photographer or agency, blank for none</label>
+      <input type="text" id="iiCredit">
+      <div class="row" style="margin-top:10px">
+        <button class="approve" id="iiSave">Save image</button>
+      </div>
+      <div class="muted" style="margin-top:8px">
+        Saving stores the picture. It reaches the site on the next deploy, when
+        the build pulls it in.
+      </div>
+    </div>
   </section>
 
   <section id="news">

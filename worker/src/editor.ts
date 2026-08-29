@@ -653,5 +653,110 @@ function showFigures() {
     ', one deploy stale at worst. <table>' + rows.join("") + "</table></div>");
 }
 
+/* ------------------------------------------------------------------ *
+ * Hero images for insight articles.
+ *
+ * Reuses the news pipeline's client wholesale — derive(), fileFromUrl() and
+ * uploadAsset() are function declarations in dashboard.ts's script, which this
+ * module is injected into, so they hoist and are simply in scope. The only
+ * thing that differs between a news hero and an insight hero is the slot
+ * string, which is why there is no second copy of the cropping code here.
+ *
+ * The picture is stored the moment you save. It appears on the site at the
+ * next deploy, when scripts/pull-images.mjs reads the manifest and writes the
+ * renditions into public/ for the static export.
+ * ------------------------------------------------------------------ */
+
+var SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+function insightSlot(category, slug) { return "insights/" + category + "/" + slug; }
+
+async function loadInsightImages() {
+  var el = $("#insightImgList");
+  var data = await api("/api/admin/assets");
+  var mine = ((data && data.assets) || []).filter(function (a) {
+    return a.slot && a.slot.indexOf("insights/") === 0;
+  });
+  if (!mine.length) {
+    el.innerHTML = '<div class="empty">No insight article has a hero image yet.</div>';
+    return;
+  }
+  el.innerHTML = mine.map(function (a) {
+    return '<div class="doc">' +
+      '<div class="row">' +
+        '<img src="' + SITE_API + "/api/images/" + esc(a.id) + '/hero" alt="" ' +
+          'style="height:44px;width:78px;object-fit:cover;border-radius:4px">' +
+        '<div>' +
+          '<div class="path">/' + esc(a.slot) + '/</div>' +
+          '<div class="muted" style="font-size:.75rem">' +
+            esc(a.alt || "No alt text — add one, it is what a screen reader announces") +
+            (a.credit ? " · " + esc(a.credit) : "") +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<button class="delete mini" data-iidel="' + esc(a.id) + '">Remove</button>' +
+    '</div>';
+  }).join("");
+}
+
+$("#insightImgList").addEventListener("click", async function (e) {
+  var btn = e.target.closest("[data-iidel]");
+  if (!btn) return;
+  if (!confirm("Remove this hero image? The article keeps publishing, without a picture.")) return;
+  btn.disabled = true;
+  var r = await api("/api/admin/assets/" + btn.getAttribute("data-iidel"), { method: "DELETE" });
+  if (r && r.ok !== false) { await loadInsightImages(); return; }
+  btn.disabled = false;
+  alert((r && r.error) || "Could not remove it.");
+});
+
+$("#iiSave").addEventListener("click", async function () {
+  var b = this;
+  var slug = ($("#iiSlug").value || "").trim().toLowerCase();
+  var file = $("#iiFile").files[0];
+  var url = ($("#iiUrl").value || "").trim();
+  var alt = ($("#iiAlt").value || "").trim();
+  var credit = ($("#iiCredit").value || "").trim();
+
+  // Checked here rather than server-side because a mistyped slug is not an
+  // error anywhere — it stores cleanly against an article that does not exist
+  // and simply never shows up. Cheaper to refuse the shape than to explain the
+  // silence later.
+  if (!SLUG_RE.test(slug)) {
+    alert("Enter the article's slug — the last part of its URL, like malaysian-tax-for-expats.");
+    return;
+  }
+  if (alt.length < 5) {
+    alert("Alt text is required — one line describing what the picture shows.");
+    return;
+  }
+  if (!file && !url) { alert("Pick a file or paste an image URL."); return; }
+
+  b.disabled = true;
+  try {
+    b.textContent = url && !file ? "Fetching…" : "Resizing…";
+    var source = file ? (file.name || null) : url;
+    var picked = file || await fileFromUrl(url);
+    var derived = await derive(picked);
+    b.textContent = "Uploading…";
+    await uploadAsset(derived, {
+      slot: insightSlot($("#iiCategory").value, slug),
+      alt: alt, credit: credit || null, source: source,
+    });
+    $("#iiFile").value = ""; $("#iiUrl").value = "";
+    $("#iiAlt").value = ""; $("#iiCredit").value = "";
+    await loadInsightImages();
+  } catch (err) {
+    alert(String((err && err.message) || err));
+  }
+  b.disabled = false;
+  b.textContent = "Save image";
+});
+
+$("#iiCategory").innerHTML = CATEGORIES.map(function (c) {
+  return '<option value="' + esc(c) + '">' + esc(c) + "</option>";
+}).join("");
+
 loadDocs();
+loadInsightImages();
 `;
