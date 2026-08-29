@@ -1,0 +1,7 @@
+# Security contact for malaysiavisaguide.com
+# https://www.rfc-editor.org/rfc/rfc9116
+
+Contact: mailto:admin@malaysiavisaguide.com
+Expires: 2027-08-29T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://malaysiavisaguide.com/.well-known/security.txt
