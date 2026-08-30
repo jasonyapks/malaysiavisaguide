@@ -26,7 +26,7 @@ export const copy: GuideCopy = {
           "You want to live in Kuala Lumpur or Penang — this is a Sarawak programme",
           "You are under 30 and therefore ineligible",
           "You cannot spend 30 days a year in Sarawak",
-          "You want work rights, which this does not carry",
+          "You want to work full time — S-MM2H allows 20 hours a week at most, in four approved sectors",
         ],
   },
 
@@ -45,11 +45,19 @@ export const copy: GuideCopy = {
         },
         {
           q: "Can I withdraw the fixed deposit?",
-          a: "Up to 50% after one year in the programme, for buying a residential house, buying a car, medical costs, or children's education in Sarawak.",
+          a: "Up to 50% after one year in the programme, for buying a residential house, buying a car, medical costs, or children's education in Sarawak. The account must never fall below RM250,000, which is what caps the withdrawal at half.",
         },
         {
           q: "Do I have to buy property under S-MM2H?",
-          a: "No. Purchase is optional. If you do buy, the floor is RM600,000 in Kuching Division and RM500,000 in other divisions, and you may sell after five years.",
+          a: "No. Purchase is optional. If you do buy, the floor is RM600,000 in Kuching Division and RM500,000 in other divisions, under the Land Code (Amendment)(No.2) Order 1998.",
+        },
+        {
+          q: "Can I work on S-MM2H?",
+          a: "Part time only, and only in an approved sector: education, banking and securities, manufacturing, or medical. Working hours are capped at 20 a week, and every application goes through MTCP to an approval committee under the State Secretary. You may also be a minority partner in a joint venture with a local partner, holding up to 49% of paid-up capital of at least RM250,000. Full-time employment is not permitted.",
+        },
+        {
+          q: "Do I need a sponsor?",
+          a: "Yes, and there is no way around it. Every applicant must be bonded by a sponsor who is from and currently living in Sarawak, or by an SMM2H licensed agent registered in Sarawak. The sponsor signs a security bond set by nationality — RM200 for Singaporeans, RM1,000 for Japan, South Korea, Hong Kong and Macau, RM1,500 for China, Australia and Europe, RM2,000 for the United States and Canada. Applications are filed through the state's MOAS system by that sponsor or agent; you cannot submit for yourself.",
         },
         {
           q: "How many days a year must I spend in Sarawak?",
@@ -84,8 +92,10 @@ export const copy: GuideCopy = {
         </ul>
         <p>
           On top of either, the RM500,000 fixed deposit must be placed with a
-          local bank in Sarawak. A one-off RM5,000 processing fee is payable to
-          the state ministry, covering the first five years of the pass.
+          local bank in Sarawak, and RM250,000 of it must stay there for as
+          long as you hold the pass. A one-off RM5,000 processing fee is
+          payable to the state ministry; it is non-refundable, and nothing is
+          processed until it is paid.
         </p>
       </Section>
 
@@ -96,6 +106,14 @@ export const copy: GuideCopy = {
           towards it. If your reason for wanting Malaysian residence is the
           peninsula, this is the wrong programme however attractive its numbers
           look.
+        </p>
+        <p>
+          The second catch is procedural. You cannot apply on your own: every
+          application must be bonded by a Sarawak-resident sponsor or a
+          Sarawak-licensed SMM2H agent, who signs a security bond for you and
+          files through the state&rsquo;s MOAS system. Your medical has to be
+          done in Sarawak and endorsed by a government doctor — a report from
+          home will be sent back to be redone before the pass is released.
         </p>
         <p>
           Where it genuinely wins is on flexibility of capital: no compulsory

@@ -762,7 +762,11 @@ export const programmes: Programme[] = [
     sponsorShort: null,
     salaryFloor: null,
     source: "https://mtcp.sarawak.gov.my/admin/file_manager/download/?id=2319",
-    lastVerified: "2026-07-23",
+    // Re-checked 2026-08-30 against the MTCP guide "SMM2H Application
+    // Guidelines - English Version as of 5.5.2026" (cover: amended 31 July
+    // 2025). Every figure in this record held; the guide pages did not, and
+    // were corrected in the same pass.
+    lastVerified: "2026-08-30",
   },
 
   {
