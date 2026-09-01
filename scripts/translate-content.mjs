@@ -526,11 +526,25 @@ async function fetchRetrying(url, init, label) {
 
     const transient = res.status === 429 || res.status >= 500;
     if (!transient || i >= waits.length) {
-      throw new Error(`${label} answered ${res.status}: ${(await res.text()).slice(0, 300)}`);
+      const body = (await res.text()).slice(0, 300);
+      if (res.status === 429) throw new QuotaExhausted(`${label}: ${body}`);
+      throw new Error(`${label} answered ${res.status}: ${body}`);
     }
     await new Promise((r) => setTimeout(r, waits[i]));
   }
 }
+
+/**
+ * The provider's allowance is gone, as opposed to this article being hard to
+ * translate.
+ *
+ * Told apart because the responses are: a run that keeps going after a quota
+ * wall spends nine failed requests per remaining article discovering the same
+ * wall, and reports a page of translation failures for a problem that is not
+ * about the content at all. Stopping is also safe, which is the point of a
+ * reconciler — whatever was written stands, and the next run picks up the rest.
+ */
+class QuotaExhausted extends Error {}
 
 async function callCloudflare(system, user, retry) {
   const token = process.env.CLOUDFLARE_API_TOKEN;
@@ -661,6 +675,7 @@ async function translate(strings, locale) {
       try {
         reply = parseReply(await ask(system, user, retry));
       } catch (err) {
+        if (err instanceof QuotaExhausted) throw err;
         log.push(String(err));
         continue;
       }
@@ -734,10 +749,12 @@ async function main() {
   let written = 0;
   let current = 0;
   let removed = 0;
+  let quotaWall = null;
   const stale = [];
   const failed = [];
 
   for (const locale of targets) {
+    if (quotaWall) break;
     const expected = new Set(docs.map((d) => d.rel));
 
     for (const doc of docs) {
@@ -765,7 +782,15 @@ async function main() {
       if (CHECK) continue;
 
       process.stdout.write(`translate-content: ${locale}/${doc.rel} … `);
-      const result = await translate(unit.strings, locale);
+      let result;
+      try {
+        result = await translate(unit.strings, locale);
+      } catch (err) {
+        if (!(err instanceof QuotaExhausted)) throw err;
+        console.log("quota exhausted");
+        quotaWall = String(err.message);
+        break;
+      }
       if (!result.ok) {
         console.log("failed");
         failed.push(
@@ -792,8 +817,9 @@ async function main() {
       console.log(`${unit.strings.length} strings`);
     }
 
-    // Only safe to prune when the full corpus was considered.
-    if (!ONLY) {
+    // Only safe to prune when the full corpus was actually considered — a run
+    // cut short by a quota wall has not seen the rest of it.
+    if (!ONLY && !quotaWall) {
       for (const file of await orphans(locale, expected)) {
         const rel = path.relative(ROOT, file);
         if (CHECK) {
@@ -826,6 +852,19 @@ async function main() {
       (failed.length ? `, ${failed.length} FAILED` : "") +
       ".",
   );
+
+  if (quotaWall) {
+    // Exit 0. Nothing is wrong with the content and nothing was half-written;
+    // the provider is simply out of allowance, and the next run continues from
+    // here. Failing the job would turn a deferral into a red build.
+    console.log(
+      `\ntranslate-content: stopped early — the provider's quota is exhausted.\n` +
+        `  ${quotaWall}\n` +
+        `What was translated is written. Re-run to continue; ` +
+        `\`--check\` lists what is outstanding.`,
+    );
+    process.exit(0);
+  }
 
   if (failed.length) {
     console.error(
