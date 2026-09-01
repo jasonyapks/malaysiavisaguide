@@ -1,7 +1,7 @@
-# malaysiavisaguide.com — Build Spec (v1.5)
+# malaysiavisaguide.com — Build Spec (v1.6)
 
 **Status:** live on `https://malaysiavisaguide.com` (cut over 2026-07-25)
-**Written:** 2026-07-22 · **Revised:** 2026-08-25
+**Written:** 2026-07-22 · **Revised:** 2026-09-01
 **Audience:** Jason, and any future Claude session picking this up cold
 **Supersedes:** `WEBSITE-BLUEPRINT.md` (June 2026) *for the v1 build only*. That document
 remains the strategic north star for later phases — positioning, monetisation sequencing,
@@ -9,6 +9,39 @@ the 9-pillar architecture, the 12-month roadmap. It is not edited or obsoleted. 
 disagree on stack or v1 scope, **this file wins**, and the two disagreements are deliberate:
 the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW authority site
 (v1 narrows to long-stay visas plus the two work/study passes).
+
+### What changed in v1.6 (2026-09-01)
+
+1. **`/news/` and `/insights/` are translated, and stay translated by themselves.**
+   `scripts/translate-content.mjs` is a reconciler: it compares each English article
+   against `content/<locale>/…`, translates what is missing or stale, and deletes what
+   has lost its source. `.github/workflows/translate-content.yml` runs it on every push
+   to `main` that touches `content/news/*.md` or `content/insights/*/*.md`.
+2. **A push is the trigger, not a publish hook, because there are two publishers.** The
+   `mvg-news` Worker commits a news article on approval; Sveltia CMS commits an insight.
+   The commit is the only thing they have in common — and it catches a hand edit too. The
+   consequence is that **the Chinese article lands one Pages build behind the English
+   one**, roughly three minutes. That is by design; it is not a bug to be reported.
+3. **`sourceHash` in a translated file's frontmatter is the sync mechanism** — a digest
+   of the English article's translatable strings, not of the file, so a corrected date
+   does not burn a model call. `translationLocked: true` takes a hand-corrected file out
+   of the loop for good. Correct one in Sveltia under "News · 简体" / "Insights · 简体",
+   and set that flag in the same save.
+4. **Numbers are never translated.** The model is sent a flat array of leaf strings;
+   `{{programme:field:fmt}}` figures, link hrefs, asset ids and block types are separate
+   nodes and never reach it. What comes back is checked for shape, for a lost or invented
+   figure, and for actually being Han script — a bad reply writes nothing.
+5. **Provider is Workers AI (`CLOUDFLARE_API_TOKEN`, Workers AI: Read).** Gemini writes
+   better Chinese and is a complete second implementation behind `TRANSLATE_PROVIDER`,
+   but its free tier allows 20 requests per day per model and a full backfill is around
+   fifty.
+6. **§2's "Language: English only" row is retired** — see the table below. The site has
+   been trilingual on three hosts since 2026-08-15; v1.6 is the point at which the
+   article sections joined the static pages.
+7. **One deliberate rendering change on the English side:** `/insights/<category>/`
+   breadcrumbs now show the short category label on every route. The literal
+   `comparisons` folder and the dynamic `[category]` route had disagreed since the CMS
+   migration, and both render one component now.
 
 ### What changed in v1.5 (2026-08-25)
 
@@ -160,7 +193,7 @@ path. **Email still works** — see §10.
 | Domain cutover | In scope — §10 | Nameservers move to Cloudflare; the domain carries live mail, so order matters |
 | Publishing | Manual `wrangler pages deploy` — and `worker/` deploys separately | Nothing goes live on its own; no git-triggered builds. `git push` is **not** a deploy |
 | Form delivery | Web3Forms → `admin@malaysiavisaguide.com` | No API keys, no DNS records, no account — working in minutes |
-| Language | English only | Chinese first when localisation comes, per blueprint §3 |
+| Language | Trilingual — en on the apex, `zh-hans` on `cn.`, `zh-hant` on `tw.` | Chinese first, per blueprint §3. Static pages 2026-08-15; `/news/` and `/insights/` 2026-09-01. Traditional is generated from Simplified (OpenCC), never hand-written |
 | Content | Researched, verified against official sources, reviewed by Jason | See §6 |
 | Repo root | `~/Claude/Projects/malaysiavisaguide/` | This file lives at its root and is committed |
 
@@ -573,8 +606,9 @@ required.
 ## 9. Explicitly not in v1
 
 Tourist / eVisa / visa-on-arrival / social-visit-pass content · the Jason-forward brand
-layer (newsletter, video, first-person commentary) · Chinese / Japanese / Korean
-localisation · the blueprint's healthcare, where-to-live, property, money and education
+layer (newsletter, video, first-person commentary) · Japanese / Korean localisation
+(Chinese landed after v1: static pages 2026-08-15, articles 2026-09-01) · the blueprint's
+healthcare, where-to-live, property, money and education
 pillars · country comparison pages (Malaysia vs Thailand et al.) · email capture ·
 the Malaysia Retirement Index.
 
