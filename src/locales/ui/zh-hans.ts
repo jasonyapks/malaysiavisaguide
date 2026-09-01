@@ -237,4 +237,178 @@ export const ui: UiStrings = {
     tailAfter: "，撰写这些指南的人会亲自回覆你。",
     metaTitle: "页面不存在",
   },
+
+  news: {
+    categoryLabel: {
+      pvip: "PVIP",
+      mm2h: "MM2H",
+      "sarawak-mm2h": "砂拉越 MM2H",
+      "de-rantau": "DE Rantau",
+      "employment-pass": "工作准证",
+      "student-pass": "学生准证",
+      general: "移民政策",
+      world: "其他国家",
+    },
+    categoryBlurb: {
+      pvip: "高端签证计划（PVIP）的变化——参与费、定期存款，以及 20 年期限在实务上如何执行。",
+      mm2h: "MM2H 第二家园计划的消息——白银级、黄金级与白金级的存款与房产门槛，以及必须通过持牌代理的规定。",
+      "sarawak-mm2h":
+        "砂拉越自己的 MM2H：州属自行设定存款、自行审批、自成一套规则，因此单独报道。",
+      "de-rantau":
+        "马来西亚的数字游民准证 DE Rantau——收入门槛、适用职业，以及 12 个月准证如何续签。",
+      "employment-pass":
+        "工作准证（Employment Pass）的消息——EP I、II、III 三级薪资门槛、ESD 的审批流程，以及雇主与持证人各自须遵守的规定。",
+      "student-pass":
+        "学生准证（Student Pass）的消息——EMGS 的审批、院校担保，以及在马来西亚就读所附带的条件。",
+      general:
+        "影响各类外籍人士、而非单一签证计划的马来西亚移民政策。",
+      world:
+        "其他国家的长期居留、退休与投资签证——读者在与马来西亚比较时会考虑的选项，只作对照，不作推荐。",
+    },
+    categoryPageTitle: {
+      world: "其他国家的签证消息",
+      general: "马来西亚移民政策消息",
+    },
+    categoryPageTitleFor: (label) => `${label} 最新消息`,
+    guideTitle: {
+      pvip: "PVIP 指南",
+      mm2h: "MM2H 指南",
+      "sarawak-mm2h": "砂拉越 MM2H 指南",
+      "de-rantau": "DE Rantau 指南",
+      "employment-pass": "工作准证指南",
+      "student-pass": "学生准证指南",
+      general: "方案对比",
+      world: "马来西亚与各国的对比",
+    },
+    comparisonTitle: "方案对比",
+    guidesTitle: "各签证指南",
+    eligibilityLink: "做一次资格评估",
+    index: {
+      metaTitle: "马来西亚签证最新消息",
+      metaDescription:
+        "马来西亚长期居留签证的最新消息与解读——PVIP、MM2H、砂拉越 MM2H、DE Rantau，以及工作与学生准证。每则消息都完整写出，并注明出处。",
+      h1: "马来西亚签证最新消息",
+      lead: "马来西亚长期居留签证有什么变化，我们完整写出来——具体数字，以及这项变化对正在申请的你到底意味着什么。每一则都经人工审阅才发布，并注明所依据的报道。",
+      empty: "目前还没有发布消息——在此之前，各签证指南里是最新的已核实数字。",
+      moreEyebrow: "更多消息",
+      moreTitle: "其余",
+      moreTitleAccent: "值得一读的内容",
+      footerBefore: "消息只是起点，不构成建议。想知道某项规定对你意味着什么，可以读",
+      footerBetween: "，或者",
+      footerAfter: "。",
+    },
+    card: {
+      readFull: "阅读全文",
+      minRead: (minutes) => `阅读约 ${minutes} 分钟`,
+      via: (source) => `来源：${source}`,
+      browseAria: "按类别浏览消息",
+      allStories: "全部消息",
+      countLabel: (label, count) => `${label} — ${count} 则消息`,
+    },
+    article: {
+      breadcrumbHome: "首页",
+      breadcrumbNews: "最新消息",
+      shortVersion: "重点摘要",
+      whatItMeansEyebrow: "这意味着什么",
+      whatItMeansTitle: "对申请人来说",
+      whatItMeansAccent: "有什么改变",
+      quotedFrom: "引自",
+      quoteTranslated: "（引文为中译）",
+      sourceHeading: "消息来源",
+      sourceBefore: "本文由 Malaysia Visa Guide 撰写，依据的是",
+      sourceAfter:
+        "的报道。我们用自己的话概括并解读这则消息，不转载原文。想看出版方的完整报道，请点击原文链接。",
+      lastUpdated: (date) => `最后更新于 ${date}。`,
+      ctaLead: "消息只是起点，不构成建议。",
+      ctaBefore: "想知道这对你自己的情况意味着什么，已核实的数字都在",
+      ctaBetween: "，或者",
+      ctaAfter: "。",
+      authorJobTitle: "MYPVIP 董事总经理",
+    },
+    category: {
+      oneStory: "目前有 1 则消息。",
+      manyStories: (count) => `共 ${count} 则消息，由新到旧。`,
+      reviewedNote: "每一则都经人工审阅才发布，并注明所依据的报道。",
+      moreOn: (label) => `更多 ${label} 消息`,
+      moreTitle: "本类别下的",
+      moreTitleAccent: "其余内容",
+      footerBefore: "消息只是起点，不构成建议。想知道这些变化对你自己的情况意味着什么，可以读",
+      footerBetween: "，或者",
+      footerAfter: "。",
+    },
+  },
+
+  insights: {
+    categoryLabel: {
+      comparisons: "方案对比",
+      "by-nationality": "按国籍",
+      "expat-living": "在马生活",
+      perspective: "第一线观察",
+      "how-to": "操作指引",
+    },
+    categoryTitle: {
+      comparisons: "方案对比与选择指南",
+      "by-nationality": "按国籍看马来西亚签证",
+      "expat-living": "在马生活、税务与理财",
+      perspective: "第一线观察",
+      "how-to": "申请流程，一步一步来",
+    },
+    categoryBlurb: {
+      comparisons:
+        "不是功能清单，而是并排的取舍——以你的收入、你手上的资金、以及未来二十年的打算来看，哪一个方案才真正适合。",
+      "by-nationality":
+        "换一本护照，会有什么不同：所需文件、按国籍定价的签证费，以及申请流程中因来源国而异的环节。",
+      "expat-living":
+        "签证问题之后紧接着出现的那些问题——税务居民身份与境外收入、各州的房产门槛、开设银行账户、子女教育与医疗。",
+      perspective:
+        "来自经营两家马来西亚持牌长期居留代理机构的第一手记录——公布的规则与柜台的做法在哪里不一致，以及这对申请人意味着多少代价。",
+      "how-to":
+        "申请本身，按实际发生的顺序来讲——递件前必须备妥什么、批准后才会解锁什么，以及哪些步骤必须人在马来西亚才能办。",
+    },
+    browseAria: "按类别浏览",
+    index: {
+      metaTitle: "深度观点",
+      metaDescription:
+        "关于马来西亚长期居留签证的方案对比、选择指南与第一手观察——由 Jason Yap 依据 500+ 宗迁居案例写成，每一个数字都可追溯到官方来源。",
+      eyebrow: "深度观点",
+      h1: "哪一个方案",
+      h1Accent: "才真正属于你",
+      moreEyebrow: "更多",
+      moreTitle: "其余",
+      moreTitleAccent: "值得一读的内容",
+      empty: "目前还没有发布文章。",
+      footerBefore: "想看的是有什么变化，而不是该怎么选？那请看",
+      newsLink: "最新消息",
+      footerBetween: "。想看各签证的参考页面，可以从",
+      compareLink: "方案对比表",
+      footerAfter: "开始。",
+    },
+    article: {
+      breadcrumb: "深度观点",
+      publishedLine: (minutes, date) => `阅读约 ${minutes} 分钟 · 发布于 ${date}`,
+      reviewedLine: (minutes, date) => `阅读约 ${minutes} 分钟 · 复核于 ${date}`,
+      sourcesHeading: "资料来源",
+      sourcesNoteBefore:
+        "上文每一个数字都出自官方文件。官方来源没有说明的地方，本站会直接说明，而不是自行填补——参见",
+      editorialLink: "我们如何查证并标注日期",
+      sourcesNoteAfter: "。",
+      checkedOn: (date) => ` — 查证于 ${date}`,
+      handoffBefore: "这是一篇对比，不构成针对你个人情况的建议。可以读",
+      listSeparator: "、",
+      listLast: "或",
+      handoffBetween: "，也可以用你自己的数字",
+      eligibilityLink: "做一次资格评估",
+      handoffAfter: "。",
+    },
+    category: {
+      oneArticle: "目前有 1 篇文章。",
+      manyArticles: (count) => `共 ${count} 篇文章，由新到旧。`,
+      tracedNote: "每一个数字都可追溯到官方文件，并标注了查证日期。",
+      footerBefore: "只想直接并排看数字，不看论述？可以用",
+      compareLink: "方案对比表",
+      footerBetween: "，或者",
+      calculatorLink: "费用计算器",
+      footerAfter: "。",
+    },
+  },
 };

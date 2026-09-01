@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { CATEGORY_LABEL, categoryPath, type NewsCategory } from "@/lib/news";
+import { defaultLocale, type Locale } from "@/lib/i18n";
+import { categoryPath, type NewsCategory } from "@/lib/news";
+import { getUi } from "@/lib/ui";
 
 /**
  * Browse-by-category navigation, shown above the feed on /news and on every
@@ -15,22 +17,30 @@ export function CategoryStrip({
   categories,
   /** The category being viewed, if any — rendered as current, not as a link. */
   current,
+  locale = defaultLocale,
 }: {
   categories: { category: NewsCategory; articles: unknown[] }[];
   current?: NewsCategory;
+  locale?: Locale;
 }) {
+  const copy = getUi(locale).news;
   if (categories.length === 0) return null;
 
   return (
-    <nav aria-label="Browse news by category" className="flex flex-wrap gap-2">
-      <Item href="/news/" label="All stories" current={current === undefined} />
+    <nav aria-label={copy.card.browseAria} className="flex flex-wrap gap-2">
+      <Item
+        href="/news/"
+        label={copy.card.allStories}
+        current={current === undefined}
+      />
       {categories.map(({ category, articles }) => (
         <Item
           key={category}
           href={categoryPath(category)}
-          label={CATEGORY_LABEL[category]}
+          label={copy.categoryLabel[category]}
           count={articles.length}
           current={category === current}
+          described={copy.card.countLabel(copy.categoryLabel[category], articles.length)}
         />
       ))}
     </nav>
@@ -42,11 +52,14 @@ function Item({
   label,
   count,
   current,
+  described,
 }: {
   href: string;
   label: string;
   count?: number;
   current: boolean;
+  /** What a screen reader hears instead of "label 3". */
+  described?: string;
 }) {
   const body = (
     <>
@@ -68,11 +81,8 @@ function Item({
 
   // The bare number is ambiguous read aloud — "MM2H 3" could be part of the
   // programme's name. The digit is hidden from assistive tech and the count
-  // spelled out here instead.
-  const described =
-    count === undefined
-      ? label
-      : `${label} — ${count} ${count === 1 ? "story" : "stories"}`;
+  // spelled out by the caller instead, in the reader's own language.
+  const announced = described ?? label;
 
   // 44px minimum height so the pill is a real thumb target, a 3px focus ring on
   // focus-visible, and a border-weight change on hover so the state does not
@@ -88,7 +98,7 @@ function Item({
   return current ? (
     <span
       aria-current="page"
-      aria-label={described}
+      aria-label={announced}
       className={`${shape} bg-forest-900 text-sand-50`}
     >
       {body}
@@ -96,7 +106,7 @@ function Item({
   ) : (
     <Link
       href={href}
-      aria-label={described}
+      aria-label={announced}
       className={`${shape} ${focus} border border-sand-200 bg-sand-50 text-forest-800 hover:border-forest-700 hover:bg-forest-50 hover:underline active:scale-[0.98]`}
     >
       {body}

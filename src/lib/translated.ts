@@ -1,3 +1,4 @@
+import translatedContent from "@/lib/data/translated-content.json";
 import { localeUrl, prefixedLocales, type Locale } from "./i18n";
 
 /**
@@ -43,8 +44,33 @@ export const translatedRoutes = new Set<string>([
   "/contact/",
 ]);
 
+/**
+ * The article paths that exist in the translated trees, generated at build time.
+ *
+ * The set above is a hand-maintained list of static pages, and it cannot
+ * express `/news/<slug>/`: the slugs are content, they arrive daily, and an
+ * article is translated some minutes after it is published rather than at the
+ * same instant (see scripts/translate-content.mjs). Enumerating them by hand
+ * would be a list that is wrong every time it matters.
+ *
+ * So `scripts/emit-translated-content.mjs` walks `content/<locale>/` in
+ * `prebuild` and writes the answer. It is a build artifact and gitignored, for
+ * the same reason `article-images.json` is: the content tree is the source of
+ * truth and a committed copy would be a second one, stale the first time an
+ * article lands.
+ *
+ * A path is listed only if it exists in EVERY translated locale. Traditional is
+ * generated from Simplified, so in practice they agree — but hreflang is a
+ * mutual claim, and listing a path one host does not serve is precisely the
+ * "no return tag" failure that drops the whole cluster.
+ */
+const translatedContentPaths = new Set<string>(translatedContent.paths);
+
 export function isTranslated(canonicalPath: string): boolean {
-  return translatedRoutes.has(canonicalPath);
+  return (
+    translatedRoutes.has(canonicalPath) ||
+    translatedContentPaths.has(canonicalPath)
+  );
 }
 
 /**
@@ -73,10 +99,9 @@ export function isTranslated(canonicalPath: string): boolean {
  * full route table, so getting it wrong is not one dead link but every
  * untranslated route dead on every Chinese page at once.
  *
- * Paths that are not canonical routes — anchors, off-site URLs, news slugs —
- * are not in the set, so they resolve to English. Correct today because nothing
- * under `/news/` or `/insights/` is translated; when that changes, those trees
- * need their own check here.
+ * Paths that are in neither set — anchors, off-site URLs, an article that has
+ * not been translated yet — resolve to English, which is the honest answer for
+ * all three.
  */
 export function linkPath(canonicalPath: string, locale: Locale): string {
   if (locale === "en" || isTranslated(canonicalPath)) return canonicalPath;

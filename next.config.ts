@@ -41,11 +41,21 @@ import type { NextConfig } from "next";
 const DEFAULT_PAGE_EXTENSIONS = ["tsx", "ts", "jsx", "js"];
 
 function insightRouteExtensions(): string[] {
-  let flags: { article?: boolean; category?: boolean };
+  let flags: {
+    article?: boolean;
+    category?: boolean;
+    zhNews?: boolean;
+    zhInsights?: boolean;
+  };
   try {
     flags = JSON.parse(
       readFileSync(path.join(process.cwd(), ".insight-routes.json"), "utf8"),
-    ) as { article?: boolean; category?: boolean };
+    ) as {
+      article?: boolean;
+      category?: boolean;
+      zhNews?: boolean;
+      zhInsights?: boolean;
+    };
   } catch {
     // No marker file: the routes stay off. That is the right default for a
     // fresh clone, for `next dev` before prebuild has run, and for anyone
@@ -55,6 +65,14 @@ function insightRouteExtensions(): string[] {
   return [
     ...(flags.article ? ["cms.tsx"] : []),
     ...(flags.category ? ["cmsindex.tsx"] : []),
+    // The Chinese /news subtree — `app/[locale]/news/**/page.zhnews.tsx`. Off
+    // until at least one article exists in every translated locale, because
+    // both routes under it are dynamic and an empty one cannot be exported.
+    ...(flags.zhNews ? ["zhnews.tsx"] : []),
+    // The translated /insights subtree — `app/[locale]/insights/**`. Switched
+    // separately from the news one: the two sections translate at their own
+    // pace and either can be the empty one.
+    ...(flags.zhInsights ? ["zhins.tsx"] : []),
   ];
 }
 

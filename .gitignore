@@ -96,3 +96,15 @@ next-env.d.ts
 # republish it. Read it in place, put the figures in programmes.ts, leave the
 # document out of the history.
 /malaysia-pvip-guidelines.md
+
+# The Traditional Chinese content tree, converted from content/zh-hans/ by
+# scripts/gen-zh-hant.mjs on every build. Unlike the generated zh-hant modules
+# under src/, these are neither typechecked nor reviewed — one mechanical
+# conversion of a file that was itself machine-written — and committing 27 of
+# them on every publish would bury the English article that actually changed.
+/content/zh-hant/
+# Which content paths exist in every translated locale, written by
+# scripts/emit-translated-content.mjs and read by lib/translated.ts for hreflang
+# and the language switcher. Derived from content/; a committed copy would be a
+# second source of truth, stale the first time an article lands.
+/src/lib/data/translated-content.json

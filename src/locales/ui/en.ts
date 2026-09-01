@@ -1,3 +1,6 @@
+import type { InsightCategory as InsightCategoryId } from "@/lib/data/insights";
+import type { NewsCategory as NewsCategoryId } from "@/lib/news";
+
 /**
  * Sitewide chrome strings — header, footer, nav, 404.
  *
@@ -236,6 +239,140 @@ export type UiStrings = {
     tailContact: string;
     tailAfter: string;
     metaTitle: string;
+  };
+  /**
+   * The news section's chrome, and the names of its categories.
+   *
+   * News *articles* are content files under `content/` and are translated by
+   * `scripts/translate-content.mjs`; what lives here is everything around them
+   * that a translator would otherwise have to find inside a .tsx file —
+   * headings, breadcrumbs, the CTA prose, and the category names, which are
+   * shared by the cards, the browse strip, the sitemap and the JSON-LD.
+   *
+   * Prose carrying an inline link is split the way `notFound` above splits it:
+   * a `Before`/`Between`/`After` run around the label of each link. Clumsy to
+   * read, and the alternative is either markup in a string or a sentence that
+   * cannot be reordered — and Chinese reorders this one.
+   */
+  news: {
+    categoryLabel: Record<NewsCategoryId, string>;
+    categoryBlurb: Record<NewsCategoryId, string>;
+    /** "<label> news" is wrong for some labels; only those are listed. */
+    categoryPageTitle: Partial<Record<NewsCategoryId, string>>;
+    categoryPageTitleFor: (label: string) => string;
+    /** The guide each category hands the reader on to. Paths live in lib/news.ts. */
+    guideTitle: Record<NewsCategoryId, string>;
+    comparisonTitle: string;
+    guidesTitle: string;
+    eligibilityLink: string;
+    index: {
+      metaTitle: string;
+      metaDescription: string;
+      h1: string;
+      lead: string;
+      empty: string;
+      moreEyebrow: string;
+      moreTitle: string;
+      moreTitleAccent: string;
+      footerBefore: string;
+      footerBetween: string;
+      footerAfter: string;
+    };
+    card: {
+      readFull: string;
+      minRead: (minutes: number) => string;
+      via: (source: string) => string;
+      browseAria: string;
+      allStories: string;
+      /** Read aloud in place of the bare digit beside a category name. */
+      countLabel: (label: string, count: number) => string;
+    };
+    article: {
+      breadcrumbHome: string;
+      breadcrumbNews: string;
+      shortVersion: string;
+      whatItMeansEyebrow: string;
+      whatItMeansTitle: string;
+      whatItMeansAccent: string;
+      quotedFrom: string;
+      /** Empty in English. Elsewhere: the quote the reader sees is a translation. */
+      quoteTranslated: string;
+      sourceHeading: string;
+      sourceBefore: string;
+      sourceAfter: string;
+      lastUpdated: (date: string) => string;
+      ctaLead: string;
+      ctaBefore: string;
+      ctaBetween: string;
+      ctaAfter: string;
+      authorJobTitle: string;
+    };
+    category: {
+      oneStory: string;
+      manyStories: (count: number) => string;
+      reviewedNote: string;
+      moreOn: (label: string) => string;
+      moreTitle: string;
+      moreTitleAccent: string;
+      footerBefore: string;
+      footerBetween: string;
+      footerAfter: string;
+    };
+  };
+  /**
+   * The /insights/ section's chrome, and the names of its categories.
+   *
+   * Same split as `news` above: the articles are content files translated by
+   * scripts/translate-content.mjs, and everything around them lives here.
+   */
+  insights: {
+    categoryLabel: Record<InsightCategoryId, string>;
+    /** The h1 of the category's own index page. */
+    categoryTitle: Record<InsightCategoryId, string>;
+    categoryBlurb: Record<InsightCategoryId, string>;
+    browseAria: string;
+    index: {
+      metaTitle: string;
+      metaDescription: string;
+      eyebrow: string;
+      h1: string;
+      h1Accent: string;
+      moreEyebrow: string;
+      moreTitle: string;
+      moreTitleAccent: string;
+      empty: string;
+      footerBefore: string;
+      newsLink: string;
+      footerBetween: string;
+      compareLink: string;
+      footerAfter: string;
+    };
+    article: {
+      breadcrumb: string;
+      publishedLine: (minutes: number, date: string) => string;
+      reviewedLine: (minutes: number, date: string) => string;
+      sourcesHeading: string;
+      sourcesNoteBefore: string;
+      editorialLink: string;
+      sourcesNoteAfter: string;
+      checkedOn: (date: string) => string;
+      handoffBefore: string;
+      listSeparator: string;
+      listLast: string;
+      handoffBetween: string;
+      eligibilityLink: string;
+      handoffAfter: string;
+    };
+    category: {
+      oneArticle: string;
+      manyArticles: (count: number) => string;
+      tracedNote: string;
+      footerBefore: string;
+      compareLink: string;
+      footerBetween: string;
+      calculatorLink: string;
+      footerAfter: string;
+    };
   };
 };
 
@@ -479,5 +616,183 @@ export const ui: UiStrings = {
     tailAfter:
       " and you'll get a reply from the person who writes these guides.",
     metaTitle: "Page not found",
+  },
+
+  news: {
+    categoryLabel: {
+      pvip: "PVIP",
+      mm2h: "MM2H",
+      "sarawak-mm2h": "Sarawak MM2H",
+      "de-rantau": "DE Rantau",
+      "employment-pass": "Employment Pass",
+      "student-pass": "Student Pass",
+      general: "Immigration",
+      world: "Other countries",
+    },
+    categoryBlurb: {
+      pvip: "Changes to the Premium Visitor Pass — the participation fee, the fixed deposit, and how the 20-year term is being applied in practice.",
+      mm2h: "Malaysia My Second Home news — the Silver, Gold and Platinum tiers, deposit and property thresholds, and the agent requirement.",
+      "sarawak-mm2h":
+        "Sarawak's own MM2H — the state programme with its own deposit, its own approvals and its own rules, reported separately because it moves separately.",
+      "de-rantau":
+        "DE Rantau, Malaysia's digital nomad pass — income thresholds, eligible professions and how the twelve-month pass is renewed.",
+      "employment-pass":
+        "Employment Pass news — the EP I, II and III salary tiers, ESD processing, and the rules employers and holders both have to meet.",
+      "student-pass":
+        "Student Pass news — EMGS processing, institution sponsorship, and the conditions attached to studying in Malaysia.",
+      general:
+        "Malaysian immigration policy that affects foreign nationals across the programmes rather than any single one of them.",
+      world:
+        "Long-stay, retirement and investor visas in other countries — the alternatives a reader is weighing Malaysia against, reported for comparison rather than recommendation.",
+    },
+    categoryPageTitle: {
+      world: "Visa news from other countries",
+      general: "Malaysian immigration news",
+    },
+    categoryPageTitleFor: (label) => `${label} news`,
+    guideTitle: {
+      pvip: "the PVIP guide",
+      mm2h: "the MM2H guide",
+      "sarawak-mm2h": "the Sarawak MM2H guide",
+      "de-rantau": "the DE Rantau guide",
+      "employment-pass": "the Employment Pass guide",
+      "student-pass": "the Student Pass guide",
+      general: "the programme comparison",
+      world: "how Malaysia compares",
+    },
+    comparisonTitle: "the programme comparison",
+    guidesTitle: "programme guides",
+    eligibilityLink: "run the eligibility checker",
+    index: {
+      metaTitle: "Malaysia visa news",
+      metaDescription:
+        "Malaysia long-stay visa news, explained — PVIP, MM2H, Sarawak MM2H, DE Rantau and the work and study passes. Each story written up in full, with its source cited.",
+      h1: "Malaysia visa news",
+      lead: "What changes in Malaysia's long-stay visa programmes, written up in full — the figures, and what each change actually means if you are applying. Every story is hand-reviewed before it appears, and every story cites the reporting it is based on.",
+      empty:
+        "No stories published yet — the programme guides carry the current verified figures in the meantime.",
+      moreEyebrow: "More updates",
+      moreTitle: "Everything else",
+      moreTitleAccent: "worth knowing",
+      footerBefore: "News is a starting point, not advice. For what a rule actually means for your case, read the ",
+      footerBetween: " or ",
+      footerAfter: ".",
+    },
+    card: {
+      readFull: "Read the full story",
+      minRead: (minutes) => `${minutes} min read`,
+      via: (source) => `via ${source}`,
+      browseAria: "Browse news by category",
+      allStories: "All stories",
+      countLabel: (label, count) =>
+        `${label} — ${count} ${count === 1 ? "story" : "stories"}`,
+    },
+    article: {
+      breadcrumbHome: "Home",
+      breadcrumbNews: "News",
+      shortVersion: "The short version",
+      whatItMeansEyebrow: "What it means",
+      whatItMeansTitle: "What this changes",
+      whatItMeansAccent: "for an applicant",
+      quotedFrom: "Quoted from",
+      quoteTranslated: "",
+      sourceHeading: "Source",
+      sourceBefore: "This article was written by Malaysia Visa Guide, based on reporting by ",
+      sourceAfter:
+        ". We summarise and explain the news in our own words; we do not reproduce it. Read the original report for the publisher's full account.",
+      lastUpdated: (date) => `Last updated ${date}.`,
+      ctaLead: "News is a starting point, not advice.",
+      ctaBefore: "For what this means in your own case, the verified figures live in ",
+      ctaBetween: ", or ",
+      ctaAfter: ".",
+      authorJobTitle: "Managing Director, MYPVIP",
+    },
+    category: {
+      oneStory: "One story so far.",
+      manyStories: (count) => `${count} stories, newest first.`,
+      reviewedNote:
+        "Every one is hand-reviewed before it appears and cites the reporting it is based on.",
+      moreOn: (label) => `More on ${label}`,
+      moreTitle: "Everything else",
+      moreTitleAccent: "in this category",
+      footerBefore: "News is a starting point, not advice. For what these changes mean for your own case, read ",
+      footerBetween: " or ",
+      footerAfter: ".",
+    },
+  },
+
+  insights: {
+    categoryLabel: {
+      comparisons: "Comparisons",
+      "by-nationality": "By nationality",
+      "expat-living": "Expat living",
+      perspective: "From the desk",
+      "how-to": "How-to",
+    },
+    categoryTitle: {
+      comparisons: "Comparisons and decision guides",
+      "by-nationality": "Malaysia visas by nationality",
+      "expat-living": "Expat living, tax and money",
+      perspective: "From the desk",
+      "how-to": "How to apply, step by step",
+    },
+    categoryBlurb: {
+      comparisons:
+        "Side-by-side decisions rather than feature lists — which programme actually fits a given income, a given pile of capital, and a given plan for the next twenty years.",
+      "by-nationality":
+        "What changes when the passport changes: documentation, visa fees rated by nationality, and the parts of an application that behave differently depending on where you are from.",
+      "expat-living":
+        "The questions that arrive straight after the visa question — tax residency and offshore income, property thresholds by state, opening a bank account, schools and healthcare.",
+      perspective:
+        "First-person notes from running two licensed Malaysian long-stay agencies — where the published rules and the counter behave differently, and what that costs an applicant.",
+      "how-to":
+        "The application itself, in the order it actually happens — what has to be in hand before you file, what only unlocks after approval, and the steps that must be done inside Malaysia rather than from home.",
+    },
+    browseAria: "Browse by category",
+    index: {
+      metaTitle: "Insights",
+      metaDescription:
+        "Comparisons, decision guides and first-person notes on Malaysia's long-stay visas — written by Jason Yap from 500+ relocation cases, with every figure traced to an official source.",
+      eyebrow: "Insights",
+      h1: "Which programme is",
+      h1Accent: "actually yours",
+      moreEyebrow: "More",
+      moreTitle: "Everything else",
+      moreTitleAccent: "worth reading",
+      empty: "No articles published yet.",
+      footerBefore: "Looking for what changed rather than what to choose? That is ",
+      newsLink: "the news feed",
+      footerBetween: ". For the programme reference pages, start with ",
+      compareLink: "the comparison table",
+      footerAfter: ".",
+    },
+    article: {
+      breadcrumb: "Insights",
+      publishedLine: (minutes, date) => `${minutes} min read · Published ${date}`,
+      reviewedLine: (minutes, date) => `${minutes} min read · Reviewed ${date}`,
+      sourcesHeading: "Sources",
+      sourcesNoteBefore:
+        "Every figure above comes from an official government document. Where an official source is silent, this site says so rather than fill the gap — see ",
+      editorialLink: "how we research and date pages",
+      sourcesNoteAfter: ".",
+      checkedOn: (date) => ` — checked ${date}`,
+      handoffBefore: "This is a comparison, not advice on your own case. Read ",
+      listSeparator: ", ",
+      listLast: " or ",
+      handoffBetween: ", or ",
+      eligibilityLink: "run the eligibility checker",
+      handoffAfter: " against your own numbers.",
+    },
+    category: {
+      oneArticle: "One article so far.",
+      manyArticles: (count) => `${count} articles, newest first.`,
+      tracedNote:
+        "Every figure is traced to an official government document and carries the date it was checked.",
+      footerBefore: "Prefer the numbers side by side without the argument? Use ",
+      compareLink: "the comparison table",
+      footerBetween: " or ",
+      calculatorLink: "the cost calculator",
+      footerAfter: ".",
+    },
   },
 };

@@ -11,6 +11,7 @@ import {
   type InsightCategory,
 } from "@/lib/data/insights";
 import { getCmsIndex, getInsightDoc } from "@/lib/insights";
+import { pageMetadata } from "@/lib/metadata";
 import { site } from "@/lib/site";
 
 /**
@@ -115,9 +116,15 @@ export async function generateMetadata({
   const article = toInsight(doc);
 
   return {
-    title: article.title,
-    description: article.dek,
-    alternates: { canonical: insightPath(article) },
+    // Through pageMetadata so the article names its Chinese counterparts in
+    // hreflang once they exist — an English page that does not name them gets
+    // the whole cluster dropped for a missing return tag.
+    ...pageMetadata({
+      canonicalPath: insightPath(article),
+      locale: "en",
+      title: article.title,
+      description: article.dek,
+    }),
     robots: article.draft ? { index: false, follow: false } : undefined,
     openGraph: {
       type: "article",

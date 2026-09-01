@@ -4,14 +4,15 @@ import { Faq, type FaqItem } from "@/components/Faq";
 import { Figure } from "@/components/Figure";
 import { articleImage, articleOgImage, insightImageKey } from "@/lib/articleImages";
 import {
-  CATEGORY_LABEL,
   categoryPath,
   insightPath,
   type Insight,
   type InsightCategory,
 } from "@/lib/data/insights";
 import { reviewDate } from "@/lib/format";
+import { defaultLocale, htmlLang, localeUrl, type Locale } from "@/lib/i18n";
 import { site } from "@/lib/site";
+import { getUi } from "@/lib/ui";
 
 /**
  * The shell every /insights/ article renders inside, plus the card and browse
@@ -23,6 +24,12 @@ import { site } from "@/lib/site";
  * between three. What carries over is the furniture that earns trust — the
  * byline with its review date, the FAQ, the sources block — because for a 45+,
  * scam-alert reader that furniture is the conversion mechanism (SPEC.md §4.3).
+ *
+ * `locale` defaults to English so the apex renders exactly as it did before the
+ * translated trees existed. Hrefs stay bare paths in every locale: one locale is
+ * one hostname, so `/insights/<cat>/<slug>/` resolves against whichever host the
+ * reader is on, and a translated index only ever lists articles that exist in
+ * its own tree.
  */
 
 export function InsightLayout({
@@ -30,32 +37,36 @@ export function InsightLayout({
   sources,
   faq,
   children,
+  locale = defaultLocale,
 }: {
   article: Insight;
   /** Every figure in the body traces to one of these. Rendered, not optional. */
   sources: { label: string; url: string; verified: string }[];
   faq: FaqItem[];
   children: React.ReactNode;
+  locale?: Locale;
 }) {
+  const copy = getUi(locale).insights;
+
   return (
     <article className="space-y-10">
-      <ArticleSchema article={article} />
+      <ArticleSchema article={article} locale={locale} />
 
       <nav aria-label="Breadcrumb" className="text-caption text-ink-muted">
         <Link href="/insights/" className="text-forest-700 underline">
-          Insights
+          {copy.article.breadcrumb}
         </Link>
         <span aria-hidden> › </span>
         <Link
           href={categoryPath(article.category)}
           className="text-forest-700 underline"
         >
-          {CATEGORY_LABEL[article.category]}
+          {copy.categoryLabel[article.category]}
         </Link>
       </nav>
 
       <header className="space-y-6">
-        <p className="eyebrow">{CATEGORY_LABEL[article.category]}</p>
+        <p className="eyebrow">{copy.categoryLabel[article.category]}</p>
         <h1 className="text-h1 font-semibold">
           {article.title}
         </h1>
@@ -63,8 +74,10 @@ export function InsightLayout({
           {article.dek}
         </p>
         <p className="text-body-sm text-ink-muted">
-          {article.readingMinutes} min read · Published{" "}
-          {reviewDate(article.published)}
+          {copy.article.publishedLine(
+            article.readingMinutes,
+            reviewDate(article.published, locale),
+          )}
         </p>
       </header>
 
@@ -72,17 +85,17 @@ export function InsightLayout({
           this article, and the header above reads correctly without it. */}
       <Hero article={article} />
 
-      <Byline lastVerified={article.reviewed} locale="en" />
+      <Byline lastVerified={article.reviewed} locale={locale} />
 
       {/* The prose. Sizing lives here rather than on each child so an article
           body stays plain semantic markup and inherits the reading measure. */}
       <div className="space-y-7 text-body-sm leading-[1.75]">{children}</div>
 
-      <Faq items={faq} locale="en" />
+      <Faq items={faq} locale={locale} />
 
-      <Sources sources={sources} />
+      <Sources sources={sources} locale={locale} />
 
-      <Handoff article={article} />
+      <Handoff article={article} locale={locale} />
     </article>
   );
 }
@@ -139,20 +152,23 @@ export function Pullquote({ children }: { children: React.ReactNode }) {
  */
 function Sources({
   sources,
+  locale,
 }: {
   sources: { label: string; url: string; verified: string }[];
+  locale: Locale;
 }) {
+  const copy = getUi(locale).insights.article;
   return (
     <section className="rounded-xl bg-sand-100 px-6 py-6">
-      <h2 className="text-lead font-semibold text-forest-900">Sources</h2>
+      <h2 className="text-lead font-semibold text-forest-900">
+        {copy.sourcesHeading}
+      </h2>
       <p className="mt-2 text-caption text-ink-muted">
-        Every figure above comes from an official government document. Where an
-        official source is silent, this site says so rather than fill the gap —
-        see{" "}
+        {copy.sourcesNoteBefore}
         <Link href="/editorial-policy/" className="text-forest-700 underline">
-          how we research and date pages
+          {copy.editorialLink}
         </Link>
-        .
+        {copy.sourcesNoteAfter}
       </p>
       <ul className="mt-4 space-y-2 text-caption">
         {sources.map((s) => (
@@ -166,8 +182,7 @@ function Sources({
               {s.label}
             </a>
             <span className="text-ink-muted">
-              {" "}
-              — checked {reviewDate(s.verified)}
+              {copy.checkedOn(reviewDate(s.verified, locale))}
             </span>
           </li>
         ))}
@@ -177,55 +192,68 @@ function Sources({
 }
 
 /** Never end on a full stop. The article answers a question; this asks the next one. */
-function Handoff({ article }: { article: Insight }) {
+function Handoff({ article, locale }: { article: Insight; locale: Locale }) {
+  const copy = getUi(locale).insights.article;
   return (
     <p className="rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
-      This is a comparison, not advice on your own case. Read{" "}
+      {copy.handoffBefore}
       {article.relatedGuides.map((g, i) => (
         <span key={g.path}>
-          {i > 0 && (i === article.relatedGuides.length - 1 ? " or " : ", ")}
+          {i > 0 &&
+            (i === article.relatedGuides.length - 1
+              ? copy.listLast
+              : copy.listSeparator)}
           <Link href={g.path} className="font-semibold underline">
             {g.title}
           </Link>
         </span>
       ))}
-      , or{" "}
+      {copy.handoffBetween}
       <Link href="/tools/eligibility/" className="font-semibold underline">
-        run the eligibility checker
-      </Link>{" "}
-      against your own numbers.
+        {copy.eligibilityLink}
+      </Link>
+      {copy.handoffAfter}
     </p>
   );
 }
 
-function ArticleSchema({ article }: { article: Insight }) {
-  const url = `${site.url}${insightPath(article)}`;
+function ArticleSchema({
+  article,
+  locale,
+}: {
+  article: Insight;
+  locale: Locale;
+}) {
+  const copy = getUi(locale).insights;
+  const origin = localeUrl("/", locale).replace(/\/$/, "");
+  const url = localeUrl(insightPath(article), locale);
   const schema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: article.title,
     description: article.dek,
     url,
+    inLanguage: htmlLang[locale],
     datePublished: article.published,
     dateModified: article.reviewed,
     author: {
       "@type": "Person",
       name: "Jason Yap",
-      jobTitle: "Managing Director, MYPVIP",
-      url: `${site.url}/about/`,
+      jobTitle: getUi(locale).news.article.authorJobTitle,
+      url: localeUrl("/about/", locale),
     },
     publisher: { "@type": "Organization", name: site.name, url: site.url },
     // Absolute, and only when it exists — Google's article rich result wants an
     // image and ignores a relative path rather than resolving it.
     ...(articleOgImage(insightImageKey(article.category, article.slug)) && {
       image: [
-        `${site.url}${articleOgImage(insightImageKey(article.category, article.slug))}`,
+        `${origin}${articleOgImage(insightImageKey(article.category, article.slug))}`,
       ],
     }),
     isPartOf: {
       "@type": "WebPage",
-      url: `${site.url}${categoryPath(article.category)}`,
-      name: CATEGORY_LABEL[article.category],
+      url: localeUrl(categoryPath(article.category), locale),
+      name: copy.categoryLabel[article.category],
     },
   };
   return (
@@ -239,25 +267,30 @@ function ArticleSchema({ article }: { article: Insight }) {
 export function InsightCard({
   article,
   showCategory = true,
+  locale = defaultLocale,
 }: {
   article: Insight;
   showCategory?: boolean;
+  locale?: Locale;
 }) {
+  const copy = getUi(locale).insights;
   return (
     <Link
       href={insightPath(article)}
       className="card-outline block px-6 py-6 transition-colors hover:border-forest-300"
     >
       {showCategory && (
-        <p className="eyebrow">{CATEGORY_LABEL[article.category]}</p>
+        <p className="eyebrow">{copy.categoryLabel[article.category]}</p>
       )}
       <h3 className="mt-2 text-h3 font-semibold leading-snug text-forest-900">
         {article.title}
       </h3>
       <p className="mt-3 text-body-sm leading-relaxed text-ink">{article.dek}</p>
       <p className="mt-4 text-caption text-ink-muted">
-        {article.readingMinutes} min read · Reviewed{" "}
-        {reviewDate(article.reviewed)}
+        {copy.article.reviewedLine(
+          article.readingMinutes,
+          reviewDate(article.reviewed, locale),
+        )}
       </p>
     </Link>
   );
@@ -267,13 +300,16 @@ export function InsightCard({
 export function InsightStrip({
   categories,
   current,
+  locale = defaultLocale,
 }: {
   categories: { category: InsightCategory; articles: Insight[] }[];
   current?: InsightCategory;
+  locale?: Locale;
 }) {
+  const copy = getUi(locale).insights;
   if (categories.length === 0) return null;
   return (
-    <nav aria-label="Browse by category" className="flex flex-wrap gap-3">
+    <nav aria-label={copy.browseAria} className="flex flex-wrap gap-3">
       {categories.map(({ category, articles }) => {
         const isCurrent = category === current;
         return (
@@ -287,7 +323,7 @@ export function InsightStrip({
                 : "rounded-full border border-sand-200 px-4 py-2 text-caption text-forest-700 transition-colors hover:border-forest-300"
             }
           >
-            {CATEGORY_LABEL[category]}
+            {copy.categoryLabel[category]}
             {/* The count has to follow the pill it sits in. `text-ink-muted` was
                 unconditional, which put dark grey on the current pill's navy at
                 2.6:1 — invisible, and a failure since this component shipped.

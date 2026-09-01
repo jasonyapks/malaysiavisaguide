@@ -5,7 +5,7 @@ import {
 } from "@/lib/data/insights";
 import { liveInsightCategories, publishedInsights } from "@/lib/insights";
 import { categoryPath, getCategoryIndex, getNewsIndex } from "@/lib/news";
-import { assertRouteTitles, routes, site } from "@/lib/site";
+import { assertRouteTitles, routes } from "@/lib/site";
 import { htmlLang, locales, localeUrl, type Locale } from "@/lib/i18n";
 import { availableLocales } from "@/lib/translated";
 
@@ -68,31 +68,46 @@ export async function sitemapEntries(
       },
     }));
 
-  // Everything below is English-only: the CMS has no locale dimension, so there
-  // are no translated articles to list. A Chinese host's sitemap ends here
-  // rather than listing English URLs it does not serve — those belong to the
-  // apex's sitemap, which is exactly the separation this file exists to keep.
-  if (locale !== "en") return pages;
+  /**
+   * The hreflang group for one content path, from the generated manifest.
+   *
+   * Same source as the <link> tags: `availableLocales()` reads
+   * lib/translated.ts, which knows which articles exist in which tree. An
+   * article published five minutes ago is in the English sitemap alone, with no
+   * alternates block, and joins the group in the next build after it is
+   * translated — which is the truth, and the only version of it that does not
+   * earn a "no return tag" in Search Console.
+   */
+  const group = (path: string) => ({
+    languages: Object.fromEntries(
+      availableLocales(path).map((l) => [htmlLang[l], localeUrl(path, l)]),
+    ),
+  });
 
   // Each article carries its own real lastModified, not the build time — a news
   // page whose date moves on every deploy teaches a crawler to ignore the date.
-  const articles = await getNewsIndex();
+  //
+  // Read for THIS locale: a Chinese host lists the Chinese articles it actually
+  // serves. It used to stop above this line and list nothing, which was correct
+  // while nothing under /news/ was translated.
+  const articles = await getNewsIndex(locale);
   const news: MetadataRoute.Sitemap = articles.map((a) => ({
-    url: `${site.url}/news/${a.slug}/`,
+    url: localeUrl(`/news/${a.slug}/`, locale),
     lastModified: new Date(a.updatedAt ?? a.publishedAt ?? Date.now()),
     // Once written, an article is finished. Only a correction changes it.
     changeFrequency: "yearly",
     priority: 0.6,
+    alternates: group(`/news/${a.slug}/`),
   }));
 
   // Category indexes. Each one's lastModified is its newest story's, so the
   // date says something true — a category only changes when a story lands in
   // it, and stamping the build time here would teach a crawler to ignore the
   // date on every page in the sitemap, articles included.
-  const categories = await getCategoryIndex();
+  const categories = await getCategoryIndex(locale);
   const categoryPages: MetadataRoute.Sitemap = categories.map(
     ({ category, articles }) => ({
-      url: `${site.url}${categoryPath(category)}`,
+      url: localeUrl(categoryPath(category), locale),
       lastModified: new Date(
         Math.max(
           ...articles.map((a) =>
@@ -105,24 +120,26 @@ export async function sitemapEntries(
       // Above an article, below the guides: it is an index, and it is the page
       // that should rank for "<programme> news".
       priority: 0.7,
+      alternates: group(categoryPath(category)),
     }),
   );
 
   // Authored articles. Priority above a news story and below a programme guide:
   // evergreen and meant to be cited, but the guides are still the reference.
   // Drafts are excluded by `published()`, which is the whole point of the flag.
-  const insights = await publishedInsights();
+  const insights = await publishedInsights(locale);
   const insightPages: MetadataRoute.Sitemap = insights.map((a) => ({
-    url: `${site.url}${insightPath(a)}`,
+    url: localeUrl(insightPath(a), locale),
     lastModified: new Date(a.reviewed),
     changeFrequency: "yearly",
     priority: 0.7,
+    alternates: group(insightPath(a)),
   }));
 
   const insightCategories: MetadataRoute.Sitemap = (
-    await liveInsightCategories()
+    await liveInsightCategories(locale)
   ).map(({ category, articles }) => ({
-    url: `${site.url}${insightCategoryPath(category)}`,
+    url: localeUrl(insightCategoryPath(category), locale),
     // The newest article's review date, for the same reason the news category
     // pages use theirs: a date that moves on every deploy teaches a crawler to
     // ignore every date in the sitemap.
@@ -131,6 +148,7 @@ export async function sitemapEntries(
     ),
     changeFrequency: "monthly",
     priority: 0.6,
+    alternates: group(insightCategoryPath(category)),
   }));
 
   return [

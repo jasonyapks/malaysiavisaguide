@@ -3,9 +3,10 @@ import { type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
 import { localisedNavRoutes } from "@/lib/site";
 import { programmes } from "@/lib/data/programmes";
-import { CATEGORY_LABEL, insightPath } from "@/lib/data/insights";
+import { insightPath } from "@/lib/data/insights";
 import { publishedInsights } from "@/lib/insights";
 import { reviewDate } from "@/lib/format";
+import { getUi } from "@/lib/ui";
 import { images } from "@/lib/images";
 import { Figure } from "@/components/Figure";
 import type { HomeCopy } from "./types";
@@ -60,10 +61,12 @@ export async function HomePage({
   // Read at build time, like /insights/ itself — `output: "export"` prerenders
   // this page, so there is no request-time fetch here.
   //
-  // Only English for now: the CMS has no locale dimension yet, so there are no
-  // Chinese articles to list. The section renders nothing rather than sending a
-  // Chinese reader to three English articles.
-  const articles = locale === "en" ? await publishedInsights() : [];
+  // Per locale, not English-only: /insights/ has a translated tree now
+  // (scripts/translate-content.mjs), and this reads whichever one the host
+  // serves. A locale with nothing translated yet gets an empty array and the
+  // section below hides itself, rather than sending a Chinese reader to three
+  // English articles.
+  const articles = await publishedInsights(locale);
 
   const href = (path: string) => linkPath(path, locale);
 
@@ -385,7 +388,7 @@ export async function HomePage({
                   href={insightPath(a)}
                   className="card-outline flex h-full flex-col p-6 transition-transform hover:-translate-y-1"
                 >
-                  <p className="eyebrow">{CATEGORY_LABEL[a.category]}</p>
+                  <p className="eyebrow">{getUi(locale).insights.categoryLabel[a.category]}</p>
                   <p className="mt-3 font-serif text-body-sm font-bold leading-snug text-forest-900">
                     {a.title}
                   </p>
@@ -396,7 +399,8 @@ export async function HomePage({
                     {a.dek}
                   </p>
                   <p className="mt-auto pt-5 text-eyebrow font-bold text-forest-700">
-                    {a.readingMinutes} min read <span aria-hidden>→</span>
+                    {getUi(locale).news.card.minRead(a.readingMinutes)}{" "}
+                    <span aria-hidden>→</span>
                   </p>
                 </Link>
               </li>

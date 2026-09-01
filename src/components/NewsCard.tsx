@@ -1,12 +1,9 @@
 import Link from "next/link";
 import { Figure } from "@/components/Figure";
 import { articleImage, newsImageKey } from "@/lib/articleImages";
-import {
-  CATEGORY_LABEL,
-  categoryPath,
-  newsDate,
-  type NewsArticle,
-} from "@/lib/news";
+import { defaultLocale, type Locale } from "@/lib/i18n";
+import { categoryPath, newsDate, type NewsArticle } from "@/lib/news";
+import { getUi } from "@/lib/ui";
 
 /**
  * The story cards, shared by /news and by each /news/category/<category>/ page.
@@ -15,15 +12,24 @@ import {
  * indexes rendering the same list. Two copies of this markup would drift the
  * first time either one is restyled, and the drift would show up as two
  * different-looking feeds on the same site.
+ *
+ * `locale` defaults to English so the /news pages on the apex read exactly as
+ * they did before the Chinese tree existed. The hrefs stay bare paths in every
+ * locale on purpose: one locale is one hostname, so `/news/<slug>/` resolves
+ * against whichever host the reader is already on — see the header of
+ * lib/i18n.ts. A Chinese index only ever lists articles that exist in Chinese,
+ * so a bare path here cannot point at a page that is not there.
  */
 
 /** The most recent story, given the room it deserves. */
 export function NewsLeadCard({
   article,
   showCategory = true,
+  locale = defaultLocale,
 }: {
   article: NewsArticle;
   showCategory?: boolean;
+  locale?: Locale;
 }) {
   const image = articleImage(newsImageKey(article.slug));
 
@@ -43,7 +49,7 @@ export function NewsLeadCard({
           />
         </Link>
       )}
-      <NewsMeta article={article} showCategory={showCategory} />
+      <NewsMeta article={article} showCategory={showCategory} locale={locale} />
       <h2 className="mt-3 text-h2 font-bold leading-tight">
         <Link href={`/news/${article.slug}/`} className="hover:text-forest-700">
           {article.headline}
@@ -52,7 +58,7 @@ export function NewsLeadCard({
       <p className="mt-3 text-lead leading-relaxed text-ink-muted">
         {article.dek}
       </p>
-      <ReadLink slug={article.slug} />
+      <ReadLink slug={article.slug} locale={locale} />
     </article>
   );
 }
@@ -61,13 +67,15 @@ export function NewsCard({
   article,
   /** Off on a category page, where the chip would repeat the page's own <h1>. */
   showCategory = true,
+  locale = defaultLocale,
 }: {
   article: NewsArticle;
   showCategory?: boolean;
+  locale?: Locale;
 }) {
   return (
     <article className="border-b border-sand-200 pb-6">
-      <NewsMeta article={article} showCategory={showCategory} />
+      <NewsMeta article={article} showCategory={showCategory} locale={locale} />
       <h2 className="mt-2 font-serif text-lead font-bold text-ink">
         <Link href={`/news/${article.slug}/`} className="hover:text-forest-700">
           {article.headline}
@@ -76,7 +84,7 @@ export function NewsCard({
       <p className="mt-1.5 text-body-sm leading-relaxed text-ink-muted">
         {article.dek}
       </p>
-      <ReadLink slug={article.slug} />
+      <ReadLink slug={article.slug} locale={locale} />
     </article>
   );
 }
@@ -91,21 +99,24 @@ export function NewsCard({
 export function NewsMeta({
   article,
   showCategory = true,
+  locale = defaultLocale,
 }: {
   article: NewsArticle;
   showCategory?: boolean;
+  locale?: Locale;
 }) {
-  const date = newsDate(article.publishedAt);
+  const copy = getUi(locale).news.card;
+  const date = newsDate(article.publishedAt, locale);
   return (
     <div className="flex flex-wrap items-center gap-3 text-eyebrow">
-      {showCategory && <CategoryChip category={article.category} />}
+      {showCategory && <CategoryChip category={article.category} locale={locale} />}
       {article.publishedAt && date && (
         <time className="text-ink-muted" dateTime={article.publishedAt}>
           {date}
         </time>
       )}
-      <span className="text-ink-muted">{article.readingMinutes} min read</span>
-      <span className="text-ink-muted">via {article.sourceName}</span>
+      <span className="text-ink-muted">{copy.minRead(article.readingMinutes)}</span>
+      <span className="text-ink-muted">{copy.via(article.sourceName)}</span>
     </div>
   );
 }
@@ -121,9 +132,11 @@ export function NewsMeta({
 export function CategoryChip({
   category,
   className = "",
+  locale = defaultLocale,
 }: {
   category: NewsArticle["category"];
   className?: string;
+  locale?: Locale;
 }) {
   return (
     // Sized to sit inline in the byline row rather than to the 44px standalone
@@ -134,18 +147,18 @@ export function CategoryChip({
       href={categoryPath(category)}
       className={`rounded-full bg-forest-50 px-2.5 py-0.5 font-semibold uppercase tracking-wide text-forest-700 transition-colors duration-150 hover:bg-forest-100 hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700 ${className}`}
     >
-      {CATEGORY_LABEL[category]}
+      {getUi(locale).news.categoryLabel[category]}
     </Link>
   );
 }
 
-function ReadLink({ slug }: { slug: string }) {
+function ReadLink({ slug, locale }: { slug: string; locale: Locale }) {
   return (
     <Link
       href={`/news/${slug}/`}
       className="mt-3 inline-flex items-center gap-1.5 text-caption font-semibold text-forest-700 underline"
     >
-      Read the full story
+      {getUi(locale).news.card.readFull}
       <span aria-hidden>→</span>
     </Link>
   );

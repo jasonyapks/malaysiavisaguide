@@ -40,6 +40,8 @@ import { fileURLToPath } from "node:url";
 
 import { insights as authored } from "../src/lib/data/insights.ts";
 import { getCmsIndex } from "../src/lib/insights.ts";
+import { prefixedLocales } from "../src/lib/i18n.ts";
+import { getNewsIndex } from "../src/lib/news.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const MARKER = path.join(ROOT, ".insight-routes.json");
@@ -51,13 +53,53 @@ const items = await getCmsIndex();
 const published = items.filter((it) => !it.draft);
 const authoredCategories = new Set(authored.map((a) => a.category));
 
+/**
+ * The Chinese /news subtree switches on the same way, and for the same reason.
+ *
+ * It carries two dynamic routes, and a translated tree is legitimately empty
+ * until the first article has been through `scripts/translate-content.mjs` —
+ * on a fresh clone, and on the first build after a locale is added. The index
+ * is switched with them rather than left standing: an index with nothing in it
+ * would be thin content on a host that is trying to earn its own authority,
+ * and it would contradict the manifest in lib/translated.ts, which only calls
+ * /news/ translated once there is something there.
+ *
+ * EVERY translated locale must have something, not just one. The routes are
+ * generated for all of `prefixedLocales` in one pass, so a locale with nothing
+ * in it is still a dynamic route yielding zero paths.
+ */
+const translatedNews = await Promise.all(
+  prefixedLocales.map(async (locale) => (await getNewsIndex(locale)).length),
+);
+
+/**
+ * The translated /insights subtree switches independently of the news one: an
+ * article can be translated hours before an insight is, and a route with no
+ * paths fails the export either way.
+ */
+const translatedInsights = await Promise.all(
+  prefixedLocales.map(async (locale) => (await getCmsIndex(locale)).length),
+);
+
 const flags = {
   article: items.length > 0,
   category: published.some((it) => !authoredCategories.has(it.category)),
+  zhNews: translatedNews.every((n) => n > 0),
+  zhInsights: translatedInsights.every((n) => n > 0),
 };
 
 await writeFile(MARKER, JSON.stringify(flags, null, 2) + "\n");
 console.log(
   `[insight-routes] ${items.length} document(s), ${published.length} published — ` +
     `article route ${flags.article ? "on" : "off"}, category route ${flags.category ? "on" : "off"}.`,
+);
+console.log(
+  `[insight-routes] translated news per locale: ` +
+    prefixedLocales.map((l, i) => `${l} ${translatedNews[i]}`).join(", ") +
+    ` — Chinese /news route ${flags.zhNews ? "on" : "off"}.`,
+);
+console.log(
+  `[insight-routes] translated insights per locale: ` +
+    prefixedLocales.map((l, i) => `${l} ${translatedInsights[i]}`).join(", ") +
+    ` — Chinese /insights route ${flags.zhInsights ? "on" : "off"}.`,
 );

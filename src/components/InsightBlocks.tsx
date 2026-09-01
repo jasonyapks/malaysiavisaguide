@@ -8,6 +8,7 @@ import { SupersededNotice } from "@/components/SupersededNotice";
 import { TierTable } from "@/components/TierTable";
 import { articleImage } from "@/lib/articleImages";
 import { getProgramme, type ProgrammeSlug } from "@/lib/data/programmes";
+import type { Locale } from "@/lib/i18n";
 import { resolveFigure } from "@/lib/figures";
 
 /**
@@ -127,15 +128,30 @@ function InlineNode({
 export function InsightBlocks({
   blocks,
   docPath,
+  locale = "en",
 }: {
   blocks: Block[];
   /** `<category>/<slug>` — the article's identity in an error message. */
   docPath: string;
+  /**
+   * Defaults to English. The three programme components below read their own
+   * rows out of `programmes.ts` in this locale — a figure block on a Chinese
+   * page must print Chinese labels around the same number, not English ones,
+   * and that number is never translated because it never reaches a translator:
+   * see the header of scripts/translate-content.mjs.
+   */
+  locale?: Locale;
 }) {
   return (
     <>
       {blocks.map((b, i) => (
-        <BlockNode key={i} block={b} where={at(docPath, i)} index={i} />
+        <BlockNode
+          key={i}
+          block={b}
+          where={at(docPath, i)}
+          index={i}
+          locale={locale}
+        />
       ))}
     </>
   );
@@ -145,10 +161,12 @@ function BlockNode({
   block,
   where,
   index,
+  locale,
 }: {
   block: Block;
   where: string;
   index: number;
+  locale: Locale;
 }) {
   switch (block.t) {
     case "heading": {
@@ -262,10 +280,17 @@ function BlockNode({
       );
 
     case "programmeNotice":
-      return <SupersededNotice programme={programme(block.programme, where)} />;
+      return (
+        <SupersededNotice
+          programme={programme(block.programme, where)}
+          locale={locale}
+        />
+      );
 
     case "keyFacts":
-      return <KeyFacts programme={programme(block.programme, where)} locale="en" />;
+      return (
+        <KeyFacts programme={programme(block.programme, where)} locale={locale} />
+      );
 
     case "tierTable":
       return (
@@ -273,6 +298,7 @@ function BlockNode({
           tiers={block.programmes.map((p) => programme(p, where))}
           caption={block.caption}
           variant={block.variant}
+          locale={locale}
         />
       );
 

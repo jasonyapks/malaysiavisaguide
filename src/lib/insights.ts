@@ -10,6 +10,7 @@ import {
   type Insight,
   type InsightCategory,
 } from "@/lib/data/insights";
+import { defaultLocale, type Locale } from "@/lib/i18n";
 
 /**
  * Build-time data layer for /insights/ — the half that comes from the CMS.
@@ -48,7 +49,16 @@ import {
  * detail. Next runs the build from the project root, which is where content/
  * sits.
  */
-const CONTENT_DIR = path.join(process.cwd(), "content", "insights");
+/**
+ * English is at `content/insights/`; every other locale is a derived tree at
+ * `content/<locale>/insights/`, written by `scripts/translate-content.mjs`.
+ * Same asymmetry, and the same reason, as `contentDir()` in lib/news.ts.
+ */
+function contentDir(locale: Locale): string {
+  return locale === defaultLocale
+    ? path.join(process.cwd(), "content", "insights")
+    : path.join(process.cwd(), "content", locale, "insights");
+}
 
 /**
  * The article paths the repo owns — one per folder under src/app/insights/.
@@ -81,7 +91,7 @@ export function hasAuthoredIndex(category: InsightCategory): boolean {
 
 // --- The CMS index ---------------------------------------------------------
 
-let docsPromise: Promise<InsightDoc[]> | null = null;
+const docsByLocale = new Map<Locale, Promise<InsightDoc[]>>();
 
 /**
  * Every article on disk, drafts included, read once per build.
@@ -91,17 +101,39 @@ let docsPromise: Promise<InsightDoc[]> | null = null;
  * directory is small enough that reading all of it is simpler and cannot get
  * the two out of step.
  */
-function getDocs(): Promise<InsightDoc[]> {
-  docsPromise ??= readDocs();
-  return docsPromise;
+function getDocs(locale: Locale): Promise<InsightDoc[]> {
+  let promise = docsByLocale.get(locale);
+  if (!promise) {
+    promise = readDocs(locale);
+    docsByLocale.set(locale, promise);
+  }
+  return promise;
 }
 
 /** Every CMS article, drafts included, ordered by category then slug. */
-export async function getCmsIndex(): Promise<Insight[]> {
-  return (await getDocs()).map(toInsight);
+export async function getCmsIndex(
+  locale: Locale = defaultLocale,
+): Promise<Insight[]> {
+  return (await getDocs(locale)).map(toInsight);
 }
 
-async function readDocs(): Promise<InsightDoc[]> {
+/**
+ * ## An empty English tree is a build failure; an empty translated one is not
+ *
+ * The paragraph at the top of this file — a build that read zero articles would
+ * delete every article path from the export, and Pages holds a deleted path at
+ * the edge for a week — is about the English tree, which is the site.
+ *
+ * A translated tree is derived and fills one article at a time: the build right
+ * after an English article is published has no Chinese file for it yet, by
+ * design (scripts/translate-content.mjs). So missing or empty means "not
+ * translated yet", the Chinese host does not carry that article, and hreflang
+ * and the language switcher are told exactly that through lib/translated.ts.
+ */
+async function readDocs(locale: Locale): Promise<InsightDoc[]> {
+  const CONTENT_DIR = contentDir(locale);
+  const english = locale === defaultLocale;
+
   let categories: string[];
   try {
     const entries = await readdir(CONTENT_DIR, { withFileTypes: true });
@@ -110,6 +142,7 @@ async function readDocs(): Promise<InsightDoc[]> {
       .map((e) => e.name)
       .sort();
   } catch (err) {
+    if (!english) return [];
     throw new Error(
       `[insights] could not read ${CONTENT_DIR} — ${String(err)}\n\n` +
         `That directory holds every article on the site. The build is stopping ` +
@@ -123,8 +156,10 @@ async function readDocs(): Promise<InsightDoc[]> {
   for (const category of categories) {
     const dir = path.join(CONTENT_DIR, category);
     const files = (await readdir(dir)).filter((f) => f.endsWith(".md")).sort();
-    for (const file of files) docs.push(await readDoc(category, file));
+    for (const file of files) docs.push(await readDoc(locale, category, file));
   }
+
+  if (docs.length === 0 && !english) return [];
 
   if (docs.length === 0) {
     throw new Error(
@@ -165,9 +200,14 @@ function mappings(v: unknown): Record<string, unknown>[] {
  * broken insight article is a page Jason believes is live. Fail the build and
  * name the file and what is wrong with it.
  */
-async function readDoc(category: string, file: string): Promise<InsightDoc> {
-  const rel = path.posix.join("content", "insights", category, file);
-  const raw = await readFile(path.join(CONTENT_DIR, category, file), "utf8");
+async function readDoc(
+  locale: Locale,
+  category: string,
+  file: string,
+): Promise<InsightDoc> {
+  const dir = contentDir(locale);
+  const rel = path.relative(process.cwd(), path.join(dir, category, file));
+  const raw = await readFile(path.join(dir, category, file), "utf8");
   const { data, body } = splitContentFile(raw);
 
   const doc = {
@@ -259,17 +299,26 @@ function toInsight(it: InsightDoc): Insight {
  * day as an authored one sits below it rather than shuffling the order between
  * builds for no reason a reader could perceive.
  */
-export async function publishedInsights(): Promise<Insight[]> {
-  const cms = await getCmsIndex();
-  return [...authored, ...cms]
+export async function publishedInsights(
+  locale: Locale = defaultLocale,
+): Promise<Insight[]> {
+  const cms = await getCmsIndex(locale);
+  // The authored registry is literal .tsx folders under `(en)/`, so it exists
+  // in English only. It is empty and meant to stay that way; the guard is here
+  // so that if one ever came back it could not leak an English article into a
+  // Chinese listing that has no page to link it to.
+  return [...(locale === defaultLocale ? authored : []), ...cms]
     .filter((a) => !a.draft)
     .sort((a, b) => b.published.localeCompare(a.published));
 }
 
 export async function insightsByCategory(
   category: InsightCategory,
+  locale: Locale = defaultLocale,
 ): Promise<Insight[]> {
-  return (await publishedInsights()).filter((a) => a.category === category);
+  return (await publishedInsights(locale)).filter(
+    (a) => a.category === category,
+  );
 }
 
 /**
@@ -284,10 +333,10 @@ export async function insightsByCategory(
  *
  * An empty index is still never published: no articles, no entry here.
  */
-export async function liveInsightCategories(): Promise<
-  { category: InsightCategory; articles: Insight[] }[]
-> {
-  const items = await publishedInsights();
+export async function liveInsightCategories(
+  locale: Locale = defaultLocale,
+): Promise<{ category: InsightCategory; articles: Insight[] }[]> {
+  const items = await publishedInsights(locale);
   const seen: InsightCategory[] = [];
   for (const a of items) if (!seen.includes(a.category)) seen.push(a.category);
   return seen.map((category) => ({
@@ -296,12 +345,23 @@ export async function liveInsightCategories(): Promise<
   }));
 }
 
-/** Categories whose index page the dynamic [category] route has to generate. */
-export async function cmsOnlyCategories(): Promise<InsightCategory[]> {
-  const live = await liveInsightCategories();
+/**
+ * Categories whose index page the dynamic [category] route has to generate.
+ *
+ * In English that excludes any category with a literal folder in the repo —
+ * `comparisons` has one, and the literal wins. The translated trees have no
+ * literal folders at all: `[locale]/insights/[category]` generates every live
+ * category, which is why this takes a locale rather than assuming English.
+ */
+export async function cmsOnlyCategories(
+  locale: Locale = defaultLocale,
+): Promise<InsightCategory[]> {
+  const live = await liveInsightCategories(locale);
   return live
     .map((c) => c.category)
-    .filter((category) => !hasAuthoredIndex(category));
+    .filter(
+      (category) => locale !== defaultLocale || !hasAuthoredIndex(category),
+    );
 }
 
 // --- One document ----------------------------------------------------------
@@ -315,7 +375,8 @@ export async function cmsOnlyCategories(): Promise<InsightCategory[]> {
 export async function getInsightDoc(
   category: string,
   slug: string,
+  locale: Locale = defaultLocale,
 ): Promise<InsightDoc | null> {
-  const docs = await getDocs();
+  const docs = await getDocs(locale);
   return docs.find((d) => d.category === category && d.slug === slug) ?? null;
 }
