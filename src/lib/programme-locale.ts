@@ -66,6 +66,26 @@ export function localiseProgramme(p: Programme, locale: Locale): Programme {
     ...(overlay.propertyStateFloorNote
       ? { propertyStateFloorNote: overlay.propertyStateFloorNote }
       : {}),
+    // `asAt` is deliberately untouched: it is an ISO date, and every renderer
+    // already puts it through `reviewDate(_, locale)`.
+    ...(overlay.incomePractice && p.incomePractice
+      ? {
+          incomePractice: {
+            ...p.incomePractice,
+            ...(overlay.incomePractice.note
+              ? { note: overlay.incomePractice.note }
+              : {}),
+            ...(overlay.incomePractice.attributionBy
+              ? {
+                  attribution: {
+                    ...p.incomePractice.attribution,
+                    by: overlay.incomePractice.attributionBy,
+                  },
+                }
+              : {}),
+          },
+        }
+      : {}),
     // One spread for everything under `governmentExtras`: the agency-fee
     // footnote the tier table shows, and the three line-item notes the cost
     // calculator shows. Kept together because they share a parent — two
@@ -91,6 +111,19 @@ export function localiseProgramme(p: Programme, locale: Locale): Programme {
                       : {}),
                     ...(overlay.agencyFee.paymentTerms
                       ? { paymentTerms: overlay.agencyFee.paymentTerms }
+                      : {}),
+                    // Guarded on the source having one. S-MM2H's agency fee is
+                    // published in the MTCP guide and carries no attribution;
+                    // spreading a `by` onto it would invent a claim the record
+                    // does not make.
+                    ...(overlay.agencyFee.attributionBy &&
+                    p.governmentExtras.agencyFee.attribution
+                      ? {
+                          attribution: {
+                            ...p.governmentExtras.agencyFee.attribution,
+                            by: overlay.agencyFee.attributionBy,
+                          },
+                        }
                       : {}),
                   },
                 }
