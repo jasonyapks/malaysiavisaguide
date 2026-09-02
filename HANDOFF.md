@@ -2,208 +2,213 @@
 
 ## What & Why
 
-Building a Chinese version of malaysiavisaguide.com with the same content as the
-English site. Jason chose **both** scripts — Simplified at `/zh-hans/` and
-Traditional at `/zh-hant/` — because Hong Kong and Taiwan (Traditional) and
-Singapore/mainland (Simplified) are all named source markets. English stays
-unprefixed at the domain root so no indexed URL moves.
+malaysiavisaguide.com in Chinese as well as English, in **both scripts** —
+Simplified and Traditional — because Hong Kong and Taiwan (Traditional) and
+Singapore and the mainland (Simplified) are all named source markets.
 
-**Shipped 2026-08-15.** Merged to `main` (fast-forward, 13 commits) and
-deployed — production is `1e7a698`. English on the apex, Simplified on
-`cn.malaysiavisaguide.com`, Traditional on `tw.malaysiavisaguide.com`, all three
-verified live.
+**One locale, one hostname.** English on the apex, Simplified on
+`cn.malaysiavisaguide.com`, Traditional on `tw.malaysiavisaguide.com`. Paths are
+identical on all three: `/about/` everywhere. English stays unprefixed at the
+root so no indexed URL moved.
 
-`i18n/chinese-site` still exists on origin and is now identical to `main`; it
-can be deleted.
+**Read the header comment in `src/lib/i18n.ts` before touching any URL code.**
+A page has a *build path* (`out/zh-hans/about/`, what Next emits) and a *public
+URL* (`https://cn.…/about/`), and every bug in this area is the two being
+confused. `functions/_middleware.ts` is the join between them.
 
-## Done
+The routing shipped 2026-08-15. Work since then has been content, on
+`feat/chinese-content-translation`.
 
-- **Routing.** `app/(en)/` (unprefixed) + `app/[locale]/` (generates `zh-hans`
-  and `zh-hant` from one tree). Two root layouts, because `<html lang>` can only
-  be set where `<html>` is rendered.
-- **One locale, one hostname.** English on the apex, Simplified on `cn.`,
-  Traditional on `tw.`. Paths are identical on all three — `/about/` everywhere.
-  **Read the header comment in `src/lib/i18n.ts` before touching any URL code:**
-  a page has a *build path* (`out/zh-hans/about/`, what Next emits) and a
-  *public URL* (`https://cn.…/about/`), and every bug in this area is the two
-  being confused. `functions/_middleware.ts` is the join between them.
-- **`app/global-not-found.tsx`** behind `experimental.globalNotFound` — the
-  root-layout split silently broke `out/404.html` back to Next's default page.
-- **Traditional is generated, never hand-written.** `scripts/gen-zh-hant.mjs`
-  converts every `zh-hans.*` under `src/` via OpenCC. `prebuild` runs `--check`
-  and fails on drift. `npm run i18n:hant` regenerates.
-- **hreflang / sitemap / language switcher** all read `src/lib/translated.ts`.
-- **CJK fonts**: platform fonts, Latin *ahead* of CJK in each stack; separate
-  stacks for Hans/Hant (same character, different regional glyph).
-- **Translated pages (both scripts):** home + all 6 visa guides — pvip, mm2h,
-  sarawak-mm2h, de-rantau, employment-pass, student-pass.
-- **Chrome localised**: header, footer, nav, cookie banner, 404, GuideLayout,
-  KeyFacts, Faq, Byline, SupersededNotice, TierTable, DataTable, `format.ts`.
-- **Translated static pages:** `/about/` (`src/content/about/`, same shape as
-  `src/content/home/`).
-- **`linkPath()` in `src/lib/translated.ts`** — internal links to untranslated
-  routes fall back to the English URL. Before this, every Chinese page shipped
-  eleven dead links, because the header, footer and 404 render the whole route
-  table through `localePath`, which prefixes unconditionally. **Use `linkPath`
-  for every link; `localePath` only for canonical URLs, hreflang and the
-  sitemap.**
-- **Lint down to 3 errors in `src/`** — all pre-existing `setState`-in-effect
-  (CookieConsent, CookiePreferences, SiteNav). Not caused by this work.
+## Where it stands
 
-## Still outstanding
+| | Chinese |
+|---|---|
+| Home, 6 visa guides, `/about/`, `/compare/`, `/tools/` ×3, `/contact/` | done |
+| `/editorial-policy/`, `/privacy/` | done — this session |
+| `/news/` — index, categories, 21 articles | done |
+| `/insights/` — 6 articles | **2 of 6** |
 
-- **Search Console.** Add and verify `cn.` and `tw.` as properties. The sitemap
-  is a single file at the apex listing all three hosts' URLs, and Google only
-  accepts that as cross-submission once every host is verified. Until then the
-  Chinese URLs are discoverable only by crawling.
-- **`scripts/deploy-site.mjs` is unverified under the new layout.** It runs
-  `wrangler pages deploy out`, a direct upload from `out/`. The git build is
-  fine — its log says `Found Functions directory at /functions. Uploading.` —
-  but if the direct-upload path does not pick up the root `functions/`
-  directory, a break-glass deploy would publish with **no host routing**: the
-  apex would look perfect and both Chinese subdomains would silently serve
-  English. Test it before relying on it.
+Every static page is now translated. The only content gap is four insight
+articles.
 
-## Remaining
+## How each layer gets translated
 
-- Translate: `/compare/`, `/tools/`, `/tools/eligibility/`,
-  `/tools/cost-calculator/`, `/editorial-policy/`, `/privacy/`, `/contact/`.
-  - **The two tool pages are client components** (`EligibilityQuiz.tsx`,
-    `CostCalculator.tsx`). Pass strings in as props — do NOT import `getUi`
-    there, or all three locales' dictionaries ship to every browser.
-- CMS locale work: add a locale dimension to `cms_documents` in the `mvg-news`
-  Worker D1, expose translated bodies via the insights API, teach the
-  `/dashboard` editor to author a translation, then translate the 4 existing
-  insights articles. `HomePage.tsx` currently renders the insights section only
-  for `locale === "en"`, so Chinese home pages hide it rather than linking out
-  to English.
-- News (19 items) is out of scope — Jason chose "static pages + the 4 insights".
-- `og:image` is the same English card on all three hosts. Fine for now; a
-  Chinese card would need `scripts/` work and a second asset.
+Three different mechanisms, and picking the wrong one is the usual mistake.
 
-## Files & Folders Touched
+1. **Chrome** — header, footer, nav, cookie banner, 404, and every shared
+   component — is a string dictionary: `src/lib/ui.ts` +
+   `src/locales/ui/{en,zh-hans,zh-hant}.ts`. `en.ts` is the type of record.
+2. **Page bodies** are extracted into `src/content/<page>/`: a shared layout
+   component that holds all the structure, `types.ts`, and one copy file per
+   locale holding every word. `/about/`, `/contact/`, `/editorial-policy/` and
+   `/privacy/` all follow this; `src/content/visas/` is the same pattern for
+   the six guides.
+3. **Articles** (`content/`) are translated by a reconciler through a model —
+   `scripts/translate-content.mjs`. English is the source of truth, every
+   translated file records a `sourceHash` of its source's translatable strings,
+   and the script works out what is missing, stale, or should no longer exist.
 
-- `src/lib/i18n.ts` — locales, `localePath()`, `stripLocale()`, `htmlLang`. Read this first.
-- `src/lib/translated.ts` — **the list of which routes exist in Chinese.** Add a path here in the same commit as the route file.
-- `src/lib/metadata.ts` — `pageMetadata()` builds canonical + hreflang per page.
-- `src/lib/ui.ts` + `src/locales/ui/{en,zh-hans,zh-hant}.ts` — chrome strings. `en.ts` is the type of record.
-- `src/locales/programmes/{zh-hans,zh-hant}.ts` — Chinese for the *prose* fields of `programmes.ts`. **No numbers here, ever.**
-- `src/lib/programme-locale.ts` — merges that overlay onto a `Programme`.
-- `src/components/RootShell.tsx` — everything both root layouts share.
-- `src/app/(en)/layout.tsx`, `src/app/[locale]/layout.tsx` — the two root layouts.
-- `src/components/LanguageSwitcher.tsx` — replaced the old fake EN/中文 pill.
-- `src/content/home/` — `HomePage.tsx` + `types.ts` + per-locale copy. Pattern for whole-page extraction.
-- `src/content/visas/` — `VisaGuide.tsx`, `types.ts`, and `<slug>/{en,zh-hans,zh-hant}.tsx` for all 6 guides. Pattern for guide extraction.
-- `scripts/gen-zh-hant.mjs` — the Simplified→Traditional generator + terminology overrides.
-- `src/app/globals.css` — `--font-cjk-*` vars and the `html[lang^="zh"]` rules.
-- `src/lib/format.ts` — `money`/`moneyPer`/`reviewDate`/`years` now take a locale. **Type-only import of `Locale`** — `scripts/emit-figures.mjs` imports this file under plain Node where `@/` does not resolve.
-- `next.config.ts` — added `experimental.globalNotFound`.
+**Traditional is generated, never hand-written.** `scripts/gen-zh-hant.mjs`
+converts every `zh-hans.*` under `src/` and every file under `content/zh-hans/`
+via OpenCC. `prebuild` runs `--check` and fails the build on drift.
+`npm run i18n:hant` regenerates.
 
-## Decisions Made
+**Figures are never translated, in any of the three.** `programmes.ts` is the
+sole source of every number (SPEC.md §4.1); prose *about* a programme lives in
+an overlay at `src/locales/programmes/zh-hans.ts` and is merged on by
+`localiseProgramme`. Digits stay Arabic and stay formatted the English way —
+`RM1,000,000`, never `RM100万` — because the reader is comparing against a bank
+form and an Immigration page that both say `RM1,000,000`. Only the words around
+the figure are translated.
 
-- **English unprefixed at root.** Moving it to `/en/` would redirect the whole
-  indexed surface to buy nothing but symmetry.
-- **OpenCC `to.tw`, not `to.twp`.** One Traditional tree serves both HK and
-  Taiwan, and `twp` swaps exactly the vocabulary those two disagree on.
-- **Digits never localised.** `RM1,000,000`, not `RM100万`. The reader is
-  comparing against a bank form and an Immigration page that both say
-  `RM1,000,000`. Only the *words* around figures are translated.
-- **Programme prose lives in an overlay, not in `programmes.ts`.** SPEC.md §4.1
-  makes that file the sole source of every figure; three language copies of each
-  record would invite the exact drift the rule prevents.
-- **Latin kept on Chinese pages** for programme names (PVIP, MM2H, DE Rantau),
-  authority names in brackets after the Chinese, and quoted official document
-  titles — a reader verifying a claim lands on an English/Malay page.
-- **`VisaGuide` takes `tierSlugs`, not a built `<TierTable>`** — passing an
-  element skips `localiseProgramme` on the other tiers and renders English
-  columns beside a translated one.
-- **Untranslated pages don't get a Chinese URL at all.** No stub pages; the
-  switcher sends you to that language's home instead, and hreflang omits it.
+## Adding a page — the recipe
 
-## Verification Method (use this — it caught two real bugs)
-
-English output must not change. Build a baseline from before the work, then diff
-visible text on every page:
-
-```sh
-git stash -u                      # if you have local changes
-git checkout 1c28238 && npm run build && cp -R out /tmp/mvg-baseline
-git checkout i18n/chinese-site && npm run build
-```
-
-Then compare: strip `<script>`/`<style>`/comments/tags from each `out/**/*.html`
-and diff against `/tmp/mvg-baseline`. **Expected diff, sitewide: only the
-language pill (`中文` → `简体 繁體`), plus the 404's `<title>`.** Anything else
-is a regression.
-
-This caught (a) the custom 404 silently reverting to Next's default, and (b) the
-guide contents rail rendering empty because `Children.toArray` does not descend
-into the fragment that `copy.sections()` returns.
-
-Also check each new Chinese page for English leaks — strip tags and grep for
-`[A-Za-z][a-z]{4,}`. Expect only: `Jason`, programme names, and bracketed
-authority names.
-
-## Next Step
-
-Translate `/editorial-policy/`, then `/privacy/` and `/contact/` — prose-only
-pages, same recipe as `/about/`:
-
-1. `src/content/<page>/{types.ts,<Page>.tsx,en.tsx,zh-hans.tsx}` — shared body
-   component, per-locale copy, English transcribed *exactly* so the baseline
-   diff stays clean.
+1. `src/content/<page>/{types.ts,<Page>.tsx,en.tsx,zh-hans.tsx}`. Transcribe the
+   English **exactly**, so the baseline diff stays clean.
 2. Make `src/app/(en)/<page>/page.tsx` a thin wrapper using `pageMetadata()`.
 3. Add `src/app/[locale]/<page>/page.tsx`.
 4. Add the path to `translatedRoutes` in `src/lib/translated.ts` **in the same
-   commit**.
-5. `npm run i18n:hant`, then the baseline diff and the two sweeps below.
+   commit** — the route tree, hreflang, the sitemap and the switcher all read
+   that set, and `assertTranslatedRoutesExist()` fails the build if it drifts.
+5. `npm run i18n:hant`, then `npm run build`, then the checks below.
 
-Leave `/compare/` and the two tool pages until last — `/compare/` is table-heavy
-and the tools are client components (see the note above about passing strings in
-as props).
+**Use `linkPath()` for every internal link; `localePath` only for canonical
+URLs, hreflang and the sitemap.** `linkPath` returns a bare path when the target
+exists in this locale and the absolute English URL when it does not. Before it
+existed, every Chinese page shipped eleven dead links, because the header,
+footer and 404 render the whole route table through `localePath`, which
+prefixes unconditionally.
 
-### Two sweeps to run alongside the baseline diff
+**Client components take their strings as props.** `CookieConsent` and
+`CookiePreferences` both do. Importing the dictionary inside one ships all three
+languages' chrome to every browser to render one panel's worth of one of them.
 
-Both are cheap and both have already caught real bugs:
+## Verifying — `scripts/check-translated-output.mjs`
 
-- **Link integrity.** Every `href="/zh-han[st]/…"` in `out/**/*.html` must
-  resolve to a built `index.html`. Expect zero misses. This is what surfaced the
-  eleven dead links `linkPath` now prevents.
-- **English leaks.** Strip tags from each new Chinese page and count
-  `[A-Za-z]{4,}` words. On `/about/` the only survivors are `Jason`, programme
-  names, company names and bracketed authority names — anything else is a
-  missed string.
+Run after `npm run build`. Its header explains what each check has caught.
 
-### Checking the host routing
+```sh
+npm run build
+node scripts/check-translated-output.mjs --leaks zh-hans/<the page you added>
+```
 
-`npm run build`, then serve the real output and drive it by `Host` header —
-this is how the RSC-payload bug below was caught:
+For the baseline diff, build the previous commit somewhere and pass it:
+
+```sh
+git stash -u && npm run build && cp -R out /tmp/mvg-baseline
+git stash pop && npm run build
+node scripts/check-translated-output.mjs --baseline /tmp/mvg-baseline
+```
+
+**Expected English diff, sitewide: none.** Anything else is a regression until
+proven otherwise.
+
+### Host routing
+
+The static checks cannot see the middleware. Serve the real output and drive it
+by `Host` header:
 
 ```sh
 npx wrangler pages dev out --port 8788 --compatibility-date=2026-07-28
 curl -sI -H "Host: cn.malaysiavisaguide.com" http://localhost:8788/about/
 ```
 
-Cover all of: each host serves the right `<html lang>`; `/zh-hans/*` 301s to
-`cn.` from the apex and to a bare path on `cn.` itself; an untranslated page
-302s to English; `robots.txt`, `sitemap.xml` and `og.png` pass through; an
-unknown host falls through to the raw prefixed tree.
+Cover: each host serves the right `<html lang>`; `/zh-hans/*` 301s to `cn.` from
+the apex and to a bare path on `cn.` itself; an untranslated page 302s to
+English; `robots.txt`, `sitemap.xml` and `og.png` pass through; an unknown host
+falls through to the raw prefixed tree.
 
-**Also check the RSC payloads**, not just the HTML — `/about/index.txt` and the
-`__next.*` files beside it must come back in the host's language. If they fall
-through to English the client router gets a 200 of the wrong language and
-soft-navigates a Chinese reader into English content with the Chinese URL still
-in the address bar. Silent, and invisible on a hard refresh.
+**Also check the RSC payloads** — `/<page>/index.txt` and the `__next.*` files
+beside it must come back in the host's language. If they fall through to English
+the client router gets a 200 of the wrong language and soft-navigates a Chinese
+reader into English content with the Chinese URL still in the address bar.
+Silent, and invisible on a hard refresh.
 
 Two dev-server artefacts that are NOT bugs: wrangler rewrites a redirect
-`Location` to `http://` when the target host equals the request host, and
-firing probes in a tight loop can 500 before reaching the Worker (no line in
-the wrangler log — that is how you tell).
+`Location` to `http://` when the target host equals the request host, and firing
+probes in a tight loop can 500 before reaching the Worker (no line in the
+wrangler log — that is how you tell).
 
-### A trap in the diff script itself
+All of the above was run against the current build on 2026-09-02 and passed.
 
-React separates adjacent text nodes with an empty `<!-- -->` comment. If your
-comparator replaces comments with a space, a locale change that merges three
-text nodes into one interpolated string reads as a whitespace diff on 32 pages
-(`2026 .` → `2026.`) and looks like a sitewide regression. Strip `<!-- -->` to
-the empty string, other comments to a space.
+## Outstanding
+
+- **Four insight articles.** `mm2h-platinum-vs-pvip`,
+  `is-foreign-income-taxed-in-malaysia`, `malaysian-tax-for-expats`,
+  `apply-for-mm2h-2026`. `node scripts/translate-content.mjs --check` lists what
+  is left. `mm2h-platinum-vs-pvip` failed once for a reason the run did not
+  report — the quota block replaced the per-file detail — so it may be a real
+  validation failure rather than a quota one.
+  - **The translator defaults to Workers AI and needs `CLOUDFLARE_API_TOKEN`**,
+    which CI has and a local shell does not. Without it, `TRANSLATE_PROVIDER=gemini`
+    falls back to `GEMINI_API_KEY` — but that free tier is 20 requests a day per
+    model and runs out around three articles. `TRANSLATE_MODEL` spreads a
+    backfill across models. Minting a Workers AI token is the durable fix.
+- **Search Console.** `cn.` and `tw.` still need adding and verifying as
+  properties. The sitemap is a single file at the apex listing all three hosts'
+  URLs, and Google only accepts that as cross-submission once every host is
+  verified. Until then the Chinese URLs are discoverable only by crawling.
+- **CMS locale work.** Add a locale dimension to `cms_documents` in the
+  `mvg-news` Worker D1, expose translated bodies via the insights API, and teach
+  the `/dashboard` editor to author a translation. Right now a translation can
+  only be produced by the reconciler, never written by hand in the CMS.
+- **`og:image` is the same English card on all three hosts.** Fine for now; a
+  Chinese card needs `scripts/` work and a second asset.
+
+## Decisions worth not relitigating
+
+- **English unprefixed at root.** Moving it to `/en/` would redirect the whole
+  indexed surface to buy nothing but symmetry.
+- **OpenCC `to.tw`, not `to.twp`.** One Traditional tree serves both HK and
+  Taiwan, and `twp` swaps exactly the vocabulary those two disagree on.
+- **Programme prose lives in an overlay, not in `programmes.ts`.** SPEC.md §4.1
+  makes that file the sole source of every figure; three language copies of each
+  record would invite the exact drift the rule prevents.
+- **Latin kept on Chinese pages** for programme names, company names, authority
+  names in brackets after the Chinese, official document titles, and vendor
+  names — a reader verifying a claim lands on an English or Malay page, and a
+  Chinese rendering of a company name cannot be looked up in the SSM register.
+- **Untranslated pages don't get a Chinese URL at all.** No stub pages; the
+  switcher sends you to that language's home instead, and hreflang omits it.
+- **`VisaGuide` takes `tierSlugs`, not a built `<TierTable>`** — passing an
+  element skips `localiseProgramme` on the other tiers and renders English
+  columns beside a translated one.
+
+## Traps that have already cost a day
+
+- **`localiseProgramme` is the single seam, and callers have to hold it up.**
+  `TierTable`, `KeyFacts` and `SupersededNotice` all expect an
+  already-localised programme and each declines to add a second seam.
+  `InsightBlocks` passed them `locale` but raw English records, so their chrome
+  came out Chinese around English data — a translated table with English
+  footnote paragraphs. Fixed in `31a8f0e`; the shape of the bug will recur at
+  the next new caller.
+- **A figure token is the one span a translator never sees.** The point of
+  `{{programme:field:fmt}}` is that the model cannot touch a number. So
+  `resolveFigure` *must* localise, or the untranslatable becomes the
+  untranslated — and some of those fields are prose, not digits
+  (`incomePractice.note` is a paragraph).
+- **A field reached structurally but missing from the declared `Programme`
+  type cannot be overlaid.** `incomePractice` and `agencyFee.attribution` were
+  both like that. If a Chinese page shows an English string out of
+  `programmes.ts`, check the type declaration before anything else.
+- **`Children.toArray` does not descend into fragments** — it rendered the
+  guide contents rail empty when `copy.sections()` returned one.
+- **The root-layout split silently reverted `out/404.html`** to Next's default.
+  `app/global-not-found.tsx` behind `experimental.globalNotFound` is the fix.
+- **`reviewDate` takes an ISO date, never a written one.** An overlay string
+  reaching it parses as Invalid Date.
+
+## Deploying
+
+Push to `main`; Pages builds from the commit. `scripts/deploy-site.mjs` is
+break-glass only — a direct upload that becomes the live deployment without
+coming from a commit.
+
+Its long-standing open question is now answered: **the direct-upload path does
+pick up the root `functions/` directory.** `wrangler pages functions build`, run
+from the repo root exactly as `deploy-site.mjs` runs `wrangler pages deploy out`
+with `cwd: ROOT`, discovers `functions/_middleware.ts` and compiles it into a
+Worker containing the host routing. So a break-glass deploy would not silently
+publish with the apex perfect and both Chinese subdomains serving English. That
+verifies discovery and compilation, not the upload itself.
