@@ -42,6 +42,7 @@ export const translatedRoutes = new Set<string>([
   "/tools/eligibility/",
   "/tools/cost-calculator/",
   "/contact/",
+  "/editorial-policy/",
 ]);
 
 /**
