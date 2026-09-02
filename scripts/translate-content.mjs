@@ -853,10 +853,32 @@ async function main() {
       ".",
   );
 
+  // The per-file reasons come FIRST, before the quota note, and print whether
+  // or not the run later hit the wall.
+  //
+  // They used to print only in the branch below, which the quota wall returned
+  // past. So a file that failed for a real reason — a lost figure, a reply that
+  // came back in English — had its diagnosis thrown away every time the run
+  // subsequently ran out of allowance, and the summary line said "1 FAILED"
+  // with nothing to act on. That hid the same article's failure twice across
+  // two sessions before anyone noticed the branch order was the cause.
+  //
+  // `failed` and the quota wall are different things: a file that stopped
+  // because the allowance ran out is never in here, so everything below is a
+  // genuine failure worth reading.
+  if (failed.length) {
+    console.error(
+      `\ntranslate-content: these were left untranslated rather than written half-right:\n` +
+        failed.map((f) => `  ${f}`).join("\n"),
+    );
+  }
+
   if (quotaWall) {
-    // Exit 0. Nothing is wrong with the content and nothing was half-written;
-    // the provider is simply out of allowance, and the next run continues from
-    // here. Failing the job would turn a deferral into a red build.
+    // Exit 0 even when something above genuinely failed. Nothing is wrong with
+    // the content and nothing was half-written; the provider is simply out of
+    // allowance, and the next run continues from here. Failing the job would
+    // turn a deferral into a red build. The genuine failures are printed above
+    // and the next run will report them again with a non-zero exit.
     console.log(
       `\ntranslate-content: stopped early — the provider's quota is exhausted.\n` +
         `  ${quotaWall}\n` +
@@ -866,13 +888,7 @@ async function main() {
     process.exit(0);
   }
 
-  if (failed.length) {
-    console.error(
-      `\ntranslate-content: these were left untranslated rather than written half-right:\n` +
-        failed.map((f) => `  ${f}`).join("\n"),
-    );
-    process.exit(1);
-  }
+  if (failed.length) process.exit(1);
 }
 
 await main();
