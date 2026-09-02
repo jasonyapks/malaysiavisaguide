@@ -53,14 +53,17 @@ const codeImages: Record<string, SiteImage> = {
   // The one composed graphic on the site rather than a photograph, and the only
   // slot where that is right: the freshness band is about the paperwork, not
   // about Malaysian life, and the Chinatown street scene that sat here said
-  // nothing about fees being checked. Nearly square (1024×997), so the Figure
-  // that renders it uses aspect-square — cropping it to 4/3 would take the
-  // title off the top.
+  // nothing about fees being checked. Replaced 2026-09-02 with the brand key
+  // visual — navy notebook, compass, gold arc — retiring the flag-and-stamp
+  // version the branding template rules out (§2 no literal flag, §8 no visa
+  // stamp as the main visual). Now 1680×944, a true 16:9, so the Figure that
+  // renders it uses aspect-video: aspect-square would object-cover the
+  // headline's first and last words straight off the sides.
   home: {
     src: "/images/home-visa-guide.webp",
-    alt: "A Malaysia Visa Guide graphic: a Malaysian flag and an approval stamp over a visa application form, with passports and the Petronas Towers.",
+    alt: "A Malaysia Visa Guide graphic: a navy notebook embossed with a gold compass rose, a brass compass, a stack of blank documents and reading glasses, under the heading Malaysia Visa Guide.",
     brief:
-      "The paperwork itself — visa application, approval stamp, Malaysian flag. Composed graphic, not a street photo.",
+      "The brand key visual — navy, gold compass arc, calm desk objects. Composed graphic, not a street photo.",
     ready: true,
   },
   pvip: {

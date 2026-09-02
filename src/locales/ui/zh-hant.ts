@@ -136,6 +136,7 @@ export const ui: UiStrings = {
     bylineBefore: "撰寫與複核：",
     bylineMid: "，",
     bylineAfter: " 董事總經理",
+    bylineEnd: "。",
     bylineLastReviewed: (date) => `最後複核於 ${date}。`,
     tiers: {
       fixedDeposit: "定期存款",

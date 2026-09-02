@@ -133,6 +133,7 @@ export const ui: UiStrings = {
     bylineBefore: "撰写与复核：",
     bylineMid: "，",
     bylineAfter: " 董事总经理",
+    bylineEnd: "。",
     bylineLastReviewed: (date) => `最后复核于 ${date}。`,
     tiers: {
       fixedDeposit: "定期存款",

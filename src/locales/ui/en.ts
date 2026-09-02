@@ -135,6 +135,8 @@ export type UiStrings = {
     bylineBefore: string;
     bylineMid: string;
     bylineAfter: string;
+    /** The full stop that ends the byline sentence. Chinese uses 。 */
+    bylineEnd: string;
     bylineLastReviewed: (date: string) => string;
     /** The tier comparison table — components/TierTable.tsx. */
     tiers: {
@@ -506,6 +508,7 @@ export const ui: UiStrings = {
     bylineBefore: "Written and reviewed by ",
     bylineMid: ", Managing Director of ",
     bylineAfter: "",
+    bylineEnd: ".",
     bylineLastReviewed: (date) => `Last reviewed ${date}.`,
     tiers: {
       fixedDeposit: "Fixed deposit",

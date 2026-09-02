@@ -92,7 +92,7 @@ export async function HomePage({
           className="compass-arc [--arc-spin:20deg] -right-56 top-10 size-[42rem] opacity-70"
         />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-[1.05fr_0.95fr] md:py-28">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pt-20 pb-14 md:grid-cols-[1.05fr_0.95fr] md:pt-28 md:pb-16">
           <div className="rise space-y-7">
             <p className="eyebrow flex items-center gap-2">
               <span
@@ -210,6 +210,33 @@ export async function HomePage({
             </ul>
           </div>
         </div>
+
+        {/* The brand key visual, full content width, closing the hero.
+
+            It sits BELOW the copy, not above it, and that is measured rather
+            than taste: the graphic is 16:9, so at the 1104px content width it
+            renders 621px tall. Above the headline it filled a 698px viewport
+            on its own and pushed the h1, both CTAs and the quiz card off the
+            first screen. A banner that hides the entire value proposition is
+            not a hero, so the reader gets the promise and the buttons first
+            and the brand statement as the full-width close.
+
+            Width is the max-w-6xl content column, NOT an edge-to-edge bleed —
+            bleeding a 16:9 image makes it ~1400px tall on a wide monitor.
+
+            No `priority`: it is below the copy and no longer the LCP
+            candidate, so preloading it would compete with the text paint the
+            visitor is actually waiting on — the same reasoning that kept it
+            lazy in the freshness band. */}
+        <div className="relative mx-auto max-w-6xl px-6 pb-20 md:pb-24">
+          <Figure
+            image={images.home}
+            aspect="aspect-video"
+            rounded="rounded-card"
+            sizes="(min-width: 1200px) 1104px, (min-width: 768px) 92vw, 100vw"
+            className="shadow-[0_30px_70px_-35px_rgb(0_20_60/0.45)]"
+          />
+        </div>
       </section>
 
       {/* Section heading + framing paragraph, split as the reference splits it. */}
@@ -250,28 +277,16 @@ export async function HomePage({
         </ul>
       </Wide>
 
-      {/* Freshness band — ice blue, full-bleed, with the review photo. */}
+      {/* Freshness band — ice blue, full-bleed. The key visual that used to sit
+          on the left has moved up to the hero, so this is a single column now:
+          the band is about the review date, and the graphic was never carrying
+          that claim. */}
       <section className="full-bleed relative overflow-hidden border-y border-sand-200 bg-linear-to-b from-sand-100 to-[#dfe3e9]">
         <div
           aria-hidden
           className="compass-arc [--arc-spin:300deg] -right-32 -top-24 size-[30rem] opacity-70"
         />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-6 py-16 md:grid-cols-[0.9fr_1.1fr]">
-          <Figure
-            image={images.home}
-            // Square, not 4/3: the graphic is 1024×997 and object-cover would
-            // crop its title off the top.
-            aspect="aspect-square"
-            rounded="rounded-card"
-            // No `priority` here, on purpose. This band sits five viewports
-            // down — page offset 4095px on an 823px viewport — but `priority`
-            // emits a <link rel="preload" as="image">, which told the browser
-            // to fetch 108KB at highest priority in competition with the paint
-            // of a hero the visitor is actually looking at. Lazy is correct for
-            // anything this far below the fold; don't add it back.
-            sizes="(min-width: 768px) 460px, 100vw"
-            className="shadow-[0_24px_60px_-30px_rgb(0_20_60/0.5)]"
-          />
+        <div className="relative mx-auto max-w-6xl px-6 py-16">
           <div className="space-y-4">
             <p className="eyebrow">{copy.freshness.eyebrow}</p>
             <h2 className="text-h2">
