@@ -26,9 +26,9 @@ The routing shipped 2026-08-15. Work since then has been content, on
 | Home, 6 visa guides, `/about/`, `/compare/`, `/tools/` ×3, `/contact/` | done |
 | `/editorial-policy/`, `/privacy/` | done — this session |
 | `/news/` — index, categories, 21 articles | done |
-| `/insights/` — 6 articles | **2 of 6** |
+| `/insights/` — 6 articles | **4 of 6** |
 
-Every static page is now translated. The only content gap is four insight
+Every static page is now translated. The only content gap is two insight
 articles.
 
 ## How each layer gets translated
@@ -133,17 +133,25 @@ All of the above was run against the current build on 2026-09-02 and passed.
 
 ## Outstanding
 
-- **Four insight articles.** `mm2h-platinum-vs-pvip`,
-  `is-foreign-income-taxed-in-malaysia`, `malaysian-tax-for-expats`,
-  `apply-for-mm2h-2026`. `node scripts/translate-content.mjs --check` lists what
-  is left. `mm2h-platinum-vs-pvip` failed once for a reason the run did not
-  report — the quota block replaced the per-file detail — so it may be a real
-  validation failure rather than a quota one.
+- **Two insight articles.** `mm2h-platinum-vs-pvip` and `apply-for-mm2h-2026`.
+  `node scripts/translate-content.mjs --check` lists what is left.
+  `mm2h-platinum-vs-pvip` has now failed on a model that was translating the
+  others fine, so it looks like a genuine validation failure — a lost or
+  invented figure is the likely class, in a dense two-programme fee comparison
+  — rather than the transport noise that stopped the earlier runs. The next run
+  will print the reason; a fix landed so that the quota wall stops swallowing it.
   - **The translator defaults to Workers AI and needs `CLOUDFLARE_API_TOKEN`**,
-    which CI has and a local shell does not. Without it, `TRANSLATE_PROVIDER=gemini`
-    falls back to `GEMINI_API_KEY` — but that free tier is 20 requests a day per
-    model and runs out around three articles. `TRANSLATE_MODEL` spreads a
-    backfill across models. Minting a Workers AI token is the durable fix.
+    which CI has and a local shell does not. Minting one is the durable fix.
+  - Without it, `TRANSLATE_PROVIDER=gemini` uses `GEMINI_API_KEY`, whose free
+    tier is **20 requests a day per model** (`GenerateRequestsPerDayPerProject`
+    `PerModel-FreeTier`). `TRANSLATE_MODEL` and `TRANSLATE_MODEL_RETRY` spread a
+    backfill across models — three articles is about all one model gives you.
+  - **The built-in retry model `gemini-3.7-flash` was 503ing and hanging** on
+    2026-09-02, and a hung connection surfaces as `TypeError: fetch failed`,
+    not as an HTTP status. If every attempt fails that way, probe the endpoint
+    with curl before believing it is a content problem. `gemini-3.5-flash`
+    worked, though it 404'd on three probes before answering — the endpoint is
+    flaky enough that one probe proves nothing.
 - **Search Console.** `cn.` and `tw.` still need adding and verifying as
   properties. The sitemap is a single file at the apex listing all three hosts'
   URLs, and Google only accepts that as cross-submission once every host is
@@ -198,6 +206,10 @@ All of the above was run against the current build on 2026-09-02 and passed.
   `app/global-not-found.tsx` behind `experimental.globalNotFound` is the fix.
 - **`reviewDate` takes an ISO date, never a written one.** An overlay string
   reaching it parses as Invalid Date.
+- **Punctuation is not a word, so no check catches it.** `Byline.tsx` closed
+  every Chinese page's byline with a Latin `.` for weeks; the leak sweep looks
+  for Latin *words*. Sentence-ending punctuation belongs in the dictionary
+  (`bylineEnd`), never hardcoded in a component that renders in three locales.
 
 ## Deploying
 
