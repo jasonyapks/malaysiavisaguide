@@ -19,7 +19,37 @@ import {
  * Declining here does not delete cookies GA4 already set; the copy says so
  * rather than implying a clean wipe we can't perform from this origin.
  */
-export function CookiePreferences() {
+
+/**
+ * Strings arrive as props, for the same reason as `ConsentStrings` on the
+ * banner: this is a client component, and importing the locale dictionary here
+ * would ship all three languages' chrome to every browser to render one
+ * panel's worth of one of them.
+ */
+export type CookiePreferencesStrings = {
+  heading: string;
+  /** The status line, one per state the panel can be in. */
+  checking: string;
+  on: string;
+  off: string;
+  /** No choice recorded, and analytics is on / off by regional default. */
+  unchosenOn: string;
+  unchosenOff: string;
+  /** Appended to the status line after a click. Keep the leading space. */
+  saved: string;
+  turnOff: string;
+  turnOn: string;
+  /** Why the greyed button is greyed. Named for the button that is inactive. */
+  turnOnInactive: string;
+  turnOffInactive: string;
+  storageNote: string;
+};
+
+export function CookiePreferences({
+  strings,
+}: {
+  strings: CookiePreferencesStrings;
+}) {
   // `undefined` = not read yet (server render and first paint). Distinguishing
   // it from `null` (read, no choice recorded) keeps the status line honest
   // instead of flashing "not chosen" at everyone. Read through the store rather
@@ -45,19 +75,19 @@ export function CookiePreferences() {
 
   const status =
     choice === undefined
-      ? "Checking your current setting…"
+      ? strings.checking
       : choice === "granted"
-        ? "Analytics cookies are ON for this browser."
+        ? strings.on
         : choice === "denied"
-          ? "Analytics cookies are OFF for this browser."
+          ? strings.off
           : effective === "granted"
-            ? "You haven't chosen yet. Analytics cookies are on by default where you are — turning them off is one click."
-            : "You haven't chosen yet, so analytics cookies are off.";
+            ? strings.unchosenOn
+            : strings.unchosenOff;
 
   return (
     <div className="rounded-xl border border-sand-200 bg-sand-100 p-6">
       <h3 className="font-serif text-body font-semibold text-ink">
-        Your cookie setting
+        {strings.heading}
       </h3>
 
       <p
@@ -70,7 +100,7 @@ export function CookiePreferences() {
         )}
         <span>
           {status}
-          {saved && " Saved."}
+          {saved && strings.saved}
         </span>
       </p>
 
@@ -81,7 +111,7 @@ export function CookiePreferences() {
           disabled={effective === "denied"}
           className="min-h-11 rounded-full border-2 border-forest-700 px-7 py-2.5 text-body-sm font-bold text-forest-700 transition-[background-color,transform] duration-150 hover:bg-forest-50 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:border-sand-400 disabled:text-ink-muted disabled:opacity-100 disabled:hover:bg-transparent"
         >
-          Turn off
+          {strings.turnOff}
         </button>
         <button
           type="button"
@@ -89,7 +119,7 @@ export function CookiePreferences() {
           disabled={effective === "granted"}
           className="min-h-11 rounded-full border-2 border-forest-700 bg-forest-700 px-7 py-2.5 text-body-sm font-bold text-sand-50 transition-[background-color,transform] duration-150 hover:border-forest-900 hover:bg-forest-900 focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:border-sand-400 disabled:bg-sand-400 disabled:opacity-100"
         >
-          Turn on
+          {strings.turnOn}
         </button>
       </div>
 
@@ -100,17 +130,12 @@ export function CookiePreferences() {
       {effective !== undefined && (
         <p className="mt-3 text-caption text-ink-muted">
           {effective === "granted"
-            ? "“Turn on” is inactive because analytics are already on."
-            : "“Turn off” is inactive because analytics are already off."}
+            ? strings.turnOnInactive
+            : strings.turnOffInactive}
         </p>
       )}
 
-      <p className="mt-3 text-caption text-ink-muted">
-        This setting is stored in this browser only, so it won&apos;t follow you
-        to another device. Turning analytics off stops any further data being
-        sent; it does not erase cookies already placed — clear them in your
-        browser settings if you want them gone.
-      </p>
+      <p className="mt-3 text-caption text-ink-muted">{strings.storageNote}</p>
     </div>
   );
 }
