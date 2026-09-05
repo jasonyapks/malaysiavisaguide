@@ -47,7 +47,8 @@ export function Byline({
         >
           MYPVIP
         </a>
-        {g.bylineAfter}.
+        {g.bylineAfter}
+        {g.bylineEnd}
         {lastVerified && (
           <>
             <br />

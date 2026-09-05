@@ -161,6 +161,22 @@ deletes the file, which removes the page on the next build. Note Cloudflare
 Pages serves a path that has vanished from an export from the edge for up to
 seven days, so it is not instant for a reader who has already been there.
 
+### The Chinese version arrives one build later — this is not a fault
+
+Approving commits the English file and Pages builds it. A GitHub Action
+(`.github/workflows/translate-content.yml`) then runs the reconciler, commits
+`content/zh-hans/news/<slug>.md`, and *that* commit builds again. So for roughly
+three minutes after an article goes live in English, `cn.` and `tw.` do not
+carry it — the language switcher says so, `hreflang` does not claim it, and the
+Chinese hosts 302 that path to the English article. Expect "I approved it and
+the Chinese page is a redirect" during that window; it is the design, not a bug.
+
+The Worker has no part in this and needs no change for it: retiring an article
+deletes only the English file, and the reconciler removes the orphaned
+translations on its next run. If the Chinese version never appears, look at the
+Action, not at the dashboard — the likely cause is a missing
+`CLOUDFLARE_API_TOKEN` repository secret (Workers AI: Read).
+
 ### Insight articles are not edited here any more
 
 `/insights` moved to [Sveltia CMS](https://sveltiacms.app/) at

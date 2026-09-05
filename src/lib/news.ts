@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { splitContentFile } from "@shared/frontmatter";
 import { parseNewsSections } from "@shared/newsbody";
+import { defaultLocale, type Locale } from "@/lib/i18n";
+import { getUi } from "@/lib/ui";
 
 /**
  * Build-time data layer for the news blog.
@@ -67,59 +69,46 @@ export interface FullNewsArticle extends NewsArticle {
  * not reachable any more, and neither is the two-step publish behind it: the
  * symptom "I approved it and it isn't live" had its cause in a D1 write that no
  * build had seen yet. A commit is the trigger now, so approving is publishing.
- */
-const CONTENT_DIR = path.join(process.cwd(), "content", "news");
-
-export const CATEGORY_LABEL: Record<NewsCategory, string> = {
-  pvip: "PVIP",
-  mm2h: "MM2H",
-  "sarawak-mm2h": "Sarawak MM2H",
-  "de-rantau": "DE Rantau",
-  "employment-pass": "Employment Pass",
-  "student-pass": "Student Pass",
-  general: "Immigration",
-  world: "Other countries",
-};
-
-/**
- * Standfirst for each category's own index page, and its meta description.
  *
- * Written per category rather than generated from the label, because a category
- * page whose description is "News about MM2H" is thin content by any measure —
- * it competes with /news and the guide for the same terms and deserves to lose
- * to both. Each of these says what the category actually covers.
+ * English is at `content/news/`; every other locale is a derived tree at
+ * `content/<locale>/news/`, written by `scripts/translate-content.mjs` from the
+ * English file. The asymmetry is deliberate: English is the source of truth and
+ * moving it would have renamed 21 files and every path in the Worker that
+ * commits them, to gain symmetry and nothing else.
  */
-export const CATEGORY_BLURB: Record<NewsCategory, string> = {
-  pvip: "Changes to the Premium Visitor Pass — the participation fee, the fixed deposit, and how the 20-year term is being applied in practice.",
-  mm2h: "Malaysia My Second Home news — the Silver, Gold and Platinum tiers, deposit and property thresholds, and the agent requirement.",
-  "sarawak-mm2h":
-    "Sarawak's own MM2H — the state programme with its own deposit, its own approvals and its own rules, reported separately because it moves separately.",
-  "de-rantau":
-    "DE Rantau, Malaysia's digital nomad pass — income thresholds, eligible professions and how the twelve-month pass is renewed.",
-  "employment-pass":
-    "Employment Pass news — the EP I, II and III salary tiers, ESD processing, and the rules employers and holders both have to meet.",
-  "student-pass":
-    "Student Pass news — EMGS processing, institution sponsorship, and the conditions attached to studying in Malaysia.",
-  general:
-    "Malaysian immigration policy that affects foreign nationals across the programmes rather than any single one of them.",
-  world:
-    "Long-stay, retirement and investor visas in other countries — the alternatives a reader is weighing Malaysia against, reported for comparison rather than recommendation.",
-};
+function contentDir(locale: Locale): string {
+  return locale === defaultLocale
+    ? path.join(process.cwd(), "content", "news")
+    : path.join(process.cwd(), "content", locale, "news");
+}
+
+/** Every category, in no particular order — the closed set of folder names. */
+export const NEWS_CATEGORIES: readonly NewsCategory[] = [
+  "pvip",
+  "mm2h",
+  "sarawak-mm2h",
+  "de-rantau",
+  "employment-pass",
+  "student-pass",
+  "general",
+  "world",
+];
 
 /**
  * What a category's own index page is called.
  *
  * Usually "<label> news", which reads correctly for a programme name — "MM2H
  * news", "Student Pass news". It does not read correctly for every label:
- * "Other countries news" is not English. Only the exceptions are listed.
+ * "Other countries news" is not English. Only the exceptions are listed, and
+ * both the labels and the exceptions live in the UI dictionary now, because a
+ * Chinese reader needs the same distinction made in Chinese.
  */
-const CATEGORY_PAGE_TITLE: Partial<Record<NewsCategory, string>> = {
-  world: "Visa news from other countries",
-  general: "Malaysian immigration news",
-};
-
-export function categoryTitle(category: NewsCategory): string {
-  return CATEGORY_PAGE_TITLE[category] ?? `${CATEGORY_LABEL[category]} news`;
+export function categoryTitle(
+  category: NewsCategory,
+  locale: Locale = defaultLocale,
+): string {
+  const copy = getUi(locale).news;
+  return copy.categoryPageTitle[category] ?? copy.categoryPageTitleFor(copy.categoryLabel[category]);
 }
 
 /** The browse-by-category index for a category. Trailing slash, like every route here. */
@@ -132,22 +121,27 @@ export function categoryPath(category: NewsCategory): string {
  * question and then hand the reader to the page that answers the real one, so
  * every article carries this link — it is the site's internal linking, and it is
  * what stops the blog being a dead end for both readers and crawlers.
+ *
+ * The path is here; the link's wording is `ui.news.guideTitle`, because the
+ * path is the same on every host and the wording is not.
  */
-export const CATEGORY_GUIDE: Record<NewsCategory, { path: string; title: string } | null> = {
-  pvip: { path: "/visas/pvip/", title: "the PVIP guide" },
-  mm2h: { path: "/visas/mm2h/", title: "the MM2H guide" },
-  "sarawak-mm2h": { path: "/visas/sarawak-mm2h/", title: "the Sarawak MM2H guide" },
-  "de-rantau": { path: "/visas/de-rantau/", title: "the DE Rantau guide" },
-  "employment-pass": { path: "/visas/employment-pass/", title: "the Employment Pass guide" },
-  "student-pass": { path: "/visas/student-pass/", title: "the Student Pass guide" },
+export const CATEGORY_GUIDE: Record<NewsCategory, { path: string } | null> = {
+  pvip: { path: "/visas/pvip/" },
+  mm2h: { path: "/visas/mm2h/" },
+  "sarawak-mm2h": { path: "/visas/sarawak-mm2h/" },
+  "de-rantau": { path: "/visas/de-rantau/" },
+  "employment-pass": { path: "/visas/employment-pass/" },
+  "student-pass": { path: "/visas/student-pass/" },
   general: null,
   // Other countries' news has no Malaysian guide to hand off to, so it points at
   // the comparison table — which is exactly the question it raises in a reader.
-  world: { path: "/compare/", title: "how Malaysia compares" },
+  world: { path: "/compare/" },
 };
 
 function asCategory(v: string): NewsCategory {
-  return v in CATEGORY_LABEL ? (v as NewsCategory) : "general";
+  return (NEWS_CATEGORIES as readonly string[]).includes(v)
+    ? (v as NewsCategory)
+    : "general";
 }
 
 /**
@@ -203,23 +197,30 @@ function toIso(v: string | null): string | null {
 }
 
 /**
- * Fetch once per build, not once per page.
+ * Fetch once per build, not once per page — and once per locale.
  *
  * `generateStaticParams`, every article page and the sitemap all want this list.
  * A module-level promise is the memo: it does not depend on framework fetch-cache
  * semantics, which have changed between Next majors and would be an invisible
- * dependency if relied on here.
+ * dependency if relied on here. Keyed by locale because the Chinese tree is a
+ * different set of files, not a different view of the same ones.
  */
-let articlesPromise: Promise<FullNewsArticle[]> | null = null;
+const articlesByLocale = new Map<Locale, Promise<FullNewsArticle[]>>();
 
-/** Every article on disk, read once per build. */
-function getArticles(): Promise<FullNewsArticle[]> {
-  articlesPromise ??= readArticles();
-  return articlesPromise;
+/** Every article on disk for a locale, read once per build. */
+function getArticles(locale: Locale): Promise<FullNewsArticle[]> {
+  let promise = articlesByLocale.get(locale);
+  if (!promise) {
+    promise = readArticles(locale);
+    articlesByLocale.set(locale, promise);
+  }
+  return promise;
 }
 
-export async function getNewsIndex(): Promise<NewsArticle[]> {
-  return (await getArticles()).map(toSummary);
+export async function getNewsIndex(
+  locale: Locale = defaultLocale,
+): Promise<NewsArticle[]> {
+  return (await getArticles(locale)).map(toSummary);
 }
 
 /**
@@ -230,14 +231,31 @@ export async function getNewsIndex(): Promise<NewsArticle[]> {
  * out of whatever `readdir` happened to return. That would reshuffle two cards
  * between builds for no reason a reader could perceive — the same argument
  * `getCategoryIndex` makes a few lines down.
+ *
+ * ## An empty English tree is a build failure; an empty Chinese one is not
+ *
+ * English is the site. Exporting it with no /news/ pages would delete every
+ * article path, and Pages serves a path that has vanished from an export for up
+ * to seven days afterwards, so the mistake outlives the fix by a week.
+ *
+ * A translated tree is derived, and it fills up one article at a time: the
+ * build that runs immediately after an English article is published has no
+ * Chinese file for it yet, by design (see scripts/translate-content.mjs). So a
+ * missing or empty directory there means "not translated yet" and the Chinese
+ * host simply does not carry that story — which is what `hreflang` and the
+ * language switcher are already told, through lib/translated.ts.
  */
-async function readArticles(): Promise<FullNewsArticle[]> {
+async function readArticles(locale: Locale): Promise<FullNewsArticle[]> {
+  const dir = contentDir(locale);
+  const english = locale === defaultLocale;
+
   let files: string[];
   try {
-    files = (await readdir(CONTENT_DIR)).filter((f) => f.endsWith(".md"));
+    files = (await readdir(dir)).filter((f) => f.endsWith(".md"));
   } catch (err) {
+    if (!english) return [];
     throw new Error(
-      `[news] could not read ${CONTENT_DIR} — ${String(err)}\n\n` +
+      `[news] could not read ${dir} — ${String(err)}\n\n` +
         `The build is stopping rather than exporting a site with no /news/ ` +
         `pages. Pages\nserves paths that vanish from an export for up to seven ` +
         `days afterwards, so the\nmistake would outlive the fix by a week.`,
@@ -246,13 +264,13 @@ async function readArticles(): Promise<FullNewsArticle[]> {
 
   const articles: FullNewsArticle[] = [];
   for (const file of files.sort()) {
-    const article = await readArticle(file);
+    const article = await readArticle(dir, file);
     if (article) articles.push(article);
   }
 
-  if (articles.length === 0) {
+  if (articles.length === 0 && english) {
     throw new Error(
-      `[news] ${CONTENT_DIR} contains no readable articles.\n\n` +
+      `[news] ${dir} contains no readable articles.\n\n` +
         `An empty blog is never the intention, and shipping one would delete ` +
         `every article\npath from the export. Restore the files, or revert ` +
         `whatever removed them.`,
@@ -275,13 +293,16 @@ async function readArticles(): Promise<FullNewsArticle[]> {
  * publishing. /insights takes the opposite line, and the header of
  * src/lib/insights.ts says why.
  */
-async function readArticle(file: string): Promise<FullNewsArticle | null> {
-  const raw = await readFile(path.join(CONTENT_DIR, file), "utf8");
+async function readArticle(
+  dir: string,
+  file: string,
+): Promise<FullNewsArticle | null> {
+  const raw = await readFile(path.join(dir, file), "utf8");
   const { data, body } = splitContentFile(raw);
   const sections = parseNewsSections(body);
 
   if (sections.length === 0) {
-    console.warn(`[news] content/news/${file} has no body — skipping it.`);
+    console.warn(`[news] ${path.join(dir, file)} has no body — skipping it.`);
     return null;
   }
 
@@ -310,16 +331,17 @@ async function readArticle(file: string): Promise<FullNewsArticle | null> {
  * The categories that actually have something in them, most-populated first,
  * each with its articles in index order (newest first).
  *
- * Only non-empty categories. A page per key of CATEGORY_LABEL would be simpler,
- * but it would publish up to eight URLs carrying a heading and no stories, and
- * an empty index is the definition of the thin content Search Console flags.
- * The categories are a fixed set that only ever fills up, so a category page,
- * once it exists, does not later vanish and 404.
+ * Only non-empty categories. A page per category would be simpler, but it would
+ * publish up to eight URLs carrying a heading and no stories, and an empty index
+ * is the definition of the thin content Search Console flags. The categories are
+ * a fixed set that only ever fills up, so a category page, once it exists, does
+ * not later vanish and 404.
  */
-export async function getCategoryIndex(): Promise<
-  { category: NewsCategory; articles: NewsArticle[] }[]
-> {
-  const items = await getNewsIndex();
+export async function getCategoryIndex(
+  locale: Locale = defaultLocale,
+): Promise<{ category: NewsCategory; articles: NewsArticle[] }[]> {
+  const items = await getNewsIndex(locale);
+  const label = getUi(locale).news.categoryLabel;
 
   const byCategory = new Map<NewsCategory, NewsArticle[]>();
   for (const a of items) {
@@ -335,21 +357,30 @@ export async function getCategoryIndex(): Promise<
         b.articles.length - a.articles.length ||
         // Ties broken by label so the browse strip does not reshuffle itself
         // between builds for no reason a reader could perceive.
-        CATEGORY_LABEL[a.category].localeCompare(CATEGORY_LABEL[b.category]),
+        label[a.category].localeCompare(label[b.category]),
     );
 }
 
-export async function getArticle(slug: string): Promise<FullNewsArticle | null> {
-  const articles = await getArticles();
+export async function getArticle(
+  slug: string,
+  locale: Locale = defaultLocale,
+): Promise<FullNewsArticle | null> {
+  const articles = await getArticles(locale);
   return articles.find((a) => a.slug === slug) ?? null;
 }
 
-/** "23 July 2026" — matches reviewDate() in lib/format.ts. */
-export function newsDate(iso: string | null): string | null {
+/**
+ * "23 July 2026" in English, 2026年7月23日 in Chinese — matches reviewDate() in
+ * lib/format.ts, which formats the same date on the guide pages.
+ */
+export function newsDate(
+  iso: string | null,
+  locale: Locale = defaultLocale,
+): string | null {
   if (!iso) return null;
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
-  return d.toLocaleDateString("en-GB", {
+  return d.toLocaleDateString(locale === "en" ? "en-GB" : locale, {
     day: "numeric",
     month: "long",
     year: "numeric",

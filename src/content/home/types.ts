@@ -28,6 +28,8 @@ export type HomeCopy = {
     eyebrow: string;
     /** Two or three lines with the accent word in the display face. */
     heading: ReactNode;
+    /** SEO-targeted subheading rendered as an h2 under the h1. Optional per locale. */
+    subheading?: string;
     lead: string;
     /** Three short pills under the lead. */
     chips: string[];

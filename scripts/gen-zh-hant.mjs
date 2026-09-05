@@ -9,6 +9,21 @@
  * conversion and fails if the committed output has drifted, which is what
  * prebuild uses.
  *
+ * ## Content markdown is converted too, and is NOT committed
+ *
+ * `content/zh-hans/**.md` — the translated news and insight articles — gets the
+ * same treatment into `content/zh-hant/`, with two differences. Those files are
+ * gitignored build artifacts, because unlike the source modules they are
+ * neither typechecked nor reviewed: they are one mechanical conversion of a
+ * file that was itself machine-written, and a diff of 27 of them on every
+ * publish would bury the English article that actually changed.
+ *
+ * Which means `--check` cannot apply to them: in CI the directory does not
+ * exist yet and "drifted" would be true on every clean build. So the content
+ * tree is always rewritten, in both modes, and the whole tree is cleared first
+ * — a Simplified file that was deleted must not leave a Traditional orphan
+ * behind that the build would then publish.
+ *
  * ## Why generate rather than translate twice
  *
  * Simplified and Traditional differ in script, not in language. Hand-writing
@@ -28,7 +43,7 @@
  * site actually uses (簽證, 存款, 移民, 准證) is identical across both regions
  * anyway, so the phrase layer would buy nothing and cost neutrality.
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { globSync } from "node:fs";
 import path from "node:path";
 import * as OpenCC from "opencc-js";
@@ -109,6 +124,31 @@ for (const rel of sources) {
   written += 1;
   console.log(`gen-zh-hant: wrote ${path.relative(ROOT, to)}`);
 }
+
+/**
+ * The translated content tree: content/zh-hans/**.md → content/zh-hant/**.md.
+ *
+ * Cleared and rewritten wholesale. It is small, it is derived, and rebuilding
+ * it costs milliseconds — whereas reconciling deletions incrementally is the
+ * kind of code that leaves one orphan behind and publishes it.
+ */
+const CONTENT_FROM = path.join(ROOT, "content", "zh-hans");
+const CONTENT_TO = path.join(ROOT, "content", "zh-hant");
+
+const contentSources = globSync("content/zh-hans/**/*.md", { cwd: ROOT });
+rmSync(CONTENT_TO, { recursive: true, force: true });
+
+for (const rel of contentSources) {
+  const from = path.join(ROOT, rel);
+  const to = path.join(CONTENT_TO, path.relative(CONTENT_FROM, from));
+  mkdirSync(path.dirname(to), { recursive: true });
+  // No banner: the file is content, and a comment is not markdown frontmatter.
+  writeFileSync(to, convert(readFileSync(from, "utf8")));
+}
+
+console.log(
+  `gen-zh-hant: ${contentSources.length} content file(s) converted into content/zh-hant/.`,
+);
 
 if (CHECK && drifted.length > 0) {
   console.error(

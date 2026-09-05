@@ -3,9 +3,10 @@ import { type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
 import { localisedNavRoutes } from "@/lib/site";
 import { programmes } from "@/lib/data/programmes";
-import { CATEGORY_LABEL, insightPath } from "@/lib/data/insights";
+import { insightPath } from "@/lib/data/insights";
 import { publishedInsights } from "@/lib/insights";
 import { reviewDate } from "@/lib/format";
+import { getUi } from "@/lib/ui";
 import { images } from "@/lib/images";
 import { Figure } from "@/components/Figure";
 import type { HomeCopy } from "./types";
@@ -60,10 +61,12 @@ export async function HomePage({
   // Read at build time, like /insights/ itself — `output: "export"` prerenders
   // this page, so there is no request-time fetch here.
   //
-  // Only English for now: the CMS has no locale dimension yet, so there are no
-  // Chinese articles to list. The section renders nothing rather than sending a
-  // Chinese reader to three English articles.
-  const articles = locale === "en" ? await publishedInsights() : [];
+  // Per locale, not English-only: /insights/ has a translated tree now
+  // (scripts/translate-content.mjs), and this reads whichever one the host
+  // serves. A locale with nothing translated yet gets an empty array and the
+  // section below hides itself, rather than sending a Chinese reader to three
+  // English articles.
+  const articles = await publishedInsights(locale);
 
   const href = (path: string) => linkPath(path, locale);
 
@@ -89,7 +92,39 @@ export async function HomePage({
           className="compass-arc [--arc-spin:20deg] -right-56 top-10 size-[42rem] opacity-70"
         />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-[1.05fr_0.95fr] md:py-28">
+        {/* The brand key visual as the masthead — full content width, above the
+            headline.
+
+            The ratio is load-bearing. The 16:9 version of this graphic rendered
+            621px tall at the 1104px content width and filled a 698px viewport
+            on its own, pushing the h1, both CTAs and the quiz card below the
+            fold; this 1584×672 cut is 2.36:1 and lands around 470px, which
+            leaves the headline on the first screen. Replacing it with anything
+            squarer puts the fold problem straight back.
+
+            aspect-[1584/672] rather than aspect-[21/9]: the file is 2.357 and
+            21/9 is 2.333, and object-cover would shave the difference off the
+            edges — where this composition keeps its arc terminus and its
+            skyline.
+
+            Width is the max-w-6xl content column, NOT an edge-to-edge bleed,
+            which would put it back over 600px tall on a wide monitor.
+
+            `priority` is right here and was explicitly wrong in the freshness
+            band five viewports down: at the top of the hero this is the LCP
+            candidate, so preloading it is the point. */}
+        <div className="relative mx-auto max-w-6xl px-6 pt-12 md:pt-16">
+          <Figure
+            image={images.home}
+            aspect="aspect-[1584/672]"
+            rounded="rounded-card"
+            priority
+            sizes="(min-width: 1200px) 1104px, (min-width: 768px) 92vw, 100vw"
+            className="shadow-[0_30px_70px_-35px_rgb(0_20_60/0.45)]"
+          />
+        </div>
+
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pt-14 pb-16 md:grid-cols-[1.05fr_0.95fr] md:pt-16 md:pb-20">
           <div className="rise space-y-7">
             <p className="eyebrow flex items-center gap-2">
               <span
@@ -102,6 +137,12 @@ export async function HomePage({
             <h1 className="text-display leading-[1.05]">
               {copy.hero.heading}
             </h1>
+
+            {copy.hero.subheading && (
+              <h2 className="text-h3 font-semibold text-forest-800">
+                {copy.hero.subheading}
+              </h2>
+            )}
 
             <p className="max-w-xl text-ink-muted">{copy.hero.lead}</p>
 
@@ -207,6 +248,7 @@ export async function HomePage({
             </ul>
           </div>
         </div>
+
       </section>
 
       {/* Section heading + framing paragraph, split as the reference splits it. */}
@@ -247,28 +289,16 @@ export async function HomePage({
         </ul>
       </Wide>
 
-      {/* Freshness band — ice blue, full-bleed, with the review photo. */}
+      {/* Freshness band — ice blue, full-bleed. The key visual that used to sit
+          on the left has moved up to the hero, so this is a single column now:
+          the band is about the review date, and the graphic was never carrying
+          that claim. */}
       <section className="full-bleed relative overflow-hidden border-y border-sand-200 bg-linear-to-b from-sand-100 to-[#dfe3e9]">
         <div
           aria-hidden
           className="compass-arc [--arc-spin:300deg] -right-32 -top-24 size-[30rem] opacity-70"
         />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-6 py-16 md:grid-cols-[0.9fr_1.1fr]">
-          <Figure
-            image={images.home}
-            // Square, not 4/3: the graphic is 1024×997 and object-cover would
-            // crop its title off the top.
-            aspect="aspect-square"
-            rounded="rounded-card"
-            // No `priority` here, on purpose. This band sits five viewports
-            // down — page offset 4095px on an 823px viewport — but `priority`
-            // emits a <link rel="preload" as="image">, which told the browser
-            // to fetch 108KB at highest priority in competition with the paint
-            // of a hero the visitor is actually looking at. Lazy is correct for
-            // anything this far below the fold; don't add it back.
-            sizes="(min-width: 768px) 460px, 100vw"
-            className="shadow-[0_24px_60px_-30px_rgb(0_20_60/0.5)]"
-          />
+        <div className="relative mx-auto max-w-6xl px-6 py-16">
           <div className="space-y-4">
             <p className="eyebrow">{copy.freshness.eyebrow}</p>
             <h2 className="text-h2">
@@ -385,7 +415,7 @@ export async function HomePage({
                   href={insightPath(a)}
                   className="card-outline flex h-full flex-col p-6 transition-transform hover:-translate-y-1"
                 >
-                  <p className="eyebrow">{CATEGORY_LABEL[a.category]}</p>
+                  <p className="eyebrow">{getUi(locale).insights.categoryLabel[a.category]}</p>
                   <p className="mt-3 font-serif text-body-sm font-bold leading-snug text-forest-900">
                     {a.title}
                   </p>
@@ -396,7 +426,8 @@ export async function HomePage({
                     {a.dek}
                   </p>
                   <p className="mt-auto pt-5 text-eyebrow font-bold text-forest-700">
-                    {a.readingMinutes} min read <span aria-hidden>→</span>
+                    {getUi(locale).news.card.minRead(a.readingMinutes)}{" "}
+                    <span aria-hidden>→</span>
                   </p>
                 </Link>
               </li>

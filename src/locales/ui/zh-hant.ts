@@ -136,6 +136,7 @@ export const ui: UiStrings = {
     bylineBefore: "撰寫與複核：",
     bylineMid: "，",
     bylineAfter: " 董事總經理",
+    bylineEnd: "。",
     bylineLastReviewed: (date) => `最後複核於 ${date}。`,
     tiers: {
       fixedDeposit: "定期存款",
@@ -239,5 +240,179 @@ export const ui: UiStrings = {
     tailContact: "提出問題",
     tailAfter: "，撰寫這些指南的人會親自回覆你。",
     metaTitle: "頁面不存在",
+  },
+
+  news: {
+    categoryLabel: {
+      pvip: "PVIP",
+      mm2h: "MM2H",
+      "sarawak-mm2h": "砂拉越 MM2H",
+      "de-rantau": "DE Rantau",
+      "employment-pass": "工作準證",
+      "student-pass": "學生準證",
+      general: "移民政策",
+      world: "其他國家",
+    },
+    categoryBlurb: {
+      pvip: "高端簽證計劃（PVIP）的變化——參與費、定期存款，以及 20 年期限在實務上如何執行。",
+      mm2h: "MM2H 第二家園計劃的消息——白銀級、黃金級與白金級的存款與房產門檻，以及必須通過持牌代理的規定。",
+      "sarawak-mm2h":
+        "砂拉越自己的 MM2H：州屬自行設定存款、自行審批、自成一套規則，因此單獨報道。",
+      "de-rantau":
+        "馬來西亞的數字遊民準證 DE Rantau——收入門檻、適用職業，以及 12 個月準證如何續簽。",
+      "employment-pass":
+        "工作準證（Employment Pass）的消息——EP I、II、III 三級薪資門檻、ESD 的審批流程，以及僱主與持證人各自須遵守的規定。",
+      "student-pass":
+        "學生準證（Student Pass）的消息——EMGS 的審批、院校擔保，以及在馬來西亞就讀所附帶的條件。",
+      general:
+        "影響各類外籍人士、而非單一簽證計劃的馬來西亞移民政策。",
+      world:
+        "其他國家的長期居留、退休與投資簽證——讀者在與馬來西亞比較時會考慮的選項，只作對照，不作推薦。",
+    },
+    categoryPageTitle: {
+      world: "其他國家的簽證消息",
+      general: "馬來西亞移民政策消息",
+    },
+    categoryPageTitleFor: (label) => `${label} 最新消息`,
+    guideTitle: {
+      pvip: "PVIP 指南",
+      mm2h: "MM2H 指南",
+      "sarawak-mm2h": "砂拉越 MM2H 指南",
+      "de-rantau": "DE Rantau 指南",
+      "employment-pass": "工作準證指南",
+      "student-pass": "學生準證指南",
+      general: "方案對比",
+      world: "馬來西亞與各國的對比",
+    },
+    comparisonTitle: "方案對比",
+    guidesTitle: "各簽證指南",
+    eligibilityLink: "做一次資格評估",
+    index: {
+      metaTitle: "馬來西亞簽證最新消息",
+      metaDescription:
+        "馬來西亞長期居留簽證的最新消息與解讀——PVIP、MM2H、砂拉越 MM2H、DE Rantau，以及工作與學生準證。每則消息都完整寫出，並註明出處。",
+      h1: "馬來西亞簽證最新消息",
+      lead: "馬來西亞長期居留簽證有什麼變化，我們完整寫出來——具體數字，以及這項變化對正在申請的你到底意味著什麼。每一則都經人工審閱才發佈，並註明所依據的報道。",
+      empty: "目前還沒有發佈消息——在此之前，各簽證指南里是最新的已核實數字。",
+      moreEyebrow: "更多消息",
+      moreTitle: "其餘",
+      moreTitleAccent: "值得一讀的內容",
+      footerBefore: "消息只是起點，不構成建議。想知道某項規定對你意味著什麼，可以讀",
+      footerBetween: "，或者",
+      footerAfter: "。",
+    },
+    card: {
+      readFull: "閱讀全文",
+      minRead: (minutes) => `閱讀約 ${minutes} 分鐘`,
+      via: (source) => `來源：${source}`,
+      browseAria: "按類別瀏覽消息",
+      allStories: "全部消息",
+      countLabel: (label, count) => `${label} — ${count} 則消息`,
+    },
+    article: {
+      breadcrumbHome: "首頁",
+      breadcrumbNews: "最新消息",
+      shortVersion: "重點摘要",
+      whatItMeansEyebrow: "這意味著什麼",
+      whatItMeansTitle: "對申請人來說",
+      whatItMeansAccent: "有什麼改變",
+      quotedFrom: "引自",
+      quoteTranslated: "（引文為中譯）",
+      sourceHeading: "消息來源",
+      sourceBefore: "本文由 Malaysia Visa Guide 撰寫，依據的是",
+      sourceAfter:
+        "的報道。我們用自己的話概括並解讀這則消息，不轉載原文。想看出版方的完整報道，請點擊原文鏈接。",
+      lastUpdated: (date) => `最後更新於 ${date}。`,
+      ctaLead: "消息只是起點，不構成建議。",
+      ctaBefore: "想知道這對你自己的情況意味著什麼，已核實的數字都在",
+      ctaBetween: "，或者",
+      ctaAfter: "。",
+      authorJobTitle: "MYPVIP 董事總經理",
+    },
+    category: {
+      oneStory: "目前有 1 則消息。",
+      manyStories: (count) => `共 ${count} 則消息，由新到舊。`,
+      reviewedNote: "每一則都經人工審閱才發佈，並註明所依據的報道。",
+      moreOn: (label) => `更多 ${label} 消息`,
+      moreTitle: "本類別下的",
+      moreTitleAccent: "其餘內容",
+      footerBefore: "消息只是起點，不構成建議。想知道這些變化對你自己的情況意味著什麼，可以讀",
+      footerBetween: "，或者",
+      footerAfter: "。",
+    },
+  },
+
+  insights: {
+    categoryLabel: {
+      comparisons: "方案對比",
+      "by-nationality": "按國籍",
+      "expat-living": "在馬生活",
+      perspective: "第一線觀察",
+      "how-to": "操作指引",
+    },
+    categoryTitle: {
+      comparisons: "方案對比與選擇指南",
+      "by-nationality": "按國籍看馬來西亞簽證",
+      "expat-living": "在馬生活、稅務與理財",
+      perspective: "第一線觀察",
+      "how-to": "申請流程，一步一步來",
+    },
+    categoryBlurb: {
+      comparisons:
+        "不是功能清單，而是並排的取捨——以你的收入、你手上的資金、以及未來二十年的打算來看，哪一個方案才真正適合。",
+      "by-nationality":
+        "換一本護照，會有什麼不同：所需文件、按國籍定價的簽證費，以及申請流程中因來源國而異的環節。",
+      "expat-living":
+        "簽證問題之後緊接著出現的那些問題——稅務居民身份與境外收入、各州的房產門檻、開設銀行賬戶、子女教育與醫療。",
+      perspective:
+        "來自經營兩家馬來西亞持牌長期居留代理機構的第一手記錄——公佈的規則與櫃檯的做法在哪裡不一致，以及這對申請人意味著多少代價。",
+      "how-to":
+        "申請本身，按實際發生的順序來講——遞件前必須備妥什麼、批准後才會解鎖什麼，以及哪些步驟必須人在馬來西亞才能辦。",
+    },
+    browseAria: "按類別瀏覽",
+    index: {
+      metaTitle: "深度觀點",
+      metaDescription:
+        "關於馬來西亞長期居留簽證的方案對比、選擇指南與第一手觀察——由 Jason Yap 依據 500+ 宗遷居案例寫成，每一個數字都可追溯到官方來源。",
+      eyebrow: "深度觀點",
+      h1: "哪一個方案",
+      h1Accent: "才真正屬於你",
+      moreEyebrow: "更多",
+      moreTitle: "其餘",
+      moreTitleAccent: "值得一讀的內容",
+      empty: "目前還沒有發佈文章。",
+      footerBefore: "想看的是有什麼變化，而不是該怎麼選？那請看",
+      newsLink: "最新消息",
+      footerBetween: "。想看各簽證的參考頁面，可以從",
+      compareLink: "方案對比表",
+      footerAfter: "開始。",
+    },
+    article: {
+      breadcrumb: "深度觀點",
+      publishedLine: (minutes, date) => `閱讀約 ${minutes} 分鐘 · 發佈於 ${date}`,
+      reviewedLine: (minutes, date) => `閱讀約 ${minutes} 分鐘 · 複核於 ${date}`,
+      sourcesHeading: "資料來源",
+      sourcesNoteBefore:
+        "上文每一個數字都出自官方文件。官方來源沒有說明的地方，本站會直接說明，而不是自行填補——參見",
+      editorialLink: "我們如何查證並標註日期",
+      sourcesNoteAfter: "。",
+      checkedOn: (date) => ` — 查證於 ${date}`,
+      handoffBefore: "這是一篇對比，不構成針對你個人情況的建議。可以讀",
+      listSeparator: "、",
+      listLast: "或",
+      handoffBetween: "，也可以用你自己的數字",
+      eligibilityLink: "做一次資格評估",
+      handoffAfter: "。",
+    },
+    category: {
+      oneArticle: "目前有 1 篇文章。",
+      manyArticles: (count) => `共 ${count} 篇文章，由新到舊。`,
+      tracedNote: "每一個數字都可追溯到官方文件，並標註了查證日期。",
+      footerBefore: "只想直接並排看數字，不看論述？可以用",
+      compareLink: "方案對比表",
+      footerBetween: "，或者",
+      calculatorLink: "費用計算器",
+      footerAfter: "。",
+    },
   },
 };

@@ -154,6 +154,13 @@ export type GovernmentExtras = {
     absorbsPrincipalProcessingFee: boolean;
     /** When each part of it falls due. Absent where it is not published. */
     paymentTerms?: string;
+    /**
+     * Who asserts the figures, where no official document publishes them.
+     * Present on MM2H, absent on Sarawak — whose schedule the MTCP guide does
+     * publish. Declared here as well as reached structurally, so that
+     * `localiseProgramme` can overlay `by` for a Chinese page.
+     */
+    attribution?: Attribution;
     note: string;
   };
   /**
@@ -187,6 +194,13 @@ export type Programme = {
   minAge: number | null;
   fixedDeposit: (Money & { withdrawable?: string }) | null;
   incomeRequirement: (Money & { period: "month" | "year" }) | null;
+  /**
+   * What actually happens where `incomeRequirement` is null — see
+   * MM2H_INCOME_PRACTICE. Declared here as well as reached structurally,
+   * because `localiseProgramme` has to be able to overlay it: an article cites
+   * it through a figure token, and a figure token is never translated.
+   */
+  incomePractice?: { note: string; attribution: Attribution };
   propertyPurchaseMin: Money | null;
   /**
    * Qualifies `propertyPurchaseMin` where a state floor overrides it.

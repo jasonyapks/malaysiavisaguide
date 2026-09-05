@@ -19,7 +19,8 @@ export const copy: HomeCopy = {
         </span>
       </>
     ),
-    lead: "Independent, clear and practical guidance on Malaysian visas, residency and long-term living. Every figure here is checked against its official government source.",
+    subheading: "Malaysia Visa & Long-Stay Residency Guide 2026",
+    lead: "Compare PVIP, MM2H, Sarawak MM2H, DE Rantau, Employment Pass and Student Pass — with current requirements, costs and official sources.",
     chips: ["Six programmes covered", "Costs in full", "Reviewed monthly"],
     ctaPrimary: "Explore Visa Options",
     ctaSecondary: "Talk to an Expert",

@@ -20,6 +20,7 @@
  */
 import process from "node:process";
 
+import { prefixedLocales } from "../src/lib/i18n.ts";
 import { getCmsIndex } from "../src/lib/insights.ts";
 import { getNewsIndex } from "../src/lib/news.ts";
 
@@ -41,6 +42,23 @@ for (const d of drafts) {
 }
 
 console.log(`news:     ${news.length} article(s)`);
+
+/**
+ * Translation coverage, reported and never enforced.
+ *
+ * A gap here is the normal state for a few minutes after an article is
+ * published — the reconciler runs on the push that publishes it, one build
+ * behind. Failing on it would block the English article going live over a
+ * Chinese page nobody has yet. `scripts/translate-content.mjs --check` says
+ * which files are outstanding; this says how many.
+ */
+for (const locale of prefixedLocales) {
+  const n = await getNewsIndex(locale);
+  const i = await getCmsIndex(locale);
+  console.log(
+    `${locale}:  ${n.length}/${news.length} news, ${i.length}/${insights.length} insights translated`,
+  );
+}
 
 if (insights.length === 0 || news.length === 0) {
   console.error("\nA section came back empty. That is never intentional here.");

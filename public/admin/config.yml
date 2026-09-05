@@ -65,10 +65,16 @@ backend:
 media_folder: ''
 public_folder: ''
 
-# One locale. The articles are English-only today — the Chinese hosts cover the
-# home page, the six programme guides and /about/, and translating articles is
-# its own job. Left declared so adding `zh-hans` later is a config change rather
-# than a migration.
+# One locale, still — and deliberately, now that the articles ARE translated.
+#
+# The Chinese files are produced by scripts/translate-content.mjs from the
+# English ones and live in a parallel tree (content/zh-hans/news/…), which is
+# not a layout Sveltia's i18n structures describe: they expect the locale folder
+# inside the collection, or a locale suffix on the filename. Rather than bend
+# the file layout to the CMS, the translated trees are declared below as plain
+# collections of their own. That also keeps the relationship honest in the UI —
+# these are derived files a human corrects, not a second language of the same
+# document that saving would try to keep in step.
 i18n:
   structure: single_file
   locales: [en]
@@ -296,3 +302,166 @@ collections:
         hint: >-
           Plain prose under `## ` headings. No links, no live figures — a news
           body is deliberately narrower than an insight body.
+
+  # --- The translated trees -------------------------------------------------
+  #
+  # Written by scripts/translate-content.mjs, not by hand. These collections
+  # exist for ONE job: correcting a term the model got wrong, in the language
+  # Jason can actually read. `create` is off — a Chinese article with no English
+  # source behind it would be deleted again by the next reconciler run.
+  #
+  # ## Set `translationLocked` when you correct one
+  #
+  # The reconciler retranslates a file whenever `sourceHash` no longer matches
+  # the English article's translatable text — which is exactly what makes the
+  # trees stay in sync, and exactly what would throw away a hand correction the
+  # next time the English article is edited. `translationLocked: true` takes the
+  # file out of that loop permanently.
+  #
+  # ## Every field below has to be declared, including the three metadata ones
+  #
+  # An undeclared field is dropped on save. `sourceHash` is the sync mechanism:
+  # a save that silently removed it would make the file look hand-written to the
+  # reconciler and it would be retranslated on the next run, discarding the very
+  # correction that was just made.
+  - name: news_zh
+    label: News · 简体
+    label_singular: Translated news article
+    folder: content/zh-hans/news
+    media_folder: ''
+    public_folder: ''
+    create: false
+    slug: '{{slug}}'
+    summary: '{{headline}}'
+    sortable_fields: [publishedAt, headline]
+    fields:
+      - { name: headline, label: 标题 Headline, widget: string }
+      - { name: dek, label: 导语 Standfirst, widget: text }
+      - name: category
+        label: Category
+        widget: select
+        options:
+          - { label: PVIP, value: pvip }
+          - { label: MM2H, value: mm2h }
+          - { label: Sarawak MM2H, value: sarawak-mm2h }
+          - { label: DE Rantau, value: de-rantau }
+          - { label: Employment Pass, value: employment-pass }
+          - { label: Student Pass, value: student-pass }
+          - { label: Immigration, value: general }
+          - { label: Other countries, value: world }
+        hint: Must match the English article. The category is not translated.
+      - { name: sourceName, label: Source name, widget: string }
+      - { name: sourceUrl, label: Source URL, widget: string }
+      - { name: publishedAt, label: Published at, widget: datetime, picker_utc: true }
+      - name: updatedAt
+        label: Updated at
+        widget: datetime
+        required: false
+        picker_utc: true
+      - { name: readingMinutes, label: Reading minutes, widget: number, value_type: int, min: 1 }
+      - name: keyPoints
+        label: 重点摘要 Key points
+        widget: list
+        required: false
+        field: { name: point, label: Point, widget: string }
+      - name: whatItMeans
+        label: 这意味着什么 What it means
+        widget: list
+        required: false
+        field: { name: point, label: Point, widget: string }
+      - name: sourceExcerpt
+        label: 引文 Source excerpt
+        widget: text
+        required: false
+        hint: A translated quotation. The page labels it as one.
+      - name: body
+        label: 正文 Body
+        widget: markdown
+        modes: [raw]
+        hint: Plain prose under `## ` headings, exactly as the English file.
+      - name: translationLocked
+        label: Locked — never retranslate
+        widget: boolean
+        required: false
+        default: false
+        hint: >-
+          Turn this on after correcting anything here, or the next time the
+          English article changes this file is rewritten from scratch.
+      - name: sourceHash
+        label: Source hash
+        widget: string
+        required: false
+        hint: Written by the reconciler. Do not edit — it is how sync is decided.
+      - { name: translatedAt, label: Translated at, widget: string, required: false }
+      - { name: translationModel, label: Model, widget: string, required: false }
+
+  - name: insights_zh
+    label: Insights · 简体
+    label_singular: Translated insight article
+    folder: content/zh-hans/insights
+    path: '{{fields.category}}/{{slug}}'
+    media_folder: ''
+    public_folder: ''
+    create: false
+    slug: '{{slug}}'
+    summary: '{{title}}'
+    sortable_fields: [published, reviewed, title]
+    fields:
+      - name: category
+        label: Category
+        widget: select
+        options:
+          - { label: Comparisons, value: comparisons }
+          - { label: By nationality, value: by-nationality }
+          - { label: Expat living, value: expat-living }
+          - { label: Perspective, value: perspective }
+          - { label: How to, value: how-to }
+        hint: The folder, and the URL. Must match the English article.
+      - { name: title, label: 标题 Title, widget: string }
+      - { name: dek, label: 导语 Standfirst, widget: text }
+      - { name: published, label: Published, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+      - { name: reviewed, label: Last reviewed, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+      - { name: readingMinutes, label: Reading minutes, widget: number, value_type: int, min: 1 }
+      - { name: draft, label: Draft, widget: boolean, required: false, default: false }
+      - name: relatedGuides
+        label: 相关指南 Related guides
+        widget: list
+        fields:
+          - { name: path, label: Path, widget: string }
+          - { name: title, label: Link text, widget: string }
+      - name: faq
+        label: 常见问题 FAQ
+        widget: list
+        required: false
+        fields:
+          - { name: q, label: Question, widget: string }
+          - { name: a, label: Answer, widget: text }
+      - name: sources
+        label: Sources
+        widget: list
+        required: false
+        hint: Not translated — the label has to match the document it links to.
+        fields:
+          - { name: label, label: Label, widget: string }
+          - { name: url, label: URL, widget: string }
+          - { name: verified, label: Verified, widget: string }
+      - name: body
+        label: 正文 Body
+        widget: markdown
+        modes: [raw]
+        hint: >-
+          The same block syntax as the English article. `{{programme:field:fmt}}`
+          figures were never translated — they resolve from programmes.ts at
+          build — so leave them exactly as they are.
+      - name: translationLocked
+        label: Locked — never retranslate
+        widget: boolean
+        required: false
+        default: false
+      - name: sourceHash
+        label: Source hash
+        widget: string
+        required: false
+        hint: Written by the reconciler. Do not edit — it is how sync is decided.
+      - { name: translatedAt, label: Translated at, widget: string, required: false }
+      - { name: translationModel, label: Model, widget: string, required: false }

@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { InsightCard, InsightStrip } from "@/components/InsightLayout";
 import {
-  CATEGORY_BLURB,
-  CATEGORY_TITLE,
-  categoryPath,
-  insightPath,
-  type InsightCategory,
-} from "@/lib/data/insights";
+  InsightsCategory,
+  insightsCategoryMetadata,
+} from "@/content/insights/InsightsCategory";
+import { type InsightCategory } from "@/lib/data/insights";
 import {
   cmsOnlyCategories,
   insightsByCategory,
   liveInsightCategories,
 } from "@/lib/insights";
-import { site } from "@/lib/site";
 
 /**
  * /insights/<category>/ for every category that has no literal folder.
@@ -34,7 +29,7 @@ import { site } from "@/lib/site";
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  const categories = await cmsOnlyCategories();
+  const categories = await cmsOnlyCategories("en");
 
   // Same trap as the article route, same preemption: `output: "export"` refuses
   // a dynamic route with zero paths and blames a missing generateStaticParams.
@@ -62,20 +57,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { category } = await params;
   const c = category as InsightCategory;
-  const title = CATEGORY_TITLE[c];
-  if (!title) return {};
-
-  return {
-    title,
-    description: CATEGORY_BLURB[c],
-    alternates: { canonical: categoryPath(c) },
-    openGraph: {
-      type: "website",
-      title: `${title} — ${site.name}`,
-      description: CATEGORY_BLURB[c],
-      url: categoryPath(c),
-    },
-  };
+  return insightsCategoryMetadata(c, "en");
 }
 
 export default async function Page({
@@ -85,74 +67,17 @@ export default async function Page({
 }) {
   const { category } = await params;
   const c = category as InsightCategory;
-  const articles = await insightsByCategory(c);
-  const categories = await liveInsightCategories();
+  const [articles, categories] = await Promise.all([
+    insightsByCategory(c, "en"),
+    liveInsightCategories("en"),
+  ]);
 
   return (
-    <div className="space-y-12">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            name: CATEGORY_TITLE[c],
-            itemListElement: articles.map((a, i) => ({
-              "@type": "ListItem",
-              position: i + 1,
-              url: `${site.url}${insightPath(a)}`,
-              name: a.title,
-            })),
-          }),
-        }}
-      />
-
-      <nav aria-label="Breadcrumb" className="text-caption text-ink-muted">
-        <Link href="/insights/" className="text-forest-700 underline">
-          Insights
-        </Link>
-        <span aria-hidden> › </span>
-        <span>{CATEGORY_TITLE[c]}</span>
-      </nav>
-
-      <header className="space-y-6">
-        <h1 className="text-h1 font-semibold">{CATEGORY_TITLE[c]}</h1>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
-          {CATEGORY_BLURB[c]}
-        </p>
-        <p className="text-body-sm text-ink-muted">
-          {articles.length === 1
-            ? "One article so far."
-            : `${articles.length} articles, newest first.`}{" "}
-          Every figure is traced to an official government document and carries
-          the date it was checked.
-        </p>
-      </header>
-
-      <InsightStrip categories={categories} current={c} />
-
-      <ul className="space-y-6">
-        {articles.map((a) => (
-          <li key={a.slug}>
-            <InsightCard article={a} showCategory={false} />
-          </li>
-        ))}
-      </ul>
-
-      <p className="rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
-        Prefer the numbers side by side without the argument? Use{" "}
-        <Link href="/compare/" className="font-semibold underline">
-          the comparison table
-        </Link>{" "}
-        or{" "}
-        <Link
-          href="/tools/cost-calculator/"
-          className="font-semibold underline"
-        >
-          the cost calculator
-        </Link>
-        .
-      </p>
-    </div>
+    <InsightsCategory
+      category={c}
+      articles={articles}
+      categories={categories}
+      locale="en"
+    />
   );
 }

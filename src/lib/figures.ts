@@ -8,6 +8,8 @@ import {
 import type { InsightCategoryId, ProgrammeId } from "@shared/blocks";
 import type { InsightCategory } from "@/lib/data/insights";
 import { getProgramme, type Programme, type ProgrammeSlug } from "@/lib/data/programmes";
+import { localiseProgramme } from "@/lib/programme-locale";
+import type { Locale } from "@/lib/i18n";
 import { money, moneyPer, reviewDate, years } from "@/lib/format";
 
 /**
@@ -57,8 +59,21 @@ void _shapeHolds;
  * reaching for them. The point of routing through format.ts at all is that
  * there stays exactly one place that decides an amount is written `RM1,000,000`
  * and not `MYR 1,000,000`.
+ *
+ * Bound per locale rather than declared once, because three of the four write
+ * words around the number — "20 years" against "20 年", "28 July 2026" against
+ * "2026年7月28日". `money` is deliberately not among them: the amount itself is
+ * never localised, because the reader is checking it against a bank form that
+ * says `RM1,000,000`. shared/ stays locale-free; the closure is the seam.
  */
-const FNS: FormatFns = { money, moneyPer, years, reviewDate };
+function fnsFor(locale: Locale): FormatFns {
+  return {
+    money,
+    moneyPer: (m) => moneyPer(m, locale),
+    years: (n) => years(n, locale),
+    reviewDate: (iso) => reviewDate(iso, locale),
+  };
+}
 
 export interface FigureRefLike {
   programme: string;
@@ -73,9 +88,23 @@ export interface FigureRefLike {
  * and it is the whole value of the error. "Unknown figure field" tells you
  * nothing; "in insight "mm2h-vs-pvip" block 12" tells you which paragraph to
  * open.
+ *
+ * `locale` matters more than it looks. A figure token is the one span of an
+ * article the translator never sees — the whole point of `{{...}}` is that the
+ * model cannot touch a number — so if this function does not localise, the
+ * untranslatable becomes the untranslated, and a Chinese paragraph breaks into
+ * an English sentence mid-flow. Some of these fields are prose:
+ * `incomePractice.note` is a paragraph. So the record is run through
+ * `localiseProgramme` before the field is read, and the words around the number
+ * are written by this locale's formatters.
  */
-export function resolveFigure(ref: FigureRefLike, where: string): string {
-  const programme = getProgramme(ref.programme as ProgrammeSlug);
+export function resolveFigure(
+  ref: FigureRefLike,
+  where: string,
+  locale: Locale = "en",
+): string {
+  const source = getProgramme(ref.programme as ProgrammeSlug);
+  const programme = source ? localiseProgramme(source, locale) : source;
   if (!programme) {
     throw new Error(
       fail(
@@ -108,7 +137,7 @@ export function resolveFigure(ref: FigureRefLike, where: string): string {
     );
   }
 
-  const text = formatFigure(value, ref.fmt, FNS);
+  const text = formatFigure(value, ref.fmt, fnsFor(locale));
   if (text === null) {
     throw new Error(
       fail(

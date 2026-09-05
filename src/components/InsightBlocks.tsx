@@ -8,6 +8,8 @@ import { SupersededNotice } from "@/components/SupersededNotice";
 import { TierTable } from "@/components/TierTable";
 import { articleImage } from "@/lib/articleImages";
 import { getProgramme, type ProgrammeSlug } from "@/lib/data/programmes";
+import { localiseProgramme } from "@/lib/programme-locale";
+import type { Locale } from "@/lib/i18n";
 import { resolveFigure } from "@/lib/figures";
 
 /**
@@ -39,6 +41,7 @@ export function InlineNodes({
   nodes,
   where,
   onNavy = false,
+  locale = "en",
 }: {
   nodes: Inline[];
   where: string;
@@ -49,11 +52,22 @@ export function InlineNodes({
    * which block it is in; the document does not.
    */
   onNavy?: boolean;
+  /**
+   * Only `fig` nodes read it, and they are the reason it has to be here: a
+   * figure token is the one span the translator never sees. See resolveFigure.
+   */
+  locale?: Locale;
 }) {
   return (
     <>
       {nodes.map((n, i) => (
-        <InlineNode key={i} node={n} where={where} onNavy={onNavy} />
+        <InlineNode
+          key={i}
+          node={n}
+          where={where}
+          onNavy={onNavy}
+          locale={locale}
+        />
       ))}
     </>
   );
@@ -63,10 +77,12 @@ function InlineNode({
   node,
   where,
   onNavy,
+  locale,
 }: {
   node: Inline;
   where: string;
   onNavy: boolean;
+  locale: Locale;
 }) {
   switch (node.t) {
     case "text":
@@ -74,13 +90,13 @@ function InlineNode({
     case "strong":
       return (
         <strong>
-          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} />
+          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} locale={locale} />
         </strong>
       );
     case "em":
       return (
         <em>
-          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} />
+          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} locale={locale} />
         </em>
       );
     case "note":
@@ -89,7 +105,7 @@ function InlineNode({
       // to <em> so it reads the same everywhere and can later be linted for.
       return (
         <span className="text-caption text-ink-muted">
-          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} />
+          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} locale={locale} />
         </span>
       );
     case "link": {
@@ -107,18 +123,18 @@ function InlineNode({
           rel="nofollow noopener"
           target="_blank"
         >
-          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} />
+          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} locale={locale} />
         </a>
       ) : (
         <Link href={node.href} className={cls}>
-          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} />
+          <InlineNodes nodes={node.c} where={where} onNavy={onNavy} locale={locale} />
         </Link>
       );
     }
     case "fig":
       // Throws, and fails the build, when it cannot be resolved. See
       // src/lib/figures.ts for why an empty span is the worse outcome.
-      return <>{resolveFigure(node, where)}</>;
+      return <>{resolveFigure(node, where, locale)}</>;
   }
 }
 
@@ -127,15 +143,30 @@ function InlineNode({
 export function InsightBlocks({
   blocks,
   docPath,
+  locale = "en",
 }: {
   blocks: Block[];
   /** `<category>/<slug>` — the article's identity in an error message. */
   docPath: string;
+  /**
+   * Defaults to English. The three programme components below read their own
+   * rows out of `programmes.ts` in this locale — a figure block on a Chinese
+   * page must print Chinese labels around the same number, not English ones,
+   * and that number is never translated because it never reaches a translator:
+   * see the header of scripts/translate-content.mjs.
+   */
+  locale?: Locale;
 }) {
   return (
     <>
       {blocks.map((b, i) => (
-        <BlockNode key={i} block={b} where={at(docPath, i)} index={i} />
+        <BlockNode
+          key={i}
+          block={b}
+          where={at(docPath, i)}
+          index={i}
+          locale={locale}
+        />
       ))}
     </>
   );
@@ -145,17 +176,19 @@ function BlockNode({
   block,
   where,
   index,
+  locale,
 }: {
   block: Block;
   where: string;
   index: number;
+  locale: Locale;
 }) {
   switch (block.t) {
     case "heading": {
       const Heading = block.level === 2 ? H2 : H3;
       return (
         <Heading>
-          <InlineNodes nodes={block.c} where={where} />
+          <InlineNodes nodes={block.c} where={where} locale={locale} />
         </Heading>
       );
     }
@@ -163,14 +196,14 @@ function BlockNode({
     case "paragraph":
       return (
         <p>
-          <InlineNodes nodes={block.c} where={where} />
+          <InlineNodes nodes={block.c} where={where} locale={locale} />
         </p>
       );
 
     case "pullquote":
       return (
         <Pullquote>
-          <InlineNodes nodes={block.c} where={where} />
+          <InlineNodes nodes={block.c} where={where} locale={locale} />
         </Pullquote>
       );
 
@@ -182,7 +215,7 @@ function BlockNode({
         >
           {block.items.map((item, i) => (
             <li key={i}>
-              <InlineNodes nodes={item} where={`${where} item ${i}`} />
+              <InlineNodes nodes={item} where={`${where} item ${i}`} locale={locale} />
             </li>
           ))}
         </List>
@@ -191,10 +224,10 @@ function BlockNode({
 
     case "table": {
       const rows = block.rows.map((r) => ({
-        label: <InlineNodes nodes={r.label} where={where} />,
+        label: <InlineNodes nodes={r.label} where={where} locale={locale} />,
         cells: r.cells.map(
           (c): Cell => ({
-            value: <InlineNodes nodes={c.value} where={where} />,
+            value: <InlineNodes nodes={c.value} where={where} locale={locale} />,
             note: c.note,
           }),
         ),
@@ -205,11 +238,12 @@ function BlockNode({
           head={block.head}
           rows={rows}
           notes={(block.notes ?? []).map((n, i) => (
-            <InlineNodes key={i} nodes={n} where={`${where} note ${i + 1}`} />
+            <InlineNodes key={i} nodes={n} where={`${where} note ${i + 1}`} locale={locale} />
           ))}
           // Unique per table on the page, which is what the footnote anchors
           // need. The block index is the only thing guaranteed to be unique.
           idPrefix={`b${index}`}
+          locale={locale}
         />
       );
     }
@@ -254,7 +288,7 @@ function BlockNode({
           <div className="mt-2 space-y-3 text-body-sm leading-relaxed">
             {block.body.map((p, i) => (
               <p key={i}>
-                <InlineNodes nodes={p} where={`${where} paragraph ${i}`} />
+                <InlineNodes nodes={p} where={`${where} paragraph ${i}`} locale={locale} />
               </p>
             ))}
           </div>
@@ -262,17 +296,25 @@ function BlockNode({
       );
 
     case "programmeNotice":
-      return <SupersededNotice programme={programme(block.programme, where)} />;
+      return (
+        <SupersededNotice
+          programme={programme(block.programme, where, locale)}
+          locale={locale}
+        />
+      );
 
     case "keyFacts":
-      return <KeyFacts programme={programme(block.programme, where)} locale="en" />;
+      return (
+        <KeyFacts programme={programme(block.programme, where, locale)} locale={locale} />
+      );
 
     case "tierTable":
       return (
         <TierTable
-          tiers={block.programmes.map((p) => programme(p, where))}
+          tiers={block.programmes.map((p) => programme(p, where, locale))}
           caption={block.caption}
           variant={block.variant}
+          locale={locale}
         />
       );
 
@@ -280,7 +322,7 @@ function BlockNode({
       // Never a full stop. The article answers a question; this asks the next.
       return (
         <p className="rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
-          <InlineNodes nodes={block.c} where={where} onNavy />
+          <InlineNodes nodes={block.c} where={where} onNavy locale={locale} />
         </p>
       );
   }
@@ -293,8 +335,20 @@ function BlockNode({
  * means a programme was deleted from programmes.ts while an article still cited
  * it — which is exactly the moment somebody needs to be told.
  */
-function programme(id: string, where: string) {
-  const p = getProgramme(id as ProgrammeSlug);
+/**
+ * The programme record a block renders, in this page's language.
+ *
+ * `TierTable`, `KeyFacts` and `SupersededNotice` all state that their `tiers` /
+ * `programme` arrive already localised — `localiseProgramme` is the single seam
+ * where programme prose becomes Chinese, and each of them declines to add a
+ * second one. This caller has to hold up its end. Without it the components
+ * translate their own chrome from the UI dictionary and render English data
+ * beside it, which is worse than either language on its own: a Chinese table
+ * whose footnotes are English paragraphs.
+ */
+function programme(id: string, where: string, locale: Locale) {
+  const raw = getProgramme(id as ProgrammeSlug);
+  const p = raw ? localiseProgramme(raw, locale) : raw;
   if (!p) {
     throw new Error(
       `[insights] ${where}: no programme "${id}" in src/lib/data/programmes.ts. ` +

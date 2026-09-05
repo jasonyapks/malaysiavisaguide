@@ -54,8 +54,27 @@ export type ProgrammeProse = {
   renewalLimit?: string;
   withdrawable?: string;
   propertyStateFloorNote?: string;
-  /** The tier table's agency-fee footnote, which is three prose fields. */
-  agencyFee?: { note?: string; includes?: string[]; paymentTerms?: string };
+  /** The attributed caveat that travels with MM2H's absent income figure.
+   *  `incomeRequirement` is null, which states there is no published number and
+   *  cannot state what happens at the counter; this is the sentence that does,
+   *  and an article reaches it through the figure token
+   *  `{{mm2h-silver:incomePractice.note:text}}`. A figure token is the one span
+   *  a translator never sees, so without an overlay it renders an English
+   *  paragraph in the middle of a Chinese one. `attributionAsAt` is not here:
+   *  it is an ISO date that `resolveFigure` formats through
+   *  `reviewDate(_, locale)`. */
+  incomePractice?: { note?: string; attributionBy?: string };
+  /** The tier table's agency-fee footnote, which is four prose fields.
+   *  `attributionBy` is who asserts the figure, rendered verbatim beside it —
+   *  MM2H's agency fee is government-set but unpublished, so the footnote
+   *  always names its source. `asAt` stays out: it is an ISO date, formatted
+   *  through `reviewDate(_, locale)`. */
+  agencyFee?: {
+    note?: string;
+    includes?: string[];
+    paymentTerms?: string;
+    attributionBy?: string;
+  };
   /** The cost calculator's line-item notes, which sit on `governmentExtras`
    *  rather than on the programme itself. They render under each fee row in
    *  the estimate, so leaving them out puts English paragraphs inside an
@@ -64,6 +83,20 @@ export type ProgrammeProse = {
   visaFeeNote?: string;
   securityBondNote?: string;
   dependants?: string[];
+};
+
+/**
+ * One Chinese copy for the three MM2H tiers, because there is one English
+ * copy: `incomePractice` sits on `MM2H_COMMON` in programmes.ts and every tier
+ * shares the object. Three transcriptions here would be three chances for the
+ * Silver table and the Gold table to describe the same practice differently.
+ */
+/** Same reason as MM2H_INCOME_PRACTICE_ZH: one English attribution, shared. */
+const MM2H_AGENCY_FEE_BY_ZH = "MYPVIP，依據政府 MM2H 收費表";
+
+const MM2H_INCOME_PRACTICE_ZH = {
+  note: "官方沒有公佈收入門檻，實務上也不設。但這不等於什麼都不用帶：申請人仍然要能證明自己可以在馬來西亞維持生活，所以銀行流水或收入證明還是值得附上，即使沒有一個必須達到的數字。",
+  attributionBy: "MYPVIP 實務操作",
 };
 
 export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
@@ -118,9 +151,11 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
     minStayShort: "90 天（25–49 歲）",
     withdrawable:
       "在房產購置完成之後，最多可提取本金的 50%；在白銀、黃金和白金級，這項購置發生在申請獲批之後。這筆款項可以用於該筆房產購置本身，也可以用於在馬來西亞的教育、醫療和旅遊支出。",
+    incomePractice: MM2H_INCOME_PRACTICE_ZH,
     propertyStateFloorNote:
       "這是全國最低標準。買房所在的州屬會為外國買家另設自己的門檻，通常更高 —— 雪蘭莪 RM2,000,000，吉隆坡 RM1,000,000 —— 真正約束這筆交易的是州屬的那一個。",
     agencyFee: {
+      attributionBy: MM2H_AGENCY_FEE_BY_ZH,
       note: "由政府固定，不由代理機構訂定 —— 這裡沒有議價空間；報價高於這個數字的，是報錯了，而不是比較貴。",
       includes: [
         "主申請人的手續費",
@@ -153,9 +188,11 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
     minStayShort: "90 天（25–49 歲）",
     withdrawable:
       "在房產購置完成之後，最多可提取本金的 50%；在白銀、黃金和白金級，這項購置發生在申請獲批之後。這筆款項可以用於該筆房產購置本身，也可以用於在馬來西亞的教育、醫療和旅遊支出。",
+    incomePractice: MM2H_INCOME_PRACTICE_ZH,
     propertyStateFloorNote:
       "這是全國最低標準。買房所在的州屬會為外國買家另設自己的門檻，通常更高 —— 雪蘭莪 RM2,000,000，吉隆坡 RM1,000,000 —— 真正約束這筆交易的是州屬的那一個。",
     agencyFee: {
+      attributionBy: MM2H_AGENCY_FEE_BY_ZH,
       note: "由政府固定，不由代理機構訂定 —— 這裡沒有議價空間；報價高於這個數字的，是報錯了，而不是比較貴。",
       includes: [
         "主申請人的手續費",
@@ -188,9 +225,11 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
     minStayShort: "90 天（25–49 歲）",
     withdrawable:
       "在房產購置完成之後，最多可提取本金的 50%；在白銀、黃金和白金級，這項購置發生在申請獲批之後。這筆款項可以用於該筆房產購置本身，也可以用於在馬來西亞的教育、醫療和旅遊支出。",
+    incomePractice: MM2H_INCOME_PRACTICE_ZH,
     propertyStateFloorNote:
       "這是全國最低標準。買房所在的州屬會為外國買家另設自己的門檻，通常更高 —— 雪蘭莪 RM2,000,000，吉隆坡 RM1,000,000 —— 真正約束這筆交易的是州屬的那一個。",
     agencyFee: {
+      attributionBy: MM2H_AGENCY_FEE_BY_ZH,
       note: "由政府固定，不由代理機構訂定 —— 這裡沒有議價空間；報價高於這個數字的，是報錯了，而不是比較貴。",
       includes: [
         "主申請人的手續費",

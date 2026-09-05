@@ -1,0 +1,80 @@
+# Keep the translated content trees in sync with the English one.
+#
+# WHY THIS RUNS ON A PUSH RATHER THAN AT PUBLISH TIME
+# Two different producers write content into this repo: the mvg-news Worker
+# commits content/news/<slug>.md when an article is approved, and Sveltia CMS
+# commits content/insights/<cat>/<slug>.md when Jason saves one. A translation
+# step attached to either would cover half the content. The commit is what they
+# have in common, so the commit is the trigger — and a file edited by hand is
+# covered too, which nothing else would have been.
+#
+# THE CHINESE ARTICLE LANDS ONE BUILD BEHIND THE ENGLISH ONE
+# The push publishes English (Pages builds from the same commit); this workflow
+# then translates, commits, and that second commit builds again. Roughly three
+# minutes apart. That is the accepted cost of covering both producers with one
+# mechanism — see the plan in .claude/plans/ and the header of
+# scripts/translate-content.mjs.
+name: Translate content
+
+on:
+  push:
+    branches: [main]
+    paths:
+      # English only. content/zh-hans/** is deliberately NOT here: this workflow
+      # writes those files, and matching them would make it retrigger itself.
+      - "content/news/*.md"
+      - "content/insights/*/*.md"
+      - "scripts/translate-content.mjs"
+  # A full pass on demand — after a prompt change, or to pick up a locale.
+  workflow_dispatch:
+
+# Two articles approved a minute apart must queue, not race: both runs would
+# otherwise read the same tree and the second would fail to push.
+concurrency:
+  group: translate-content
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    permissions:
+      # The only write this job makes is the translation commit.
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Translate what is missing or stale
+        env:
+          # Workers AI, on the account this project already bills to. The token
+          # needs Workers AI: Read and nothing else.
+          #
+          # Gemini is the alternative and writes better Chinese, but its free
+          # tier allows 20 requests per day per model and one backfill is around
+          # fifty — to use it, set TRANSLATE_PROVIDER=gemini and GEMINI_API_KEY
+          # on a paid key.
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          TRANSLATE_PROVIDER: cloudflare
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/translate-content.mjs
+
+      - name: Commit the result
+        run: |
+          set -euo pipefail
+          # content/zh-hant/ is gitignored and regenerated at build time, so
+          # only the Simplified tree is ever committed here.
+          if git diff --quiet -- content/zh-hans; then
+            echo "Nothing to translate — no commit."
+            exit 0
+          fi
+          git config user.name "mvg-translate[bot]"
+          git config user.email "noreply@malaysiavisaguide.com"
+          git add content/zh-hans
+          COUNT=$(git diff --cached --name-only | wc -l | tr -d ' ')
+          git commit -m "content: translate ${COUNT} file(s) into Chinese"
+          git push
