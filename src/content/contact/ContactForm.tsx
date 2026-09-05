@@ -123,12 +123,21 @@ export function ContactForm({ locale }: { locale: Locale }) {
         aria-hidden
       />
 
+      {/* The length caps below bound honest input; they are not a security
+          control and should not be mistaken for one. This form POSTs straight
+          from the browser to Web3Forms with a publishable access key, so anyone
+          determined can skip the DOM entirely and post whatever they like. What
+          these do is stop a paste accident becoming a 2 MB submission, and give
+          the reader a limit their browser enforces while they type. The real
+          bot control has to run where we do not: on Web3Forms' side, or behind
+          a proxy of our own. */}
       <Field label={copy.fields.name} htmlFor="name">
         <input
           id="name"
           name="name"
           type="text"
           required
+          maxLength={100}
           autoComplete="name"
           className={inputClass}
         />
@@ -140,6 +149,8 @@ export function ContactForm({ locale }: { locale: Locale }) {
           name="email"
           type="email"
           required
+          // 254 is the maximum length of an address that can be delivered.
+          maxLength={254}
           autoComplete="email"
           className={inputClass}
         />
@@ -166,6 +177,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
           id="message"
           name="message"
           required
+          maxLength={5000}
           rows={6}
           className={`${inputClass} resize-y`}
         />
