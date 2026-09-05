@@ -106,6 +106,12 @@ export async function HomePage({
               {copy.hero.heading}
             </h1>
 
+            {copy.hero.subheading && (
+              <h2 className="text-h3 font-semibold text-forest-800">
+                {copy.hero.subheading}
+              </h2>
+            )}
+
             <p className="max-w-xl text-ink-muted">{copy.hero.lead}</p>
 
             <ul className="flex flex-wrap gap-2.5">
