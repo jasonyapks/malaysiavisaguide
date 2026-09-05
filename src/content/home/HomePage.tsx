@@ -92,7 +92,39 @@ export async function HomePage({
           className="compass-arc [--arc-spin:20deg] -right-56 top-10 size-[42rem] opacity-70"
         />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pt-20 pb-14 md:grid-cols-[1.05fr_0.95fr] md:pt-28 md:pb-16">
+        {/* The brand key visual as the masthead — full content width, above the
+            headline.
+
+            The ratio is load-bearing. The 16:9 version of this graphic rendered
+            621px tall at the 1104px content width and filled a 698px viewport
+            on its own, pushing the h1, both CTAs and the quiz card below the
+            fold; this 1584×672 cut is 2.36:1 and lands around 470px, which
+            leaves the headline on the first screen. Replacing it with anything
+            squarer puts the fold problem straight back.
+
+            aspect-[1584/672] rather than aspect-[21/9]: the file is 2.357 and
+            21/9 is 2.333, and object-cover would shave the difference off the
+            edges — where this composition keeps its arc terminus and its
+            skyline.
+
+            Width is the max-w-6xl content column, NOT an edge-to-edge bleed,
+            which would put it back over 600px tall on a wide monitor.
+
+            `priority` is right here and was explicitly wrong in the freshness
+            band five viewports down: at the top of the hero this is the LCP
+            candidate, so preloading it is the point. */}
+        <div className="relative mx-auto max-w-6xl px-6 pt-12 md:pt-16">
+          <Figure
+            image={images.home}
+            aspect="aspect-[1584/672]"
+            rounded="rounded-card"
+            priority
+            sizes="(min-width: 1200px) 1104px, (min-width: 768px) 92vw, 100vw"
+            className="shadow-[0_30px_70px_-35px_rgb(0_20_60/0.45)]"
+          />
+        </div>
+
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pt-14 pb-16 md:grid-cols-[1.05fr_0.95fr] md:pt-16 md:pb-20">
           <div className="rise space-y-7">
             <p className="eyebrow flex items-center gap-2">
               <span
@@ -217,32 +249,6 @@ export async function HomePage({
           </div>
         </div>
 
-        {/* The brand key visual, full content width, closing the hero.
-
-            It sits BELOW the copy, not above it, and that is measured rather
-            than taste: the graphic is 16:9, so at the 1104px content width it
-            renders 621px tall. Above the headline it filled a 698px viewport
-            on its own and pushed the h1, both CTAs and the quiz card off the
-            first screen. A banner that hides the entire value proposition is
-            not a hero, so the reader gets the promise and the buttons first
-            and the brand statement as the full-width close.
-
-            Width is the max-w-6xl content column, NOT an edge-to-edge bleed —
-            bleeding a 16:9 image makes it ~1400px tall on a wide monitor.
-
-            No `priority`: it is below the copy and no longer the LCP
-            candidate, so preloading it would compete with the text paint the
-            visitor is actually waiting on — the same reasoning that kept it
-            lazy in the freshness band. */}
-        <div className="relative mx-auto max-w-6xl px-6 pb-20 md:pb-24">
-          <Figure
-            image={images.home}
-            aspect="aspect-video"
-            rounded="rounded-card"
-            sizes="(min-width: 1200px) 1104px, (min-width: 768px) 92vw, 100vw"
-            className="shadow-[0_30px_70px_-35px_rgb(0_20_60/0.45)]"
-          />
-        </div>
       </section>
 
       {/* Section heading + framing paragraph, split as the reference splits it. */}
