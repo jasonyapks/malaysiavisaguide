@@ -12,10 +12,14 @@ export const copy: EditorialPolicyCopy = {
 
   standfirst: (
     <>
-      Every figure on this site is traced to an official source, reviewed by a
-      named person, and stamped with the date it was last checked. This page
-      explains how that works, and what happens when the rules change — which,
-      for Malaysian visas, they do often.
+      Every figure on this site is traced to a named source, reviewed by a named
+      person, and stamped with the date it was last checked. Most come straight
+      from an official document. A few cannot: the government&apos;s own
+      published guide sometimes lags the rule being applied at the counter, and
+      where that happens the figure is labelled as what it is rather than
+      quietly mixed in with the rest. This page explains how that works, and
+      what happens when the rules change — which, for Malaysian visas, they do
+      often.
     </>
   ),
 
@@ -37,13 +41,36 @@ export const copy: EditorialPolicyCopy = {
           each other.
         </p>
         <p>
-          The rule behind that file is simple:{" "}
-          <strong>
-            nothing renders a number that didn&apos;t come with an official
-            source
-          </strong>
-          . If a figure can&apos;t be confirmed against a government page, it is
-          flagged for review rather than published.
+          The rule behind that file is not that every number has a current
+          official document behind it. It is that{" "}
+          <strong>no number is unattributed</strong>. Each figure carries one of
+          three standings, and the page tells you which one you are reading:
+        </p>
+        <ul className="ml-5 list-disc space-y-2">
+          <li>
+            <strong>Officially published</strong> — a current government
+            document states the figure, and it is linked. This is where most of
+            the site sits.
+          </li>
+          <li>
+            <strong>Announced, document pending</strong> — the authority has
+            changed the rule but its published guide still shows the old terms.
+            The page carries a dated notice naming what changed and whose word
+            it rests on, and says plainly when the figures shown are still the
+            superseded ones.
+          </li>
+          <li>
+            <strong>Current practice</strong> — no official document publishes
+            the figure either way, and it rests on a named practitioner&apos;s
+            word, dated. The MM2H agency-fee schedule is the clearest example:
+            MOTAC&apos;s December 2025 guide does not publish it, but it is
+            fixed, and a reader comparing quotes without it is defenceless.
+          </li>
+        </ul>
+        <p>
+          A figure that fits none of the three is not published. It goes on an
+          open list of questions rather than being guessed at, because a
+          confident wrong number is the one thing this site cannot afford.
         </p>
       </>
     ),

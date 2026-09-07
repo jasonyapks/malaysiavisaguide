@@ -113,7 +113,7 @@ export async function HomePage({
             `priority` is right here and was explicitly wrong in the freshness
             band five viewports down: at the top of the hero this is the LCP
             candidate, so preloading it is the point. */}
-        <div className="relative mx-auto max-w-6xl px-6 pt-12 md:pt-16">
+        <div className="relative mx-auto max-w-6xl px-6 pt-6 md:pt-8">
           <Figure
             image={images.home}
             aspect="aspect-[1584/672]"
@@ -124,7 +124,7 @@ export async function HomePage({
           />
         </div>
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 pt-14 pb-16 md:grid-cols-[1.05fr_0.95fr] md:pt-16 md:pb-20">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-6 pt-8 pb-14 md:grid-cols-[1.05fr_0.95fr] md:pt-10 md:pb-16">
           <div className="rise space-y-7">
             <p className="eyebrow flex items-center gap-2">
               <span
