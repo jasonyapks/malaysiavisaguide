@@ -1,6 +1,6 @@
 ---
-title: "How to apply for MM2H 2026: the full 4-tier process (SEZ, Silver, Gold, Platinum)"
-dek: "Four tiers, and the deposit is the least interesting difference between them. What each one actually requires, which steps can only be done inside Malaysia, and the two property conditions that bind after the visa is already in your passport."
+title: "How to apply for MM2H 2026: Silver, Gold, Platinum and the SEZ/SFZ zone routes"
+dek: "Three main tiers plus two zone routes, and the deposit is the least interesting difference between them. What each one actually requires, which steps can only be done inside Malaysia, and the two property conditions that bind after the visa is already in your passport."
 published: "2026-08-03"
 reviewed: "2026-08-03"
 readingMinutes: 8
@@ -12,11 +12,11 @@ relatedGuides:
     title: "the PVIP guide"
 faq:
   - q: "Do I have to buy property on MM2H, or is it optional?"
-    a: "It is compulsory on every tier, including the SEZ and SFZ tiers. The purchase must complete within one year of your visa being endorsed, and you must hold the property for ten years. Selling before ten years is allowed only if you are moving up to a higher-value property and immigration has authorised it in advance. Stated by MYPVIP practice, as at 3 August 2026."
+    a: "It is compulsory on every tier, including the SEZ and SFZ zone routes. The purchase must complete within one year of your visa being endorsed, and you must hold the property for ten years. Selling before ten years is allowed only if you are moving up to a higher-value property and immigration has authorised it in advance. Stated by MYPVIP practice, as at 3 August 2026."
   - q: "Can I use the fixed deposit to pay for the property?"
     a: "No. Up to 50% of the deposit becomes withdrawable once the property purchase completes, which means the money is released after the purchase rather than in time to fund it. Permitted uses of that withdrawal are education, medical costs and tourism activities in Malaysia. Treat the deposit and the purchase price as two separate sums when you budget."
   - q: "Which MM2H tier lets me work in Malaysia?"
-    a: "Only Platinum. MOTAC's guide marks both business or investment activity and career opportunities as permissible on Platinum alone, and it is also the only tier that allows you to sponsor a foreign domestic helper. Silver, Gold and the SEZ and SFZ tiers do not permit local employment or running a Malaysian business."
+    a: "Only Platinum. MOTAC's guide marks both business or investment activity and career opportunities as permissible on Platinum alone, and it is also the only tier that allows you to sponsor a foreign domestic helper. Silver, Gold and the SEZ and SFZ zone routes do not permit local employment or running a Malaysian business."
   - q: "How long do I have to spend in Malaysia each year?"
     a: "If the main applicant is aged 25 to 49, the requirement is 90 cumulative days a year, and it can be met between the main applicant, the spouse and dependants rather than by the principal alone. From age 50 there is no minimum stay requirement at all. The rule follows the applicant's age, not the tier."
   - q: "Which family members can I include?"
@@ -38,11 +38,11 @@ Most people pick an MM2H tier by reading across a row of fixed deposits and stop
 
 So the question worth answering before you file is not which tier you can afford. It is which tier you can still afford twelve months after approval, in the state you actually want to live in.
 
-## The four tiers
+## The three main tiers, and the zone routes
 
-MOTAC runs MM2H as four tiers. Three of them — Silver, Gold and Platinum — are set out in the ministry's own December 2025 guide, and every figure for those three below is read from that guide. The fourth, covering the Special Economic Zone and Special Financial Zone, is priced differently and documented more thinly, so its column rests on practice rather than on the published table.
+MOTAC runs MM2H as three main tiers — Silver, Gold and Platinum — set out in the ministry's own December 2025 guide, and every figure for those three below is read from that guide. Alongside them run two zone-based routes covering the Special Economic Zone and Special Financial Zone. They are not rungs on the same ladder: they are tied to a designated zone, approved in a different order, priced differently and documented more thinly, so their column rests on practice rather than on the published table.
 
-{% table caption="The four MM2H tiers on current guidance" %}
+{% table caption="The three main MM2H tiers and the zone routes, on current guidance" %}
 |  | SEZ / SFZ | Silver | Gold | Platinum |
 | --- | --- | --- | --- | --- |
 | **Fixed deposit** | USD 65,000 under 50, USD 32,000 from 50 [^1] | {{mm2h-silver:fixedDeposit:money}} [^2] | {{mm2h-gold:fixedDeposit:money}} | {{mm2h-platinum:fixedDeposit:money}} |

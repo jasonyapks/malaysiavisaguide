@@ -33,6 +33,24 @@
 # violations without blocking, so a missing origin surfaces as a console note
 # and a report, not a broken page. Promote it to the enforcing header once the
 # reports are clean and the inline scripts carry hashes.
+#
+# `report-uri /csp-report` is what makes "once the reports are clean" a state
+# anyone can actually check. Until it was added the policy named no reporting
+# destination at all, so every violation a browser generated was discarded and
+# the promotion condition could never be evaluated. The collector is
+# functions/csp-report.ts — same-origin on purpose, so validating the policy
+# does not require adding an origin to it. Relative path: one rule block serves
+# all three hosts, and each reports to itself.
+#
+# NOTE the `report-to` header the site already sends is Cloudflare's Network
+# Error Logging group. It is unrelated to CSP and collects none of this.
+#
+# challenges.cloudflare.com appears three times, and all three are needed for
+# one widget: script-src for the api.js loader, frame-src because Turnstile
+# renders inside an iframe (which `default-src 'self'` would otherwise refuse,
+# since frame-src falls back to it), and connect-src for the challenge's own
+# XHRs. Miss the frame-src and the widget is an empty box with nothing in the
+# console to say why.
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Content-Security-Policy: frame-ancestors 'none'; base-uri 'self'; object-src 'none'
@@ -41,7 +59,7 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), browsing-topics=()
   Cross-Origin-Opener-Policy: same-origin
   X-Content-Type-Options: nosniff
-  Content-Security-Policy-Report-Only: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://api.web3forms.com https://mvg-news.jason-6bf.workers.dev https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com; form-action 'self' https://api.web3forms.com
+  Content-Security-Policy-Report-Only: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://api.web3forms.com https://mvg-news.jason-6bf.workers.dev https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://challenges.cloudflare.com; form-action 'self' https://api.web3forms.com; report-uri /csp-report
 
 # The CMS origin is the one place a wildcard CORS could ever matter — it is the
 # only surface that will hold a credential (the GitHub token, in localStorage).

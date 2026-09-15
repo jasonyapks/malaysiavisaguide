@@ -16,15 +16,15 @@ export const copy: GuideCopy = {
   meta: {
     title: "MM2H 2026: Silver, Gold and Platinum requirements",
     description:
-      "The three MM2H tiers compared against the official MOTAC criteria — fixed deposit, property minimum, term, fees, minimum stay and the age rules that most guides get wrong.",
+      "The three main MM2H tiers compared against the official MOTAC criteria — fixed deposit, property minimum, term, fees, minimum stay and the age rules that most guides get wrong. Plus the SEZ and SFZ zone routes, which run on different rules.",
   },
 
   title: "Malaysia My Second Home (MM2H)",
 
   answer:
-    "MM2H comes in three tiers. Silver needs a USD 150,000 fixed deposit and a RM600,000 property; Gold needs USD 500,000 and RM1 million; Platinum needs USD 1 million and RM2 million — but those property figures are national minimums, and the state you buy in sets its own floor for foreign buyers, RM2 million in Selangor and RM1 million in Kuala Lumpur. The agency fee is set by the government, not the agency: RM40,000 on Silver, RM55,000 on Gold, RM70,000 on Platinum. The minimum age is 25. Holders aged 25 to 49 must spend 90 days a year in Malaysia; from 50 there is no minimum stay.",
+    "MM2H comes in three main tiers, with two zone-based routes — SEZ and SFZ — running alongside them on different rules. Silver needs a USD 150,000 fixed deposit and a RM600,000 property; Gold needs USD 500,000 and RM1 million; Platinum needs USD 1 million and RM2 million — but those property figures are national minimums, and the state you buy in sets its own floor for foreign buyers, RM2 million in Selangor and RM1 million in Kuala Lumpur. The agency fee is set by the government, not the agency: RM40,000 on Silver, RM55,000 on Gold, RM70,000 on Platinum. The minimum age is 25. Holders aged 25 to 49 must spend 90 days a year in Malaysia; from 50 there is no minimum stay.",
 
-  tierCaption: "The three tiers at a glance",
+  tierCaption: "The three main tiers at a glance",
 
   suits: {
         yes: [
@@ -45,7 +45,7 @@ export const copy: GuideCopy = {
   faq: [
         {
           q: "What is the minimum age for MM2H in 2026?",
-          a: "25 for the main applicant on Silver, Gold and Platinum, per MOTAC's own category table. Much secondary coverage says 30; that is not what the official document says. The SEZ/SFZ tiers go lower, at 21.",
+          a: "25 for the main applicant on Silver, Gold and Platinum, per MOTAC's own category table. Much secondary coverage says 30; that is not what the official document says. The SEZ and SFZ zone routes go lower, at 21.",
         },
         {
           q: "How many days a year must I spend in Malaysia?",
@@ -126,7 +126,7 @@ export const copy: GuideCopy = {
           </li>
           <li>
             <strong>The processing fee</strong> — RM5,000 for the principal and
-            RM2,500 for each dependant, the same across all three tiers. The
+            RM2,500 for each dependant, the same across all three main tiers. The
             principal&apos;s is already inside the agency fee, so it should not
             appear twice on a quote.
           </li>
@@ -239,10 +239,12 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="The SEZ and SFZ tiers">
+      <Section title="The SEZ and SFZ zone routes">
         <p>
-          MOTAC also publishes two lower-cost tiers for the Special Economic
-          Zone and Special Financial Zone: a USD 65,000 fixed deposit for
+          MOTAC also publishes two lower-cost routes for the Special Economic
+          Zone and Special Financial Zone. They are not tiers in the Silver /
+          Gold / Platinum ladder: they are tied to a designated zone and are
+          approved in a different order. Each takes a USD 65,000 fixed deposit for
           applicants aged 21 to 49, and USD 32,000 for those aged 50 and over.
           Both run 10 years renewable, carry a RM1,000 participation fee, and
           require property purchase at the price set for the relevant SEZ
