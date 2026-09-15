@@ -1,3 +1,4 @@
+import type { ProgrammeSlug } from "./data/programmes";
 import { locales, localeOrigin, type Locale } from "./i18n";
 import { linkPath } from "./translated";
 import { getUi } from "./ui";
@@ -96,6 +97,23 @@ export const routes: Route[] = [
   { path: "/privacy/", title: "Privacy", nav: "site" },
   { path: "/contact/", title: "Contact", nav: "site" },
 ];
+
+/**
+ * Each programme slug points at the guide page that documents it.
+ *
+ * Not one-to-one: the three MM2H tiers share a single guide, which is why a
+ * guide's update date cannot be derived from a programme slug alone.
+ */
+export const guideHref: Record<ProgrammeSlug, string> = {
+  pvip: "/visas/pvip/",
+  "mm2h-silver": "/visas/mm2h/",
+  "mm2h-gold": "/visas/mm2h/",
+  "mm2h-platinum": "/visas/mm2h/",
+  smm2h: "/visas/sarawak-mm2h/",
+  "de-rantau": "/visas/de-rantau/",
+  "employment-pass": "/visas/employment-pass/",
+  "student-pass": "/visas/student-pass/",
+};
 
 export const navRoutes = (group: Route["nav"]) =>
   routes.filter((r) => r.nav === group);

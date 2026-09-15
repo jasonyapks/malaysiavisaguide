@@ -8,6 +8,7 @@ import { categoryPath, getCategoryIndex, getNewsIndex } from "@/lib/news";
 import { assertRouteTitles, routes } from "@/lib/site";
 import { htmlLang, locales, localeUrl, type Locale } from "@/lib/i18n";
 import { availableLocales } from "@/lib/translated";
+import { pageUpdated } from "@/lib/updated";
 
 /**
  * One sitemap per host — SPEC.md §4.4.
@@ -56,7 +57,13 @@ export async function sitemapEntries(
     .filter((r) => availableLocales(r.path).includes(locale))
     .map((r) => ({
       url: localeUrl(r.path, locale),
-      lastModified: new Date(),
+      // NOT the build time. Pages rebuilds on every push, so `new Date()` here
+      // moved all fourteen static entries together whether or not a word had
+      // changed — and Google only uses <lastmod> "if it's consistently and
+      // verifiably accurate", so one always-fresh block discredits the dates on
+      // the articles below too. `pageUpdated` reads the commit that last touched
+      // this page's own copy files. See src/lib/updated.ts.
+      lastModified: pageUpdated(r.path),
       changeFrequency: "monthly" as const,
       // The English page stays the primary one. A translation of the home page
       // is not a second 1.0-priority page on the site.
