@@ -46,11 +46,17 @@
  * the same reason. Restyling the footer does not modify the main content of
  * ninety pages.
  *
- * ## Why the previous value is kept rather than replaced with today
+ * ## What happens when git is unavailable
  *
- * If git is unavailable (a tarball export, a checkout with no history), the
- * committed values stand. The one thing this script must never do is fall back
- * to the build clock, because that silently restores the bug it exists to fix.
+ * The route gets no date, and its sitemap entry is emitted without a <lastmod>
+ * at all — which Google documents as optional. A previous run's values are
+ * reused if the file is still on disk, but the output is gitignored like the
+ * repo's other generated data, so a fresh checkout without history simply omits
+ * the element.
+ *
+ * The one thing this script must never do is fall back to the build clock. An
+ * absent lastmod costs a hint; a lastmod that is always fresh costs the whole
+ * file its credibility, which is the bug this exists to fix.
  */
 
 import { execFileSync } from "node:child_process";
