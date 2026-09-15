@@ -3,6 +3,7 @@ import { Section } from "@/components/GuideLayout";
 import {
   getProgramme,
   MM2H_AGENCY_FEE_ATTRIBUTION,
+  MM2H_FD_TIMING_ATTRIBUTION,
   MM2H_FD_WITHDRAWAL,
   MM2H_INCOME_PRACTICE,
 } from "@/lib/data/programmes";
@@ -69,7 +70,7 @@ export const copy: GuideCopy = {
         },
         {
           q: "Can I withdraw the fixed deposit?",
-          a: `${MM2H_FD_WITHDRAWAL} Note what that timing rules out: the window opens on completion, so the deposit cannot be the source of your down payment. It can reimburse a purchase you have already completed; it cannot finance one. Budget the deposit and the property as two sums you must have available at the same time. On SEZ and SFZ the in-zone purchase comes before approval rather than after it, so treat the timing above as describing Silver, Gold and Platinum only.`,
+          a: `${MM2H_FD_WITHDRAWAL} Note what that timing rules out: the window opens on completion, so the deposit cannot be the source of your down payment. It can reimburse a purchase you have already completed; it cannot finance one. Budget the deposit and the property as two sums you must have available at the same time. On SEZ and SFZ the in-zone purchase comes before approval rather than after it, so treat the timing above as describing Silver, Gold and Platinum only; its page carries the same permitted uses, but when the SEZ window opens is an open question this site does not assert either way. The permitted uses above, the purchase of a residence included, are published in MOTAC's guide of December 2025 on each category page — Silver at p.37. The completion timing is not: the guide anchors the window to approval, and opening it on completion is ${MM2H_FD_TIMING_ATTRIBUTION.by}, ${reviewDate(MM2H_FD_TIMING_ATTRIBUTION.asAt)}.`,
         },
         {
           q: "Do I need a licensed agent to apply for MM2H?",

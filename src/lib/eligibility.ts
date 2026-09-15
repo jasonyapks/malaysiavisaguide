@@ -19,6 +19,7 @@ import {
 } from "@/lib/data/programmes";
 import { money, moneyPer } from "@/lib/format";
 import type { Locale } from "@/lib/i18n";
+import { guideHref } from "@/lib/site";
 import { getUi } from "@/lib/ui";
 
 /**
@@ -44,18 +45,6 @@ export type Answers = {
   buyProperty: boolean | null;
   /** Employer or institution already lined up (Employment Pass / Student Pass). */
   hasSponsor: boolean | null;
-};
-
-/** Each programme slug points at the guide page that documents it. */
-const GUIDE_HREF: Record<ProgrammeSlug, string> = {
-  pvip: "/visas/pvip/",
-  "mm2h-silver": "/visas/mm2h/",
-  "mm2h-gold": "/visas/mm2h/",
-  "mm2h-platinum": "/visas/mm2h/",
-  smm2h: "/visas/sarawak-mm2h/",
-  "de-rantau": "/visas/de-rantau/",
-  "employment-pass": "/visas/employment-pass/",
-  "student-pass": "/visas/student-pass/",
 };
 
 const LONG_STAY: ProgrammeSlug[] = [
@@ -197,7 +186,7 @@ export function evaluate(a: Answers, locale: Locale = "en"): Outcome {
     const result: Result = {
       slug: p.slug,
       name: p.name,
-      href: GUIDE_HREF[p.slug],
+      href: guideHref[p.slug],
       gates,
       blockers,
     };

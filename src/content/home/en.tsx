@@ -4,7 +4,7 @@ import type { HomeCopy } from "./types";
 /** English home page copy — moved here verbatim from app/page.tsx. */
 export const copy: HomeCopy = {
   hero: {
-    eyebrow: "Independent · verified against official sources",
+    eyebrow: "Independent · every figure sourced and dated",
     // Branding template §9, verbatim. "Malaysia" takes the display face and the
     // gold, because the template's brand equation puts the destination — not
     // the paperwork — at the end of the sentence (§14, §16).
@@ -37,8 +37,8 @@ export const copy: HomeCopy = {
     ),
     promises: [
       {
-        title: "Every figure checked against its official source",
-        body: "Fees, thresholds and tenures are traced to the government page that sets them, with the date we last looked.",
+        title: "Every figure carries its source and its standing",
+        body: "Most are traced to the government page that sets them, with the date we last looked. Where the published document is behind the counter, the page says so and names whose practice it rests on instead.",
       },
       {
         title: "PVIP and MM2H compared side by side",
@@ -145,7 +145,12 @@ export const copy: HomeCopy = {
           stated in it, and recorded the date. That date is published on the
           programme guide. Where a rule was announced by press release but never
           written into the official document, the guide says exactly that
-          instead of quietly picking whichever number reads better.
+          instead of quietly picking whichever number reads better. And where
+          the official document still carries wording the counter no longer
+          applies, the page publishes what is actually applied, names the
+          practitioner it rests on and dates it — rather than quoting a
+          document we know to be out of step. Which of the three you are
+          reading is stated beside the answer, never left to be inferred.
         </p>
         <p>
           This matters more than it should, because these programmes are revised

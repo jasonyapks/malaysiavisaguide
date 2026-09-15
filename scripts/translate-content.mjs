@@ -57,10 +57,14 @@
  * Run it through the TS resolve hook — it imports shared/ and src/lib:
  * `npm run i18n:translate`.
  */
+import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
+
+const run = promisify(execFile);
 
 import { splitContentFile, writeContentFile } from "../shared/frontmatter.ts";
 import { parseNewsSections, writeNewsSections } from "../shared/newsbody.ts";
@@ -449,7 +453,15 @@ const MODELS = {
   },
   cloudflare: {
     first: process.env.TRANSLATE_MODEL ?? "@cf/qwen/qwen3.8-27b",
-    retry: process.env.TRANSLATE_MODEL_RETRY ?? "@cf/deepseek-ai/deepseek-v4-flash-0731",
+    // NOT deepseek-v4-flash: it is listed in `wrangler ai models` but answers
+    // 403 "not available on the Workers Free plan", so the escalation attempt
+    // died on billing rather than on the content — and only ever on the third
+    // attempt, which is the hardest failure to reproduce. Checked 2026-09-16.
+    retry: process.env.TRANSLATE_MODEL_RETRY ?? "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+  },
+  claude: {
+    first: process.env.TRANSLATE_MODEL ?? "claude-sonnet-5",
+    retry: process.env.TRANSLATE_MODEL_RETRY ?? "claude-sonnet-5",
   },
 };
 
@@ -478,6 +490,7 @@ ${glossary}
 5. Never output markdown, HTML, quotation marks around the whole string, or a translator's note.
 6. A string that is only a proper noun or a code may come back unchanged.
 7. A date written as prose takes the ${target} convention — "27 August" becomes 8月27日, "27 August 2026" becomes 2026年8月27日 — keeping the same digits. Never leave an English month name sitting inside a ${target} sentence.
+8. A number written as a word in English stays a word. "ten years" is 十年, never 10年; "five tiers" is 五档, never 5档; "one of the two" is 两者之一, never 2者之一. Arabic digits belong in your reply only where Arabic digits stand in the input. This is rule 1 in the other direction and just as absolute.
 
 You are given a JSON object {"t": [...]} of strings. You reply with a JSON object {"t": [...]} holding exactly the same number of strings, in the same order, translated. You output only JSON.`;
 }
@@ -612,7 +625,50 @@ async function callGemini(system, user, retry) {
   return body?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ?? "";
 }
 
+/**
+ * Claude, through the locally installed `claude` CLI.
+ *
+ * ## Why the CLI and not the Anthropic SDK
+ *
+ * The SDK wants a credential this machine does not have: no `ANTHROPIC_API_KEY`
+ * and no `ant auth login` profile. The `claude` binary is already authenticated
+ * — it is what Jason runs every day — so this provider needs nothing minted and
+ * nothing stored. The cost is that it is local-only: a GitHub runner has no
+ * such session, so **CI still needs `CLOUDFLARE_API_TOKEN`** and this provider
+ * cannot stand in for it. It is the right tool for a backfill run by hand.
+ *
+ * `-p` prints one reply and exits, `--output-format text` keeps it plain rather
+ * than a stream-json envelope, and `--system-prompt` replaces the CLI's own
+ * system prompt with ours rather than appending to it — `--append-system-prompt`
+ * would leave Claude Code's agent instructions in front of the translation
+ * rules, which is a different and much longer prompt than the other two
+ * providers are given.
+ *
+ * The payload goes as an argv string, which caps at roughly 1MB on macOS. A
+ * batch is 5000 characters (`batches()`), so there is three orders of magnitude
+ * of headroom and no need for stdin plumbing.
+ */
+async function callClaude(system, user, retry) {
+  try {
+    const { stdout } = await run(
+      "claude",
+      ["-p", user, "--model", modelName(retry), "--system-prompt", system, "--output-format", "text"],
+      { maxBuffer: 32 * 1024 * 1024, timeout: 10 * 60 * 1000 },
+    );
+    return stdout;
+  } catch (err) {
+    if (err?.code === "ENOENT") {
+      throw new Error(
+        "the `claude` CLI is not on PATH. Install Claude Code, or run with " +
+          "TRANSLATE_PROVIDER=cloudflare and CLOUDFLARE_API_TOKEN set.",
+      );
+    }
+    throw new Error(`claude CLI failed: ${err?.stderr?.trim() || err?.message || err}`);
+  }
+}
+
 async function ask(system, user, retry) {
+  if (PROVIDER === "claude") return await callClaude(system, user, retry);
   return PROVIDER === "gemini"
     ? await callGemini(system, user, retry)
     : await callCloudflare(system, user, retry);
@@ -669,7 +725,9 @@ async function translate(strings, locale) {
           ? payload
           : `${payload}\n\nYour previous reply was rejected: ${log[log.length - 1]}. ` +
             `Translate again, fixing exactly that. Every digit must appear in your ` +
-            `reply exactly as it appears in the input.`;
+            `reply exactly as it appears in the input, and your reply must contain ` +
+            `no digit the input does not: an English number word becomes a number ` +
+            `word in the target language, never an Arabic digit.`;
 
       let reply;
       try {

@@ -11,7 +11,8 @@ import type { Programme } from "@/lib/data/programmes";
 import type { Locale } from "@/lib/i18n";
 import { getUi } from "@/lib/ui";
 import type { SiteImage } from "@/lib/images";
-import { site } from "@/lib/site";
+import { guideHref, site } from "@/lib/site";
+import { pageUpdatedISODate } from "@/lib/updated";
 import { Byline } from "@/components/Byline";
 import { Faq, type FaqItem } from "@/components/Faq";
 import { GuideHead, Lozenge } from "@/components/GuideHead";
@@ -82,7 +83,13 @@ export function GuideLayout({
     "@type": "Article",
     headline: title,
     description: answer,
-    dateModified: programme.lastVerified,
+    // The date the PAGE last changed, not the date its source was last checked.
+    // `lastVerified` answers a different question — it is what the byline shows
+    // the reader, and it moves only after a real review of the official
+    // document. Publishing it as `dateModified` understated every guide that had
+    // been revised since its last review: MM2H declared 28 July while carrying
+    // an update notice dated 3 August. See src/lib/updated.ts.
+    dateModified: pageUpdatedISODate(guideHref[programme.slug], programme),
     author: {
       "@type": "Person",
       name: "Jason Yap",

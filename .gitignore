@@ -108,3 +108,4 @@ next-env.d.ts
 # and the language switcher. Derived from content/; a committed copy would be a
 # second source of truth, stale the first time an article lands.
 /src/lib/data/translated-content.json
+/src/lib/data/updated.json

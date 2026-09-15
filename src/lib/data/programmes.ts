@@ -361,12 +361,21 @@ const MM2H_COMMON = {
     changedOn: "2026-08-03",
     attribution: { by: "MYPVIP practice", asAt: "2026-08-23" },
     whatChanged: [
-      "The 50% fixed-deposit withdrawal opens once the property purchase completes, not on approval of the application. On Silver, Gold and Platinum the purchase follows approval, so the sequence is approval, then purchase, then withdrawal. The purchase itself remains a permitted use, alongside education, medical and tourism in Malaysia. SEZ and SFZ run the other way round: the in-zone purchase is a condition of approval rather than a step after it.",
+      "The 50% fixed-deposit withdrawal opens once the property purchase completes, not on approval of the application. On Silver, Gold and Platinum the purchase follows approval, so the sequence is approval, then purchase, then withdrawal. SEZ and SFZ run the other way round: the in-zone purchase is a condition of approval rather than a step after it. Only the timing departs from the guide: the permitted uses, the purchase of a residence among them, are published in it.",
       "Dependent children qualify up to age 34, meaning before the 35th birthday. The guide's \"up to age 35\" reads a year wider than the counter applies.",
     ],
     figuresPending: false,
   },
 };
+
+/**
+ * Whose word the withdrawal *timing* rests on — the same attribution the
+ * superseded notice carries, exported so a copy file can name it beside the
+ * answer without importing the whole of MM2H_COMMON. The permitted uses need
+ * no attribution: they are in MOTAC's guide. See MM2H_FD_WITHDRAWAL below.
+ */
+export const MM2H_FD_TIMING_ATTRIBUTION: Attribution =
+  MM2H_COMMON.superseded.attribution;
 
 // Corrected three times. This string covers Silver, Gold and Platinum only.
 //
@@ -389,8 +398,22 @@ const MM2H_COMMON = {
 // something that follows it — so this string does not describe SEZ, and the
 // SEZ withdrawal trigger is deliberately unstated until Jason confirms it.
 //
-// MOTAC's guide still reads the old way, so this rests on attribution rather
-// than on `source` — see the `superseded` block on MM2H_COMMON.
+// Two standings in one sentence, and they are not the same strength:
+//
+//   * The permitted uses are OFFICIALLY PUBLISHED. Each category page carries
+//     "Maximum withdrawal of 50% is allowed on the principal FD value after the
+//     approval as MM2H participant has been obtained for the purposes of
+//     purchasing a residence, education, medical and tourism activities in
+//     Malaysia" — Silver p.37, Gold p.33, Platinum p.29, SEZ p.43 of the
+//     December 2025 guide (printed folios, checked 2026-09-15). Purchasing a
+//     residence is in the document verbatim;
+//     it is not something this site deduced or took on practice.
+//   * The TIMING rests on attribution. The guide anchors the window to
+//     approval; practice opens it on completion of the purchase. That half, and
+//     only that half, is what the `superseded` block on MM2H_COMMON covers.
+//
+// Do not collapse the two. Attributing the permitted-use list to practice
+// understates it — a reader who checks the guide finds it there.
 export const MM2H_FD_WITHDRAWAL =
   "Up to 50% of the principal may be withdrawn once the property purchase completes, which on Silver, Gold and Platinum follows approval of the application. It may go towards the property purchase itself, or towards education, medical or tourism activities in Malaysia.";
 
