@@ -478,6 +478,7 @@ ${glossary}
 5. Never output markdown, HTML, quotation marks around the whole string, or a translator's note.
 6. A string that is only a proper noun or a code may come back unchanged.
 7. A date written as prose takes the ${target} convention — "27 August" becomes 8月27日, "27 August 2026" becomes 2026年8月27日 — keeping the same digits. Never leave an English month name sitting inside a ${target} sentence.
+8. A number written as a word in English stays a word. "ten years" is 十年, never 10年; "five tiers" is 五档, never 5档; "one of the two" is 两者之一, never 2者之一. Arabic digits belong in your reply only where Arabic digits stand in the input. This is rule 1 in the other direction and just as absolute.
 
 You are given a JSON object {"t": [...]} of strings. You reply with a JSON object {"t": [...]} holding exactly the same number of strings, in the same order, translated. You output only JSON.`;
 }
@@ -669,7 +670,9 @@ async function translate(strings, locale) {
           ? payload
           : `${payload}\n\nYour previous reply was rejected: ${log[log.length - 1]}. ` +
             `Translate again, fixing exactly that. Every digit must appear in your ` +
-            `reply exactly as it appears in the input.`;
+            `reply exactly as it appears in the input, and your reply must contain ` +
+            `no digit the input does not: an English number word becomes a number ` +
+            `word in the target language, never an Arabic digit.`;
 
       let reply;
       try {
