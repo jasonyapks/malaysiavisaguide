@@ -88,6 +88,37 @@ const flags = {
   zhInsights: translatedInsights.every((n) => n > 0),
 };
 
+/**
+ * One locale translated and another empty means the Traditional tree has not
+ * been generated yet, not that the site is half-translated.
+ *
+ * `content/zh-hant/` is gitignored and written by gen-zh-hant.mjs. When this
+ * script ran before it in `prebuild`, a clean checkout counted zh-hant 0 and
+ * `every(n => n > 0)` switched BOTH Chinese article routes off — so Simplified
+ * was taken down by Traditional's absence, and the build succeeded. Cloudflare
+ * Pages served every Chinese /news and /insights URL as a 302 to English while
+ * a local build, where content/zh-hant/ survives from last time, looked
+ * perfect. Nothing failed; 28 articles simply were not there.
+ *
+ * The order is fixed in package.json. This is the tripwire for the next time
+ * something moves it: an asymmetry between locales is a generation failure, and
+ * it should stop the build rather than quietly unpublish a language.
+ */
+function assertLocalesAgree(label, counts) {
+  const translated = counts.filter((n) => n > 0).length;
+  if (translated === 0 || translated === counts.length) return;
+  const detail = prefixedLocales.map((l, i) => `${l} ${counts[i]}`).join(", ");
+  throw new Error(
+    `[insight-routes] ${label} counts disagree across locales (${detail}).\n` +
+      `A locale at zero while another has documents means its tree was not ` +
+      `generated — run gen-zh-hant.mjs before this script. Refusing to switch ` +
+      `the Chinese ${label} route off on the strength of a missing directory.`,
+  );
+}
+
+assertLocalesAgree("news", translatedNews);
+assertLocalesAgree("insights", translatedInsights);
+
 await writeFile(MARKER, JSON.stringify(flags, null, 2) + "\n");
 console.log(
   `[insight-routes] ${items.length} document(s), ${published.length} published — ` +
