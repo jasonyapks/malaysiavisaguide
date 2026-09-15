@@ -1,3 +1,5 @@
+import { programmes } from "@/lib/data/programmes";
+import { guideHref } from "@/lib/site";
 import updatedDates from "@/lib/data/updated.json";
 
 /**
@@ -64,4 +66,25 @@ export function pageUpdatedISODate(
   programme?: Parameters<typeof pageUpdated>[1],
 ): string | undefined {
   return pageUpdated(path, programme)?.toISOString().slice(0, 10);
+}
+
+/**
+ * The same, for a route in the sitemap, where no programme record is in hand.
+ *
+ * A guide route folds in the curated dates of every programme it documents —
+ * all three tiers, for /visas/mm2h/. Without this a guide would carry no
+ * <lastmod> at all wherever git history is unavailable (Cloudflare Pages clones
+ * shallow), even though `lastVerified` and `changedOn` are sitting right there
+ * and are exactly the dates a reader is shown. The sitemap and the Article
+ * schema should not disagree about when a guide last changed.
+ */
+export function routeUpdated(path: string): Date | undefined {
+  const documented = programmes.filter((p) => guideHref[p.slug] === path);
+  if (documented.length === 0) return pageUpdated(path);
+
+  const dates = documented
+    .map((p) => pageUpdated(path, p))
+    .filter((d): d is Date => d instanceof Date);
+
+  return dates.length ? new Date(Math.max(...dates.map((d) => d.getTime()))) : undefined;
 }
