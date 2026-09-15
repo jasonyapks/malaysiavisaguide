@@ -453,7 +453,11 @@ const MODELS = {
   },
   cloudflare: {
     first: process.env.TRANSLATE_MODEL ?? "@cf/qwen/qwen3.8-27b",
-    retry: process.env.TRANSLATE_MODEL_RETRY ?? "@cf/deepseek-ai/deepseek-v4-flash-0731",
+    // NOT deepseek-v4-flash: it is listed in `wrangler ai models` but answers
+    // 403 "not available on the Workers Free plan", so the escalation attempt
+    // died on billing rather than on the content — and only ever on the third
+    // attempt, which is the hardest failure to reproduce. Checked 2026-09-16.
+    retry: process.env.TRANSLATE_MODEL_RETRY ?? "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
   },
   claude: {
     first: process.env.TRANSLATE_MODEL ?? "claude-sonnet-5",
