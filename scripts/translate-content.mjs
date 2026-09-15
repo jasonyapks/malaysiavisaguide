@@ -57,10 +57,14 @@
  * Run it through the TS resolve hook — it imports shared/ and src/lib:
  * `npm run i18n:translate`.
  */
+import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
+
+const run = promisify(execFile);
 
 import { splitContentFile, writeContentFile } from "../shared/frontmatter.ts";
 import { parseNewsSections, writeNewsSections } from "../shared/newsbody.ts";
@@ -451,6 +455,10 @@ const MODELS = {
     first: process.env.TRANSLATE_MODEL ?? "@cf/qwen/qwen3.8-27b",
     retry: process.env.TRANSLATE_MODEL_RETRY ?? "@cf/deepseek-ai/deepseek-v4-flash-0731",
   },
+  claude: {
+    first: process.env.TRANSLATE_MODEL ?? "claude-sonnet-5",
+    retry: process.env.TRANSLATE_MODEL_RETRY ?? "claude-sonnet-5",
+  },
 };
 
 /** Which model string ends up in the file's `translationModel` field. */
@@ -613,7 +621,50 @@ async function callGemini(system, user, retry) {
   return body?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ?? "";
 }
 
+/**
+ * Claude, through the locally installed `claude` CLI.
+ *
+ * ## Why the CLI and not the Anthropic SDK
+ *
+ * The SDK wants a credential this machine does not have: no `ANTHROPIC_API_KEY`
+ * and no `ant auth login` profile. The `claude` binary is already authenticated
+ * — it is what Jason runs every day — so this provider needs nothing minted and
+ * nothing stored. The cost is that it is local-only: a GitHub runner has no
+ * such session, so **CI still needs `CLOUDFLARE_API_TOKEN`** and this provider
+ * cannot stand in for it. It is the right tool for a backfill run by hand.
+ *
+ * `-p` prints one reply and exits, `--output-format text` keeps it plain rather
+ * than a stream-json envelope, and `--system-prompt` replaces the CLI's own
+ * system prompt with ours rather than appending to it — `--append-system-prompt`
+ * would leave Claude Code's agent instructions in front of the translation
+ * rules, which is a different and much longer prompt than the other two
+ * providers are given.
+ *
+ * The payload goes as an argv string, which caps at roughly 1MB on macOS. A
+ * batch is 5000 characters (`batches()`), so there is three orders of magnitude
+ * of headroom and no need for stdin plumbing.
+ */
+async function callClaude(system, user, retry) {
+  try {
+    const { stdout } = await run(
+      "claude",
+      ["-p", user, "--model", modelName(retry), "--system-prompt", system, "--output-format", "text"],
+      { maxBuffer: 32 * 1024 * 1024, timeout: 10 * 60 * 1000 },
+    );
+    return stdout;
+  } catch (err) {
+    if (err?.code === "ENOENT") {
+      throw new Error(
+        "the `claude` CLI is not on PATH. Install Claude Code, or run with " +
+          "TRANSLATE_PROVIDER=cloudflare and CLOUDFLARE_API_TOKEN set.",
+      );
+    }
+    throw new Error(`claude CLI failed: ${err?.stderr?.trim() || err?.message || err}`);
+  }
+}
+
 async function ask(system, user, retry) {
+  if (PROVIDER === "claude") return await callClaude(system, user, retry);
   return PROVIDER === "gemini"
     ? await callGemini(system, user, retry)
     : await callCloudflare(system, user, retry);
