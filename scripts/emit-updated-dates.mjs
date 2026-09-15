@@ -93,6 +93,51 @@ const SOURCES = {
   "/contact/": ["src/content/contact"],
 };
 
+/**
+ * Is this a shallow clone, and can it be deepened?
+ *
+ * Cloudflare Pages clones at depth 1. In that repository `git log -1 -- <path>`
+ * answers with the tip commit for EVERY path, because the tip is the only
+ * commit there is — so all seventeen routes come back with the build commit's
+ * date and move together on every push. That is the original bug wearing a
+ * different hat, and it does not reproduce locally, where the clone is full.
+ * The preview deploy is what exposed it: /about/, /privacy/, /visas/pvip/ and
+ * /news/ all carried one identical timestamp.
+ *
+ * So: deepen if we can, and if we cannot, refuse to date anything rather than
+ * publish seventeen copies of today.
+ */
+function historyIsUsable() {
+  const shallow = () => {
+    try {
+      return (
+        execFileSync("git", ["rev-parse", "--is-shallow-repository"], {
+          cwd: ROOT,
+          encoding: "utf8",
+          stdio: ["ignore", "pipe", "ignore"],
+        }).trim() === "true"
+      );
+    } catch {
+      return null; // not a git repository at all
+    }
+  };
+
+  const first = shallow();
+  if (first === null) return false;
+  if (first === false) return true;
+
+  try {
+    execFileSync("git", ["fetch", "--unshallow", "--quiet"], {
+      cwd: ROOT,
+      stdio: "ignore",
+      timeout: 120_000,
+    });
+  } catch {
+    return false;
+  }
+  return shallow() === false;
+}
+
 /** The commit date of the last commit touching any of `files`, or null. */
 function lastCommit(files) {
   try {
@@ -116,11 +161,12 @@ function readPrevious() {
 }
 
 const previous = readPrevious();
+const usable = historyIsUsable();
 const out = {};
 const missing = [];
 
 for (const [route, files] of Object.entries(SOURCES)) {
-  const found = lastCommit(files);
+  const found = usable ? lastCommit(files) : null;
   if (found) {
     out[route] = found;
   } else if (previous[route]) {
@@ -136,7 +182,14 @@ writeFileSync(OUT, `${JSON.stringify(sorted, null, 2)}\n`);
 
 const dated = Object.keys(sorted).length;
 console.log(`emit-updated-dates: ${dated}/${Object.keys(SOURCES).length} route(s) dated.`);
-if (missing.length) {
+if (!usable) {
+  console.log(
+    "emit-updated-dates: shallow or absent git history and --unshallow did not " +
+      "help, so no route was dated from git. Those pages ship without a " +
+      "<lastmod>, which is correct — dating them all from the build commit is " +
+      "the bug this script exists to prevent.",
+  );
+} else if (missing.length) {
   console.log(
     `emit-updated-dates: no git history for ${missing.length} route(s) — ` +
       `kept the committed value where there was one: ${missing.join(", ")}`,
