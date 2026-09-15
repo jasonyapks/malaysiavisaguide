@@ -133,15 +133,24 @@ All of the above was run against the current build on 2026-09-02 and passed.
 
 ## Outstanding
 
-- **Two insight articles.** `mm2h-platinum-vs-pvip` and `apply-for-mm2h-2026`.
-  `node scripts/translate-content.mjs --check` lists what is left.
-  `mm2h-platinum-vs-pvip` has now failed on a model that was translating the
-  others fine, so it looks like a genuine validation failure — a lost or
-  invented figure is the likely class, in a dense two-programme fee comparison
-  — rather than the transport noise that stopped the earlier runs. The next run
-  will print the reason; a fix landed so that the quota wall stops swallowing it.
-  - **The translator defaults to Workers AI and needs `CLOUDFLARE_API_TOKEN`**,
-    which CI has and a local shell does not. Minting one is the durable fix.
+- **Four articles outstanding**, as of 2026-09-15: `federal-mm2h-vs-sarawak-mm2h`
+  and `mm2h-platinum-vs-pvip` and `apply-for-mm2h-2026` missing,
+  `mm2h-vs-pvip-vs-de-rantau` stale. `npm run i18n:translate -- --check` lists
+  them — note the `npm run`, which supplies `scripts/ts-resolve.mjs`; calling
+  `node scripts/translate-content.mjs` directly cannot resolve the extensionless
+  `shared/*` imports and dies in the module loader.
+  - `mm2h-platinum-vs-pvip`'s failure is now diagnosed and it was a genuine
+    validation failure: `figures invented: 10, 5, 4, 1, 3, 8`. The article spells
+    its quantities out ("ten years"), the model wrote them as Arabic digits, and
+    the guard read digits that were never in the source. Prompt rule 8 is the
+    fix — PR #3, unverified against a live model.
+  - **The translator defaults to Workers AI and needs `CLOUDFLARE_API_TOKEN`,
+    which nothing has.** The repo has no Actions secrets at all
+    (`gh api repos/{owner}/{repo}/actions/secrets` → `total_count: 0`), so the
+    Translate content workflow has failed on both of its runs — 5 Sep and
+    15 Sep — with `CLOUDFLARE_API_TOKEN is not set`. It must be minted in the
+    dashboard with **Workers AI: Read** and added with `gh secret set`; a
+    wrangler OAuth session is not enough for that endpoint.
   - Without it, `TRANSLATE_PROVIDER=gemini` uses `GEMINI_API_KEY`, whose free
     tier is **20 requests a day per model** (`GenerateRequestsPerDayPerProject`
     `PerModel-FreeTier`). `TRANSLATE_MODEL` and `TRANSLATE_MODEL_RETRY` spread a
