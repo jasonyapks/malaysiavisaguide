@@ -5,7 +5,7 @@ category: "general"
 sourceName: "legit.ng"
 sourceUrl: "https://www.legit.ng/people/1730763-malaysia-releases-list-31-countries-citizens-obtain-evisa-visiting-country/"
 publishedAt: "2026-09-15T16:18:24.807Z"
-updatedAt: "2026-09-15T16:18:55.000Z"
+updatedAt: "2026-09-16T00:32:00.000Z"
 readingMinutes: 2
 keyPoints:
   - "31 nationalities now need a Single Entry eVisa for social visits"
@@ -23,6 +23,12 @@ sourceExcerpt: "The requirement applies specifically to a Single Entry Visa (SEV
 The Malaysian government announced that, starting in 2026, citizens of 31 identified countries must secure an electronic visa before travelling for social purposes such as tourism, family visits or short‑term events. The move is presented as part of a broader effort to tighten border control and enhance national security while still encouraging legitimate travel.
 
 The rule targets the Single Entry Visa (SEV) and ties eligibility directly to the traveller’s nationality. Applicants are required to complete the eVisa process online prior to departure, and the visa cannot be issued from within Malaysia, Israel or North Korea, meaning those locations are excluded from the application pipeline.
+
+## The 31 countries on the list
+
+The nationalities affected, alphabetically: Afghanistan, Angola, Bangladesh, Bhutan, Burkina Faso, Burundi, Cameroon, the Central African Republic, Colombia, Côte d’Ivoire, the Democratic Republic of the Congo, Djibouti, Equatorial Guinea, Eritrea, Ethiopia, Ghana, Guinea-Bissau, India, Liberia, Mali, Montenegro, Mozambique, Myanmar, Nepal, Niger, Nigeria, Pakistan, the Republic of the Congo, Rwanda, Serbia and Sri Lanka.
+
+Two pairs on that list are easy to misread. The Democratic Republic of the Congo (capital Kinshasa) and the Republic of the Congo (capital Brazzaville) are separate countries and both appear, so check which passport you hold rather than assuming one entry covers both. Niger and Nigeria are likewise distinct entries.
 
 ## How the single entry visa works
 
