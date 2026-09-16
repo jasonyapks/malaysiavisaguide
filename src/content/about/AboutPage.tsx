@@ -80,6 +80,13 @@ export function AboutPage({
 
       <section className={PROSE}>
         <h2 className="font-serif text-h3 font-semibold text-ink">
+          {copy.verify.heading}
+        </h2>
+        {copy.verify.body}
+      </section>
+
+      <section className={PROSE}>
+        <h2 className="font-serif text-h3 font-semibold text-ink">
           {copy.government.heading}
         </h2>
         {copy.government.body}

@@ -41,6 +41,14 @@ export type AboutCopy = {
     heading: string;
     body: (href: (path: string) => string) => ReactNode;
   };
+  /**
+   * The two official registers a reader can check an agent against — MOTAC's
+   * licensed-MM2H list and Immigration's authorised-PVIP list. It sits under
+   * `disclosure` because it is the practical half of the same argument: having
+   * named the businesses Jason runs, the page hands over the means to verify
+   * them, and to verify whoever else is pitching.
+   */
+  verify: { heading: string; body: ReactNode };
   government: { heading: string; body: ReactNode };
   /** The closing band: prompt, link label, then the rest of the sentence. */
   cta: { text: string; label: string; tail: string };

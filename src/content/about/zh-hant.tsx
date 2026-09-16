@@ -97,6 +97,46 @@ export const copy: AboutCopy = {
     ),
   },
 
+  verify: {
+    heading: "對照官方名單核查代理 —— 也包括本站披露的這兩家",
+    body: (
+      <>
+        <p>
+          任何網站都能自稱&ldquo;持牌&rdquo;。兩項計劃都公佈了獲授權承辦申請的代理機構名單，名字在不在名單上，才是唯一算數的依據。誰在向你推銷，就去查誰
+          —— 順帶也把 Jason 名下這兩家公司查一遍。
+        </p>
+        <ul className="ml-5 list-disc space-y-2">
+          <li>
+            <strong>MM2H</strong> ——
+            旅遊藝術文化部（MOTAC）的持牌 MM2H 公司名單：{" "}
+            <a
+              href="https://www.motac.gov.my/en/kategori-semakan-new/licensed-mm2h-company/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              motac.gov.my → Licensed MM2H Company
+            </a>
+          </li>
+          <li>
+            <strong>PVIP</strong> ——
+            移民局公佈的 Premium Visa Programme 授權代理名單：{" "}
+            <a
+              href="https://imigresen-online.imi.gov.my/eservices/doc/AUTHORISED_MALAYSIA_PREMIUM_VISA_PROGRAMME_AGENCIES.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Authorised Malaysia Premium Visa Programme Agencies（PDF）
+            </a>
+          </li>
+        </ul>
+        <p>
+          兩份名單會隨著牌照的批出與吊銷而更新，請直接從政府網站打開，別用代理轉發給你的副本。一家公司若不在對應的名單上，就不能替你遞交申請
+          —— 無論它聲稱自己能做什麼。
+        </p>
+      </>
+    ),
+  },
+
   government: {
     heading: "本站不是政府機構",
     body: (

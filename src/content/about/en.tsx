@@ -85,6 +85,51 @@ export const copy: AboutCopy = {
     ),
   },
 
+  verify: {
+    heading: "Check any agent against the official list — including this one",
+    body: (
+      <>
+        <p>
+          Anyone can put &ldquo;licensed&rdquo; on a website. Both programmes
+          publish a register of the agencies actually authorised to file, and
+          the only name that counts is the one on it. Look up whoever is
+          pitching you &mdash; and look up Jason&apos;s two companies while you
+          are there.
+        </p>
+        <ul className="ml-5 list-disc space-y-2">
+          <li>
+            <strong>MM2H</strong> &mdash; MOTAC&apos;s register of licensed MM2H
+            companies:{" "}
+            <a
+              href="https://www.motac.gov.my/en/kategori-semakan-new/licensed-mm2h-company/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              motac.gov.my &rarr; Licensed MM2H Company
+            </a>
+          </li>
+          <li>
+            <strong>PVIP</strong> &mdash; the Immigration Department&apos;s list
+            of authorised Premium Visa Programme agencies:{" "}
+            <a
+              href="https://imigresen-online.imi.gov.my/eservices/doc/AUTHORISED_MALAYSIA_PREMIUM_VISA_PROGRAMME_AGENCIES.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Authorised Malaysia Premium Visa Programme Agencies (PDF)
+            </a>
+          </li>
+        </ul>
+        <p>
+          Both are reissued as licences are granted and withdrawn, so open them
+          from the government site rather than trusting a copy an agent sends
+          you. If a company is not on the relevant list, it cannot lodge your
+          application, whatever it tells you it can do.
+        </p>
+      </>
+    ),
+  },
+
   government: {
     heading: "Not a government body",
     body: (
