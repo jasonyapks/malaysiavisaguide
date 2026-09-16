@@ -49,7 +49,13 @@ export function DataTable({
   locale = "en",
 }: {
   caption?: string;
-  head: string[];
+  /**
+   * ReactNode rather than string so a header cell can be a link — the
+   * comparison page names a programme in each column and the guide that
+   * documents it is the obvious next click. Every existing caller passes
+   * strings and renders identically.
+   */
+  head: ReactNode[];
   /** `label` renders in the pinned row-header column. Wrap it in <strong> to
    *  emphasise it — a comparison of programmes wants the name prominent, a
    *  comparison of attributes wants the label quiet. */
@@ -84,7 +90,7 @@ export function DataTable({
             <tr className="border-b border-sand-200">
               {head.map((h, i) => (
                 <th
-                  key={h || `col-${i}`}
+                  key={i}
                   scope="col"
                   className={
                     i === 0
@@ -95,7 +101,14 @@ export function DataTable({
                       : "sticky top-0 z-10 min-w-[9rem] bg-white px-4 py-3 text-left font-serif text-body-sm font-semibold text-forest-900 sm:px-6 sm:text-lead"
                   }
                 >
-                  {h || <span className="sr-only">{t.attributeColumn}</span>}
+                  {/* The row-label column has no header of its own. Tested on
+                      the index rather than on falsiness, because a header is
+                      now a node and only column 0 is ever meant to be blank. */}
+                  {i === 0 && !h ? (
+                    <span className="sr-only">{t.attributeColumn}</span>
+                  ) : (
+                    h
+                  )}
                 </th>
               ))}
             </tr>

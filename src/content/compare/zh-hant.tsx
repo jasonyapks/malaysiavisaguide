@@ -12,12 +12,13 @@ import type { CompareCopy } from "./types";
  */
 export const copy: CompareCopy = {
   meta: {
-    title: "馬來西亞各簽證計劃並排對比",
+    title: "馬來西亞簽證對比：MM2H、PVIP 等計劃",
     description:
       "所有長期居留計劃與工作、留學準證，按真正決定取捨的數字並排對比 —— 定期存款、房產、年限、費用、最短居留與工作權。",
   },
 
-  heading: "計劃對比",
+  // 計劃名稱沿用 locales/programmes/zh-hant.ts 的寫法，不另行音譯。
+  heading: "馬來西亞簽證對比：MM2H、PVIP、砂拉越 MM2H 與 DE Rantau",
 
   intro:
     "馬來西亞的長期居留計劃以存款為門檻：你靠投入資金取得資格。工作與留學準證則以擔保為門檻：由僱主或院校擔保你，不存在存款要求。",

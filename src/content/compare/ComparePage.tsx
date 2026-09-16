@@ -127,7 +127,7 @@ export function ComparePage({
           <h2 className="font-serif text-h3 font-semibold">
             {copy.longStay.heading}
           </h2>
-          <TierTable tiers={longStayTiers} locale={locale} />
+          <TierTable tiers={longStayTiers} locale={locale} linkHeaders />
           <p className="max-w-3xl text-body-sm text-ink-muted">
             {copy.longStay.note}
           </p>
@@ -138,7 +138,12 @@ export function ComparePage({
             {copy.workStudy.heading}
           </h2>
           <p className="max-w-3xl text-ink-muted">{copy.workStudy.intro}</p>
-          <TierTable tiers={workStudyTiers} variant="work-study" locale={locale} />
+          <TierTable
+            tiers={workStudyTiers}
+            variant="work-study"
+            locale={locale}
+            linkHeaders
+          />
           <p className="max-w-3xl text-body-sm text-ink-muted">
             {copy.workStudy.note(f)}
           </p>

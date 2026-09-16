@@ -10,12 +10,17 @@ import type { CompareCopy } from "./types";
  */
 export const copy: CompareCopy = {
   meta: {
-    title: "Compare Malaysia's visa programmes side by side",
+    // The left-hand half only. RootShell's title template appends
+    // " — Malaysia Visa Guide", so naming the site here would print it twice.
+    title: "Compare Malaysia Visas: MM2H, PVIP & More",
     description:
       "Every long-stay programme and work/study pass compared on the figures that decide it — deposit, property, term, fees, minimum stay and work rights.",
   },
 
-  heading: "Compare the programmes",
+  // The h1 names the four long-stay programmes it actually compares. "Compare
+  // the programmes" was accurate to someone already on the page and meaningless
+  // to anyone arriving at it.
+  heading: "Compare Malaysia Visas: MM2H, PVIP, Sarawak MM2H and DE Rantau",
 
   intro:
     "Malaysia's long-stay programmes are deposit-gated: you qualify by placing capital. The work and study passes are sponsor-gated: an employer or institution backs you, and no deposit exists.",

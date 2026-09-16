@@ -175,7 +175,10 @@ export const copy: GuideCopy = {
         <p>
           A quote materially above these figures is not an expensive agent. It
           is a wrong one, and the right response is to ask which line item the
-          difference belongs to.
+          difference belongs to. This is the opposite of how PVIP works, where
+          the agency fee is commercial and published nowhere official — the{" "}
+          <Link href={href("/compare/")}>comparison table</Link> sets the two
+          side by side.
         </p>
         <p>
           <em>
@@ -202,7 +205,10 @@ export const copy: GuideCopy = {
           you intend to live first, find that state&apos;s foreign-buyer
           threshold, and only then work out which tier makes sense — doing it the
           other way round is how people end up qualified for Silver and unable to
-          buy anything.
+          buy anything. The{" "}
+          <Link href={href("/tools/eligibility/")}>eligibility checker</Link>{" "}
+          answers the first question in six questions; the state&apos;s floor
+          you have to look up for the state you have chosen.
         </p>
       </Section>
 
@@ -226,7 +232,13 @@ export const copy: GuideCopy = {
           For a retiree this makes MM2H effectively obligation-free on the stay
           side. For a working-age applicant it does not, and that is often the
           deciding factor between MM2H and{" "}
-          <Link href={href("/visas/pvip/")}>PVIP</Link>, which exempts stay entirely.
+          <Link href={href("/visas/pvip/")}>PVIP</Link>, which exempts stay
+          entirely. Platinum is the tier where that choice is genuinely close,
+          and{" "}
+          <Link href={href("/insights/comparisons/mm2h-platinum-vs-pvip/")}>
+            MM2H Platinum against PVIP
+          </Link>{" "}
+          works it through on the figures.
         </p>
       </Section>
 
@@ -260,13 +272,21 @@ export const copy: GuideCopy = {
           that purchase rather than preceding it. So the commitment is made
           before you hold an approval, which is a materially different risk from
           the three main tiers — and the fixed-deposit withdrawal timing
-          described in the FAQ above does not carry across to these two.
+          described in the FAQ above does not carry across to these two. The
+          ordinary sequence, stage by stage, is set out in{" "}
+          <Link href={href("/insights/how-to/apply-for-mm2h-2026/")}>
+            how to apply for MM2H
+          </Link>
+          .
         </p>
         <p>
           These are materially cheaper than Silver and are the least-discussed
           part of the programme. They are tied to specific zones, so the right
           question is not whether you qualify but whether you want to live where
-          they apply.
+          they apply. If the cost is what is driving you rather than the
+          location,{" "}
+          <Link href={href("/visas/sarawak-mm2h/")}>Sarawak&apos;s own MM2H</Link>{" "}
+          is the other cheap route, and it asks for no property purchase at all.
         </p>
       </Section>
     </>

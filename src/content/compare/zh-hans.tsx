@@ -9,12 +9,13 @@ import type { CompareCopy } from "./types";
  */
 export const copy: CompareCopy = {
   meta: {
-    title: "马来西亚各签证计划并排对比",
+    title: "马来西亚签证对比：MM2H、PVIP 等计划",
     description:
       "所有长期居留计划与工作、留学准证，按真正决定取舍的数字并排对比 —— 定期存款、房产、年限、费用、最短居留与工作权。",
   },
 
-  heading: "计划对比",
+  // 计划名称沿用 locales/programmes/zh-hans.ts 的写法，不另行音译。
+  heading: "马来西亚签证对比：MM2H、PVIP、砂拉越 MM2H 与 DE Rantau",
 
   intro:
     "马来西亚的长期居留计划以存款为门槛：你靠投入资金取得资格。工作与留学准证则以担保为门槛：由雇主或院校担保你，不存在存款要求。",

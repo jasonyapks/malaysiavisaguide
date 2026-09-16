@@ -1,7 +1,10 @@
+import Link from "next/link";
 import { DataTable, noteCollector } from "@/components/DataTable";
 import type { Programme } from "@/lib/data/programmes";
 import { money, moneyPer, years } from "@/lib/format";
 import type { Locale } from "@/lib/i18n";
+import { guideHref } from "@/lib/site";
+import { linkPath } from "@/lib/translated";
 import { getUi } from "@/lib/ui";
 
 type Row = {
@@ -27,6 +30,7 @@ export function TierTable({
   caption,
   locale = "en",
   variant = "long-stay",
+  linkHeaders = false,
 }: {
   tiers: Programme[];
   caption?: string;
@@ -39,6 +43,15 @@ export function TierTable({
    * set instead.
    */
   variant?: "long-stay" | "work-study";
+  /**
+   * Link each column header to the guide that documents that programme.
+   *
+   * Opt-in rather than always-on, because `guideHref` is not one-to-one: all
+   * three MM2H tiers resolve to /visas/mm2h/, and that guide renders this very
+   * table. Turning it on everywhere would put three links to the current page
+   * in the header row of the page itself. Only /compare/ passes it.
+   */
+  linkHeaders?: boolean;
 }) {
   const t = getUi(locale).guide.tiers;
   const g = getUi(locale).guide;
@@ -189,7 +202,24 @@ export function TierTable({
   return (
     <DataTable
       caption={caption}
-      head={["", ...tiers.map((t) => t.name)]}
+      head={[
+        "",
+        ...tiers.map((t) =>
+          linkHeaders ? (
+            <Link
+              key={t.slug}
+              // Still reads as a header: the <th>'s own serif weight and colour
+              // are inherited, and only the underline marks it as a link.
+              href={linkPath(guideHref[t.slug], locale)}
+              className="underline decoration-forest-300 underline-offset-4 hover:decoration-forest-700"
+            >
+              {t.name}
+            </Link>
+          ) : (
+            t.name
+          ),
+        ),
+      ]}
       rows={body}
       notes={notes}
       idPrefix={`tt-${variant}`}

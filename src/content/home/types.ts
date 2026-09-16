@@ -28,8 +28,19 @@ export type HomeCopy = {
     eyebrow: string;
     /** Two or three lines with the accent word in the display face. */
     heading: ReactNode;
-    /** SEO-targeted subheading rendered as an h2 under the h1. Optional per locale. */
-    subheading?: string;
+    /**
+     * The descriptive, search-facing counterpart to `heading`, rendered as an
+     * h2 directly under the h1.
+     *
+     * Required, and deliberately so. `heading` is the branding template's
+     * slogan (§9) and names neither the country's programmes nor the year, so
+     * it is the subheading that tells a reader — or a crawler — what this page
+     * actually is. It was optional once, and the consequence was that both
+     * Chinese homepages shipped without one: `cn.` and `tw.` carried the
+     * slogan and nothing descriptive anywhere on the page. Making it a type
+     * error is what stops that happening again.
+     */
+    subheading: string;
     lead: string;
     /** Three short pills under the lead. */
     chips: string[];
