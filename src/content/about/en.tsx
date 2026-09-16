@@ -107,6 +107,14 @@ export const copy: AboutCopy = {
             >
               motac.gov.my &rarr; Licensed MM2H Company
             </a>
+            <span className="mt-1 block">
+              The list does not take a search term from a link, so type{" "}
+              <strong>MY PREMIUM</strong> into its search box yourself. The
+              entry to match is licence no.{" "}
+              <span className="font-mono text-[0.95em]">MM2H862</span> &mdash;
+              check the number, not just the name, because several unrelated
+              companies on that register start the same way.
+            </span>
           </li>
           <li>
             <strong>PVIP</strong> &mdash; the Immigration Department&apos;s list
@@ -118,6 +126,10 @@ export const copy: AboutCopy = {
             >
               Authorised Malaysia Premium Visa Programme Agencies (PDF)
             </a>
+            <span className="mt-1 block">
+              The entry to match is{" "}
+              <strong>MY PR PROGRAM SDN. BHD.</strong>, first on the list.
+            </span>
           </li>
         </ul>
         <p>

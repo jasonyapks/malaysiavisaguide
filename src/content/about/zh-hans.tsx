@@ -113,6 +113,12 @@ export const copy: AboutCopy = {
             >
               motac.gov.my → Licensed MM2H Company
             </a>
+            <span className="mt-1 block">
+              这份名单不支持用链接预填搜索词，请自行在搜索框中输入{" "}
+              <strong>MY PREMIUM</strong>。要核对的是牌照号{" "}
+              <span className="font-mono text-[0.95em]">MM2H862</span>{" "}
+              —— 核对号码，不要光看名字，因为那份名单上有好几家无关的公司，名字开头都一样。
+            </span>
           </li>
           <li>
             <strong>PVIP</strong> ——
@@ -124,6 +130,9 @@ export const copy: AboutCopy = {
             >
               Authorised Malaysia Premium Visa Programme Agencies（PDF）
             </a>
+            <span className="mt-1 block">
+              要核对的是 <strong>MY PR PROGRAM SDN. BHD.</strong>，排在名单第一位。
+            </span>
           </li>
         </ul>
         <p>
