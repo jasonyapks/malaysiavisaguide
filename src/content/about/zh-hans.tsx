@@ -88,7 +88,7 @@ export const copy: AboutCopy = {
           和那些更便宜的计划，写得和代理机构收费承办的计划一样详细 ——
           因为一份回避了不利选项的参考，根本算不上参考。
           <Link href={href("/editorial-policy/")}>编辑方针</Link>
-          写明了这份独立性是怎么守住的。
+          交代了这份独立性是怎么守住的。
         </p>
       </>
     ),

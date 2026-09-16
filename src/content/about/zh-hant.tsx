@@ -91,7 +91,7 @@ export const copy: AboutCopy = {
           和那些更便宜的計劃，寫得和代理機構收費承辦的計劃一樣詳細 ——
           因為一份迴避了不利選項的參考，根本算不上參考。
           <Link href={href("/editorial-policy/")}>編輯方針</Link>
-          寫明瞭這份獨立性是怎麼守住的。
+          交代了這份獨立性是怎麼守住的。
         </p>
       </>
     ),

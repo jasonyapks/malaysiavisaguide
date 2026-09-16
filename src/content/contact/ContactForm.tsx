@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { localisedNavRoutes, navRoutes } from "@/lib/site";
 import { localeName, localeOrigin, type Locale } from "@/lib/i18n";
+import { linkPath } from "@/lib/translated";
 import { getContactCopy } from "./copy";
 
 /**
@@ -131,6 +132,21 @@ export function ContactForm({ locale }: { locale: Locale }) {
         setStatus("success");
         setMessage(copy.success);
         form.reset();
+        /*
+         * Send the reader to /thank-you/ — the only way to reach that URL, so a
+         * page_view on it IS the conversion. See content/thank-you/types.ts.
+         *
+         * `window.location.assign`, NOT router.push. GA4 here is a plain
+         * `gtag('config')` in RootShell that fires one page_view when the
+         * document loads; a client-side push changes the URL without one, so
+         * the conversion this redirect exists to record would never be sent.
+         * A full navigation costs a reload on a page the reader is leaving
+         * anyway, and makes the hit real.
+         *
+         * The success state above still renders for the moment before the
+         * browser leaves, and remains the whole answer if navigation is blocked.
+         */
+        window.location.assign(linkPath("/thank-you/", locale));
       } else {
         setStatus("error");
         setMessage(json?.body?.message ?? json?.message ?? copy.errorGeneric);
