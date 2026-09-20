@@ -106,7 +106,7 @@
 # build from the programme data and a stale copy would state a wrong fee.
 #
 # logo-mark.webp is the one file preloaded on every page — it is the header
-# mark, cropped from the master artwork at MVG_logo.png. logo-mark.png is the
+# mark, cropped from the master artwork at docs/brand/MVG_logo.png. logo-mark.png is the
 # same crop at 256px for email, print and the CMS, and is not requested by any
 # page. Same 30 days for the same reason: stable paths, replaced in place.
 /logo-mark.webp

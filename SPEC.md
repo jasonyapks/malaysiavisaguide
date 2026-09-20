@@ -47,9 +47,9 @@ the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW autho
 
 1. **§4.3 Design is on its FIFTH direction — "Guided Passport", and it is the first one
    that is not a swatch board.** It implements two documents Jason supplied:
-   `malaysiavisaguide_branding_template.md` (the written system — colour, type, devices,
+   `docs/brand/branding-template.md` (the written system — colour, type, devices,
    photography, voice, and how the brand behaves off the site) and
-   `MVG_branding_board.png` (the visual board, which is where the logo actually lives).
+   `docs/brand/MVG_branding_board.png` (the visual board, which is where the logo actually lives).
    Both outrank §4.3; when they disagree with each other, see the next point.
 2. **The two brand documents disagree on Primary Navy** — the markdown says `#071D3A`,
    the board's swatch says `#0B1D3A`. **Jason settled it: the markdown is canonical**, and
@@ -60,7 +60,7 @@ the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW autho
    on a navy foundation, and — critically — a colour that cannot carry body text at all.
    See the gold rule at the top of `globals.css` before using it anywhere.
 4. **New logo.** The Petronas Towers mark is retired. The master artwork is
-   **`MVG_logo.png`** in the repo root — 2172×724 RGBA, icon + wordmark + tagline, supplied
+   **`docs/brand/MVG_logo.png`** — 2172×724 RGBA, icon + wordmark + tagline, supplied
    by Jason. Every logo asset on the site is cut from it; nothing is drawn by hand. A
    vector redraw shipped for about an hour before the real file arrived and has been
    deleted — do not resurrect `BrandMark.tsx` or `logo-mark.svg` from the history.
@@ -403,7 +403,7 @@ deep rainforest green + warm sand + hibiscus; 2026-07-24 replaced it with a navy
 echo of the official eVISA portal; 2026-07-25 replaced *that* with champagne-and-gold after
 `connectinasia.com`; 2026-07-26 replaced that in turn with a cobalt palette from a
 four-swatch board; 2026-08-25 replaced that with the brand system in
-**`malaysiavisaguide_branding_template.md`**. None of the first four should be resurrected
+**`docs/brand/branding-template.md`**. None of the first four should be resurrected
 from this file's history.
 
 **Two documents outrank this section now.** The branding template is the *intent* — it
@@ -448,7 +448,7 @@ work; keep it.
   dark-on-light and all but vanish on a `forest-900` panel. `on-navy` re-points them for the
   whole subtree — put it on any `bg-forest-900` block that contains an eyebrow or an accent
   word. Navy is also the one ground where gold gets to be its undarkened self.
-- **Logo — `MVG_logo.png` in the repo root is the master.** Navy passport, gold crescent
+- **Logo — `docs/brand/MVG_logo.png` is the master.** Navy passport, gold crescent
   and 14-point star, gold compass rose whose long axis breaks the cover's edge. Every
   shipped asset is a crop of it, at boxes measured off the **alpha channel**, not by eye:
   the icon is `x154 y23 614×670`, the wordmark `x798 y112 1231×527`, separated by a 30px

@@ -460,7 +460,7 @@ function navGroupsFor(locale: Locale) {
 /**
  * Our own mark — never the government crest.
  *
- * This is the real logo. `MVG_logo.png` in the repo root is the master Jason
+ * This is the real logo. `docs/brand/MVG_logo.png` is the master Jason
  * supplied: 2172×724 RGBA, icon plus wordmark plus tagline. The icon is cropped
  * out of it at x154 y23, 614×670 — a box measured off the alpha channel, not by
  * eye; there is a 30px fully transparent gutter at x768–797 separating the icon

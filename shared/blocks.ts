@@ -97,7 +97,7 @@ export type Inline =
   | { t: "strong"; c: Inline[] }
   | { t: "em"; c: Inline[] }
   | { t: "link"; href: string; c: Inline[] }
-  | { t: "fig"; programme: ProgrammeId; field: string; fmt: string }
+  | ({ t: "fig" } & FigureRef)
   | { t: "note"; c: Inline[] };
 
 /** A table cell: inline content plus an optional 1-based footnote reference. */

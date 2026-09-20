@@ -21,7 +21,7 @@
 /**
  * Design tokens — v5 "Guided Passport", 2026-08-25.
  *
- * Implements malaysiavisaguide_branding_template.md §3–§4. Replaces the v4
+ * Implements docs/brand/branding-template.md §3–§4. Replaces the v4
  * cobalt-sky palette with the brand's navy-and-gold system: navy authority,
  * royal blue for digital UI, gold as a rationed accent, and off-white/mist
  * surfaces. SPEC.md §4.3 is stale (it described v3).
@@ -69,8 +69,8 @@
   --color-forest-600: #2e6dc2; /* royal blue, lifted — progress bars, active rules */
   --color-forest-700: #124e9e; /* Royal Blue — links, secondary headings (7.4:1) */
   /* Primary Navy — headings, dark panels (15.8:1).
-     The two brand documents disagree here: malaysiavisaguide_branding_template.md
-     §3 says #071D3A, MVG_branding_board.png labels its navy swatch #0B1D3A.
+     The two brand documents disagree here: docs/brand/branding-template.md
+     §3 says #071D3A, docs/brand/MVG_branding_board.png labels its navy swatch #0B1D3A.
      Jason settled it on 2026-08-25 — the markdown is canonical. That is this
      value, and it is also the navy the logo is drawn in, so the page and the
      mark share one. Do not reintroduce the board's value from the file history. */

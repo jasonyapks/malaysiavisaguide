@@ -120,17 +120,21 @@ export type FigureValue =
 
 export type FigureValueKind = FigureValue["kind"];
 
-/** Every way a resolved value may be written. Also a closed set. */
-const FIGURE_FORMATS = [
-  "money",
-  "moneyPer",
-  "years",
-  "number",
-  "text",
-  "date",
-] as const;
-
-export type FigureFormat = (typeof FIGURE_FORMATS)[number];
+/**
+ * Every way a resolved value may be written. A closed set.
+ *
+ * A union rather than an `as const` array, which is what its neighbours in this
+ * file are: those are arrays because something iterates them at runtime. Nothing
+ * iterates this one — a format is validated against FORMATS_FOR_KIND below, which
+ * is narrower and is the check that matters.
+ */
+export type FigureFormat =
+  | "money"
+  | "moneyPer"
+  | "years"
+  | "number"
+  | "text"
+  | "date";
 
 /** Which formats each kind of value accepts. */
 export const FORMATS_FOR_KIND: Record<FigureValueKind, readonly FigureFormat[]> =

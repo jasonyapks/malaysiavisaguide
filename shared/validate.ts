@@ -3,14 +3,12 @@ import {
   INSIGHT_CATEGORIES,
   PROGRAMME_IDS,
   type Block,
-  type Inline,
 } from "./blocks";
 import {
   FIGURE_FIELD_IDS,
   FORMATS_FOR_KIND,
   figureFieldKind,
 } from "./figures";
-import type { InsightDoc } from "./insight";
 
 /**
  * One validator, run twice: by the Worker before a document is stored, and by
