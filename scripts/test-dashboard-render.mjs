@@ -83,6 +83,34 @@ scripts.forEach((src, i) => {
   }
 });
 
+// --- 1b. The script is allowed to run under the page's own CSP -------------
+//
+// index.ts serves this with `script-src 'nonce-…'` and nothing else. A <script>
+// without the nonce does not execute, and because the whole dashboard is one
+// script, the page would come up as styled markup where no button does anything.
+// Nothing in a typecheck or a render notices that; this does.
+for (const [i, tag] of [
+  ...html.matchAll(/<script\b([^>]*)>/g),
+].entries()) {
+  if (!/\bnonce="test-nonce"/.test(tag[1])) {
+    fail.push(
+      `script ${i + 1} carries no nonce, so CSP will refuse to run it — tag was <script${tag[1]}>`,
+    );
+  }
+}
+
+// An inline handler attribute is refused by the same policy, for the same
+// reason, and is the easy habit to slip back into when adding a button. Every
+// listener on this page is attached with addEventListener; keep it that way.
+for (const m of html.matchAll(/\s(on[a-z]+)=["']/g)) {
+  fail.push(
+    `inline \`${m[1]}\` handler — CSP blocks it; attach the listener in the script instead`,
+  );
+}
+if (/href=["']javascript:/i.test(html)) {
+  fail.push("a javascript: URL — CSP blocks it");
+}
+
 // --- 2. Every element the script addresses exists --------------------------
 //
 // The check that earns this file. A panel removed from the markup but still

@@ -5,13 +5,35 @@ import { INSIGHT_IMAGES_JS } from "./insight-images";
 /**
  * The private dashboard, served only to Jason (behind Cloudflare Access).
  * Self-contained HTML + vanilla JS — it talks to the same Worker's /api/admin
- * routes, whose requests carry the Access cookie automatically. No framework,
- * no external requests, so it works under a strict CSP.
+ * routes, whose requests carry the Access cookie automatically. No framework and
+ * no external requests, which is what makes a strict CSP possible.
+ *
+ * As of 2026-09-20 that CSP is actually sent (`html()` in index.ts), rather than
+ * being a property the page merely had. Two consequences for anyone editing this
+ * file, both enforced by `npm run test:dashboard`:
+ *
+ *   — the single inline <script> runs because it carries the nonce. There must
+ *     stay exactly one, and any second one needs the nonce too.
+ *   — no `onclick=` or other inline handler attributes. They are refused by
+ *     `script-src 'nonce-…'`, silently, leaving a button that looks fine and does
+ *     nothing. Every listener here is attached with addEventListener, mostly
+ *     delegated from a container because the rows are rebuilt on each render.
+ *
+ * Inline `style="…"` attributes are fine — style-src keeps 'unsafe-inline'
+ * precisely so they are, and index.ts explains why a nonce there would break
+ * them.
  */
 export function dashboardHtml(
   email: string,
   siteOrigin: string,
   newsApiOrigin: string,
+  /**
+   * CSP nonce for the one inline <script>, minted per response in index.ts.
+   * Without it on the tag the script does not run and the page is inert — which
+   * is the intended behaviour for anything injected into this markup, and would
+   * be an obvious, immediate failure for the page itself rather than a quiet one.
+   */
+  nonce: string,
 ): string {
   return `<!doctype html>
 <html lang="en">
@@ -332,7 +354,7 @@ export function dashboardHtml(
   </section>
 
 </main>
-<script>
+<script nonce="${escapeHtml(nonce)}">
 const $ = (s) => document.querySelector(s);
 const SITE = ${JSON.stringify(siteOrigin)};
 // Serialised from shared/blocks.ts rather than retyped, so the image panel's

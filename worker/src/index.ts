@@ -21,6 +21,7 @@ import {
   putVariant,
 } from "./assets";
 import { dashboardHtml } from "./dashboard";
+import { dashboardHeaders } from "./headers";
 
 /**
  * Columns the public site needs for the /news index. `body` is deliberately
@@ -215,8 +216,57 @@ export default {
       return new Response("Forbidden — dashboard is private.", { status: 403 });
     }
 
+    /**
+     * Cross-site request forgery, for the one class of request that can do harm.
+     *
+     * Access authenticates with a cookie, and a cookie is sent by the browser
+     * whoever caused the request. So a page on another origin can make Jason's
+     * browser POST here — /api/admin/items/<id>/delete, or an approve that
+     * commissions a large-model article — and Access will have authenticated it
+     * perfectly, because it *is* him. Nothing above this line would notice.
+     *
+     * `Sec-Fetch-Site` settles it and cannot be set by script, which is the whole
+     * point of it: the browser writes it. Every call the dashboard makes is a
+     * relative path to its own origin, so `same-origin` is what ours look like.
+     * `cross-site` and `same-site` are refused — a subdomain is not this page —
+     * and so is `none`, which means a top-level navigation rather than a fetch
+     * and has no business being a POST.
+     *
+     * Origin is the fallback for a browser too old to send Sec-Fetch-Site, and it
+     * is compared against the origin of THIS request rather than a constant,
+     * because the dashboard answers on two hosts: malaysiavisaguide.com and the
+     * workers.dev fallback. A fixed value would work on one and lock out the
+     * other.
+     *
+     * Reads are left alone. They change nothing, and a GET that did would be the
+     * bug worth fixing instead.
+     *
+     * Calling these from a script: send `Origin` matching the host you are
+     * calling. You need the Access cookie regardless, so this adds a header to a
+     * request that already had to be authenticated.
+     */
+    const MUTATING = ["POST", "PUT", "PATCH", "DELETE"];
+    if (MUTATING.includes(request.method) && !isSameOrigin(request)) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Refused: this request did not come from the dashboard. If you are " +
+            "calling the API directly, send an Origin header matching this host.",
+        },
+        403,
+      );
+    }
+
     if (pathname === "/" || pathname === "/dashboard") {
-      return html(dashboardHtml(email, env.SITE_ORIGIN, env.NEWS_API_ORIGIN));
+      // A fresh nonce per response — the inline script is allowed by CSP because
+      // it carries this value, and nothing injected into the page can guess it.
+      const nonce = crypto.randomUUID();
+      return html(
+        dashboardHtml(email, env.SITE_ORIGIN, env.NEWS_API_ORIGIN, nonce),
+        nonce,
+        env,
+      );
     }
 
     // GET /api/admin/items?status=pending|approved|rejected
@@ -681,16 +731,49 @@ function base64ToBytes(b64: string): Uint8Array {
   return out;
 }
 
+/**
+ * True only for a request the dashboard's own page made. See the long note at
+ * the admin gate for why a cookie is not enough on its own.
+ */
+function isSameOrigin(request: Request): boolean {
+  const site = request.headers.get("sec-fetch-site");
+  if (site) return site === "same-origin";
+
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  try {
+    return new URL(origin).origin === new URL(request.url).origin;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * `no-store` because every one of these carries queue state — what is pending,
+ * what failed to commit, how the build is going. A cached copy of that is a lie
+ * with a timestamp.
+ *
+ * The public read routes go through `cors()`, which sets its own `cache-control`
+ * afterwards and so overrides this deliberately: those answers are cacheable for
+ * five minutes and are read by tooling, not by a person making a decision.
+ */
 function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "content-type": "application/json; charset=utf-8" },
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      "x-content-type-options": "nosniff",
+    },
   });
 }
 
-function html(body: string): Response {
+/**
+ * The dashboard document, with the policy from headers.ts applied.
+ */
+function html(body: string, nonce: string, env: Env): Response {
   return new Response(body, {
-    headers: { "content-type": "text/html; charset=utf-8" },
+    headers: dashboardHeaders(nonce, env.NEWS_API_ORIGIN),
   });
 }
 
