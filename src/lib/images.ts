@@ -118,6 +118,12 @@ const codeImages: Record<string, SiteImage> = {
  * (it is not a property of a photograph; it is a note about what to look for),
  * and losing it would mean deleting a picture in the dashboard left an
  * unlabelled placeholder rather than the one that says what belongs there.
+ *
+ * @public The call to use for code written from here on. `images` below exists
+ * only so the twenty-odd existing `images["pvip"]` call sites — several under
+ * `src/content/visas/`, which is hand-edited on purpose — did not all have to
+ * change to gain the CMS. Nothing imports this yet by construction, not by
+ * neglect.
  */
 export function siteImage(key: string): SiteImage | null {
   const code = codeImages[key];

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+
+  // Dead-code audit — `npm run deadcode`.
+  //
+  // WHY IT IS CHECKED IN. Untuned, the audit reports around forty findings on a
+  // clean repo, nearly all of them artefacts of this project's shape: two
+  // package.json files, route files switched on by file extension (see
+  // next.config.ts), Pages Functions invoked by path, and a Worker that reaches
+  // shared/ by relative path. A report that is mostly noise does not get read —
+  // which is how a 640-line retired insight editor sat in the dashboard for a
+  // month after the CMS moved out from under it. Tuned, this reports NOTHING on a
+  // clean tree, so a single new finding is worth reading.
+  //
+  // NOT A DEPENDENCY. `npm run deadcode` fetches it with npx. This repo has three
+  // runtime dependencies and the audit runs a few times a year; a tool that is
+  // not in the build does not belong in the lockfile.
+  //
+  // An export that is deliberately public though nothing imports it yet carries an
+  // `@public` JSDoc tag stating why, and `tags` below excludes those. The reason
+  // belongs next to the export, where someone deciding whether to delete it will
+  // be standing — not in this file.
+
+  "tags": ["-@public"],
+
+  // VALUES, NOT TYPES. `types` is excluded because an exported type that no other
+  // file imports is not evidence of anything: a type is erased at build, costs
+  // nothing at runtime, and is usually there to describe a module's shape to
+  // whoever reads it next — `DeployStatus`, `Route`, `WatchRow` are all like that.
+  // Reporting them means 22 findings that each resolve to "yes, deliberately",
+  // which is the noise this config exists to remove. Dead code that matters is
+  // dead *implementation*, and the `exports` and `files` checks still catch that:
+  // if a function goes, its types show up in the same diff.
+  "exclude": ["types"],
+
+  "workspaces": {
+    ".": {
+      // The extension-gated /insights and Chinese route files are real pages that
+      // Next compiles only when scripts/sync-insight-routes.mjs switches them on.
+      // knip cannot know that page.cms.tsx is a route and page.zhins.tsx is too.
+      //
+      // functions/ is Cloudflare Pages Functions — _middleware.ts and the two
+      // handlers are invoked by the platform by path, never imported.
+      //
+      // public/ is absent from `project` on purpose, which also keeps the vendored
+      // 1.9MB @sveltia/cms bundle out: it is someone else's minified build, and
+      // upgrading it is a re-download rather than an edit.
+      "entry": [
+        "src/app/**/page.{tsx,cms.tsx,cmsindex.tsx,zhins.tsx,zhnews.tsx}",
+        "src/app/**/{layout,not-found,global-not-found}.tsx",
+        "src/app/**/{robots,sitemap}.ts",
+        "functions/**/*.ts",
+        "scripts/*.mjs"
+      ],
+      "project": ["src/**/*.{ts,tsx}", "shared/**/*.ts", "scripts/*.mjs"],
+
+      // Tailwind v4 arrives through @tailwindcss/postcss and an @import in
+      // src/app/globals.css. knip reads neither, so it cannot see the one
+      // dependency every page's styling rests on.
+      //
+      // `postcss` is knip's own inference from the filename postcss.config.mjs.
+      // That file names one plugin, @tailwindcss/postcss, which is declared;
+      // postcss itself arrives underneath it and is not ours to list.
+      "ignoreDependencies": ["tailwindcss", "postcss"]
+    },
+
+    "worker": {
+      // Its own package, its own lockfile. It reaches shared/ by relative path
+      // rather than a tsconfig alias on purpose: wrangler bundles with esbuild and
+      // a path alias here typechecks and then fails to build (worker/tsconfig.json
+      // says so). src/index.ts is picked up as the default entry.
+      "entry": ["scripts/*.mjs"],
+      "project": ["src/**/*.ts", "scripts/*.mjs"]
+    }
+  }
+}

@@ -184,7 +184,7 @@ export function parseInline(src: string): Inline[] {
  * left alone — prose is full of them and escaping all of them makes the source
  * unreadable to write in.
  */
-export function escText(v: string, hard: boolean): string {
+function escText(v: string, hard: boolean): string {
   if (hard) return v.replace(/([\\*_[\](){}])/g, "\\$1");
   return v
     .replace(/\\/g, "\\\\")
@@ -226,7 +226,7 @@ function emitInline(nodes: Inline[] | undefined, hard: boolean): string {
  * every document as lossy and push every write down the hard-escape path —
  * correct output, unreadable source.
  */
-export function sameInline(a: Inline[] | undefined, b: Inline[] | undefined): boolean {
+function sameInline(a: Inline[] | undefined, b: Inline[] | undefined): boolean {
   const xs = a || [];
   const ys = b || [];
   if (xs.length !== ys.length) return false;

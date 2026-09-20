@@ -365,7 +365,7 @@ function SuitList({
  * Turn a section title into a stable anchor. Shared by <Section> and the
  * contents rail so the two can never disagree about a link target.
  */
-export function sectionId(title: string): string {
+function sectionId(title: string): string {
   return title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")

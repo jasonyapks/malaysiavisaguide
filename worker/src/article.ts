@@ -80,7 +80,7 @@ const PROGRAMME_CONTEXT: Record<string, string> = {
  * alternate-source hunt are skipped entirely — the source has already been read,
  * by a human.
  */
-export async function writeArticle(
+async function writeArticle(
   env: Env,
   item: Pick<NewsItem, "title" | "summary" | "category" | "source_name" | "source_url">,
   override?: { text: string },
@@ -454,7 +454,7 @@ export async function generateAndStore(
  * it a rewrite of the same story would collide with itself and publish at
  * `-2`, quietly abandoning the URL search engines had already indexed.
  */
-export async function uniqueSlug(
+async function uniqueSlug(
   env: Env,
   headline: string,
   excludeId: string,

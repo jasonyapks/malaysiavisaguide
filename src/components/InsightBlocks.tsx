@@ -37,7 +37,7 @@ function at(docPath: string, index: number): string {
 
 // --- Inline ----------------------------------------------------------------
 
-export function InlineNodes({
+function InlineNodes({
   nodes,
   where,
   onNavy = false,

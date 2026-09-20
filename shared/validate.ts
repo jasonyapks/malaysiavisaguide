@@ -374,26 +374,3 @@ export function validateInsightDoc(doc: unknown): string[] {
 
   return errs;
 }
-
-/** Narrowing wrapper for callers that only want a yes/no. */
-export function isInsightDoc(doc: unknown): doc is InsightDoc {
-  return validateInsightDoc(doc).length === 0;
-}
-
-/** Everything an inline tree references, for a figure pre-flight. */
-export function collectFigureRefs(
-  nodes: Inline[],
-): { programme: string; field: string; fmt: string }[] {
-  const out: { programme: string; field: string; fmt: string }[] = [];
-  const walk = (ns: Inline[]) => {
-    for (const n of ns) {
-      if (n.t === "fig") {
-        out.push({ programme: n.programme, field: n.field, fmt: n.fmt });
-      } else if (n.t !== "text") {
-        walk(n.c);
-      }
-    }
-  };
-  walk(nodes);
-  return out;
-}

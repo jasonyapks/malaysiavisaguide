@@ -72,7 +72,7 @@ export type Attribution = {
  * belongs in UNVERIFIED, not here, and `figuresPending` says out loud that the
  * numbers rendered on the page are still the superseded ones.
  */
-export type Superseded = {
+type Superseded = {
   /** When the change took effect, ISO. Formatted at render through
    *  `reviewDate(_, locale)` — it used to be stored as English prose
    *  ("16 March 2026"), which no locale could do anything with, and it read as
@@ -105,7 +105,7 @@ export type Superseded = {
  * are priced by nationality, not by programme. Those amounts live in
  * `nationality-fees.ts`; a programme only declares that it charges them.
  */
-export type GovernmentExtras = {
+type GovernmentExtras = {
   /**
    * Immigration pass fee, per person per year of the approved term. Collected
    * for the whole term when the visa is issued or renewed, not annually.
@@ -508,7 +508,12 @@ export const PVIP_GOVERNMENT_FEE_ATTRIBUTION: Attribution = {
   asAt: "2026-07-28",
 };
 
-/** Payment terms attached to the government-fixed agency fee. */
+/**
+ * Payment terms attached to the government-fixed agency fee.
+ *
+ * @public Quoted into the MM2H records below. Named rather than inlined because
+ * the same sentence applies to every tier and must not drift between them.
+ */
 export const MM2H_AGENCY_FEE_TERMS =
   "20% of the agency fee is payable on submission and the remaining 80% after approval. All agency fees are inclusive of 8% SST.";
 
@@ -910,6 +915,10 @@ export const programmes: Programme[] = [
  * Gaps where no official source could confirm a figure. Nothing here may be
  * published as fact — these are questions for Jason, who is the domain
  * authority, not guesses to fill in.
+ *
+ * @public Read by a person, not by code — which is the point. SPEC.md §4.1 is
+ * why an unsourced figure does not ship, and this is the list it produces. No
+ * import is expected and its absence is not evidence of anything.
  *
  * Reviewed 2026-07-23.
  */

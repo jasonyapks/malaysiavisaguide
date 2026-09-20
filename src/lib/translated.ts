@@ -27,6 +27,10 @@ import { localeUrl, prefixedLocales, type Locale } from "./i18n";
  * ADDING A PAGE: create `src/app/[locale]/<path>/page.tsx` and add the path
  * here in the same commit. Doing one without the other is the bug this file
  * is designed to make loud.
+ *
+ * @public The declaration HANDOFF.md sends you to. Read in this file by
+ * `linkPath()` and by `assertTranslatedRoutesExist()`, which fails the build on
+ * drift — so it is load-bearing regardless of who imports it.
  */
 export const translatedRoutes = new Set<string>([
   "/",

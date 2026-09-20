@@ -47,7 +47,7 @@ function defined(obj: Record<string, unknown>): Frontmatter {
   ) as Frontmatter;
 }
 
-export function newsFilePath(slug: string): string {
+function newsFilePath(slug: string): string {
   return `content/news/${slug}.md`;
 }
 

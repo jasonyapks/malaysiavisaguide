@@ -13,7 +13,7 @@ import type { PrivacyCopy } from "./types";
  */
 
 /** Update whenever the substance of the policy changes, not on a re-word. */
-export const LAST_UPDATED = "2026-07-28";
+const LAST_UPDATED = "2026-07-28";
 
 const PROSE =
   "space-y-4 text-body-sm leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink";

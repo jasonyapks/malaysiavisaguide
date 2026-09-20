@@ -31,7 +31,7 @@ export type NewsCategory =
   | "world";
 
 /** The article body as the Worker stores it — see worker/src/article.ts. */
-export interface ArticleBody {
+interface ArticleBody {
   keyPoints: string[];
   sections: { heading: string; paragraphs: string[] }[];
   whatItMeans: string[];
@@ -82,7 +82,13 @@ function contentDir(locale: Locale): string {
     : path.join(process.cwd(), "content", locale, "news");
 }
 
-/** Every category, in no particular order — the closed set of folder names. */
+/**
+ * Every category, in no particular order — the closed set of folder names.
+ *
+ * @public The set `isNewsCategory()` below narrows against. Exported as the
+ * declared vocabulary of this module: a category that is not in here is not a
+ * category, and that is worth being able to read from outside.
+ */
 export const NEWS_CATEGORIES: readonly NewsCategory[] = [
   "pvip",
   "mm2h",

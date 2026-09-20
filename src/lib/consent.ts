@@ -10,7 +10,7 @@
  * default. STORAGE_KEY must stay identical in both places.
  */
 
-export const STORAGE_KEY = "mvg-consent";
+const STORAGE_KEY = "mvg-consent";
 
 export type Choice = "granted" | "denied";
 
@@ -54,12 +54,12 @@ declare global {
  * bootstrap script in RootShell.tsx — if the marker is missing because a file
  * was served without the Function in front of it, the safe answer is opt-in.
  */
-export function readRegion(): ConsentRegion {
+function readRegion(): ConsentRegion {
   return window.__mvgConsentRegion === "open" ? "open" : "strict";
 }
 
 /** What analytics_storage is set to for someone who has not answered yet. */
-export function regionDefault(region: ConsentRegion): Choice {
+function regionDefault(region: ConsentRegion): Choice {
   return region === "open" ? "granted" : "denied";
 }
 

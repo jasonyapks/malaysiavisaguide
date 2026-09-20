@@ -36,10 +36,20 @@ export const NATIONALITY_FEE_ATTRIBUTION: Attribution = {
   asAt: "2026-07-28",
 };
 
-/** Charged where a country is not named in the visa fee schedule. */
+/**
+ * Charged where a country is not named in the visa fee schedule.
+ *
+ * @public A figure, exported because this is the file figures live in. It is
+ * composed into `nationalityFees` below rather than imported elsewhere, which is
+ * an implementation detail of today, not a reason to hide it.
+ */
 export const VISA_FEE_DEFAULT = 20;
 
-/** Charged where a country is not named in the security bond schedule. */
+/**
+ * Charged where a country is not named in the security bond schedule.
+ *
+ * @public As above.
+ */
 export const SECURITY_BOND_DEFAULT = 1_500;
 
 export type NationalityFee = {
@@ -62,6 +72,9 @@ export type NationalityFee = {
  * schedule's regional rows — Africa, Europe, British C.I, Portugal C.I — all
  * sit at RM1,500, which is the default, so they need no expansion: an unnamed
  * European or African country lands on the right figure either way.
+ *
+ * @public The schedule itself. Consumed by `nationalityFees` in this file,
+ * and the thing a human edits when Immigration republishes a fee table.
  */
 export const NATIONALITIES: NationalityFee[] = [
   { label: "Angola", visaFee: 20, securityBond: 2_000 },

@@ -14,9 +14,9 @@ export type StepId =
  * a translated "RM 1 million – RM 2.05 million" that still patched the old
  * band would silently score the reader against the wrong tier.
  */
-export type Choice = { label: string; hint?: string; patch: Partial<Answers> };
+type Choice = { label: string; hint?: string; patch: Partial<Answers> };
 
-export type Step = { prompt: string; help?: string; choices: Choice[] };
+type Step = { prompt: string; help?: string; choices: Choice[] };
 
 export type EligibilityCopy = {
   meta: { title: string; description: string };

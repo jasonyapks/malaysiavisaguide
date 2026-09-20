@@ -66,10 +66,6 @@ export function isPrefixedLocale(value: string): value is PrefixedLocale {
   return (prefixedLocales as readonly string[]).includes(value);
 }
 
-export function isLocale(value: string): value is Locale {
-  return (locales as readonly string[]).includes(value);
-}
-
 /**
  * The public origin each locale is served from. One locale, one hostname.
  *

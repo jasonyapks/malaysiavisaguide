@@ -1,34 +1,41 @@
 import type { Env } from "./types";
 
 /**
- * Publishing, from the dashboard.
+ * Reporting on the build — how the deploy panel knows what is happening.
  *
- * WHY THIS EXISTS. The site is a static export, so approving an article writes a
- * D1 row and nothing a reader can see changes. Something has to run `next build`
- * and upload the result, and a Worker cannot run a Next.js build. What it *can*
- * do is ask Cloudflare Pages to run one: the project is connected to the repo, so
- * `POST /deployments` starts a build from the production branch, which fetches
- * this Worker's own API and bakes the current content in.
+ * WHAT THIS FILE IS NOT, ANY MORE. It used to start builds. The site is a static
+ * export, so there was a time when approving an article wrote a D1 row and
+ * changed nothing a reader could see; something had to run `next build`, and a
+ * Worker cannot, so this asked Cloudflare Pages to do it. That whole mechanism is
+ * gone: approving an article now commits `content/news/<slug>.md`, and a push to
+ * main IS the deploy. Nothing has to ask for a build, because making the commit
+ * already caused one. The publish-then-deploy gap that produced "I approved it
+ * and it isn't live" cannot happen when there is only one step.
  *
- * WHY NOT A DEPLOY HOOK. The plan called for one. A deploy hook is an unguessable
- * URL that triggers a build with no auth, which means it has to be created by hand
- * in the dashboard and stored as a second secret. `POST /deployments` does the same
- * job with the API token the status panel already needs, so there is one credential
- * for both and nothing for Jason to click. The tradeoff is that the token is
- * broader than a hook URL — Pages: Edit can also roll back and delete — which is
- * acceptable for a token only this Worker holds, and better than a bearer URL that
- * anyone who ever sees it can fire forever.
+ * What is left is the read half — which got MORE useful in the trade, not less.
+ * When the deploy is a consequence of a commit rather than a button, the panel
+ * reporting on it is the only place Jason finds out that the build his last save
+ * triggered went red.
  *
- * Needs CF_PAGES_TOKEN (Cloudflare Pages: Edit). Absent, publishing and the status
- * panel both degrade to a clear message rather than breaking the dashboard.
+ * Needs CF_PAGES_TOKEN (Cloudflare Pages: Edit — the token also permits rollback
+ * and delete, which is why only this Worker holds it). Absent, both functions
+ * here degrade to a clear message rather than breaking the dashboard, and
+ * everything else on the page still works: nothing on the publishing path depends
+ * on this file any more.
  */
 
 const API = "https://api.cloudflare.com/client/v4";
 const PROJECT = "malaysiavisaguide";
 
-/** Where a build has got to, flattened from Cloudflare's stage/status pair. */
+/**
+ * Where a build has got to, flattened from Cloudflare's stage/status pair.
+ *
+ * @public Part of what `getDeployStatus()` answers with, so it is named for the
+ * caller's benefit even where TypeScript would infer it.
+ */
 export type Phase = "queued" | "building" | "deploying" | "success" | "failure";
 
+/** @public The deployment `getDeployStatus()` returns. See Phase above. */
 export interface Deployment {
   id: string;
   short: string;

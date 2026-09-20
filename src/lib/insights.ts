@@ -85,7 +85,7 @@ const AUTHORED_CATEGORIES = new Set<InsightCategory>(
   authored.map((a) => a.category),
 );
 
-export function hasAuthoredIndex(category: InsightCategory): boolean {
+function hasAuthoredIndex(category: InsightCategory): boolean {
   return AUTHORED_CATEGORIES.has(category);
 }
 

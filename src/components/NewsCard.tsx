@@ -96,7 +96,7 @@ export function NewsCard({
  * category, so the chip would repeat the page's own <h1> once per card and,
  * worse, link every card back to the page the reader is standing on.
  */
-export function NewsMeta({
+function NewsMeta({
   article,
   showCategory = true,
   locale = defaultLocale,

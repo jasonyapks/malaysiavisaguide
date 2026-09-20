@@ -1,4 +1,5 @@
 import { INSIGHT_CATEGORIES } from "../../shared/blocks";
+import { HERO as HERO_SPEC, OG as OG_SPEC } from "./assets";
 import { INSIGHT_IMAGES_JS } from "./insight-images";
 
 /**
@@ -681,12 +682,25 @@ function renderImageBox(it) {
 }
 
 /**
- * The renditions, and the quality settings that used to live in sharp's call.
- * Changed here, they change everywhere — this is now the only place an image on
- * this site is resized.
+ * The renditions, serialised out of worker/src/assets.ts rather than retyped.
+ *
+ * This is where an image on this site is resized — the crop runs in the browser
+ * — but the numbers belong to the file that documents what a hero_key promises.
+ * They were written out in both places until 2026-09-20 with nothing keeping the
+ * two in step.
  */
-const HERO = { w: 1440, h: 810, type: "image/webp", q: 0.76 };
-const OG   = { w: 1200, h: 630, type: "image/jpeg", q: 0.82 };
+const HERO = ${JSON.stringify({
+  w: HERO_SPEC.width,
+  h: HERO_SPEC.height,
+  type: HERO_SPEC.mime,
+  q: HERO_SPEC.quality,
+})};
+const OG = ${JSON.stringify({
+  w: OG_SPEC.width,
+  h: OG_SPEC.height,
+  type: OG_SPEC.mime,
+  q: OG_SPEC.quality,
+})};
 
 /**
  * Crop-to-fill, reproducing sharp's \`fit: "cover"\` with the default centre

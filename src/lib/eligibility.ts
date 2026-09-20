@@ -84,7 +84,7 @@ function monthlyIncomeFloorMYR(p: Programme): number | null {
   return r.currency === "USD" ? monthly * INDICATIVE_USD_TO_MYR : monthly;
 }
 
-export type Gate = { ok: boolean; requirement: string };
+type Gate = { ok: boolean; requirement: string };
 
 /**
  * The gates for one programme, each built from a field on the programme itself

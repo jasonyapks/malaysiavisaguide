@@ -21,9 +21,20 @@
   // exact paths — never to the bare apex, which would put the public site
   // behind a login. The workers.dev URL keeps working as a fallback.
   // MUST stay explicit. Adding `routes` makes wrangler default workers_dev to
-  // false, which silently kills mvg-news.jason-6bf.workers.dev — and that host
-  // is still what `site.newsApi` fetches at build time, so the site build would
-  // start failing with no obvious cause.
+  // false, which silently kills mvg-news.jason-6bf.workers.dev. Two things still
+  // need that host:
+  //
+  //   1. `scripts/pull-images.mjs` fetches /api/images from it on every build, so
+  //      turning it off means articles deploy without their pictures — and that
+  //      script is deliberately `--soft` in prebuild, so the build SUCCEEDS and
+  //      the images are simply missing. Silent.
+  //   2. the dashboard loads image previews from it (NEWS_API_ORIGIN below),
+  //      because on the custom domain only /dashboard* and /api/admin/* route
+  //      here and /api/images would fall through to Pages.
+  //
+  // It used to be the site build's news and insights fetches too. Those are gone
+  // — content is markdown in the repo since 2026-08-25 — so a broken workers.dev
+  // host no longer fails a build. It costs pictures instead, which is quieter.
   "workers_dev": true,
 
   "routes": [

@@ -12,7 +12,7 @@ import markSrc from "@/assets/logo-mark.webp";
 import "@/app/globals.css";
 import { htmlLang, localeOrigin, ogLocale, type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
-import { localisedNavRoutes, site } from "@/lib/site";
+import { localisedNavRoutes, navGroupKeys, site } from "@/lib/site";
 import { getUi } from "@/lib/ui";
 import { SiteNav } from "@/components/SiteNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -445,7 +445,7 @@ document.head.appendChild(s);`,
  */
 function navGroupsFor(locale: Locale) {
   const ui = getUi(locale);
-  return (["programmes", "work-study", "tools", "reading"] as const).map(
+  return navGroupKeys.map(
     (key) => ({
       key,
       label: ui.navGroups[key],

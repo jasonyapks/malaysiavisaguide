@@ -17,7 +17,7 @@ import type { ReactNode } from "react";
  * layout that all of them share. A missing key is a type error rather than a
  * blank section discovered by a reader.
  */
-export type SectionCopy = {
+type SectionCopy = {
   eyebrow: string;
   title: ReactNode;
   body: ReactNode;

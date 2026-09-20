@@ -40,7 +40,7 @@ import { countryName } from "@/lib/countries";
 import { localiseProgramme } from "@/lib/programme-locale";
 import { getUi, type UiStrings } from "@/lib/ui";
 
-export type Kind = "fee" | "capital";
+type Kind = "fee" | "capital";
 
 export type LineItem = {
   label: string;

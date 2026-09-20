@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Lozenge } from "@/components/GuideHead";
 import { type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
-import { localisedNavRoutes } from "@/lib/site";
+import { localisedNavRoutes, navGroupKeys } from "@/lib/site";
 import { getUi } from "@/lib/ui";
 
 /**
@@ -16,7 +16,7 @@ import { getUi } from "@/lib/ui";
  */
 export function NotFoundContent({ locale }: { locale: Locale }) {
   const ui = getUi(locale);
-  const groups = (["programmes", "work-study", "tools", "reading"] as const).map(
+  const groups = navGroupKeys.map(
     (key) => ({
       key,
       label: ui.navGroups[key],

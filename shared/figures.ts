@@ -24,9 +24,9 @@
  * that is the moment to notice.
  */
 
-export type CurrencyLike = "MYR" | "USD";
+type CurrencyLike = "MYR" | "USD";
 
-export interface MoneyLike {
+interface MoneyLike {
   amount: number;
   currency: CurrencyLike;
 }
@@ -93,7 +93,7 @@ export interface ProgrammeLike {
 }
 
 /** Who asserted something, and when it was current. */
-export interface AttributionLike {
+interface AttributionLike {
   by: string;
   asAt: string;
 }
@@ -121,7 +121,7 @@ export type FigureValue =
 export type FigureValueKind = FigureValue["kind"];
 
 /** Every way a resolved value may be written. Also a closed set. */
-export const FIGURE_FORMATS = [
+const FIGURE_FORMATS = [
   "money",
   "moneyPer",
   "years",
@@ -256,8 +256,6 @@ export const FIGURE_FIELDS = [
   label: string;
   kind: FigureValueKind;
 }[];
-
-export type FigureField = (typeof FIGURE_FIELDS)[number]["id"];
 
 export const FIGURE_FIELD_IDS: readonly string[] = FIGURE_FIELDS.map(
   (f) => f.id,

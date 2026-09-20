@@ -36,8 +36,8 @@
  * disagree with itself.
  */
 
-export type Scalar = string | number | boolean;
-export type Mapping = Record<string, Scalar>;
+type Scalar = string | number | boolean;
+type Mapping = Record<string, Scalar>;
 export type Frontmatter = Record<string, Scalar | Scalar[] | Mapping[]>;
 
 // --- Writing ----------------------------------------------------------------
@@ -60,7 +60,7 @@ function scalarOut(v: Scalar): string {
  * Render frontmatter. Key order is the caller's, and it is preserved — the
  * order is the reading order of the file and there is no reason to sort it.
  */
-export function writeFrontmatter(data: Frontmatter): string {
+function writeFrontmatter(data: Frontmatter): string {
   const lines: string[] = [];
 
   for (const [key, value] of Object.entries(data)) {
@@ -214,7 +214,7 @@ export function splitContentFile(text: string): {
 }
 
 /** Parse the text between the fences. */
-export function parseFrontmatter(src: string): Frontmatter {
+function parseFrontmatter(src: string): Frontmatter {
   const lines = src.split("\n");
   const data: Frontmatter = {};
   let i = 0;

@@ -10,15 +10,16 @@ export const site = {
   url: localeOrigin.en,
   description:
     "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
-  // Public read-only endpoint of the news Worker (worker/). Read at BUILD time —
-  // /news and every /news/<slug>/ page are prerendered from it. The build points
-  // itself at a local Worker via NEWS_API_URL; see src/lib/news.ts.
-  newsApi: "https://mvg-news.jason-6bf.workers.dev/api/news",
-  // Public read-only endpoint for CMS-authored /insights/ articles, on the same
-  // Worker. Read at BUILD time, like the news API, and subject to the same rule:
-  // if it is unreachable the build fails rather than shipping an empty section.
-  // Override with INSIGHTS_API_URL; see src/lib/insights.ts.
-  insightsApi: "https://mvg-news.jason-6bf.workers.dev/api/cms/insights",
+  // There were `newsApi` and `insightsApi` URLs here, pointing at the news
+  // Worker, and the build fetched both. It does not any more: since 2026-08-25
+  // articles are markdown in content/, and src/lib/news.ts and
+  // src/lib/insights.ts read them off disk. Nothing in src/ makes a network call
+  // at build time, which is why a Worker outage can no longer fail a build.
+  //
+  // The Worker's origin has NOT stopped mattering — scripts/pull-images.mjs still
+  // fetches /api/images from it during prebuild. That URL lives in that script,
+  // next to the code that uses it.
+  //
   // No Cloudflare Web Analytics token here — Cloudflare injects its own beacon at
   // the edge for this zone (site tag 6d5e4a6a…, which the Worker dashboard queries).
   // The hand-placed token that used to live here recorded nothing; removed 2026-07-28.
@@ -130,7 +131,7 @@ export const navRoutes = (group: Route["nav"]) =>
  */
 export type LocalisedRoute = Route & { canonicalPath: string };
 
-export function localisedRoutes(locale: Locale): LocalisedRoute[] {
+function localisedRoutes(locale: Locale): LocalisedRoute[] {
   const { routeTitles } = getUi(locale);
   return routes.map((r) => ({
     ...r,
@@ -145,14 +146,6 @@ export function localisedNavRoutes(
   locale: Locale,
 ): LocalisedRoute[] {
   return localisedRoutes(locale).filter((r) => r.nav === group);
-}
-
-export function routeTitle(path: string, locale: Locale): string {
-  return (
-    getUi(locale).routeTitles[path] ??
-    routes.find((r) => r.path === path)?.title ??
-    path
-  );
 }
 
 /**
@@ -183,16 +176,24 @@ export function assertRouteTitles(): void {
 
 /**
  * The categorised primary nav — SPEC.md §3. Each group is a labelled dropdown
- * in the header instead of every programme sitting flat in one row. Order here
- * is the order they appear left-to-right.
+ * in the header instead of every programme sitting flat in one row.
+ *
+ * **This array's order is the left-to-right order in the header.** `reading` is
+ * last so the nav reads as a funnel: what the programmes are, then help
+ * deciding, then what is being written about them.
+ *
+ * Keys only — the labels are in `src/locales/ui/*.ts` under `navGroups`, because
+ * the header renders in three languages. There was a second copy of this list
+ * here carrying English labels, unreferenced, while RootShell and
+ * NotFoundContent each hardcoded the same four keys inline; both now read this.
+ * A group added here appears in both, and `assertRouteTitles()` still catches a
+ * route that no locale has a title for.
  */
 export type NavGroupKey = "programmes" | "work-study" | "tools" | "reading";
 
-export const navGroups: { key: NavGroupKey; label: string }[] = [
-  { key: "programmes", label: "Long-stay visas" },
-  { key: "work-study", label: "Work & study" },
-  { key: "tools", label: "Tools & compare" },
-  // Last, so the header reads as a funnel: what the programmes are, then help
-  // deciding, then what is being written about them.
-  { key: "reading", label: "Insights & news" },
-];
+export const navGroupKeys = [
+  "programmes",
+  "work-study",
+  "tools",
+  "reading",
+] as const satisfies readonly NavGroupKey[];

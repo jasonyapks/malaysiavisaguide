@@ -70,7 +70,7 @@ export type InsightCategoryId = (typeof INSIGHT_CATEGORIES)[number];
  * for either is a validation failure at save time and a build failure after
  * that — never an empty span on a live page.
  */
-export interface FigureRef {
+interface FigureRef {
   programme: ProgrammeId;
   field: string;
   fmt: string;

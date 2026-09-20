@@ -27,18 +27,36 @@ import type { Asset, Env } from "./types";
  */
 
 /** The three renditions. Anything else is a 400 — these are R2 key prefixes. */
-export const VARIANTS = ["orig", "hero", "og"] as const;
+const VARIANTS = ["orig", "hero", "og"] as const;
 export type Variant = (typeof VARIANTS)[number];
 
 /**
+ * The two renditions, and the settings they are produced with.
+ *
  * The hero renders at most 720 CSS pixels wide, so 1440 covers a 2× display
  * exactly. The OG card is the size every social platform asks for. Both are
- * centre-cropped to their aspect ratio. These numbers are duplicated in
- * dashboard.ts, which is where the cropping actually happens; they live here too
- * because this is the file that documents what a `hero_key` promises.
+ * centre-cropped to their aspect ratio.
+ *
+ * **This is the only definition.** The cropping happens in the browser
+ * (dashboard.ts `derive()`), and these values used to be written out twice —
+ * `{width, height}` here to document what a `hero_key` promises, and
+ * `{w, h, type, q}` there to do the work, with nothing keeping the two in step.
+ * `dashboard.ts` now serialises these into its script, so changing a dimension
+ * or a quality here changes what is actually encoded. The `q` values came from
+ * the `sharp` call this replaced, which is why they are oddly specific.
  */
-export const HERO = { width: 1440, height: 810 };
-export const OG = { width: 1200, height: 630 };
+export const HERO = {
+  width: 1440,
+  height: 810,
+  mime: "image/webp",
+  quality: 0.76,
+} as const;
+export const OG = {
+  width: 1200,
+  height: 630,
+  mime: "image/jpeg",
+  quality: 0.82,
+} as const;
 
 /**
  * A ceiling on a single uploaded object, in bytes.
@@ -67,12 +85,12 @@ export function isVariant(v: string): v is Variant {
 }
 
 /** The R2 key for one rendition. The only place keys are composed. */
-export function assetKey(id: string, variant: Variant, ext: string): string {
+function assetKey(id: string, variant: Variant, ext: string): string {
   return `${variant}/${id}.${ext}`;
 }
 
 /** File extension for an original, from its mime type. */
-export function extForMime(mime: string): string {
+function extForMime(mime: string): string {
   const known: Record<string, string> = {
     "image/jpeg": "jpg",
     "image/jpg": "jpg",
