@@ -70,12 +70,12 @@ async function loadInsightImages() {
 $("#insightImgList").addEventListener("click", async function (e) {
   var btn = e.target.closest("[data-iidel]");
   if (!btn) return;
-  if (!confirm("Remove this hero image? The article keeps publishing, without a picture.")) return;
+  if (!armed(btn, "Remove — click again")) return;
   btn.disabled = true;
   var r = await api("/api/admin/assets/" + btn.getAttribute("data-iidel"), { method: "DELETE" });
-  if (r && r.ok !== false) { await loadInsightImages(); return; }
+  if (r && r.ok !== false) { toast("Image removed. The article keeps publishing, without a picture.", "good"); await loadInsightImages(); return; }
   btn.disabled = false;
-  alert((r && r.error) || "Could not remove it.");
+  toast((r && r.error) || "Could not remove it.", "bad");
 });
 
 $("#iiSave").addEventListener("click", async function () {
@@ -91,14 +91,14 @@ $("#iiSave").addEventListener("click", async function () {
   // and simply never shows up. Cheaper to refuse the shape than to explain the
   // silence later.
   if (!SLUG_RE.test(slug)) {
-    alert("Enter the article's slug — the last part of its URL, like malaysian-tax-for-expats.");
+    toast("Enter the article's slug — the last part of its URL, like malaysian-tax-for-expats.", "bad");
     return;
   }
   if (alt.length < 5) {
-    alert("Alt text is required — one line describing what the picture shows.");
+    toast("Alt text is required — one line describing what the picture shows.", "bad");
     return;
   }
-  if (!file && !url) { alert("Pick a file or paste an image URL."); return; }
+  if (!file && !url) { toast("Pick a file or paste an image URL.", "bad"); return; }
 
   b.disabled = true;
   try {
@@ -114,8 +114,9 @@ $("#iiSave").addEventListener("click", async function () {
     $("#iiFile").value = ""; $("#iiUrl").value = "";
     $("#iiAlt").value = ""; $("#iiCredit").value = "";
     await loadInsightImages();
+    toast("Image saved. It reaches the site on the next deploy.", "good");
   } catch (err) {
-    alert(String((err && err.message) || err));
+    toast(String((err && err.message) || err), "bad");
   }
   b.disabled = false;
   b.textContent = "Save image";

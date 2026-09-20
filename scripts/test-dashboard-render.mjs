@@ -144,9 +144,14 @@ const orphans = [...present]
   .filter((id) => !joined.includes(`"${id}"`) && !joined.includes(`'${id}'`));
 
 // --- 3. Balanced markup ----------------------------------------------------
+//
+// Counted with the <script> contents removed. Balance inside the script is
+// meaningless — it is prose and string literals — and counting it there produced
+// a failure for the word "<details>" appearing in a comment about the panel.
+const markupOnly = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, "");
 for (const tag of ["section", "details", "main", "div", "table"]) {
-  const open = (html.match(new RegExp(`<${tag}\\b`, "g")) ?? []).length;
-  const close = (html.match(new RegExp(`</${tag}>`, "g")) ?? []).length;
+  const open = (markupOnly.match(new RegExp(`<${tag}\\b`, "g")) ?? []).length;
+  const close = (markupOnly.match(new RegExp(`</${tag}>`, "g")) ?? []).length;
   if (open !== close) {
     fail.push(`<${tag}>: ${open} opened, ${close} closed`);
   }

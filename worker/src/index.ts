@@ -269,6 +269,68 @@ export default {
       );
     }
 
+    /**
+     * GET /api/admin/counts — what the header strip shows.
+     *
+     * One query rather than the three list fetches the page would otherwise make
+     * to count the same rows, and it answers a question no single list can: the
+     * dashboard opens on Pending, so before this existed a stranded article — one
+     * approved, with a slug, whose commit failed — was invisible until you thought
+     * to click Approved. That is the one state on this page that means the site is
+     * wrong right now, and it was the one you had to go looking for.
+     *
+     * `checked` is the newest successful source check, which answers "is the
+     * watcher actually running" without expanding the panel.
+     */
+    if (pathname === "/api/admin/counts" && request.method === "GET") {
+      const row = await env.DB.prepare(
+        `SELECT
+           COUNT(*) FILTER (WHERE status = 'pending')  AS pending,
+           COUNT(*) FILTER (WHERE status = 'approved') AS approved,
+           COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,
+           COUNT(*) FILTER (WHERE polish_state = 'needs-claude') AS polish,
+           COUNT(*) FILTER (
+             WHERE status = 'approved' AND slug IS NOT NULL
+               AND committed_at IS NULL AND retired_at IS NULL
+           ) AS stranded
+         FROM news_items`,
+      ).first<{
+        pending: number;
+        approved: number;
+        rejected: number;
+        polish: number;
+        stranded: number;
+      }>();
+
+      // The watcher's tables arrive in migration 007. A deployment that has not
+      // run it yet must not take the header down with it — the counts above are
+      // the part that matters.
+      let checked: string | null = null;
+      let unreachable = 0;
+      try {
+        const w = await env.DB.prepare(
+          `SELECT MAX(last_checked_at) AS checked,
+                  COUNT(*) FILTER (WHERE status = 'unreachable') AS unreachable
+             FROM source_watch`,
+        ).first<{ checked: string | null; unreachable: number }>();
+        checked = w?.checked ?? null;
+        unreachable = w?.unreachable ?? 0;
+      } catch {
+        // No source_watch table yet. Reported as "never checked".
+      }
+
+      return json({
+        ok: true,
+        pending: row?.pending ?? 0,
+        approved: row?.approved ?? 0,
+        rejected: row?.rejected ?? 0,
+        polish: row?.polish ?? 0,
+        stranded: row?.stranded ?? 0,
+        checked,
+        unreachable,
+      });
+    }
+
     // GET /api/admin/items?status=pending|approved|rejected
     // GET /api/admin/items?polish=needed — the /humanizer queue, cutting across
     // status: an item needing the real skill is usually already approved.

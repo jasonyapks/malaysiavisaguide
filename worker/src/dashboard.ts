@@ -52,14 +52,62 @@ export function dashboardHtml(
   body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     color:var(--ink); background:var(--sand-50); line-height:1.5; }
   a { color:var(--forest-700); }
-  header.top { background:var(--forest-900); color:var(--sand-50); padding:16px 24px;
-    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+
+  /* ---- The bar that stays put ----
+     Four stacked panels ran to about five screens, so the state of the queue and
+     the way to the panel you wanted were both only reachable by scrolling. This
+     sticks: counts on the left, jumps on the right, everything above the fold at
+     every scroll position. */
+  header.top { position:sticky; top:0; z-index:20;
+    background:var(--forest-900); color:var(--sand-50); padding:12px 24px 0;
+    box-shadow:0 1px 0 rgba(0,0,0,.18); }
+  header.top .line1 { display:flex; align-items:baseline; justify-content:space-between;
+    flex-wrap:wrap; gap:8px; }
   header.top h1 { font-size:1.1rem; margin:0; font-weight:700; }
   header.top .who { font-size:.85rem; color:var(--sand-200); }
+
+  /* Counts. Tabular numerals so a changing figure does not shift the row. */
+  .stats { display:flex; gap:18px; flex-wrap:wrap; margin:10px 0 0;
+    font-size:.82rem; color:var(--sand-200); }
+  .stats .stat { display:flex; align-items:baseline; gap:6px; }
+  .stats .stat b { color:#fff; font-weight:700; font-variant-numeric:tabular-nums; }
+  /* Red is reserved, here as everywhere on this page, for the site being wrong
+     right now — an approved article whose commit failed. Nothing else earns it. */
+  .stats .stat.bad b, .stats .stat.bad { color:#fca5a5; }
+  .stats .stat.bad b { font-weight:800; }
+
+  /* Jump links. Plain anchors — the sections have had ids all along. */
+  nav.panels { display:flex; gap:4px; flex-wrap:wrap; margin-top:10px; }
+  nav.panels a { color:var(--sand-200); text-decoration:none; font-size:.82rem;
+    padding:7px 12px; border-radius:8px 8px 0 0; border:1px solid transparent;
+    border-bottom:none; }
+  nav.panels a:hover { background:rgba(255,255,255,.08); color:#fff; }
+  nav.panels a.here { background:var(--sand-50); color:var(--forest-900); font-weight:600; }
+
+  /* scroll-margin so an anchor jump does not tuck the heading under the bar. */
   main { max-width:960px; margin:0 auto; padding:24px; }
   section { background:#fff; border:1px solid var(--sand-200); border-radius:14px;
-    padding:20px; margin-bottom:24px; }
+    padding:20px; margin-bottom:24px; scroll-margin-top:140px; }
   h2 { font-size:1.05rem; margin:0 0 14px; }
+
+  /* ---- Toasts ----
+     What replaced alert(). A modal dialog blocks the page, loses whatever is
+     underneath it, and on a form the size of the manual-intake one it is the
+     difference between reading the error and retyping the story. These stack,
+     fade, and never take the page away. */
+  #toasts { position:fixed; right:18px; bottom:18px; z-index:60;
+    display:flex; flex-direction:column; gap:8px; max-width:min(420px,calc(100vw - 36px)); }
+  .toast { padding:11px 14px; border-radius:10px; font-size:.87rem;
+    box-shadow:0 6px 20px rgba(0,0,0,.16); border:1px solid;
+    animation:toastin .16s ease-out; }
+  .toast.info { background:#fff; border-color:var(--sand-400); color:var(--ink); }
+  .toast.good { background:#f0fdf4; border-color:#86efac; color:#14532d; }
+  .toast.bad  { background:#fef2f2; border-color:#fca5a5; color:#991b1b; }
+  .toast button.x { float:right; margin:-2px -6px 0 10px; padding:0 6px;
+    background:none; border:none; color:inherit; opacity:.55; font-size:1rem; }
+  .toast button.x:hover { opacity:1; }
+  @keyframes toastin { from { opacity:0; transform:translateY(6px); } }
+  @media (prefers-reduced-motion:reduce) { .toast { animation:none; } }
   .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   table { width:100%; border-collapse:collapse; font-size:.9rem; }
   td { padding:6px 4px; border-bottom:1px solid var(--sand-100); }
@@ -133,6 +181,16 @@ export function dashboardHtml(
   .imgbox img { display:block; width:100%; max-width:420px; aspect-ratio:16/9;
     object-fit:cover; border-radius:8px; margin:10px 0; background:var(--sand-400); }
   .imgbox .or { font-size:.75rem; color:var(--ink-muted); margin:8px 0 4px; }
+  /* The insight panel's own labels. The rule on .draft label covers the news
+     editor's copy of this form, but the insights one is a bare .imgbox and was
+     inheriting nothing — so its labels ran inline with the inputs and the alt
+     text prompt wrapped around the end of the URL field. */
+  .imgbox label { display:block; font-size:.75rem; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--ink-muted); margin:12px 0 4px; }
+  .imgbox input[type=text], .imgbox input[type=url], .imgbox input[type=file],
+  .imgbox select { width:100%; padding:8px 10px; font:inherit;
+    border:1px solid var(--sand-400); border-radius:8px; background:#fff; }
+  .imgbox .row select, .imgbox .row input[type=text] { width:auto; flex:1 1 180px; }
   .warn { background:#fff7ed; border:1px solid #fdba74; color:#9a3412;
     padding:10px 12px; border-radius:8px; font-size:.85rem; margin-top:10px; }
   .live { font-size:.8rem; }
@@ -197,9 +255,19 @@ export function dashboardHtml(
 </head>
 <body>
 <header class="top">
-  <h1>Malaysia Visa Guide — control room</h1>
-  <span class="who">Signed in: ${escapeHtml(email)}</span>
+  <div class="line1">
+    <h1>Malaysia Visa Guide — control room</h1>
+    <span class="who">Signed in: ${escapeHtml(email)}</span>
+  </div>
+  <div class="stats" id="stats"><span class="stat">Loading…</span></div>
+  <nav class="panels" id="panelNav">
+    <a href="#publish">Publish</a>
+    <a href="#watch">Sources</a>
+    <a href="#insights">Images</a>
+    <a href="#news">News queue</a>
+  </nav>
 </header>
+<div id="toasts" role="status" aria-live="polite"></div>
 <main>
 
   <!-- Loud, persistent failure bar. A commit that fails leaves an article
@@ -383,6 +451,156 @@ async function api(path, opts) {
   return r.json();
 }
 
+/* ------------------------------------------------------------------ *
+ * Telling Jason something
+ * ------------------------------------------------------------------ */
+
+/**
+ * A message that does not take the page away.
+ *
+ * This replaced alert(). A modal blocks every other control, has to be dismissed
+ * before the thing it is describing can be looked at, and — the case that
+ * actually cost something — sits on top of the manual-intake form holding a
+ * story that was pasted in by hand, so reading the error and fixing the field
+ * cannot happen at the same time.
+ *
+ * Errors stay until dismissed; anything else clears itself. A failure is the one
+ * kind of message that must not scroll past while you are looking elsewhere.
+ */
+function toast(message, kind) {
+  const el = document.createElement("div");
+  el.className = "toast " + (kind || "info");
+  const x = document.createElement("button");
+  x.className = "x";
+  x.type = "button";
+  x.setAttribute("aria-label", "Dismiss");
+  x.textContent = "×";
+  x.addEventListener("click", () => el.remove());
+  el.textContent = String(message);
+  el.prepend(x);
+  $("#toasts").append(el);
+  if (kind !== "bad") setTimeout(() => el.remove(), 6000);
+  return el;
+}
+
+/**
+ * Two clicks for anything that cannot be undone, in place of confirm().
+ *
+ * Same objection as alert(), plus one specific to this page: the browser dialog
+ * names the page, not the article, so "Remove the image from this article?"
+ * arrives with no way to check WHICH article without dismissing it first. Arming
+ * the button instead keeps the row, the headline and the picture on screen while
+ * the question is being answered, and the answer is in the same place as the
+ * question.
+ *
+ * Returns true once armed and clicked again. Disarms after six seconds, so a
+ * button left half-pressed does not stay dangerous.
+ */
+function armed(btn, prompt) {
+  if (btn.dataset.armed === "1") return true;
+  const original = btn.textContent;
+  btn.dataset.armed = "1";
+  btn.textContent = prompt || "Click again to confirm";
+  const reset = () => {
+    if (!btn.isConnected) return;
+    delete btn.dataset.armed;
+    btn.textContent = original;
+  };
+  btn.dataset.resetAt = String(Date.now() + 6000);
+  setTimeout(reset, 6000);
+  return false;
+}
+
+/* ------------------------------------------------------------------ *
+ * Unsent work survives a reload
+ * ------------------------------------------------------------------ */
+
+/**
+ * localStorage, wrapped so it can never be the thing that breaks the page.
+ *
+ * It throws in a private window and on blocked site data, and the dashboard
+ * working is worth more than a restored draft. Every read returns null and every
+ * write is a no-op if the browser refuses.
+ */
+const draft = {
+  get(key) {
+    try { return JSON.parse(localStorage.getItem("mvg:" + key) || "null"); }
+    catch { return null; }
+  },
+  set(key, value) {
+    try { localStorage.setItem("mvg:" + key, JSON.stringify(value)); } catch {}
+  },
+  clear(key) {
+    try { localStorage.removeItem("mvg:" + key); } catch {}
+  },
+};
+
+/* ------------------------------------------------------------------ *
+ * The header strip
+ *
+ * The dashboard opens on Pending, so before this existed the one state that
+ * means the site is WRONG right now — an approved article whose commit failed —
+ * was two clicks away and you had to suspect it to go looking. Now it is in the
+ * bar, in red, at every scroll position.
+ * ------------------------------------------------------------------ */
+
+function ago(iso) {
+  if (!iso) return "never";
+  const then = Date.parse(iso.length <= 19 && !iso.endsWith("Z") ? iso + "Z" : iso);
+  if (!Number.isFinite(then)) return "never";
+  const mins = Math.max(0, Math.round((Date.now() - then) / 60000));
+  if (mins < 1) return "just now";
+  if (mins < 60) return mins + "m ago";
+  const hrs = Math.round(mins / 60);
+  if (hrs < 48) return hrs + "h ago";
+  return Math.round(hrs / 24) + "d ago";
+}
+
+async function loadCounts() {
+  const c = await api("/api/admin/counts").catch(() => null);
+  const box = $("#stats");
+  if (!c || !c.ok) {
+    box.innerHTML = '<span class="stat">Counts unavailable.</span>';
+    return;
+  }
+
+  const bits = [];
+  // Stranded leads when there is one, and is omitted entirely when there is not.
+  // A permanent "Not live: 0" trains the eye to skip the place the warning
+  // appears, which is the opposite of what it is for.
+  if (c.stranded > 0) {
+    bits.push('<span class="stat bad"><b>' + c.stranded + '</b> NOT LIVE — commit failed</span>');
+  }
+  bits.push('<span class="stat"><b>' + c.pending + '</b> pending</span>');
+  bits.push('<span class="stat"><b>' + c.approved + '</b> approved</span>');
+  if (c.polish > 0) bits.push('<span class="stat"><b>' + c.polish + '</b> need polish</span>');
+  bits.push('<span class="stat">sources checked <b>' + esc(ago(c.checked)) + "</b></span>");
+  if (c.unreachable > 0) {
+    bits.push('<span class="stat bad"><b>' + c.unreachable + '</b> unreadable</span>');
+  }
+  box.innerHTML = bits.join("");
+}
+
+/**
+ * Which panel the jump links highlight.
+ *
+ * Cheap scroll handler rather than IntersectionObserver: four elements, and the
+ * rule wanted here ("the last heading that has passed under the bar") is a
+ * position comparison, which an observer answers awkwardly.
+ */
+const PANELS = ["publish", "watch", "insights", "news"];
+function markPanel() {
+  let here = PANELS[0];
+  for (const id of PANELS) {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top <= 160) here = id;
+  }
+  document.querySelectorAll("nav.panels a").forEach((a) => {
+    a.classList.toggle("here", a.getAttribute("href") === "#" + here);
+  });
+}
+addEventListener("scroll", markPanel, { passive: true });
+
 // ---- Publish ----
 //
 // The site is a static export, so every panel below writes to D1 and changes
@@ -530,6 +748,11 @@ async function loadList() {
   const query = currentView === "polish" ? "polish=needed" : "status=" + currentView;
   const { items } = await api("/api/admin/items?" + query);
   currentItems = items || [];
+
+  // The header follows the list. Every action that changes the queue already
+  // ends in loadList(), so one call here keeps the counts honest without
+  // threading a refresh through fifteen handlers — and it is one cheap query.
+  loadCounts();
 
   // The bar reflects the approved view, where stranded articles live. On any
   // other tab it is cleared rather than left showing a stale count.
@@ -889,20 +1112,61 @@ $("#list").addEventListener("click", async (e) => {
   if (act === "edit") {
     if (!item) return;
     b.closest(".item").querySelector(".draft").outerHTML = renderEditor(item);
+    const editor = document.querySelector('[data-editor="' + id + '"]');
+
+    // Unsaved edits to this article, from a previous visit. Restoring is offered
+    // rather than done: the stored copy may be older than what the humanizer or a
+    // rewrite has since written into the row, and silently preferring it would
+    // quietly undo that.
+    const saved = draft.get("edit:" + id);
+    if (saved && editor) {
+      const bar = document.createElement("div");
+      bar.className = "warn";
+      bar.textContent = "You have unsaved edits to this article from " + ago(saved.at) + ". ";
+      const restore = document.createElement("button");
+      restore.className = "ghost";
+      restore.type = "button";
+      restore.textContent = "Restore them";
+      restore.addEventListener("click", () => {
+        for (const [f, v] of Object.entries(saved.fields)) {
+          const el = editor.querySelector('[data-f="' + f + '"]');
+          if (el) el.value = v;
+        }
+        bar.remove();
+      });
+      const discard = document.createElement("button");
+      discard.className = "ghost";
+      discard.type = "button";
+      discard.textContent = "Discard";
+      discard.addEventListener("click", () => { draft.clear("edit:" + id); bar.remove(); });
+      bar.append(restore, " ", discard);
+      editor.prepend(bar);
+    }
+
+    if (editor) {
+      editor.addEventListener("input", () => {
+        const fields = {};
+        editor.querySelectorAll("[data-f]").forEach((el) => {
+          // File inputs have no value worth storing and cannot be restored into.
+          if (el.type !== "file") fields[el.dataset.f] = el.value;
+        });
+        draft.set("edit:" + id, { at: new Date().toISOString(), fields });
+      });
+    }
     return;
   }
-  if (act === "cancel") { loadList(); return; }
+  if (act === "cancel") { draft.clear("edit:" + id); loadList(); return; }
 
   if (act === "save") {
     const editor = document.querySelector('[data-editor="' + id + '"]');
     const patch = collectEditor(editor);
-    if (!patch.body.sections.length) { alert("An article needs at least one section with a heading and a paragraph."); return; }
+    if (!patch.body.sections.length) { toast("An article needs at least one section with a heading and a paragraph.", "bad"); return; }
     b.disabled = true; b.textContent = "Saving…";
     const r = await api("/api/admin/items/" + id, {
       method: "PATCH", headers: {"content-type":"application/json"}, body: JSON.stringify(patch),
     });
-    if (r.ok) loadList();
-    else { b.disabled = false; b.textContent = "Save"; alert(r.error || "Could not save."); }
+    if (r.ok) { draft.clear("edit:" + id); toast("Saved. Live once the site rebuilds.", "good"); loadList(); }
+    else { b.disabled = false; b.textContent = "Save"; toast(r.error || "Could not save.", "bad"); }
     return;
   }
 
@@ -915,11 +1179,11 @@ $("#list").addEventListener("click", async (e) => {
     const alt = get("imgAlt").value.trim();
     const credit = get("imgCredit").value.trim();
 
-    if (alt.length < 5) { alert("Alt text is required — one line describing what the picture shows."); return; }
+    if (alt.length < 5) { toast("Alt text is required — one line describing what the picture shows.", "bad"); return; }
     const item = currentItems.find(i => i.id === id);
     // Alt or credit alone is a legitimate edit of an image already attached.
-    if (!file && !url && !(item && item.has_image)) { alert("Pick a file or paste an image URL."); return; }
-    if (!item || !item.slug) { alert("Write the article first — the image is filed against its slug."); return; }
+    if (!file && !url && !(item && item.has_image)) { toast("Pick a file or paste an image URL.", "bad"); return; }
+    if (!item || !item.slug) { toast("Write the article first — the image is filed against its slug.", "bad"); return; }
 
     b.disabled = true;
     try {
@@ -928,7 +1192,7 @@ $("#list").addEventListener("click", async (e) => {
       // existing asset instead.
       if (!file && !url) {
         if (!item.asset_id) {
-          alert("This picture is still in the old store. Re-upload it to edit the caption.");
+          toast("This picture is still in the old store. Re-upload it to edit the caption.", "bad");
           b.disabled = false; b.textContent = "Save image"; return;
         }
         b.textContent = "Saving…";
@@ -937,7 +1201,7 @@ $("#list").addEventListener("click", async (e) => {
           body: JSON.stringify({ slot: "news/" + item.slug, alt: alt, credit: credit || null }),
         });
         if (r.ok) loadList();
-        else { b.disabled = false; b.textContent = "Save image"; alert(r.error || "Could not save."); }
+        else { b.disabled = false; b.textContent = "Save image"; toast(r.error || "Could not save.", "bad"); }
         return;
       }
 
@@ -953,17 +1217,17 @@ $("#list").addEventListener("click", async (e) => {
       loadList();
     } catch (err) {
       b.disabled = false; b.textContent = "Save image";
-      alert(String(err.message || err));
+      toast(String(err.message || err), "bad");
     }
     return;
   }
 
   if (act === "delimg") {
-    if (!confirm("Remove the image from this article?")) return;
+    if (!armed(b, "Remove image — click again")) return;
     b.disabled = true; b.textContent = "Removing…";
     const r = await api("/api/admin/items/" + id + "/image", { method: "DELETE" });
     if (r.ok) loadList();
-    else { b.disabled = false; b.textContent = "Remove image"; alert(r.error || "Could not remove it."); }
+    else { b.disabled = false; b.textContent = "Remove image"; toast(r.error || "Could not remove it.", "bad"); }
     return;
   }
 
@@ -976,7 +1240,7 @@ $("#list").addEventListener("click", async (e) => {
       body: JSON.stringify({ polish_state: "claude-polished" }),
     });
     if (r.ok) loadList();
-    else { b.disabled = false; b.textContent = "Mark polished"; alert(r.error || "Could not update."); }
+    else { b.disabled = false; b.textContent = "Mark polished"; toast(r.error || "Could not update.", "bad"); }
     return;
   }
 
@@ -997,18 +1261,42 @@ $("#list").addEventListener("click", async (e) => {
     return;
   }
 
+  // Two clicks for the two that destroy work.
+  //
+  // Delete is permanent. Rewrite is subtler and was the more expensive of the
+  // two to click by accident: it discards prose that a large model was already
+  // paid to write — and, on a live article, prose that has been read, edited and
+  // published. Both sit in a row of ordinary buttons next to Edit.
+  if (act === "delete" && !armed(b, "Delete permanently — click again")) return;
+  if (act === "regenerate" && !armed(b, "Rewrite from scratch — click again")) return;
+
   // approve / regenerate / humanize all make a large-model call — the first two
   // read the source first. Tell the user it will be slow instead of looking hung.
   const slow = act === "approve" || act === "regenerate" || act === "humanize";
   b.disabled = true;
   const label = b.textContent;
+  let tick = null;
   if (slow) {
     b.textContent = act === "humanize" ? "Humanising…" : "Writing…";
-    if (msg) msg.innerHTML = '<div class="spin">' + (act === "humanize"
-      ? "Rewriting the prose — 20–40 seconds. The facts and figures are checked against the original before anything is saved."
-      : "Reading the source and writing the article — this takes 20–60 seconds. Leave the tab open.") + '</div>';
+    const what = act === "humanize"
+      ? "Rewriting the prose. The facts and figures are checked against the original before anything is saved."
+      : "Reading the source and writing the article. Leave the tab open.";
+    // A live count rather than "this takes 20–60 seconds". The static estimate
+    // reads as a stall the moment it is exceeded, and there is no way to tell a
+    // slow model call from a dead one. A number that is still moving says which.
+    const started = Date.now();
+    const paint = () => {
+      if (!msg) return;
+      const secs = Math.round((Date.now() - started) / 1000);
+      msg.innerHTML = '<div class="spin">' + what + " <strong>" + secs + "s</strong>" +
+        (secs > 90 ? " — longer than usual, but still going." : "") + "</div>";
+    };
+    paint();
+    tick = setInterval(paint, 1000);
   }
-  const r = await api("/api/admin/items/" + id + "/" + act, { method: "POST" });
+  const r = await api("/api/admin/items/" + id + "/" + act, { method: "POST" })
+    .catch((err) => ({ ok: false, error: String((err && err.message) || err) }));
+  if (tick) clearInterval(tick);
   if (r && r.ok === false) {
     b.disabled = false; b.textContent = label;
     if (msg) msg.innerHTML = '<div class="warn">' + esc(r.error || "That did not work.") + '</div>';
@@ -1056,7 +1344,7 @@ $("#refresh").addEventListener("click", async (e) => {
   const r = await api("/api/admin/refresh", { method: "POST" });
   e.target.disabled = false; e.target.textContent = "Fetch latest now";
   showTab("pending");
-  alert("Added " + (r.added ?? 0) + " new item(s) to the pending queue.");
+  toast("Added " + (r.added ?? 0) + " new item(s) to the pending queue.", (r.added ?? 0) > 0 ? "good" : "info");
 });
 $("#submitBtn").addEventListener("click", async () => {
   const url = $("#submitUrl").value.trim(); if (!url) return;
@@ -1064,7 +1352,7 @@ $("#submitBtn").addEventListener("click", async () => {
   const r = await api("/api/admin/submit", { method: "POST", headers: {"content-type":"application/json"}, body: JSON.stringify({ url }) });
   $("#submitBtn").disabled = false;
   if (r.ok) { $("#submitUrl").value = ""; showTab("pending"); }
-  else alert(r.error || "Could not add that URL.");
+  else toast(r.error || "Could not add that URL.", "bad");
 });
 
 // ---- Manual intake ----
@@ -1072,12 +1360,52 @@ $("#submitBtn").addEventListener("click", async () => {
 // item goes through. A manual story reaches a page by exactly the same route as
 // a swept one, and neither request is left open long enough for a proxy to give
 // up on it.
-$("#mText").addEventListener("input", () => {
+/**
+ * The manual-intake form survives a reload.
+ *
+ * It holds up to twelve thousand characters of a story keyed in or pasted by
+ * hand, and it sits in a panel that starts collapsed on every load. A stray
+ * Cmd-R, a session that times out, a crash — any of them used to cost the whole
+ * paste, and the only recovery was to go and get the story again. Saved on every
+ * keystroke, restored on load, cleared only on success.
+ */
+const MANUAL_FIELDS = ["#mUrl", "#mSource", "#mTitle", "#mCategory", "#mDate", "#mText"];
+
+function saveManualDraft() {
+  const out = {};
+  for (const sel of MANUAL_FIELDS) out[sel] = $(sel).value;
+  // An empty form is not a draft worth keeping — storing one would reopen the
+  // panel on the next load for nothing.
+  if (MANUAL_FIELDS.every((sel) => !out[sel])) { draft.clear("manual"); return; }
+  draft.set("manual", out);
+}
+
+function restoreManualDraft() {
+  const saved = draft.get("manual");
+  if (!saved) return;
+  let any = false;
+  for (const sel of MANUAL_FIELDS) {
+    if (saved[sel]) { $(sel).value = saved[sel]; any = true; }
+  }
+  if (!any) return;
+  // Open the panel — a restored draft nobody can see is the same as a lost one.
+  $("#manual").open = true;
+  countManual();
+  toast("Restored what you had typed into the manual form.", "info");
+}
+
+function countManual() {
   const n = $("#mText").value.trim().length;
   $("#mCount").textContent = n < 400
     ? n + " characters — 400 minimum."
     : n + " characters.";
-});
+}
+
+$("#mText").addEventListener("input", countManual);
+for (const sel of MANUAL_FIELDS) {
+  $(sel).addEventListener("input", saveManualDraft);
+  $(sel).addEventListener("change", saveManualDraft);
+}
 $("#mSubmit").addEventListener("click", async () => {
   const btn = $("#mSubmit"), out = $("#mMsg");
   const payload = {
@@ -1118,6 +1446,7 @@ $("#mSubmit").addEventListener("click", async () => {
   // Only clear on success, so a failure never costs a long paste.
   ["#mUrl", "#mSource", "#mTitle", "#mText", "#mDate"].forEach(s => { $(s).value = ""; });
   $("#mCount").textContent = "0 characters — 400 minimum.";
+  draft.clear("manual");
 
   if (written.committed === false) {
     // Written and approved, but the commit failed — so it is NOT live. Say so
@@ -1237,6 +1566,7 @@ $("#watchRun").addEventListener("click", async (e) => {
 function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
 loadList(); loadCategories(); pollDeploy(); loadWatch();
+loadCounts(); markPanel(); restoreManualDraft();
 ${INSIGHT_IMAGES_JS}
 </script>
 </body>
