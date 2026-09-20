@@ -1,9 +1,5 @@
-import {
-  BLOCK_TYPES,
-  INSIGHT_CATEGORIES,
-  PROGRAMME_IDS,
-} from "../../shared/blocks";
-import { EDITOR_JS } from "./editor";
+import { INSIGHT_CATEGORIES } from "../../shared/blocks";
+import { INSIGHT_IMAGES_JS } from "./insight-images";
 
 /**
  * The private dashboard, served only to Jason (behind Cloudflare Access).
@@ -160,40 +156,15 @@ export function dashboardHtml(
   .chg .diff { margin-top:10px; max-height:280px; overflow:auto; }
   .chg .row { margin-top:10px; }
 
-  /* ---- Insight editor (Phase 5) ---- */
+  /* ---- Attached-image rows ----
+     One row per stored hero image, in the insights panel. Shares the flex shape
+     the retired document list used, which is why it is still called .doc. */
   .doc { border:1px solid var(--sand-200); border-radius:12px; padding:12px 14px;
     margin-bottom:10px; display:flex; gap:12px; align-items:baseline;
     flex-wrap:wrap; justify-content:space-between; }
-  .doc h3 { font-size:.95rem; margin:0; }
   .doc .path { font-size:.78rem; color:var(--ink-muted); font-family:ui-monospace,Menlo,monospace; }
-  .pill { font-size:.68rem; text-transform:uppercase; letter-spacing:.05em;
-    padding:2px 8px; border-radius:999px; }
-  .pill.live { background:#dcfce7; color:#14532d; }
-  .pill.draft { background:var(--sand-100); color:var(--ink-muted); }
-  .ed { margin-top:16px; }
-  .ed .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-    gap:10px 14px; }
-  .ed label { display:block; font-size:.75rem; text-transform:uppercase;
-    letter-spacing:.05em; color:var(--ink-muted); margin-bottom:4px; }
-  .ed input[type=text], .ed input[type=date], .ed input[type=number],
-  .ed select, .ed textarea { width:100%; padding:8px 10px; font:inherit;
-    border:1px solid var(--sand-400); border-radius:8px; background:#fff; }
-  .ed textarea { resize:vertical; line-height:1.5; }
-  /* Blocks. The drag handle is deliberately absent — reordering is two buttons,
-     which works with a keyboard and needs no pointer gymnastics. */
-  .blk { border:1px solid var(--sand-200); border-radius:10px; padding:10px 12px;
-    margin-bottom:9px; background:var(--sand-50); }
-  .blk > .hd { display:flex; gap:6px; align-items:center; margin-bottom:8px; }
-  .blk > .hd .kind { font-size:.7rem; text-transform:uppercase; letter-spacing:.06em;
-    color:var(--forest-700); font-weight:700; margin-right:auto; }
-  .blk button.mini { padding:2px 8px; font-size:.78rem; background:#fff;
+  button.mini { padding:2px 8px; font-size:.78rem; background:#fff;
     border:1px solid var(--sand-400); }
-  .blk .cell { margin-bottom:8px; }
-  .rowline { display:flex; gap:8px; align-items:flex-start; margin-bottom:6px; }
-  .rowline > * { flex:1 1 0; min-width:0; }
-  .rowline > button { flex:0 0 auto; }
-  .syntax { font-size:.75rem; color:var(--ink-muted); margin:6px 0 0;
-    font-family:ui-monospace,Menlo,monospace; }
   .errs { background:#fef2f2; border:1px solid #fca5a5; color:#991b1b;
     padding:10px 12px; border-radius:8px; font-size:.85rem; margin:10px 0; }
   .errs ul { margin:6px 0 0; padding-left:18px; }
@@ -250,36 +221,31 @@ export function dashboardHtml(
   </section>
 
   <!--
-    Insights. The evergreen half of the site — what Jason thinks, as opposed to
-    /news (machine-fed, perishable) and /visas (reference). Written here since
-    Phase 5; before that an article was 500 lines of hand-written JSX.
+    Insights — pictures only.
+
+    The prose is not edited here. /insights/ articles are markdown in
+    content/insights/ and are written at /admin/ (Sveltia CMS), where saving
+    commits and deploys in one step. This panel is what Sveltia cannot do:
+    hero images live in R2 rather than in git (public/admin/config.yml explains
+    why), so there is no media library over there to upload one through.
+
+    The image is filed against a slug typed by hand, and nothing here checks
+    that the article exists. It may not exist yet — attaching the picture
+    before the prose lands is a legitimate order to work in — and a slot for an
+    article that never arrives costs a row nobody reads. The slot is the only
+    thing that binds the two: scripts/pull-images.mjs matches
+    "insights/<category>/<slug>" against the article's own path, and neither
+    side has to know how the other was made.
   -->
   <section id="insights">
-    <div class="row" style="justify-content:space-between">
-      <h2>Insight articles</h2>
-      <button class="approve" id="newDoc">Write a new article</button>
-    </div>
-    <div id="docList"><div class="empty">Loading…</div></div>
-    <div id="editor" class="ed" hidden></div>
+    <h2>Insight article images</h2>
+    <p class="muted" style="margin:6px 0 0">
+      The articles themselves are written at
+      <a href="${escapeHtml(siteOrigin)}/admin/" target="_blank" rel="noopener">/admin/</a>.
+      Pictures are here because that editor has no media library — they live in
+      R2, not in the repo.
+    </p>
 
-    <!--
-      Hero images for /insights/ articles.
-
-      Separate from the editor above, and filed against a slug typed by hand
-      rather than picked off the list, because the list is not the whole set.
-      An insight article can reach the site two ways: written here, or written
-      straight into content/insights/ in the repo. The second kind never appears
-      in #docList — it has no row in D1 — and before this panel existed it had
-      no way to get a picture at all.
-
-      The slot is the only thing that binds an image to an article:
-      scripts/pull-images.mjs matches "insights/<category>/<slug>" against the
-      article's own path and neither side has to know how the other was made.
-      That is also why nothing here validates that the article exists. It may
-      not exist yet — attaching the picture before the prose lands is a
-      legitimate order to work in — and a slot for an article that never
-      arrives costs a row nobody reads.
-    -->
     <div class="imgbox" id="insightImages">
       <h4>Hero images</h4>
       <div id="insightImgList"><div class="empty">Loading…</div></div>
@@ -368,11 +334,9 @@ export function dashboardHtml(
 <script>
 const $ = (s) => document.querySelector(s);
 const SITE = ${JSON.stringify(siteOrigin)};
-// Serialised from shared/blocks.ts rather than retyped, so the picker cannot
-// drift from the union the validator enforces.
-const BLOCK_TYPES = ${JSON.stringify(BLOCK_TYPES)};
+// Serialised from shared/blocks.ts rather than retyped, so the image panel's
+// category select cannot drift from the closed list the site validates against.
 const CATEGORIES = ${JSON.stringify(INSIGHT_CATEGORIES)};
-const PROGRAMMES = ${JSON.stringify(PROGRAMME_IDS)};
 /**
  * Where to load an attached image preview from.
  *
@@ -1237,7 +1201,7 @@ $("#watchRun").addEventListener("click", async (e) => {
 function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
 loadList(); loadCategories(); pollDeploy(); loadWatch();
-${EDITOR_JS}
+${INSIGHT_IMAGES_JS}
 </script>
 </body>
 </html>`;

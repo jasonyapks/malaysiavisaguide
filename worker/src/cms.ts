@@ -1,34 +1,31 @@
 import type { Env } from "./types";
 import type { InsightDoc, InsightSummary } from "../../shared/insight";
 import type { Block } from "../../shared/blocks";
-import { validateInsightDoc } from "../../shared/validate";
 
 /**
- * The public read path for CMS-authored documents — what `next build` fetches.
+ * Read-only access to the pre-migration /insights/ rows in `cms_documents`.
  *
- * Two endpoints, both public for exactly the reason /api/news is public: the
- * build machine has no browser to log in with, and nothing served here is not
- * about to be published on the site anyway. Drafts are the one wrinkle and they
- * are served on purpose — a draft is reviewed at its real URL, noindex and
- * unlisted, which is only possible if the build can read it.
+ * ## This is no longer how the site gets its articles
  *
- * ## The contract, and why it is worth being fussy about
+ * It was, until 2026-08-25. The CMS then moved out of D1 and into markdown under
+ * `content/insights/`, edited at /admin/ in Sveltia CMS, where a save is a commit
+ * and a push to main is the deploy. `src/lib/insights.ts` reads those files off
+ * disk and makes no request at all, so nothing on the reader's path touches this
+ * file any more.
  *
- * `src/lib/insights.ts` **throws** on anything it cannot read: a non-200, a body
- * with no `items` array, a document that fails validation. That is not
- * defensiveness for its own sake. /insights/ pages are the evergreen, meant-to-
- * be-cited half of the site, and an API that answered `{items: []}` when it
- * meant "I am broken" would delete every article path from the static export.
- * Cloudflare Pages then holds a deleted path at the edge for up to seven days,
- * serving 200 for a page that no longer exists — so the mistake outlives the
- * fix by a week. A failed build costs a minute.
+ * What still calls it: `scripts/test-markdown.mjs`, whose live suite round-trips
+ * each stored document through `shared/markdown.ts` to prove the compiler is
+ * lossless, and `scripts/migrate-cms-to-files.mjs`, kept as the record of what
+ * the migration did. Both go when the table does.
  *
- * So this file's job is to be unambiguous. It answers with articles, or it
- * answers with a status code. It never answers "nothing" to mean "I could not
- * tell you".
- *
- * The one exception is spelled out on `missingTable()` below, and it is about
- * deploy ordering rather than about failure.
+ * The write path that used to live at the bottom of this file — `saveInsightDoc`,
+ * `deleteInsightDoc`, and the admin-only readers the editor addressed documents
+ * by id with — is gone. Its endpoints answered 410 from the migration onward,
+ * because a write here would have reported success, changed a row, and changed
+ * nothing a reader could ever see. That is the exact failure the migration
+ * removed, and keeping a working-looking editor over it would have reintroduced
+ * it. `validateInsightDoc` in shared/validate.ts is unaffected: the site still
+ * runs it at render, on documents that now arrive as files.
  *
  * ## Shape
  *
@@ -36,8 +33,7 @@ import { validateInsightDoc } from "../../shared/validate";
  * exists because /api/news predates anyone thinking about it and is now frozen
  * — the site's build reads it and the 2026-07-25 outage was that coupling
  * breaking. This one is defined the other way round: `shared/insight.ts` is the
- * type, both sides import it, and the SQL is mapped into it here. The columns
- * can be refactored without touching the site.
+ * type, both sides import it, and the SQL is mapped into it here.
  */
 
 /** Columns the index needs. `blocks` is absent — see below. */
@@ -189,170 +185,4 @@ function parseJson<T>(raw: string | null, fallback: T): T {
  */
 function missingTable(err: unknown): boolean {
   return /no such table:\s*cms_documents/i.test(String(err));
-}
-
-/* ------------------------------------------------------------------ *
- * The write path — Phase 5. Admin only; the router gates it on Access.
- * ------------------------------------------------------------------ */
-
-/**
- * The admin list. Same rows as the public index plus `id`, because the editor
- * addresses a document by identity and the public site addresses it by path.
- * That distinction is the whole reason the primary key is a UUID rather than
- * the path (see migration 006): correcting a slug is an ordinary edit, and it
- * must not orphan the row being edited.
- */
-export async function listInsightsAdmin(
-  env: Env,
-): Promise<{ items: (InsightSummary & { id: string })[] }> {
-  let results: SummaryRow[] | undefined;
-  try {
-    ({ results } = await env.DB.prepare(
-      `SELECT ${SUMMARY_COLUMNS} FROM cms_documents
-        WHERE kind = 'insight'
-        ORDER BY COALESCE(published, created_at) DESC
-        LIMIT 500`,
-    ).all<SummaryRow>());
-  } catch (err) {
-    if (missingTable(err)) return { items: [] };
-    throw err;
-  }
-  return {
-    items: (results ?? []).map((r) => ({ ...toSummary(r), id: r.id })),
-  };
-}
-
-/** One whole document by id, for the editor to load. */
-export async function getInsightById(
-  env: Env,
-  id: string,
-): Promise<(InsightDoc & { id: string }) | null> {
-  let row: DocRow | null = null;
-  try {
-    row = await env.DB.prepare(
-      `SELECT ${SUMMARY_COLUMNS}, blocks, faq, sources FROM cms_documents
-        WHERE kind = 'insight' AND id = ?`,
-    )
-      .bind(id)
-      .first<DocRow>();
-  } catch (err) {
-    if (missingTable(err)) return null;
-    throw err;
-  }
-  if (!row) return null;
-  return {
-    ...toSummary(row),
-    id: row.id,
-    blocks: parseJson<Block[]>(row.blocks, []),
-    faq: parseJson<InsightDoc["faq"]>(row.faq, []),
-    sources: parseJson<InsightDoc["sources"]>(row.sources, []),
-  };
-}
-
-export type SaveOutcome =
-  | { ok: true; id: string; created: boolean }
-  | { ok: false; status: 404 | 409 | 422; error: string; errors?: string[] };
-
-/**
- * Create or replace a document, whole.
- *
- * A whole-document PUT rather than a field patch, and that is deliberate. The
- * body is an AST: a patch that could touch one block would need block identity,
- * an ordering column and a merge rule, all to save bytes on a payload that is
- * 26KB at its worst. The editor holds the document in memory and sends it back.
- *
- * `validateInsightDoc` runs here **before** anything is written. That is the
- * point of Phase 5 — a malformed document has to fail against the thing Jason
- * just typed, not ten minutes later in a red Pages build that names no article.
- * The site validates again at render, because a row can also arrive from a
- * script or a migration (both of which have already happened once).
- */
-export async function saveInsightDoc(
-  env: Env,
-  doc: unknown,
-  id: string | null,
-): Promise<SaveOutcome> {
-  const errors = validateInsightDoc(doc);
-  if (errors.length) {
-    return { ok: false, status: 422, error: "Document did not validate", errors };
-  }
-  const d = doc as InsightDoc;
-
-  // The unique index on (kind, category, slug) would raise a constraint error
-  // anyway. Checking first turns "D1_ERROR: UNIQUE constraint failed" into a
-  // sentence naming the article that already sits at that URL.
-  const clash = await env.DB.prepare(
-    `SELECT id FROM cms_documents WHERE kind = 'insight' AND category = ? AND slug = ?`,
-  )
-    .bind(d.category, d.slug)
-    .first<{ id: string }>();
-  if (clash && clash.id !== id) {
-    return {
-      ok: false,
-      status: 409,
-      error: `/insights/${d.category}/${d.slug}/ is already taken by another document.`,
-    };
-  }
-
-  // Undefined means draft. Migration 006 defaults the column the same way, for
-  // the same reason: a half-written article that is accidentally live is worse
-  // than a finished one that needs a second click.
-  const draft = d.draft === false ? 0 : 1;
-  const guides = JSON.stringify(d.relatedGuides);
-  const blocks = JSON.stringify(d.blocks);
-  const faq = JSON.stringify(d.faq);
-  const sources = JSON.stringify(d.sources);
-
-  if (id === null) {
-    const newId = crypto.randomUUID();
-    await env.DB.prepare(
-      `INSERT INTO cms_documents
-         (id, kind, category, slug, title, dek, published, reviewed,
-          reading_minutes, related_guides, blocks, faq, sources, draft)
-       VALUES (?, 'insight', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    )
-      .bind(
-        newId, d.category, d.slug, d.title, d.dek, d.published, d.reviewed,
-        d.readingMinutes, guides, blocks, faq, sources, draft,
-      )
-      .run();
-    return { ok: true, id: newId, created: true };
-  }
-
-  const res = await env.DB.prepare(
-    `UPDATE cms_documents
-        SET category = ?, slug = ?, title = ?, dek = ?, published = ?,
-            reviewed = ?, reading_minutes = ?, related_guides = ?, blocks = ?,
-            faq = ?, sources = ?, draft = ?, updated_at = datetime('now')
-      WHERE kind = 'insight' AND id = ?`,
-  )
-    .bind(
-      d.category, d.slug, d.title, d.dek, d.published, d.reviewed,
-      d.readingMinutes, guides, blocks, faq, sources, draft, id,
-    )
-    .run();
-
-  if (!res.meta.changes) {
-    return { ok: false, status: 404, error: "No such document." };
-  }
-  return { ok: true, id, created: false };
-}
-
-/**
- * Delete a document.
- *
- * No soft delete and no undo, and that is a considered omission rather than a
- * gap. A published article's URL is the thing worth protecting, and Cloudflare
- * Pages keeps serving a removed path from the edge for up to seven days — so
- * "deleted" is already slow and messy at the reader's end. Unpublishing is what
- * the draft flag is for, and it is reversible in one click. Delete is for a
- * document that was never live.
- */
-export async function deleteInsightDoc(env: Env, id: string): Promise<boolean> {
-  const res = await env.DB.prepare(
-    `DELETE FROM cms_documents WHERE kind = 'insight' AND id = ?`,
-  )
-    .bind(id)
-    .run();
-  return Boolean(res.meta.changes);
 }

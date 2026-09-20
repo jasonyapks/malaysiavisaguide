@@ -6,12 +6,7 @@ import { humanizeStored } from "./humanize";
 import { publishNewsFile, unpublishNewsFile } from "./publish-file";
 import { getDeployStatus, getBuildLog } from "./publish";
 import { runWatch, listWatch, acknowledgeEvent, promoteEvent } from "./watch";
-import {
-  getInsight,
-  getInsightById,
-  listInsights,
-  listInsightsAdmin,
-} from "./cms";
+import { getInsight, listInsights } from "./cms";
 import {
   commitAsset,
   deleteAssetBySlot,
@@ -171,18 +166,27 @@ export default {
       return cors(env, json({ item }));
     }
 
-    // --- Public: CMS-authored /insights/ documents, read by the site's build ---
+    // --- Read-only: the pre-migration /insights/ rows in cms_documents ---
     //
-    // Public for the same reason /api/news is: `next build` reads them and has
-    // no browser to log in with. Drafts are included on purpose — a draft is
-    // reviewed at its real URL, noindex and unlisted, which only works if the
-    // build can see it. See worker/src/cms.ts for the contract.
+    // THE SITE BUILD NO LONGER READS THIS. It did until 2026-08-25; since the
+    // migration, `src/lib/insights.ts` reads content/insights/**.md off disk and
+    // never makes a request. Two things still call it, both of them tools:
+    // `scripts/test-markdown.mjs` (its live suite, which round-trips the stored
+    // documents through shared/markdown.ts) and `scripts/migrate-cms-to-files.mjs`,
+    // kept as the record of the migration rather than to be run again.
+    //
+    // So this is a read-only window onto a table nothing publishes from. It stays
+    // until the table is dropped, which is the point at which both callers go too.
+    // The admin write endpoints that used to sit further down this file are gone:
+    // they answered 410 after the migration, and an endpoint whose only answer is
+    // 410 is worth less than the lines it costs. Writing an insight is
+    // /admin/ (Sveltia CMS) — a commit, not a row.
     //
     // ⚠️ These paths need a Bypass policy on the "MVG Dashboard" Access app
     // before a deployed Worker can serve them. Access is scoped to the whole
     // host and today only /api/news is bypassed — /api/images (Phase 3) needs
-    // the same. Without it the site build gets a 302 to the login page, reads
-    // HTML where it expected JSON, and stops.
+    // the same. Without it a caller gets a 302 to the login page and reads HTML
+    // where it expected JSON.
     if (pathname === "/api/cms/insights") {
       if (request.method === "OPTIONS") return cors(env, new Response(null, { status: 204 }));
       return cors(env, json(await listInsights(env)));
@@ -405,92 +409,6 @@ export default {
     // payload and the old path paid it twice. The commit is last and separate so
     // an interrupted upload leaves orphaned objects and no row, never a row whose
     // bytes are missing. See assets.ts.
-
-    // --- Admin: authoring /insights/ documents (Phase 5) ---
-    //
-    // Addressed by id, not by path, unlike the public read routes above. The
-    // path is editable — correcting a slug before first publish is an ordinary
-    // edit — and a key that moves takes the row being edited with it.
-    //
-    // Every write runs validateInsightDoc first. That is the reason this exists
-    // rather than a wrangler d1 execute: a document that cannot render must be
-    // refused against the thing just typed, not discovered in a red Pages build
-    // that names no article.
-    if (pathname === "/api/admin/insights" && request.method === "GET") {
-      return json(await listInsightsAdmin(env));
-    }
-
-    // The figure catalogue, proxied rather than fetched by the browser.
-    //
-    // public/figures.json is a Pages asset on the site's origin, and the
-    // dashboard is served from two different hosts (the custom domain and
-    // workers.dev). Fetching it client-side would be same-origin on one and a
-    // CORS failure on the other, and Pages sends no CORS headers. Server-side
-    // there is no origin to be wrong about. See scripts/emit-figures.mjs for
-    // why this is a build artifact and can be one deploy stale.
-    if (pathname === "/api/admin/figures" && request.method === "GET") {
-      const res = await fetch(`${env.SITE_ORIGIN}/figures.json`, {
-        headers: { accept: "application/json" },
-      });
-      if (!res.ok) {
-        return json({ error: `figures.json — status ${res.status}` }, 502);
-      }
-      return json(await res.json());
-    }
-
-    /**
-     * Writing an insight through this dashboard is over. Sveltia CMS owns it.
-     *
-     * A 410 rather than a silent success, and this is the important part: the
-     * site build reads content/insights/**.md off disk now, so a save that
-     * still wrote `cms_documents` would report success, change a D1 row, and
-     * change nothing a reader could ever see. That is the exact failure this
-     * whole migration was meant to remove, and leaving the endpoint working
-     * would reintroduce it on the insights side while fixing it on news.
-     *
-     * The GET below still answers, so the panel can list what is in D1 while
-     * the table is still there. Only writing is closed.
-     */
-    if (pathname === "/api/admin/insights" && request.method === "POST") {
-      return json(
-        {
-          ok: false,
-          error:
-            "Insight articles are edited at /admin/ (Sveltia CMS) now — they " +
-            "are markdown files in the repo, and saving there commits and " +
-            "deploys in one step. Saving here would write a database row that " +
-            "nothing reads.",
-        },
-        410,
-      );
-    }
-
-    const cmsAdmin = pathname.match(/^\/api\/admin\/insights\/([^/]+)$/);
-    if (cmsAdmin) {
-      const [, id] = cmsAdmin;
-
-      if (request.method === "GET") {
-        const item = await getInsightById(env, id);
-        if (!item) return json({ ok: false, error: "Not found" }, 404);
-        return json({ item });
-      }
-
-      // Closed for the same reason as POST above: a write here would succeed
-      // and change nothing a reader sees.
-      if (request.method === "PUT" || request.method === "DELETE") {
-        return json(
-          {
-            ok: false,
-            error:
-              "Insight articles live in the repo now and are edited at " +
-              "/admin/ (Sveltia CMS). This endpoint would write a database " +
-              "row that the site no longer reads.",
-          },
-          410,
-        );
-      }
-
-    }
 
     if (pathname === "/api/admin/assets" && request.method === "GET") {
       return json(await listAssets(env));

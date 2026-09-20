@@ -79,10 +79,29 @@ function toPhase(stage: string | undefined, status: string | undefined): Phase {
   return "building";
 }
 
-function toDeployment(raw: Record<string, any>): Deployment {
-  const stage = raw.latest_stage?.name as string | undefined;
-  const status = raw.latest_stage?.status as string | undefined;
-  const created = raw.created_on as string;
+/**
+ * The subset of Cloudflare's deployment object this file reads.
+ *
+ * Every field is optional but `id` and `created_on`, because it is someone
+ * else's JSON: a key that disappears has to surface as a missing value in the
+ * panel, not as a type error at a call site that cannot do anything about it.
+ */
+interface RawDeployment {
+  id: string;
+  created_on: string;
+  short_id?: string;
+  modified_on?: string;
+  url?: string;
+  latest_stage?: { name?: string; status?: string; ended_on?: string | null };
+  deployment_trigger?: {
+    metadata?: { commit_hash?: string; commit_message?: string };
+  };
+}
+
+function toDeployment(raw: RawDeployment): Deployment {
+  const stage = raw.latest_stage?.name;
+  const status = raw.latest_stage?.status;
+  const created = raw.created_on;
   const phase = toPhase(stage, status);
 
   // Elapsed stops climbing once the build is done, so a finished deployment reads
@@ -110,11 +129,18 @@ function toDeployment(raw: Record<string, any>): Deployment {
   };
 }
 
-async function cf(
+/** Cloudflare's standard v4 envelope. */
+interface CfEnvelope<T> {
+  success?: boolean;
+  result?: T;
+  errors?: { message?: string }[];
+}
+
+async function cf<T>(
   env: Env,
   path: string,
   init?: RequestInit,
-): Promise<{ ok: true; result: any } | { ok: false; error: string }> {
+): Promise<{ ok: true; result: T } | { ok: false; error: string }> {
   const res = await fetch(`${API}${path}`, {
     ...init,
     headers: {
@@ -123,14 +149,18 @@ async function cf(
     },
   });
 
-  const body = (await res.json().catch(() => null)) as any;
+  const body = (await res
+    .json()
+    .catch(() => null)) as CfEnvelope<T> | null;
   if (!res.ok || !body?.success) {
     const msg =
-      body?.errors?.map((e: any) => e.message).join("; ") ||
-      `Cloudflare returned ${res.status}.`;
+      body?.errors
+        ?.map((e) => e.message)
+        .filter(Boolean)
+        .join("; ") || `Cloudflare returned ${res.status}.`;
     return { ok: false, error: msg };
   }
-  return { ok: true, result: body.result };
+  return { ok: true, result: body.result as T };
 }
 
 /** The production deployment list, newest first. */
@@ -140,7 +170,7 @@ export async function getDeployStatus(env: Env): Promise<DeployStatus> {
   }
 
   try {
-    const res = await cf(
+    const res = await cf<RawDeployment[]>(
       env,
       `/accounts/${env.CF_ACCOUNT_ID}/pages/projects/${PROJECT}/deployments?env=production&per_page=1`,
     );
@@ -157,42 +187,15 @@ export async function getDeployStatus(env: Env): Promise<DeployStatus> {
   }
 }
 
-/**
- * Start a build. Returns the deployment so the panel can begin polling it
- * immediately rather than waiting a tick to discover its own work.
- *
- * Refuses while one is already running — see isBusy. The caller gets the
- * in-flight deployment back with `queued: true`, which is what the UI shows, so a
- * second click reads as "already going" instead of doing nothing visible.
+/*
+ * There was a `triggerPublish()` here, which POSTed to the Pages deployments
+ * endpoint to start a site-wide build. It went when publishing became
+ * per-article: approving a news item commits content/news/<slug>.md and a push
+ * to main IS the deploy, so nothing needs to ask Cloudflare to build. Its one
+ * caller, POST /api/admin/publish, now retries a failed commit instead — see
+ * publish-file.ts. The read half of this file stays, because the panel still
+ * reports on the build that the commit set off.
  */
-export async function triggerPublish(
-  env: Env,
-): Promise<
-  | { ok: true; queued: boolean; deployment: Deployment | null }
-  | { ok: false; error: string }
-> {
-  if (!env.CF_PAGES_TOKEN) return { ok: false, error: NOT_CONFIGURED };
-
-  const current = await getDeployStatus(env);
-  if (current.ok && current.busy) {
-    return { ok: true, queued: true, deployment: current.latest };
-  }
-
-  // Pages wants multipart here even for a git build; `branch` is the only field
-  // that matters, and it pins the build to production rather than whatever
-  // Cloudflare would otherwise infer.
-  const form = new FormData();
-  form.set("branch", "main");
-
-  const res = await cf(
-    env,
-    `/accounts/${env.CF_ACCOUNT_ID}/pages/projects/${PROJECT}/deployments`,
-    { method: "POST", body: form },
-  );
-  if (!res.ok) return { ok: false, error: res.error };
-
-  return { ok: true, queued: false, deployment: toDeployment(res.result) };
-}
 
 /**
  * The tail of a failed build's log.
@@ -210,15 +213,15 @@ export async function getBuildLog(
   if (!env.CF_PAGES_TOKEN) return { ok: false, error: NOT_CONFIGURED, lines: [] };
 
   try {
-    const res = await cf(
+    const res = await cf<{ data?: { line?: string }[] }>(
       env,
       `/accounts/${env.CF_ACCOUNT_ID}/pages/projects/${PROJECT}/deployments/${id}/history/logs`,
     );
     if (!res.ok) return { ok: false, error: res.error, lines: [] };
 
     const all: string[] = (res.result?.data ?? [])
-      .map((l: any) => l.line)
-      .filter((l: unknown): l is string => typeof l === "string");
+      .map((l) => l.line)
+      .filter((l): l is string => typeof l === "string");
     return { ok: true, lines: all.slice(-lines) };
   } catch (err) {
     return { ok: false, error: String(err), lines: [] };
