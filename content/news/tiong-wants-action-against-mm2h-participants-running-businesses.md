@@ -42,6 +42,6 @@ He didn't say what would change, or when.
 
 ## The programme as it stands
 
-MM2H started in 2002, was suspended in August 2020, came back with revised conditions, and was restructured again in 2024. For each tier's pass length, fixed deposit and property rules, see our [MM2H guide](/visas/mm2h/).
+MM2H started in 2002, was suspended in August 2020, came back with revised conditions, and was restructured again in 2024. For each tier's pass length, fixed deposit and property rules, see the MM2H guide linked at the end of this article.
 
 If you picked Silver or Gold for the lower deposit and planned to earn locally, the gap between what you want to do and what your pass allows is now something the government has said it will look for. Sort out the authorisation, or rethink the tier, before an officer raises it with you.
