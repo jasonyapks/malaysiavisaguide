@@ -44,12 +44,10 @@ He didn't say what would change, or when.
 
 MM2H started in 2002, was suspended in August 2020, came back with revised conditions, and was restructured again in 2024. There are now four categories, each with its own validity period:
 
-| Category | Pass validity | Business or work |
-|---|---|---|
-| Platinum | 20 years | Allowed |
-| Gold | 15 years | Needs further authorisation |
-| Silver | 5 years | Needs further authorisation |
-| SEZ / SFZ | 10 years | Needs further authorisation |
+- Platinum: 20-year pass, business and work allowed
+- Gold: 15-year pass, business needs further authorisation
+- Silver: 5-year pass, business needs further authorisation
+- SEZ / SFZ: 10-year pass, business needs further authorisation
 
 Each tier also has its own fixed deposit and residential property purchase requirements.
 
