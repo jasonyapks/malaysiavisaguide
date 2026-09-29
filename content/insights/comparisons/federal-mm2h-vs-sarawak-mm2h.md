@@ -4,7 +4,6 @@ dek: "These are two programmes run by two governments that happen to share a nam
 published: "2026-09-05"
 reviewed: "2026-09-05"
 readingMinutes: 9
-draft: true
 relatedGuides:
   - path: "/visas/mm2h/"
     title: "the federal MM2H guide"

@@ -4,7 +4,6 @@ dek: "这是两个由两个不同政府运作、恰好共用同一个名称的�
 published: "2026-09-05"
 reviewed: "2026-09-05"
 readingMinutes: 9
-draft: true
 relatedGuides:
   - path: "/visas/mm2h/"
     title: "联邦 MM2H 指南"
