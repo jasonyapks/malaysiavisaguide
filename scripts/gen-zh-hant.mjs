@@ -68,6 +68,10 @@ const TERMINOLOGY = [
   ["菜單", "選單"],
   // Likewise 信息 → 資訊 for "information"; 訊息 would mean a chat message.
   ["信息", "資訊"],
+  // 签 is 簽 when it means "sign"; OpenCC segments 签授权书 as 籤 (a slip or
+  // lot), which is wrong here. Same for 签批, "sign off".
+  ["籤授權書", "簽授權書"],
+  ["籤批", "簽批"],
 ];
 
 const converter = OpenCC.ConverterFactory(

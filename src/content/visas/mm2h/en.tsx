@@ -15,7 +15,7 @@ const silver = getProgramme("mm2h-silver")!;
 /** English MM2H guide copy — moved here verbatim from app/visas/mm2h/page.tsx. */
 export const copy: GuideCopy = {
   meta: {
-    title: "MM2H 2026: Silver, Gold and Platinum requirements",
+    title: "MM2H (Malaysia My Second Home) 2026: requirements, fees and tiers",
     description:
       "The three main MM2H tiers compared against the official MOTAC criteria — fixed deposit, property minimum, term, fees, minimum stay and the age rules that most guides get wrong. Plus the SEZ and SFZ zone routes, which run on different rules.",
   },

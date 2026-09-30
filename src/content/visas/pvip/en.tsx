@@ -96,6 +96,10 @@ export const copy: GuideCopy = {
       a: "No. All applications must be made through an agency authorised by the Immigration Department of Malaysia. MM2H is no different on the current guidance: MOTAC's December 2025 guide routes every MM2H application through a licensed MM2H company too, so the agent requirement is not a PVIP peculiarity.",
     },
     {
+      q: "Is there a list of authorised PVIP agents?",
+      a: "The Immigration Department's PVIP FAQ does not point to a public one. Agencies are appointed by Immigration, each with a written approval valid for three years. Ask the agency for that letter and check it is in date, then look the company up with SSM: an appointed agency must be a Sdn. Bhd. with at least RM1,000,000 paid-up capital and at least 51% Malaysian ownership. The company on the approval should be the one on your contract — an approval cannot be rented out or passed to a middleman.",
+    },
+    {
       q: "Is there an age limit?",
       a: "No. The Immigration Department lists 'no age limits' as the first stated benefit of the programme, which makes PVIP the only long-stay route open to applicants under 25. The age limit that does exist applies to sponsored children, not to the principal — see below.",
     },
@@ -236,6 +240,29 @@ export const copy: GuideCopy = {
           cut short by your passport expiring — the usual reason a 20-year
           programme issues a five-year sticker — the application for the
           remaining balance goes in three months before the current pass ends.
+        </p>
+      </Section>
+
+      <Section title="Checking that an agent is authorised">
+        <p>
+          Immigration appoints PVIP agencies itself, and its PVIP FAQ does not point applicants to a public list of them. The check falls to you — and the FAQ sets out what to check against:
+        </p>
+        <ul>
+          <li>
+            <strong>Ask for the approval letter.</strong> Every agency holds a written approval from the Immigration Department. It is valid for three years and must be renewed before it lapses; an agency whose approval has lapsed has its new applications blocked. Check the date.
+          </li>
+          <li>
+            <strong>Look the company up with SSM.</strong> An appointed agency must be a Sdn. Bhd. with at least RM1,000,000 paid-up capital, at least 51% Malaysian-owned, with PVIP consultancy as its nature of business. The SSM company profile shows all of it.
+          </li>
+          <li>
+            <strong>Make sure the company filing is the one you are paying.</strong> An approval cannot be rented, sold or handed to anyone else, so a referrer or middleman is not the agency. The name on your contract should be the name on the approval letter.
+          </li>
+          <li>
+            <strong>Expect to sign a power of attorney.</strong> Agents can act only for clients who have authorised them in writing. An agency that files without one is outside the rules.
+          </li>
+        </ul>
+        <p>
+          <em>Agency criteria from the Immigration Department&apos;s PVIP FAQ.</em>
         </p>
       </Section>
 
