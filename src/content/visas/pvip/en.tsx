@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { Section } from "@/components/GuideLayout";
-import { PVIP_GOVERNMENT_FEE_ATTRIBUTION } from "@/lib/data/programmes";
-import { reviewDate } from "@/lib/format";
+import {
+  PVIP_AGENT_FEE_ATTRIBUTION,
+  PVIP_AGENT_FEE_FROM,
+  PVIP_GOVERNMENT_FEE_ATTRIBUTION,
+} from "@/lib/data/programmes";
+import { money, reviewDate } from "@/lib/format";
+
+const agentFrom = money(PVIP_AGENT_FEE_FROM);
 import type { GuideCopy } from "../types";
 
 /** English PVIP guide copy — moved here verbatim from app/visas/pvip/page.tsx.
@@ -14,9 +20,8 @@ import type { GuideCopy } from "../types";
  * by the one that happens. Do not "fix" it back to the document. */
 export const copy: GuideCopy = {
   meta: {
-    title: "Premium Visa Programme (PVIP): costs and requirements",
-    description:
-      "What PVIP actually costs, who qualifies, and how it compares to MM2H. RM200,000 participation fee, RM1 million fixed deposit, RM40,000 monthly income offshore or onshore, 20-year residence.",
+    title: "Premium Visa Programme (PVIP): costs, agent fees and requirements",
+    description: `What PVIP actually costs: RM200,000 participation fee, RM1 million fixed deposit, and agent fees from ${agentFrom} depending on family size. Who qualifies, and how it compares to MM2H.`,
   },
 
   title: "Premium Visa Programme (PVIP)",
@@ -60,7 +65,11 @@ export const copy: GuideCopy = {
     },
     {
       q: "What are the PVIP government fees?",
-      a: "Four. The participation fee is one of them — RM200,000 for the principal, RM100,000 or RM50,000 per dependant — and it is the one everybody quotes. The other three are the pass fee at RM2,000 per person per year of the approved term, a multiple-entry visa fee, and a one-off security bond. The last two are set by your nationality rather than by the programme, so the cost calculator is the place to get your own figure. What is not a government fee is the agency fee: that one is commercial and unpublished.",
+      a: `Four. The participation fee is one of them — RM200,000 for the principal, RM100,000 or RM50,000 per dependant — and it is the one everybody quotes. The other three are the pass fee at RM2,000 per person per year of the approved term, a multiple-entry visa fee, and a one-off security bond. The last two are set by your nationality rather than by the programme, so the cost calculator is the place to get your own figure. What is not a government fee is the agency fee: that one is commercial, set by the agent, and starts from around ${agentFrom}.`,
+    },
+    {
+      q: "How much do PVIP agents charge?",
+      a: `From around ${agentFrom}, and upward from there. Immigration does not set PVIP agent fees, so they vary between agents — and, with any one agent, by family size, how many dependants are included and on which term, and how much work the income and source-of-funds paperwork needs. Get the figure in writing before you pay anything, with what it covers: whether dependants are priced in, whether the medical, insurance and fixed-deposit steps are handled, and what comes back if the application is refused. A quote well under the range is worth reading line by line for what it leaves out. (Range stated by ${PVIP_AGENT_FEE_ATTRIBUTION.by}, ${reviewDate(PVIP_AGENT_FEE_ATTRIBUTION.asAt)}.)`,
     },
     {
       q: "Why is my visa only five years when PVIP runs twenty?",
@@ -249,7 +258,9 @@ export const copy: GuideCopy = {
           </li>
           <li>
             <strong>Agent fees:</strong> set by the agency, not by Immigration,
-            and not published anywhere official. Ask for the figure in writing
+            and not published anywhere official. Across the market they start
+            from around {agentFrom} and rise with family size and case
+            complexity. Ask for the figure in writing
             before you commit. This is the opposite of MM2H, where the agency
             fee is fixed by the government and there is nothing to negotiate.
           </li>
@@ -257,7 +268,7 @@ export const copy: GuideCopy = {
         <p>
           A single applicant is therefore looking at a little over RM210,000 in
           government fees genuinely spent, and RM1,000,000 committed but
-          retained — before agent fees.
+          retained — before agent fees, which start from around {agentFrom}.
         </p>
       </Section>
 
@@ -296,8 +307,9 @@ export const copy: GuideCopy = {
         </p>
         <p>
           Only the agency fee sits outside this list. That one is commercial,
-          set by the agency rather than by Immigration, and published nowhere
-          official — get it in writing.
+          set by the agency rather than by Immigration — from around{" "}
+          {agentFrom} depending on family size and case complexity — and
+          published nowhere official. Get it in writing.
         </p>
         <p>
           <em>

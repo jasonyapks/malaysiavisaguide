@@ -509,6 +509,21 @@ export const PVIP_GOVERNMENT_FEE_ATTRIBUTION: Attribution = {
 };
 
 /**
+ * Where PVIP agent fees start across the market. Commercial, not government-set,
+ * so it is a floor and never a single price: the fee rises with family size,
+ * dependants' terms and case complexity. Jason set it on 2026-09-30 as the
+ * market range MYPVIP sees quoted.
+ *
+ * @public Quoted by the PVIP guide in all three languages.
+ */
+export const PVIP_AGENT_FEE_FROM: Money = { amount: 60_000, currency: "MYR" };
+
+export const PVIP_AGENT_FEE_ATTRIBUTION: Attribution = {
+  by: "MYPVIP, from agent quotes across the market",
+  asAt: "2026-09-30",
+};
+
+/**
  * Payment terms attached to the government-fixed agency fee.
  *
  * @public Quoted into the MM2H records below. Named rather than inlined because

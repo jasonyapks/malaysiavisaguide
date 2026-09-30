@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { Section } from "@/components/GuideLayout";
-import { PVIP_GOVERNMENT_FEE_ATTRIBUTION } from "@/lib/data/programmes";
-import { reviewDate } from "@/lib/format";
+import {
+  PVIP_AGENT_FEE_ATTRIBUTION,
+  PVIP_AGENT_FEE_FROM,
+  PVIP_GOVERNMENT_FEE_ATTRIBUTION,
+} from "@/lib/data/programmes";
+import { money, reviewDate } from "@/lib/format";
+
+const agentFrom = money(PVIP_AGENT_FEE_FROM);
 import type { GuideCopy } from "../types";
 
 /**
@@ -20,9 +26,8 @@ import type { GuideCopy } from "../types";
  */
 export const copy: GuideCopy = {
   meta: {
-    title: "高端签证计划（PVIP）：费用与申请条件",
-    description:
-      "PVIP 到底要花多少钱、谁能申请、和 MM2H 怎么比。RM200,000 参与费、RM1,000,000 定期存款、每月 RM40,000 收入（境外或境内皆可），20 年居留。",
+    title: "高端签证计划（PVIP）：费用、代理费与申请条件",
+    description: `PVIP 到底要花多少钱：RM200,000 参与费、RM1,000,000 定期存款，代理费 ${agentFrom} 起，视家庭人数而定。谁能申请、和 MM2H 怎么比。`,
   },
 
   title: "高端签证计划（PVIP）",
@@ -66,7 +71,11 @@ export const copy: GuideCopy = {
     },
     {
       q: "PVIP 的政府收费有哪些？",
-      a: "四项。参与费是其中之一 —— 主申请人 RM200,000，每名家属 RM100,000 或 RM50,000 —— 这也是所有人都会引用的那一项。另外三项是准证费（每人每年 RM2,000，按批准年限计）、多次入境签证费，以及一次性的保证金。后两项按你的国籍而非按计划订定，所以要拿到属于你自己的数字，请用费用计算器。不属于政府收费的是代理服务费：那一项是商业性质的，也从未公开。",
+      a: `四项。参与费是其中之一 —— 主申请人 RM200,000，每名家属 RM100,000 或 RM50,000 —— 这也是所有人都会引用的那一项。另外三项是准证费（每人每年 RM2,000，按批准年限计）、多次入境签证费，以及一次性的保证金。后两项按你的国籍而非按计划订定，所以要拿到属于你自己的数字，请用费用计算器。不属于政府收费的是代理服务费：那一项是商业性质的，由代理订定，约 ${agentFrom} 起。`,
+    },
+    {
+      q: "PVIP 代理费要多少？",
+      a: `约 ${agentFrom} 起，往上浮动。PVIP 的代理费不由移民局订定，所以各家代理报价不同；即使是同一家代理，也会因家庭人数、随行家属人数及其所选年限，以及收入与资金来源文件的工作量而不同。在付任何款项之前，请要求对方以书面给出金额，并写明包含哪些项目：家属是否已计入、体检、保险和定期存款手续是否代办，以及申请被拒时退还多少。报价明显低于这个范围的，值得逐项核对漏掉了什么。（此范围来自 MYPVIP 对市场上各家代理报价的观察，${reviewDate(PVIP_AGENT_FEE_ATTRIBUTION.asAt, "zh-hans")}。）`,
     },
     {
       q: "PVIP 是 20 年，为什么我的签证只有五年？",
@@ -211,11 +220,11 @@ export const copy: GuideCopy = {
             <strong>仍然属于你的钱：</strong>RM1,000,000 定期存款。它躺在你自己的账户里并设有质押，不在政府的账户里。
           </li>
           <li>
-            <strong>代理费：</strong>由代理机构订定，不由移民局订定，也没有任何官方渠道公布。在你签约之前，请要求对方以书面给出金额。这一点和 MM2H 正好相反 —— MM2H 的代理费由政府固定，根本没有议价空间。
+            <strong>代理费：</strong>由代理机构订定，不由移民局订定，也没有任何官方渠道公布。就市场行情而言，约 {agentFrom} 起，随家庭人数与案件复杂程度而增加。在你签约之前，请要求对方以书面给出金额。这一点和 MM2H 正好相反 —— MM2H 的代理费由政府固定，根本没有议价空间。
           </li>
         </ul>
         <p>
-          所以单人申请的情况是：真正花掉的政府收费略高于 RM210,000，另有 RM1,000,000 被占用但仍属于你 —— 这还没算代理费。
+          所以单人申请的情况是：真正花掉的政府收费略高于 RM210,000，另有 RM1,000,000 被占用但仍属于你 —— 这还没算代理费（约 {agentFrom} 起）。
         </p>
       </Section>
 
@@ -243,7 +252,7 @@ export const copy: GuideCopy = {
           会按你自己的国籍和家庭人数，就五年的初次批准把这四项全部算出来。
         </p>
         <p>
-          只有代理服务费不在这份清单里。那一项是商业性质的，由代理机构而非移民局订定，也没有任何官方渠道公布 —— 请要求书面报价。
+          只有代理服务费不在这份清单里。那一项是商业性质的，由代理机构而非移民局订定 —— 约 {agentFrom} 起，视家庭人数与案件复杂程度而定 —— 也没有任何官方渠道公布。请要求书面报价。
         </p>
         <p>
           <em>
