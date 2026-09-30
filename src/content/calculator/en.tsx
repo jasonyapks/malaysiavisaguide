@@ -1,11 +1,17 @@
+import { getProgramme } from "@/lib/data/programmes";
 import type { CalculatorCopy } from "./types";
+
+const deRantau = getProgramme("de-rantau");
+const deRantauFee =
+  deRantau && "processingFee" in deRantau && deRantau.processingFee
+    ? `RM${deRantau.processingFee.principal.toLocaleString("en-MY")}`
+    : null;
 
 /** English cost-calculator copy — moved here from the page and the component. */
 export const copy: CalculatorCopy = {
   meta: {
-    title: "What each Malaysian visa really costs",
-    description:
-      "An itemised, honest cost estimate for every Malaysian long-stay programme and work/study pass — by family size, with refundable deposits kept strictly separate from the fees you never see again.",
+    title: "Malaysia visa cost calculator: what each long-stay visa costs",
+    description: `How much a 1-year or longer Malaysian visa costs${deRantauFee ? ` — DE Rantau from ${deRantauFee}` : ""}, plus Employment Pass, Student Pass, MM2H and PVIP. Itemised by family size and passport, with refundable deposits kept separate from fees.`,
   },
 
   heading: "What will it actually cost?",

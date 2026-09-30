@@ -5,9 +5,9 @@ import type { GuideCopy } from "../types";
 /** English de-rantau guide copy — moved here verbatim from app/visas/de-rantau/page.tsx. */
 export const copy: GuideCopy = {
   meta: {
-    title: "DE Rantau Nomad Pass: income requirements and costs",
+    title: "DE Rantau: Malaysia's digital nomad visa — requirements and cost",
     description:
-      "Malaysia's digital nomad pass. USD 24,000 a year for tech professions, USD 60,000 for everyone else, 3 to 12 months renewable once, RM1,080 processing fee.",
+      "DE Rantau is Malaysia's digital nomad visa: USD 24,000 a year for tech professions, USD 60,000 for everyone else, 3 to 12 months renewable once. RM1,080 processing fee plus RM360 a year pass fee.",
   },
 
   title: "DE Rantau Nomad Pass",
