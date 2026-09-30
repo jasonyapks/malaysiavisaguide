@@ -44,7 +44,7 @@ export const copy: GuideCopy = {
         },
         {
           q: "Can I bring my family on a Student Pass?",
-          a: "Master's and PhD students may sponsor a spouse, children under 18, disabled children of any age, and parents. Dependants must show financial capability through three months of bank statements or a scholarship or embassy sponsorship letter. Dependants are not allowed to work or conduct business.",
+          a: "Master's and PhD students may sponsor a spouse, children under 18, disabled children of any age, and parents or parents-in-law. Students below Master's level cannot bring dependants. Dependants must show financial capability through three months of bank statements or a scholarship or embassy sponsorship letter. Dependants are not allowed to work or conduct business.",
         },
         {
           q: "What documents are required?",

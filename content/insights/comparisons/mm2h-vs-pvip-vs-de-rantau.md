@@ -34,12 +34,12 @@ sources:
   - label: "Immigration Department of Malaysia — PVIP FAQ"
     url: "https://imigresen-online.imi.gov.my/eservices/doc/FAQ_PVIP.pdf"
     verified: "2026-07-23"
-  - label: "MDEC — DE Rantau Pass FAQ"
-    url: "https://www.mdec.my/static/pdf/derantau/251105_DE%20Rantau_Pass_FAQ_V8.pdf"
-    verified: "2026-07-23"
+  - label: "MDEC — DE Rantau Pass FAQ (v10, 28 August 2026)"
+    url: "https://mdec.my/api/media/file/DE-Rantau_Pass_FAQ_v10.pdf"
+    verified: "2026-09-30"
   - label: "MTCP Sarawak — S-MM2H guidelines"
-    url: "https://mtcp.sarawak.gov.my/admin/file_manager/download/?id=2319"
-    verified: "2026-07-23"
+    url: "https://mtcp.sarawak.gov.my/web/attachment/show/?docid=REt0S0kvVFpidEtubkZUT09mcWFSZz09OjpeOuewhViH0oQ6MBHzQtpV"
+    verified: "2026-09-30"
 ---
 
 ## You have probably already noticed the thing nobody says out loud

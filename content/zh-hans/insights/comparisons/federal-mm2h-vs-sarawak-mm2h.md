@@ -25,9 +25,9 @@ faq:
   - q: "两者各自的有效期是多久？"
     a: "砂拉越准证有效期为五年，可续期一次，再延长五年。满十年后，须在到期前六个月重新提交申请——名义上是续期，实质上是一次新的申请。联邦计划的有效期则按层级而定：白银级为五年，黄金级为十五年，白金级为二十年，均可续期。"
 sources:
-  - label: "MTCP Sarawak — SMM2H Application Guidelines (English, as at 5.5.2026)"
-    url: "https://mtcp.sarawak.gov.my/admin/file_manager/download/?id=2319"
-    verified: "2026-08-30"
+  - label: "MTCP Sarawak — SMM2H Application Guidelines (English, amended 31 July 2025)"
+    url: "https://mtcp.sarawak.gov.my/web/attachment/show/?docid=REt0S0kvVFpidEtubkZUT09mcWFSZz09OjpeOuewhViH0oQ6MBHzQtpV"
+    verified: "2026-09-30"
   - label: "MOTAC — Guide: Malaysia My Second Home (December 2025)"
     url: "https://www.motac.gov.my/wp-content/uploads/2025/12/Guide-Malaysia-My-Second-Home.pdf"
     verified: "2026-07-28"

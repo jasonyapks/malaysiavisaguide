@@ -347,7 +347,7 @@ const MM2H_COMMON = {
   sponsorShort: null,
   salaryFloor: null,
   source: MM2H_SOURCE,
-  lastVerified: "2026-07-28",
+  lastVerified: "2026-09-30",
   // MOTAC's December 2025 guide still carries the pre-correction wording on
   // both of the fields below, so they rest on named, dated practice rather than
   // on `source`. `lastVerified` stays at the date the guide was checked — it
@@ -660,7 +660,7 @@ export const programmes: Programme[] = [
       defaultTermYears: 5,
     },
     source: "https://imigresen-online.imi.gov.my/eservices/doc/FAQ_PVIP.pdf",
-    lastVerified: "2026-07-23",
+    lastVerified: "2026-09-30",
     // The fields above are now the 2026 terms, supplied by Jason on 2026-07-27.
     // Immigration's FAQ still shows the 2022 launch terms, so they rest on
     // attribution rather than on `source` — which is exactly what the notice
@@ -813,12 +813,17 @@ export const programmes: Programme[] = [
     sponsor: null,
     sponsorShort: null,
     salaryFloor: null,
-    source: "https://mtcp.sarawak.gov.my/admin/file_manager/download/?id=2319",
+    source: "https://mtcp.sarawak.gov.my/web/attachment/show/?docid=REt0S0kvVFpidEtubkZUT09mcWFSZz09OjpeOuewhViH0oQ6MBHzQtpV",
     // Re-checked 2026-08-30 against the MTCP guide "SMM2H Application
     // Guidelines - English Version as of 5.5.2026" (cover: amended 31 July
     // 2025). Every figure in this record held; the guide pages did not, and
     // were corrected in the same pass.
-    lastVerified: "2026-08-30",
+    //
+    // 2026-09-30: every figure held again. `source` moved to the guide itself,
+    // linked from MTCP's requirements page — the old download id=2319 serves a
+    // 9-page Dec 2024 "Enhancement of S-MM2H requirements" deck instead. The
+    // agency fee is in MTCP's agent-licensing rules §1.15, not in the guide.
+    lastVerified: "2026-09-30",
   },
 
   {
@@ -852,8 +857,8 @@ export const programmes: Programme[] = [
     sponsorShort: "Foreign employer or clients",
     salaryFloor: null,
     source:
-      "https://www.mdec.my/static/pdf/derantau/251105_DE%20Rantau_Pass_FAQ_V8.pdf",
-    lastVerified: "2026-07-23",
+      "https://mdec.my/api/media/file/DE-Rantau_Pass_FAQ_v10.pdf",
+    lastVerified: "2026-09-30",
   },
 
   {
@@ -886,7 +891,7 @@ export const programmes: Programme[] = [
     salaryFloor: { amount: 5_000, currency: "MYR" },
     source:
       "https://esd.imi.gov.my/portal/latest-news/announcement/announcement-266-ep-salary-policy-2026/",
-    lastVerified: "2026-07-23",
+    lastVerified: "2026-09-30",
   },
 
   {
@@ -907,17 +912,20 @@ export const programmes: Programme[] = [
     minStayShort: null,
     workRights: "restricted",
     dependants: [
+      // Immigration's Student Pass page (checked 2026-09-30): only Master's and
+      // PhD students may bring dependants at all, so the limit covers every
+      // row, not just the first two. Parents-in-law were missing.
       "Spouse (Master's and PhD students only)",
       "Children under 18 (Master's and PhD students only)",
-      "Disabled children, any age",
-      "Parents",
+      "Disabled children, any age (Master's and PhD students only)",
+      "Parents and parents-in-law (Master's and PhD students only)",
     ],
     sponsor: "The education institution, screened by EMGS",
     sponsorShort: "Your institution",
     salaryFloor: null,
     source:
       "https://www.imi.gov.my/index.php/en/main-services/pass/student-pass/",
-    lastVerified: "2026-07-23",
+    lastVerified: "2026-09-30",
   },
 ];
 

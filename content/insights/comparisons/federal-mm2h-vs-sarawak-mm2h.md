@@ -25,9 +25,9 @@ faq:
   - q: "How long does each one last?"
     a: "Sarawak is issued five years and renewed once for five more. After ten years you file a fresh application, six months before expiry — a renewal in name, a new application in substance. Federal terms run by tier: five years on Silver, fifteen on Gold, twenty on Platinum, all renewable."
 sources:
-  - label: "MTCP Sarawak — SMM2H Application Guidelines (English, as at 5.5.2026)"
-    url: "https://mtcp.sarawak.gov.my/admin/file_manager/download/?id=2319"
-    verified: "2026-08-30"
+  - label: "MTCP Sarawak — SMM2H Application Guidelines (English, amended 31 July 2025)"
+    url: "https://mtcp.sarawak.gov.my/web/attachment/show/?docid=REt0S0kvVFpidEtubkZUT09mcWFSZz09OjpeOuewhViH0oQ6MBHzQtpV"
+    verified: "2026-09-30"
   - label: "MOTAC — Guide: Malaysia My Second Home (December 2025)"
     url: "https://www.motac.gov.my/wp-content/uploads/2025/12/Guide-Malaysia-My-Second-Home.pdf"
     verified: "2026-07-28"

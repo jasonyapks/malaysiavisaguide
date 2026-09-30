@@ -28,10 +28,13 @@ const ICON: Record<string, IconName> = {
   "/visas/student-pass/": "swap",
 };
 
+// The OLDEST check, not the newest: the headline says "every fee and
+// threshold", which is only as fresh as the stalest programme. Taking the
+// newest let one re-checked programme vouch for all the others.
 const lastReviewed = programmes
   .map((p) => p.lastVerified)
   .sort()
-  .at(-1)!;
+  .at(0)!;
 
 /**
  * The official pages behind the figures, one row per issuing authority.

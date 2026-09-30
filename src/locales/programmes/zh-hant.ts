@@ -281,8 +281,8 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
     dependants: [
       "配偶（僅限碩士與博士生）",
       "18 歲以下子女（僅限碩士與博士生）",
-      "殘障子女，不限年齡",
-      "父母",
+      "殘障子女，不限年齡（僅限碩士與博士生）",
+      "父母及配偶的父母（僅限碩士與博士生）",
     ],
     name: "學生準證（Student Pass）",
     authority: "移民局／EMGS",
