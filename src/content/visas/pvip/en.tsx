@@ -119,14 +119,16 @@ export const copy: GuideCopy = {
         </p>
         <ul>
           <li>
-            <strong>Income of RM40,000 a month</strong> — RM480,000 a year. Two
-            things about this are more generous than most write-ups suggest.
-            First, it does not have to be a salary: realised gains on
-            investments, rental income and pension drawdown all count, which is
-            what puts the threshold within reach of a retiree with no employer.
-            Second, it does not have to be offshore. Malaysian-sourced income
-            qualifies too, provided you can show proof of Malaysian income tax
-            paid on it.
+            <strong>Income of RM40,000 a month</strong> — RM480,000 a year. It
+            does not have to be a salary: realised gains on investments, rental
+            income and pension drawdown all count. But an applicant without a
+            fixed salary — a retiree included — must also show{" "}
+            <strong>RM5,000,000 in savings</strong>, on top of the income, with
+            twelve months of bank statements. Nor does the income have to be
+            offshore: Malaysian-sourced income qualifies too, provided you can
+            show proof of Malaysian income tax paid on it. The one way round
+            the income test is net assets of RM1,000,000,000 — one billion
+            ringgit — which the guidelines accept in its place.
           </li>
           <li>
             <strong>A RM1,000,000 fixed deposit</strong> opened with a bank

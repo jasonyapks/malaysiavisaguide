@@ -18,7 +18,7 @@ faq:
   - q: "Can I move from DE Rantau to MM2H or PVIP later?"
     a: "That is the normal path and the sensible one. DE Rantau gives you up to 24 months to decide before any capital is committed. Start the longer application before the second year runs out, not after."
   - q: "Does my PVIP income have to be a salary?"
-    a: "No, and it does not have to be offshore either. Realised gains on investments, rental income and pension drawdown all count towards the RM40,000 a month. Malaysian-sourced income counts too, provided you can show proof of Malaysian income tax paid on it. Both of those are more generous than most write-ups say, including the older ones on this site."
+    a: "No, and it does not have to be offshore either. Realised gains on investments, rental income and pension drawdown all count towards the RM40,000 a month. Malaysian-sourced income counts too, provided you can show proof of Malaysian income tax paid on it. Both of those are more generous than most write-ups say, including the older ones on this site. The catch: without a fixed salary — as a retiree, say — you must also show RM5,000,000 in savings on top of the income."
   - q: "Can my spouse take a shorter PVIP term than mine?"
     a: "Yes, and it is the cheaper route. Your own term is fixed at 20 years, but each dependant chooses: RM100,000 for 20 years, or RM50,000 for 10 years. For a couple that is a RM50,000 decision, so it is worth making deliberately rather than by default."
   - q: "Is the fixed deposit gone for good?"
@@ -114,7 +114,7 @@ Where MM2H genuinely disappoints people: on Silver and Gold there are no work ri
 
 **PVIP, if you clear both gates — and there are two.** {{pvip:incomeRequirement:moneyPer}} in income, and {{pvip:fixedDeposit:money}} on fixed deposit. PVIP is the only one of the three that tests income _and_ capital together.
 
-The income test is more generous than it looks, in two ways most write-ups get wrong. It does not have to be a salary — realised gains on investments, rental income and pension drawdown all count. And it does not have to be offshore: Malaysian-sourced income qualifies too, provided you can produce proof of Malaysian income tax paid on it. If you have read that onshore income is disqualifying, that was true of the 2022 rules and is not true now.
+The income test is more generous than it looks, in two ways most write-ups get wrong. It does not have to be a salary — realised gains on investments, rental income and pension drawdown all count. And it does not have to be offshore: Malaysian-sourced income qualifies too, provided you can produce proof of Malaysian income tax paid on it. If you have read that onshore income is disqualifying, that was true of the 2022 rules and is not true now. What most write-ups also miss runs the other way: an applicant without a fixed salary, a retiree included, must show RM5,000,000 in savings on top of the income, with twelve months of bank statements.
 
 On top of the deposit sits a participation fee of {{pvip:participationFee.principal:money}} for the principal, and this is the number to be clear-eyed about: it is a fee, not a deposit. It does not come back. Your own term is fixed at {{pvip:tenureYears:years}}, but each dependant chooses theirs — RM100,000 for 20 years, or RM50,000 for 10 years. For a couple that is a RM50,000 decision on its own, and it is one people make by default rather than deliberately.
 

@@ -22,7 +22,7 @@ faq:
   - q: "What if I cannot show RM40,000 a month?"
     a: "Then PVIP is closed to you regardless of how much capital you hold, and Platinum becomes the only twenty-year route of the two. This is the single most common reason a wealthy applicant ends up on Platinum rather than PVIP."
   - q: "Does the PVIP income have to be salary, or offshore?"
-    a: "Neither. Realised investment gains, rental income and pension drawdown all count towards the RM40,000 a month, and Malaysian-sourced income counts too if you can show Malaysian income tax paid on it. That is more generous than most write-ups state."
+    a: "Neither. Realised investment gains, rental income and pension drawdown all count towards the RM40,000 a month, and Malaysian-sourced income counts too if you can show Malaysian income tax paid on it. That is more generous than most write-ups state. The catch is for anyone without a fixed salary, retirees included: you must also show RM5,000,000 in savings on top of the income."
   - q: "Do I need an agent for either?"
     a: "Yes, for both. PVIP applications go through an agency authorised by the Immigration Department. MM2H applications go through a company licensed by MOTAC under the Tourism Industry Act 1992. Neither has an independent route on current guidance."
 sources:
@@ -46,7 +46,7 @@ Can you evidence {{pvip:incomeRequirement:moneyPer}} of income?
 
 That is the whole fork. PVIP tests income; MM2H Platinum does not test income at all. Everything else follows from which side of that line you fall on, and no amount of capital moves you across it — an applicant with eight figures in assets and no provable monthly income cannot buy their way into PVIP.
 
-The test is broader than most write-ups admit, which matters if you have already ruled yourself out. It does not have to be salary: realised investment gains, rental income and pension drawdown all count. It does not have to be offshore either — Malaysian-sourced income qualifies, with proof of Malaysian income tax paid on it.
+The test is broader than most write-ups admit, which matters if you have already ruled yourself out. It does not have to be salary: realised investment gains, rental income and pension drawdown all count. It does not have to be offshore either — Malaysian-sourced income qualifies, with proof of Malaysian income tax paid on it. The catch comes with the breadth: an applicant without a fixed salary, a retiree included, must also show RM5,000,000 in savings on top of the income, with twelve months of bank statements.
 
 One qualification on the Platinum side, because “no income requirement” is easy to over-read. {{mm2h-platinum:incomePractice.note:text}} There is still no figure to hit, and that is the whole advantage — but arrive with the statements anyway. _{{mm2h-platinum:incomePractice.attributionBy:text}}, as at {{mm2h-platinum:incomePractice.attributionAsAt:date}}. MOTAC's guide publishes no income figure either way, so this is practice rather than a published rule._
 

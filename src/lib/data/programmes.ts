@@ -589,6 +589,16 @@ export const programmes: Programme[] = [
     // pension drawdown all count. Not restricted to offshore either — onshore
     // income qualifies with proof of Malaysian income tax paid on it, which
     // reverses what the 2022 FAQ says and what this page used to say.
+    //
+    // Two qualifications, confirmed by Jason 2026-09-30 and resting on the same
+    // guideline as the rest of the 2026 terms. Neither is modelled as a field —
+    // the guide and two insights state them in prose, so change them there too.
+    //  - No fixed salary (retirees included): RM5,000,000 in savings ON TOP of
+    //    the income, with 12 months of bank statements. An eligibility bar, not
+    //    a paperwork convention. Whether the RM1M deposit counts towards it is
+    //    not settled, so nothing says either way.
+    //  - Net assets of RM1,000,000,000 (one billion — not a transcription
+    //    error) qualify in place of the income. Guidelines §2.1.
     incomeRequirement: { amount: 40_000, currency: "MYR", period: "month" },
     propertyPurchaseMin: null,
     participationFee: {
@@ -920,33 +930,17 @@ export const programmes: Programme[] = [
  * why an unsourced figure does not ship, and this is the list it produces. No
  * import is expected and its absence is not evidence of anything.
  *
- * Reviewed 2026-07-23.
+ * Reviewed 2026-07-23. On 2026-09-30 Jason settled four: PVIP net assets
+ * (RM1bn is real), the RM5M savings bar for non-salaried applicants (it is an
+ * eligibility bar), the PVIP multiple-entry visa fee (per annum, as modelled)
+ * and the SEZ/SFZ agency fee (RM40,000, same as Silver, as the MM2H guide
+ * already says).
  */
 export const UNVERIFIED: { slug: ProgrammeSlug; question: string }[] = [
   {
     slug: "pvip",
     question:
-      "Qualification by NET ASSETS is confirmed to exist — the PVIP management guidelines §2.1 offer it as an alternative to the RM40,000 monthly income — but the threshold as transcribed reads RM1,000,000,000 (one billion ringgit), which is 2,083 times the annual income it substitutes for and would make the route theoretical. Is that a digit-count error for RM1,000,000 or RM100,000,000, or is the billion real? Nothing about net assets is published on the site until the figure is settled.",
-  },
-  {
-    slug: "pvip",
-    question:
       "Answered in part on 2026-08-26: a government document does now state the 2026 terms, and the attribution above names it. What is still missing is a public URL — it is not on imigresen-online.imi.gov.my and no copy is findable. Until one exists it cannot become `source`, and the notice keeps pointing at the unrevised FAQ. Ask again whenever Immigration republishes.",
-  },
-  {
-    slug: "pvip",
-    question:
-      "Does a retiree, or anyone else without a fixed salary, have to show RM5,000,000 in savings ON TOP of the RM40,000 a month? The document checklist for a new application asks a non-fixed-income applicant for 12 months of bank statements plus proof of RM5,000,000 in savings, marked as strictly required for retirees. Read as an eligibility bar that removes most of the retirees the guide page currently tells they qualify; read as a supporting-document convention it changes nothing. Jason held it on 2026-08-26 pending his own check — nothing about it is published until he settles which it is. This is the single largest open question on the programme.",
-  },
-  {
-    slug: "pvip",
-    question:
-      "Is the multiple-entry visa fee charged per year of the approved term, or once at issuance? Still open after the guidelines: Lampiran L(1) prints one flat rate per country with no 'per annum' marking, while the MM2H schedule marks its equivalent line per annum, and the calculator prices PVIP the same way on that basis. The amounts are small (RM6–RM50), so the answer changes very little — but the guidelines' silence is not a confirmation.",
-  },
-  {
-    slug: "mm2h-silver",
-    question:
-      "The government agency fee schedule prints one figure for 'Silver/SEZ' (RM40,000). Do the SEZ and SFZ tiers really carry the same agency fee as Silver despite a fixed deposit a fifth the size? The SEZ tiers are described in prose on the MM2H guide page but are not modelled as programmes here, so nothing renders the figure for them yet.",
   },
   {
     slug: "student-pass",
