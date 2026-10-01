@@ -24,6 +24,7 @@
     "i18n:check-output": "node scripts/check-translated-output.mjs",
     "deadcode": "npx --yes knip@5",
     "prose:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/check-programme-prose.mjs",
+    "agents:check": "node scripts/check-agents.mjs",
     "countries:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/ts-resolve.mjs scripts/check-countries.mjs"
   },
   "dependencies": {

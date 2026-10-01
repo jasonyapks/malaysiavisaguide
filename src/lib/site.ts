@@ -85,6 +85,11 @@ export const routes: Route[] = [
   { path: "/compare/", title: "Compare", nav: "tools" },
   { path: "/tools/eligibility/", title: "Eligibility checker", nav: "tools" },
   { path: "/tools/cost-calculator/", title: "Cost calculator", nav: "tools" },
+  // The licensed-agent directory. The hub is in the nav; the two lists are
+  // sitemap-only, reached from it, for the same isActive() reason as /tools/.
+  { path: "/agents/", title: "Licensed agents", nav: "tools" },
+  { path: "/agents/mm2h/", title: "Licensed MM2H agents" },
+  { path: "/agents/pvip/", title: "Authorised PVIP agencies" },
   // Sitemap only — no `nav`, on purpose. `isActive()` in SiteNav is a prefix
   // match, so a /tools/ entry in the tools dropdown would light up alongside
   // whichever tool the reader is actually on. Its internal link is the Tools

@@ -5,6 +5,7 @@ import {
   PVIP_AGENT_FEE_FROM,
   PVIP_GOVERNMENT_FEE_ATTRIBUTION,
 } from "@/lib/data/programmes";
+import { registers } from "@/lib/data/agents";
 import { money, reviewDate } from "@/lib/format";
 
 const agentFrom = money(PVIP_AGENT_FEE_FROM);
@@ -103,7 +104,7 @@ export const copy: GuideCopy = {
     },
     {
       q: "有 PVIP 授权代理名单吗？",
-      a: "移民局的 PVIP 常见问答并没有指向任何公开名单。代理机构由移民局委任，每家都持有有效期三年的书面批准。请要求代理机构出示这封批准信并核对是否仍在有效期内，再到 SSM 查询公司资料：获委任的代理机构必须是实缴资本至少 RM1,000,000、本地持股至少 51% 的私人有限公司（Sdn. Bhd.）。批准信上的公司应与你合约上的公司一致 —— 代理资格不得出租，也不得转给中间人。",
+      a: `有。移民局在其 eServices 网站公布「Authorised Malaysia Premium Visa Programme (PVIP) Application Agencies」名单，本指南在 malaysiavisaguide.com/agents/pvip/ 提供可搜索的副本（英文），核对日期为 ${reviewDate(registers.pvip.lastVerified, "zh-hans")}。在名单上只是第一步。代理机构由移民局委任，每家都持有有效期三年的书面批准。请要求代理机构出示这封批准信并核对是否仍在有效期内，再到 SSM 查询公司资料：获委任的代理机构必须是实缴资本至少 RM1,000,000、本地持股至少 51% 的私人有限公司（Sdn. Bhd.）。批准信上的公司应与你合约上的公司一致 —— 代理资格不得出租，也不得转给中间人。`,
     },
     {
       q: "有年龄限制吗？",
@@ -214,7 +215,8 @@ export const copy: GuideCopy = {
 
       <Section title="怎么确认代理机构获得授权">
         <p>
-          PVIP 代理机构由移民局自行委任，而移民局的 PVIP 常见问答并没有指向任何公开名单。所以核实的责任在你，而常见问答列出了可以对照的条件：
+          PVIP 代理机构由移民局自行委任，移民局也公布了获授权代理的名单，本指南提供
+          <Link href={href("/agents/pvip/")}>可搜索的名单副本</Link>（英文）。先从名单查起：不在名单上的公司无法替你提交申请。但在名单上并不代表核实就此完成，常见问答还列出了以下可以对照的条件：
         </p>
         <ul>
           <li>

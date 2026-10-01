@@ -181,6 +181,14 @@ export const copy: GuideCopy = {
           side by side.
         </p>
         <p>
+          Before any of that, check the company quoting you is licensed at all.
+          This guide keeps a{" "}
+          <Link href={href("/agents/mm2h/")}>
+            searchable copy of MOTAC&apos;s licensed MM2H register
+          </Link>
+          , with licence numbers and validity dates.
+        </p>
+        <p>
           <em>
             Stated by {MM2H_AGENCY_FEE_ATTRIBUTION.by},{" "}
             {reviewDate(MM2H_AGENCY_FEE_ATTRIBUTION.asAt)}. MOTAC&apos;s

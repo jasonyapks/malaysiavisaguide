@@ -17,6 +17,8 @@
  * a class to the site's stylesheet.
  */
 @source not "../../public/admin";
+/* raw/ holds untouched register snapshots (HTML inside JSON); never scan it. */
+@source not "../../raw";
 
 /**
  * Design tokens — v5 "Guided Passport", 2026-08-25.
@@ -427,6 +429,59 @@ html[lang^="zh"] .font-display {
    The lift is tinted with navy rather than neutral black — a grey shadow under
    a navy-and-gold palette is what makes a premium layout look printed on the
    wrong stock. */
+/*
+ * One card in the licensed-agent directory (/agents/). The MM2H list renders
+ * 250 of these, and every class string is shipped twice (HTML and the RSC
+ * payload), so the card's styling lives here once rather than on each element.
+ */
+@utility agent-card {
+  @apply scroll-mt-24 rounded-xl border border-sand-200 bg-white px-5 py-4;
+  &:target {
+    @apply border-forest-600 ring-2 ring-forest-600;
+  }
+  & h3 {
+    @apply font-serif text-lead font-semibold text-forest-900;
+  }
+  & dl {
+    @apply mt-3 space-y-1 text-body-sm;
+  }
+  & dl > div {
+    @apply grid grid-cols-[6.5rem_minmax(0,1fr)] gap-2;
+  }
+  & dt {
+    @apply text-ink-muted;
+  }
+  & dd {
+    @apply min-w-0 text-ink;
+    /* Register addresses and emails carry long unbroken runs. */
+    overflow-wrap: anywhere;
+  }
+  & a {
+    @apply text-forest-700 underline;
+  }
+  & a[href^="tel:"] {
+    @apply whitespace-nowrap;
+  }
+}
+
+/*
+ * Licence status on an agent card. Each state has its own glyph and label in
+ * the markup, so colour is never the only signal.
+ */
+@utility lic-status {
+  @apply inline-block rounded-md border px-2 py-0.5 text-caption font-semibold;
+  &[data-status="valid"] {
+    @apply border-forest-600 bg-forest-50 text-forest-900;
+  }
+  &[data-status="expiring"] {
+    @apply border-gold-500 bg-white text-ink;
+  }
+  &[data-status="expired"],
+  &[data-status="unlisted"] {
+    @apply border-alert-600 bg-white text-alert-600;
+  }
+}
+
 @utility card-lux {
   border-radius: var(--radius-card);
   background: linear-gradient(

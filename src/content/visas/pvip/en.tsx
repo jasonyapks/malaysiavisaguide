@@ -5,6 +5,7 @@ import {
   PVIP_AGENT_FEE_FROM,
   PVIP_GOVERNMENT_FEE_ATTRIBUTION,
 } from "@/lib/data/programmes";
+import { registers } from "@/lib/data/agents";
 import { money, reviewDate } from "@/lib/format";
 
 const agentFrom = money(PVIP_AGENT_FEE_FROM);
@@ -97,7 +98,7 @@ export const copy: GuideCopy = {
     },
     {
       q: "Is there a list of authorised PVIP agents?",
-      a: "The Immigration Department's PVIP FAQ does not point to a public one. Agencies are appointed by Immigration, each with a written approval valid for three years. Ask the agency for that letter and check it is in date, then look the company up with SSM: an appointed agency must be a Sdn. Bhd. with at least RM1,000,000 paid-up capital and at least 51% Malaysian ownership. The company on the approval should be the one on your contract — an approval cannot be rented out or passed to a middleman.",
+      a: `Yes. The Immigration Department publishes "Authorised Malaysia Premium Visa Programme (PVIP) Application Agencies" on its eServices portal, and this guide keeps a searchable copy at malaysiavisaguide.com/agents/pvip/, checked ${reviewDate(registers.pvip.lastVerified)}. Being on the list is the first check, not the last. Agencies are appointed by Immigration, each with a written approval valid for three years. Ask the agency for that letter and check it is in date, then look the company up with SSM: an appointed agency must be a Sdn. Bhd. with at least RM1,000,000 paid-up capital and at least 51% Malaysian ownership. The company on the approval should be the one on your contract — an approval cannot be rented out or passed to a middleman.`,
     },
     {
       q: "Is there an age limit?",
@@ -245,7 +246,8 @@ export const copy: GuideCopy = {
 
       <Section title="Checking that an agent is authorised">
         <p>
-          Immigration appoints PVIP agencies itself, and its PVIP FAQ does not point applicants to a public list of them. The check falls to you — and the FAQ sets out what to check against:
+          Immigration appoints PVIP agencies itself and publishes the list of them. This guide keeps a{" "}
+          <Link href={href("/agents/pvip/")}>searchable copy of that list</Link>. Start there: a company that is not on it cannot lodge your application. Being on the list is not the whole check, though, and the PVIP FAQ sets out what else to check:
         </p>
         <ul>
           <li>
