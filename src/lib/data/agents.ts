@@ -137,7 +137,7 @@ export function licenceStatus(l: Mm2hLicence, today: string): LicenceStatus {
 }
 
 /** The company's best licence, for the status filter. */
-export function companyStatus(a: Agent, today: string): LicenceStatus {
+function companyStatus(a: Agent, today: string): LicenceStatus {
   const order: LicenceStatus[] = ["valid", "expiring", "unlisted", "expired"];
   return mainLicences(a)
     .map((l) => licenceStatus(l, today))
