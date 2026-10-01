@@ -5,7 +5,7 @@ import type { GuideCopy } from "../types";
 /** Simplified Chinese S-MM2H guide. SOURCE for zh-hant. */
 export const copy: GuideCopy = {
   meta: {
-    title: "砂拉越 MM2H（S-MM2H）：申请条件与费用",
+    title: "砂拉越第二家园（S-MM2H）2026：申请条件与费用",
     description:
       "砂拉越有自己的一套 MM2H，规则也自成一格：RM500,000 定期存款、每月 RM10,000 收入或 RM100,000 存款、10 年期、每年在砂拉越住满 30 天，而且不强制买房。",
   },

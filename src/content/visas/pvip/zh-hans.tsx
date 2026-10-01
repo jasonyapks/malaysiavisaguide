@@ -27,7 +27,7 @@ import type { GuideCopy } from "../types";
  */
 export const copy: GuideCopy = {
   meta: {
-    title: "高端签证计划（PVIP）：费用、代理费与申请条件",
+    title: "马来西亚高端签证计划（PVIP）2026：代理费、总费用与申请条件",
     description: `PVIP 到底要花多少钱：RM200,000 参与费、RM1,000,000 定期存款，代理费 ${agentFrom} 起，视家庭人数而定。谁能申请、和 MM2H 怎么比。`,
   },
 

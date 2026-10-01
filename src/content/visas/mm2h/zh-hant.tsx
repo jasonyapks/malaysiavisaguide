@@ -25,7 +25,7 @@ import type { GuideCopy } from "../types";
  */
 export const copy: GuideCopy = {
   meta: {
-    title: "MM2H 2026：白銀、黃金與白金級的申請條件",
+    title: "馬來西亞第二家園（MM2H）2026：費用、申請條件與白銀、黃金、白金級",
     description:
       "對照 MOTAC 官方標準逐項比較 MM2H 三個主要等級 —— 定期存款、房產最低價、年限、各項費用、最低居住天數，以及大多數指南寫錯的年齡規定。另有適用不同規則的 SEZ 與 SFZ 特區路線。",
   },

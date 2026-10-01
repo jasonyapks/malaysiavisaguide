@@ -30,7 +30,7 @@ import type { GuideCopy } from "../types";
  */
 export const copy: GuideCopy = {
   meta: {
-    title: "高端簽證計劃（PVIP）：費用、代理費與申請條件",
+    title: "馬來西亞高端簽證計劃（PVIP）2026：代理費、總費用與申請條件",
     description: `PVIP 到底要花多少錢：RM200,000 參與費、RM1,000,000 定期存款，代理費 ${agentFrom} 起，視家庭人數而定。誰能申請、和 MM2H 怎麼比。`,
   },
 
