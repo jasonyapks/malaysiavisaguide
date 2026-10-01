@@ -70,7 +70,7 @@ export const copy: AgentsCopy = {
       meta: {
         title: "PVIP 授权代理：移民局官方名单",
         description: (n, t) =>
-          `移民局 PVIP 名单上的全部 ${n} 家代理机构，可按名称和州属搜索，列出地址和联系方式。其中 ${t} 家已于 2026 年 9 月被终止，并已标注。`,
+          `移民局 PVIP 名单上的全部 ${n} 家有效代理机构，可按名称和州属搜索，列出地址和联系方式。另有 ${t} 家已于 2026 年 9 月被终止，未列入本名单。`,
       },
       title: "PVIP 授权代理机构",
       standfirst: (
@@ -166,15 +166,13 @@ export const copy: AgentsCopy = {
     },
     pvipStatus: {
       active: "\u2713 列于移民局名单",
-      terminated: "\u2715 已于 2026 年 9 月终止",
     },
-    terminatedNote: (listDated) => `仍列于移民局 ${listDated} 的名单上`,
     pvipTerminations: ({ count, month, by, on, listDated }) => (
       <>
         名单上有 {count} 家代理机构已于 {month}
         被终止。移民局尚未重新发布名单，日期为 {listDated}
         的现行名单仍列出这些机构，因此终止状态是根据 {by} 于 {on}
-        提供的资料，而非移民局公布。相关卡片上已加以标注。
+        提供的资料，而非移民局公布。这些机构未列入本名单。
       </>
     ),
     row: {
@@ -220,8 +218,6 @@ export const copy: AgentsCopy = {
     anyStatus: "所有状态",
     validNow: "目前有效（{n}）",
     lapsed: "已过期或不在现行名单上（{n}）",
-    pvipActive: "列于名单且仍有效（{n}）",
-    pvipTerminated: "已于 2026 年 9 月终止（{n}）",
     showing: "显示 {total} 家中的 {shown} 家",
     total: "共 {total} 家公司",
     clear: "清除筛选",

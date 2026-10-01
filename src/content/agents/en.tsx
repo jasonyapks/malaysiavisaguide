@@ -74,7 +74,7 @@ export const copy: AgentsCopy = {
       meta: {
         title: "Authorised PVIP agents: Immigration's list",
         description: (n, t) =>
-          `All ${n} agencies on Immigration's PVIP list, searchable by name and state, with addresses and contact details. ${t} were terminated in September 2026 and are marked.`,
+          `All ${n} active agencies on Immigration's PVIP list, searchable by name and state, with addresses and contact details. ${t} agencies terminated in September 2026 are left out.`,
       },
       title: "Authorised PVIP agencies",
       standfirst: (
@@ -191,17 +191,14 @@ export const copy: AgentsCopy = {
     },
     pvipStatus: {
       active: "\u2713 On Immigration's list",
-      terminated: "\u2715 Terminated, September 2026",
     },
-    terminatedNote: (listDated) =>
-      `Still printed on Immigration's list dated ${listDated}`,
     pvipTerminations: ({ count, month, by, on, listDated }) => (
       <>
         {" "}
         {count} of the agencies on it were terminated in {month}. Immigration
         has not yet reissued its list, which is dated {listDated} and still
         prints them, so their termination is as reported by {by} on {on}, not by
-        Immigration. They are marked on their cards.
+        Immigration. They are left out of this list.
       </>
     ),
     row: {
@@ -252,8 +249,6 @@ export const copy: AgentsCopy = {
     anyStatus: "Any status",
     validNow: "Valid now ({n})",
     lapsed: "Expired or not on current register ({n})",
-    pvipActive: "On the list and active ({n})",
-    pvipTerminated: "Terminated September 2026 ({n})",
     showing: "Showing {shown} of {total} companies",
     total: "{total} companies",
     clear: "Clear filters",

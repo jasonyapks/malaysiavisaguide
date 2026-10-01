@@ -80,9 +80,16 @@ export const registers: Record<
 
 const agents = data.companies as Agent[];
 
-/** Alphabetical, as imported. */
+const terminated = new Set<string>(PVIP_TERMINATED.ids);
+
+/** On Immigration's PVIP list, less the agencies reported terminated. */
+const onPvipList = (a: Agent): boolean => !!a.pvip && !terminated.has(a.id);
+
+/** Alphabetical, as imported. Terminated PVIP agencies are left out. */
 export const agentsFor = (programme: AgentProgramme): Agent[] =>
-  agents.filter((a) => (programme === "mm2h" ? a.mm2h.length > 0 : a.pvip));
+  agents.filter((a) =>
+    programme === "mm2h" ? a.mm2h.length > 0 : onPvipList(a),
+  );
 
 /**
  * The licences a card shows: head office only. Branch licences (MM2H810/1 …)
@@ -156,37 +163,33 @@ for (const id of PVIP_TERMINATED.ids) {
   }
 }
 
-const terminated = new Set<string>(PVIP_TERMINATED.ids);
-
-/** PVIP only: on Immigration's list and active, or reported terminated. */
-export type PvipStatus = "active" | "terminated";
-export const pvipStatus = (a: Agent): PvipStatus =>
-  terminated.has(a.id) ? "terminated" : "active";
-
 /**
- * The filter's two choices, for either register: "current" (valid MM2H
- * licence / active PVIP agency) or "lapsed" (expired or unlisted / terminated).
+ * The MM2H filter's two choices: "current" (valid or expiring licence) or
+ * "lapsed" (expired or unlisted). Every PVIP agency shown is current.
  */
 export function statusGroup(
   a: Agent,
   programme: AgentProgramme,
   today: string,
 ): "current" | "lapsed" {
-  if (programme === "pvip")
-    return pvipStatus(a) === "active" ? "current" : "lapsed";
+  if (programme === "pvip") return "current";
   const s = companyStatus(a, today);
   return s === "valid" || s === "expiring" ? "current" : "lapsed";
 }
 
-/** Which list a related company appears on, preferring the current one. */
-export function relatedHref(r: Related, current: AgentProgramme): string {
+/**
+ * Which list a related company appears on, preferring the current one; null
+ * when it is on neither (a terminated PVIP agency with no MM2H licence).
+ */
+export function relatedHref(
+  r: Related,
+  current: AgentProgramme,
+): string | null {
   const a = byId.get(r.id);
   const on = (p: AgentProgramme) =>
-    p === "mm2h" ? !!a?.mm2h.length : !!a?.pvip;
-  const programme = on(current)
-    ? current
-    : current === "mm2h"
-      ? "pvip"
-      : "mm2h";
+    p === "mm2h" ? !!a?.mm2h.length : !!a && onPvipList(a);
+  const other = current === "mm2h" ? "pvip" : "mm2h";
+  const programme = on(current) ? current : on(other) ? other : null;
+  if (!programme) return null;
   return `/agents/${programme}/#${r.id}`;
 }

@@ -4,7 +4,6 @@ import {
   agentStates,
   licenceStatus,
   mainLicences,
-  pvipStatus,
   statusGroup,
   MM2HGOV_SOURCE,
   registers,
@@ -60,22 +59,19 @@ export function AgentDirectory({
     (a) => statusGroup(a, programme, today) === "current",
   ).length;
   const f = copy.filter;
-  const statusOptions = [
-    {
-      value: "current",
-      label: (programme === "mm2h" ? f.validNow : f.pvipActive).replace(
-        "{n}",
-        String(current),
-      ),
-    },
-    {
-      value: "lapsed",
-      label: (programme === "mm2h" ? f.lapsed : f.pvipTerminated).replace(
-        "{n}",
-        String(list.length - current),
-      ),
-    },
-  ];
+  const statusOptions =
+    programme === "pvip"
+      ? null
+      : [
+          {
+            value: "current",
+            label: f.validNow.replace("{n}", String(current)),
+          },
+          {
+            value: "lapsed",
+            label: f.lapsed.replace("{n}", String(list.length - current)),
+          },
+        ];
   const month = new Date(
     `${PVIP_TERMINATED.month}-01T00:00:00Z`,
   ).toLocaleDateString(locale === "en" ? "en-GB" : "zh-CN", {
@@ -202,7 +198,9 @@ function AgentCard({
         ? [agent.pvip.state]
         : [];
   const onOther =
-    other === "mm2h" ? agent.mm2h.length > 0 : agent.pvip !== null;
+    other === "mm2h"
+      ? agent.mm2h.length > 0
+      : agentsFor("pvip").includes(agent);
   // Hash links: resolve the page for this locale, then append the anchor.
   const anchor = (target: string) => {
     const [path, hash] = target.split("#");
@@ -233,21 +231,9 @@ function AgentCard({
         : agent.pvip && (
             <dl>
               <Row label={t.row.status}>
-                <span
-                  className="lic-status"
-                  data-status={
-                    pvipStatus(agent) === "terminated" ? "expired" : "valid"
-                  }
-                >
-                  {t.pvipStatus[pvipStatus(agent)]}
+                <span className="lic-status" data-status="valid">
+                  {t.pvipStatus.active}
                 </span>
-                {pvipStatus(agent) === "terminated" && (
-                  <span className="block text-caption text-ink-muted">
-                    {t.terminatedNote(
-                      reviewDate(PVIP_TERMINATED.listDated, locale),
-                    )}
-                  </span>
-                )}
               </Row>
               <Row label={t.row.address}>{agent.pvip.address}</Row>
               <Row label={t.row.phone}>
@@ -295,12 +281,16 @@ function AgentCard({
         >
           {t.shares(
             t.joinList(r.shared.map((k) => t.shared[k])),
-            <Link
-              href={anchor(relatedHref(r, programme))}
-              className="font-medium"
-            >
-              {r.name}
-            </Link>,
+            relatedHref(r, programme) ? (
+              <Link
+                href={anchor(relatedHref(r, programme)!)}
+                className="font-medium"
+              >
+                {r.name}
+              </Link>
+            ) : (
+              <span className="font-medium">{r.name}</span>
+            ),
           )}
         </p>
       ))}
