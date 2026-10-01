@@ -21,8 +21,8 @@ import type { GuideCopy } from "../types";
  * by the one that happens. Do not "fix" it back to the document. */
 export const copy: GuideCopy = {
   meta: {
-    title: "Premium Visa Programme (PVIP): costs, agent fees and requirements",
-    description: `What PVIP actually costs: RM200,000 participation fee, RM1 million fixed deposit, and agent fees from ${agentFrom} depending on family size. Who qualifies, and how it compares to MM2H.`,
+    title: "PVIP Malaysia 2026: agent fees, total cost and requirements",
+    description: `PVIP agent fees start from ${agentFrom}, on top of the RM200,000 participation fee and RM1 million fixed deposit. The full cost for a single applicant, a couple or a family, who qualifies, and how PVIP compares with MM2H.`,
   },
 
   title: "Premium Visa Programme (PVIP)",

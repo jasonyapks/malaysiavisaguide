@@ -5,7 +5,7 @@ import type { GuideCopy } from "../types";
 /** English sarawak-mm2h guide copy — moved here verbatim from app/visas/sarawak-mm2h/page.tsx. */
 export const copy: GuideCopy = {
   meta: {
-    title: "Sarawak MM2H (S-MM2H): requirements and costs",
+    title: "Sarawak MM2H (S-MM2H) 2026: requirements, costs and fees",
     description:
       "Sarawak runs its own MM2H with its own rules: RM500,000 fixed deposit, RM10,000 monthly income or RM100,000 in savings, 10 years, 30 days a year in Sarawak, and no compulsory property purchase.",
   },
