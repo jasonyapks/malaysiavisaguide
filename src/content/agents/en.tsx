@@ -102,8 +102,9 @@ export const copy: AgentsCopy = {
   disclosure: (href) => (
     <>
       <strong>Disclosure.</strong> This guide is written by the Managing
-      Director of MYPVIP. Two of its companies, MY PR Program Sdn. Bhd. (PVIP)
-      and My Premium (MM2H) Sdn. Bhd., appear on these registers. Every listing
+      Director of MYPVIP. Two of its companies,{" "}
+      <Link href={`${href("/agents/pvip/")}#myprprogram`}>MY PR Program Sdn. Bhd.</Link> (PVIP) and{" "}
+      <Link href={`${href("/agents/mm2h/")}#mypremiummm2h`}>My Premium (MM2H) Sdn. Bhd.</Link>, appear on these registers. Every listing
       here is copied from the official government register. Companies are in
       alphabetical order, and a listing is not an endorsement.{" "}
       <Link href={href("/about/")}>About this guide</Link>

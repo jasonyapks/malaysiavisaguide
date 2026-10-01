@@ -92,8 +92,9 @@ export const copy: AgentsCopy = {
 
   disclosure: (href) => (
     <>
-      <strong>利益披露：</strong>本指南由 MYPVIP 的董事经理撰写。其旗下两家公司
-      MY PR Program Sdn. Bhd.（PVIP）和 My Premium (MM2H) Sdn. Bhd.
+      <strong>利益披露：</strong>本指南由 MYPVIP 的董事经理撰写。其旗下两家公司{" "}
+      <Link href={`${href("/agents/pvip/")}#myprprogram`}>MY PR Program Sdn. Bhd.</Link>（PVIP）和{" "}
+      <Link href={`${href("/agents/mm2h/")}#mypremiummm2h`}>My Premium (MM2H) Sdn. Bhd.</Link>{" "}
       均列于这些名单中。这里的每一条资料都取自政府官方名单，公司按英文字母顺序排列，列入名单并不代表推荐。
       <Link href={href("/about/")}>关于本指南</Link>
     </>
