@@ -583,6 +583,85 @@ const MM2H_GOVERNMENT_EXTRAS = {
   defaultTermYears: 5,
 };
 
+/**
+ * S-MM2H figures that the MTCP guide publishes and that no `Programme` field
+ * can hold: the savings route, the dependant uplift on income, the deposit's
+ * permanent floor, the property floors if a participant buys, the sponsor's
+ * security bond by nationality, and the document gates.
+ *
+ * Official, not practice: every value here is in the same MTCP guide the smm2h
+ * record's `source` points at ("SMM2H Application Guidelines — English Version
+ * as of 5.5.2026"), and the two property floors are also the prescribed amounts
+ * under the Land Code (Amendment)(No.2) Order 1998. They lived as hardcoded
+ * prose on the guide page until 2026-10-01; this is where a correction now
+ * reaches all three languages at once.
+ *
+ * Bond nationality NAMES are words and live in each locale's copy, keyed by
+ * these slugs — the same split as STATE_PROPERTY_FLOORS.
+ *
+ * @public Quoted by the S-MM2H guide in all three languages.
+ */
+export const SMM2H_TERMS = {
+  incomeWithDependant: { amount: 15_000, currency: "MYR", period: "month" },
+  savings: { amount: 100_000, currency: "MYR" },
+  savingsWithDependant: { amount: 200_000, currency: "MYR" },
+  /** Latest N months of statements, for income and for savings alike. */
+  evidenceMonths: 3,
+  /** What must stay in the fixed deposit for the life of the pass. */
+  fdMinimumBalance: { amount: 250_000, currency: "MYR" },
+  fdWithdrawalMaxPercent: 50,
+  fdWithdrawalAfterYears: 1,
+  /** Optional purchase — the floor if a participant buys, per property. */
+  propertyFloorKuching: { amount: 600_000, currency: "MYR" },
+  propertyFloorOtherDivisions: { amount: 500_000, currency: "MYR" },
+  partTimeHoursPerWeek: 20,
+  jvMaxSharePercent: 49,
+  jvMinPaidUpCapital: { amount: 250_000, currency: "MYR" },
+  passportMinValidityMonths: 24,
+  goodConductMaxAgeMonths: 12,
+  /** Local medical insurance is required for the main applicant below this age;
+   *  for dependants at any age. */
+  principalInsuranceBelowAge: 60,
+  /** Children qualify as dependants up to and including this age; no limit if
+   *  disabled. */
+  childMaxAge: 21,
+  /** The fresh application after ten years is filed this far before expiry. */
+  freshApplicationMonthsBeforeExpiry: 6,
+  securityBonds: [
+    { slug: "singapore", bond: { amount: 200, currency: "MYR" } },
+    { slug: "thailand", bond: { amount: 300, currency: "MYR" } },
+    { slug: "indonesia", bond: { amount: 500, currency: "MYR" } },
+    { slug: "jp-kr-hk-mo", bond: { amount: 1_000, currency: "MYR" } },
+    { slug: "cn-au-eu-tw-other", bond: { amount: 1_500, currency: "MYR" } },
+    { slug: "us-ca", bond: { amount: 2_000, currency: "MYR" } },
+  ],
+} as const satisfies {
+  incomeWithDependant: Money & { period: "month" };
+  savings: Money;
+  savingsWithDependant: Money;
+  fdMinimumBalance: Money;
+  propertyFloorKuching: Money;
+  propertyFloorOtherDivisions: Money;
+  jvMinPaidUpCapital: Money;
+  securityBonds: readonly { slug: string; bond: Money }[];
+  [k: string]: unknown;
+};
+
+/**
+ * Whose word the Sarawak property points rest on where the Land Code and the
+ * MTCP guide are silent: that a joint-name transfer to a Malaysian is refused
+ * at registration, that no cap on the number of properties is published, and
+ * that the RM300,000 / RM350,000 figures still quoted online are the stale 2013
+ * campaign amounts. The floors themselves need no attribution — they are in the
+ * Order and in the guide.
+ *
+ * @public Quoted by the S-MM2H guide in all three languages.
+ */
+export const SARAWAK_PROPERTY_PRACTICE_ATTRIBUTION: Attribution = {
+  by: "MYPVIP practice",
+  asAt: "2026-09-02",
+};
+
 export const programmes: Programme[] = [
   {
     slug: "pvip",
