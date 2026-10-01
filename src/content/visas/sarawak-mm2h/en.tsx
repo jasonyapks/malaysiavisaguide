@@ -74,7 +74,7 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="Two routes to qualifying">
+      <Section title="S-MM2H requirements: two routes to qualifying">
         <p>
           S-MM2H accepts either an income stream or a pot of savings, which is
           unusual and makes it reachable for people the federal programme turns
@@ -99,7 +99,7 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="The catch worth understanding">
+      <Section title="The S-MM2H stay requirement: 30 days in Sarawak">
         <p>
           S-MM2H is a Sarawak programme. The 30-day requirement is 30 days{" "}
           <em>in Sarawak</em> — time spent in Kuala Lumpur does not count

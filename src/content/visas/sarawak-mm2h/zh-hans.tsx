@@ -73,7 +73,7 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="两条符合资格的路径">
+      <Section title="S-MM2H 申请条件：两条符合资格的路径">
         <p>
           S-MM2H 接受收入流或一笔存款二选一，这在同类计划里并不常见，也让一些被联邦计划挡在门外的人够得着：
         </p>
@@ -90,7 +90,7 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="值得先弄明白的那个前提">
+      <Section title="S-MM2H 居住要求：每年在砂拉越住满 30 天">
         <p>
           S-MM2H 是砂拉越的计划。那 30 天指的是在
           <em>砂拉越</em>的 30 天 —— 待在吉隆坡的时间不算数。如果你想拿马来西亚居留权的理由在半岛，那么无论它的数字看起来多诱人，这都是选错了计划。

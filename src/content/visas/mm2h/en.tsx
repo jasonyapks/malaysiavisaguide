@@ -98,7 +98,7 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="The costs that don't appear in the deposit figure">
+      <Section title="MM2H fees: the costs that don't appear in the deposit figure">
         <p>
           MM2H is usually described by its fixed deposit, which is the least
           expensive part of it. The deposit stays yours. Three other numbers do
@@ -143,7 +143,7 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="The agency fee is fixed by the government">
+      <Section title="MM2H agency fees are fixed by the government">
         <p>
           This is the most useful thing to know before you speak to anyone about
           MM2H, and it is the reverse of how the market is usually described.
@@ -197,7 +197,7 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="The property minimum is not the price you will pay">
+      <Section title="MM2H property requirement: the minimum is not the price you will pay">
         <p>{silver.propertyStateFloorNote}</p>
         <p>
           This catches Silver applicants hardest, because the gap is the widest:
@@ -219,7 +219,7 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="The age rule, which most guides get wrong">
+      <Section title="MM2H age requirements: the rule most guides get wrong">
         <p>
           MOTAC&apos;s category table sets the minimum age for the main
           applicant at <strong>25</strong>, not 30. The stay requirement is then
@@ -249,7 +249,7 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="Dependants and family">
+      <Section title="MM2H for dependants and family">
         <p>
           Children may be included up to age 34 provided they are single, which
           is to say up to but not including their thirty-fifth birthday. That is
@@ -259,7 +259,7 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="The SEZ and SFZ zone routes">
+      <Section title="MM2H SEZ and SFZ zone routes">
         <p>
           MOTAC also publishes two lower-cost routes for the Special Economic
           Zone and Special Financial Zone. They are not tiers in the Silver /
