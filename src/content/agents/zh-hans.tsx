@@ -35,8 +35,7 @@ export const copy: AgentsCopy = {
           </p>
           <p>
             <strong>MM2H：</strong>
-            MOTAC 现行指南规定，申请应通过经该部发牌的 MM2H
-            旅游业者递交。
+            MOTAC 现行指南规定，申请应通过经该部发牌的 MM2H 旅游业者递交。
             <Link href={href("/visas/mm2h/")}>MM2H 指南</Link>
             完整引述了这项规定。
           </p>
@@ -70,8 +69,8 @@ export const copy: AgentsCopy = {
     pvip: {
       meta: {
         title: "PVIP 授权代理：移民局官方名单",
-        description: (n) =>
-          `全部 ${n} 家获移民局授权的 PVIP 申请代理机构，可按名称和州属搜索，列出地址和联系方式，均取自官方名单。`,
+        description: (n, t) =>
+          `移民局 PVIP 名单上的全部 ${n} 家代理机构，可按名称和州属搜索，列出地址和联系方式。其中 ${t} 家已于 2026 年 9 月被终止，并已标注。`,
       },
       title: "PVIP 授权代理机构",
       standfirst: (
@@ -94,8 +93,8 @@ export const copy: AgentsCopy = {
   disclosure: (href) => (
     <>
       <strong>利益披露：</strong>本指南由 MYPVIP 的董事经理撰写。其旗下两家公司
-      MY PR Program Sdn. Bhd.（PVIP）和 My Premium (MM2H) Sdn.
-      Bhd. 均列于这些名单中。这里的每一条资料都取自政府官方名单，公司按英文字母顺序排列，列入名单并不代表推荐。
+      MY PR Program Sdn. Bhd.（PVIP）和 My Premium (MM2H) Sdn. Bhd.
+      均列于这些名单中。这里的每一条资料都取自政府官方名单，公司按英文字母顺序排列，列入名单并不代表推荐。
       <Link href={href("/about/")}>关于本指南</Link>
     </>
   ),
@@ -112,7 +111,8 @@ export const copy: AgentsCopy = {
         </li>
         <li>
           <strong>MM2H：核对执照编号和有效期。</strong>
-          MOTAC 名单上有好几家互不相关、名称却很相似的公司。请对方以书面形式提供执照编号，并确认执照尚未过期。
+          MOTAC
+          名单上有好几家互不相关、名称却很相似的公司。请对方以书面形式提供执照编号，并确认执照尚未过期。
         </li>
         <li>
           <strong>PVIP：要求出示批准信。</strong>
@@ -149,7 +149,8 @@ export const copy: AgentsCopy = {
           <>
             并已与 MOTAC 的另一份名单（{mm2hgov}
             ）交叉核对，该名单的更新较慢。两者的有效期不一致时，两个日期都会列出。只出现在
-            mm2h.gov.my 上的公司也已收录并加以标注，方便你分辨执照已失效还是名称拼写有误。
+            mm2h.gov.my
+            上的公司也已收录并加以标注，方便你分辨执照已失效还是名称拼写有误。
           </>
         )}
         如果两家名称不同的公司在名单上登记了相同的电邮域名、电话号码或办公地址，两张卡片都会注明。这只是名单上的事实，并不表示两家公司有关联；如果这对你重要，请直接询问。执照随时可能发出或撤销，签约前请务必到官方来源再次确认。
@@ -163,6 +164,19 @@ export const copy: AgentsCopy = {
       expired: "✕ 已过期",
       unlisted: "! 不在 motac.gov.my 名单上",
     },
+    pvipStatus: {
+      active: "\u2713 列于移民局名单",
+      terminated: "\u2715 已于 2026 年 9 月终止",
+    },
+    terminatedNote: (listDated) => `仍列于移民局 ${listDated} 的名单上`,
+    pvipTerminations: ({ count, month, by, on, listDated }) => (
+      <>
+        名单上有 {count} 家代理机构已于 {month}
+        被终止。移民局尚未重新发布名单，日期为 {listDated}
+        的现行名单仍列出这些机构，因此终止状态是根据 {by} 于 {on}
+        提供的资料，而非移民局公布。相关卡片上已加以标注。
+      </>
+    ),
     row: {
       licence: "执照编号",
       status: "状态",
@@ -191,7 +205,9 @@ export const copy: AgentsCopy = {
       "office address": "办公地址",
     },
     joinList: (xs) =>
-      xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join("、")}和${xs.at(-1)}`,
+      xs.length < 2
+        ? xs.join("")
+        : `${xs.slice(0, -1).join("、")}和${xs.at(-1)}`,
     schemaName: (label, register) => `${register} 上的 ${label} 代理`,
   },
 
@@ -204,6 +220,8 @@ export const copy: AgentsCopy = {
     anyStatus: "所有状态",
     validNow: "目前有效（{n}）",
     lapsed: "已过期或不在现行名单上（{n}）",
+    pvipActive: "列于名单且仍有效（{n}）",
+    pvipTerminated: "已于 2026 年 9 月终止（{n}）",
     showing: "显示 {total} 家中的 {shown} 家",
     total: "共 {total} 家公司",
     clear: "清除筛选",

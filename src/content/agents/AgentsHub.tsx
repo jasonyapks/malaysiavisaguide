@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { registerCount, registers, type AgentProgramme } from "@/lib/data/agents";
+import {
+  registerCount,
+  registers,
+  type AgentProgramme,
+} from "@/lib/data/agents";
 import { reviewDate } from "@/lib/format";
 import { type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
@@ -13,7 +17,13 @@ import type { AgentsCopy } from "./types";
 const PROSE =
   "space-y-4 text-body-sm leading-relaxed text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_strong]:text-ink";
 
-export function AgentsHub({ locale, copy }: { locale: Locale; copy: AgentsCopy }) {
+export function AgentsHub({
+  locale,
+  copy,
+}: {
+  locale: Locale;
+  copy: AgentsCopy;
+}) {
   const href = (path: string) => linkPath(path, locale);
   const programmes: AgentProgramme[] = ["mm2h", "pvip"];
 

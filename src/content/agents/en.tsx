@@ -13,8 +13,7 @@ export const copy: AgentsCopy = {
       <>
         Anyone can call themselves a visa consultant. Only the companies on two
         government registers can actually file an MM2H or PVIP application.
-        Before you sign or pay anything, find the company on the register
-        below.
+        Before you sign or pay anything, find the company on the register below.
       </>
     ),
     cardTitle: {
@@ -23,8 +22,8 @@ export const copy: AgentsCopy = {
     },
     cardBody: (count, publisher, checked) => (
       <>
-        {count} companies, copied from the register published by the{" "}
-        {publisher} and checked {checked}. Search by name or filter by state.
+        {count} companies, copied from the register published by the {publisher}{" "}
+        and checked {checked}. Search by name or filter by state.
       </>
     ),
     why: {
@@ -74,8 +73,8 @@ export const copy: AgentsCopy = {
     pvip: {
       meta: {
         title: "Authorised PVIP agents: Immigration's list",
-        description: (n) =>
-          `All ${n} Immigration-authorised PVIP application agencies, searchable by name and state, with addresses and contact details copied from the official list.`,
+        description: (n, t) =>
+          `All ${n} agencies on Immigration's PVIP list, searchable by name and state, with addresses and contact details. ${t} were terminated in September 2026 and are marked.`,
       },
       title: "Authorised PVIP agencies",
       standfirst: (
@@ -90,7 +89,9 @@ export const copy: AgentsCopy = {
       guideLabel: "PVIP guide",
     },
     breadcrumb: "Licensed agents",
-    guideLine: (link) => <>Costs, requirements and timelines are in the {link}.</>,
+    guideLine: (link) => (
+      <>Costs, requirements and timelines are in the {link}.</>
+    ),
   },
 
   publisher: {
@@ -124,8 +125,8 @@ export const copy: AgentsCopy = {
         <li>
           <strong>For MM2H, match the licence number and its dates.</strong>{" "}
           Several unrelated companies on MOTAC&apos;s register have similar
-          names. Ask for the licence number in writing and check that it has
-          not expired.
+          names. Ask for the licence number in writing and check that it has not
+          expired.
         </li>
         <li>
           <strong>For PVIP, ask for the approval letter.</strong> The{" "}
@@ -136,8 +137,8 @@ export const copy: AgentsCopy = {
           <strong>Get the fees in writing, separated.</strong> Government fees
           and the agent&apos;s own fee should be listed as separate lines. For
           MM2H, the government fixes the agency fee itself. The{" "}
-          <Link href={href("/visas/mm2h/")}>MM2H guide</Link> gives the
-          figures, so any quote above them is wrong.
+          <Link href={href("/visas/mm2h/")}>MM2H guide</Link> gives the figures,
+          so any quote above them is wrong.
         </li>
         <li>
           <strong>Pay the registered company.</strong> Pay into an account in
@@ -160,8 +161,8 @@ export const copy: AgentsCopy = {
   directory: {
     source: ({ register, publisher, checked, mm2hgov }) => (
       <>
-        Source: {register}, {publisher}. Copied in full and checked on{" "}
-        {checked}.
+        Source: {register}, {publisher}. Copied in full and checked on {checked}
+        .
         {mm2hgov && (
           <>
             {" "}
@@ -171,11 +172,11 @@ export const copy: AgentsCopy = {
             and marked, so you can tell a lapsed licence from a misspelt name.
           </>
         )}{" "}
-        Where two differently named companies print the same email domain,
-        phone number or office address, both cards say so. That is a fact from
-        the registers, not a finding that the companies are connected, so ask
-        if it matters to you. Licences are granted and withdrawn between our
-        checks, so confirm on the official source before you sign anything.
+        Where two differently named companies print the same email domain, phone
+        number or office address, both cards say so. That is a fact from the
+        registers, not a finding that the companies are connected, so ask if it
+        matters to you. Licences are granted and withdrawn between our checks,
+        so confirm on the official source before you sign anything.
       </>
     ),
     searchHeading: (label) => `Search the ${label} register`,
@@ -188,6 +189,21 @@ export const copy: AgentsCopy = {
       expired: "✕ Expired",
       unlisted: "! Not on motac.gov.my register",
     },
+    pvipStatus: {
+      active: "\u2713 On Immigration's list",
+      terminated: "\u2715 Terminated, September 2026",
+    },
+    terminatedNote: (listDated) =>
+      `Still printed on Immigration's list dated ${listDated}`,
+    pvipTerminations: ({ count, month, by, on, listDated }) => (
+      <>
+        {" "}
+        {count} of the agencies on it were terminated in {month}. Immigration
+        has not yet reissued its list, which is dated {listDated} and still
+        prints them, so their termination is as reported by {by} on {on}, not by
+        Immigration. They are marked on their cards.
+      </>
+    ),
     row: {
       licence: "Licence no.",
       status: "Status",
@@ -196,8 +212,13 @@ export const copy: AgentsCopy = {
       phone: "Phone",
       email: "Email",
     },
-    mm2hgovPrints: (licence) => <>mm2h.gov.my prints this licence as {licence}</>,
-    validityFrom: { motac: "motac.gov.my register", mm2hgov: "mm2h.gov.my only" },
+    mm2hgovPrints: (licence) => (
+      <>mm2h.gov.my prints this licence as {licence}</>
+    ),
+    validityFrom: {
+      motac: "motac.gov.my register",
+      mm2hgov: "mm2h.gov.my only",
+    },
     mm2hgovShows: (range) => `; mm2h.gov.my shows ${range}`,
     alsoOn: (label, link) => (
       <>
@@ -216,7 +237,9 @@ export const copy: AgentsCopy = {
       "office address": "office address",
     },
     joinList: (xs) =>
-      xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`,
+      xs.length < 2
+        ? xs.join("")
+        : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`,
     schemaName: (label, register) => `${label} agents on the ${register}`,
   },
 
@@ -229,6 +252,8 @@ export const copy: AgentsCopy = {
     anyStatus: "Any status",
     validNow: "Valid now ({n})",
     lapsed: "Expired or not on current register ({n})",
+    pvipActive: "On the list and active ({n})",
+    pvipTerminated: "Terminated September 2026 ({n})",
     showing: "Showing {shown} of {total} companies",
     total: "{total} companies",
     clear: "Clear filters",

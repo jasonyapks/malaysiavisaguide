@@ -61,6 +61,13 @@ The import derives these (same non-free email domain, same phone number, or the 
   - One phone number is `012--2995268`.
   - One MOTAC postcode is `818000`.
 
+## PVIP terminations (not from a register)
+- On 2026-10-01 Jason Yap confirmed that 22 PVIP agencies were terminated in September 2026. They are the agencies struck out in his "PVIP Agency Roster 2026" artifact.
+- Immigration's PDF (dated 13 Aug 2026, unchanged on 1 Oct 2026) still lists all 22.
+- The site marks them "Terminated, September 2026", attributed to Jason by name and date, from `src/lib/data/agent-status.ts`. This is the only hand-maintained status on the site.
+- The build fails if any of those ids stops matching a PVIP agency after a re-import.
+- When Immigration reissues the PDF without them, re-import and empty the list.
+
 ## Refresh
 1. Run `npm run agents:check`. It compares all three sources against the import and blocks nothing.
 2. If any source changed: save new snapshots as `raw/agents/<today>-motac-mm2h-companies.json`, `<today>-mm2hgov-agencies.html` and `<today>-imi-pvip-agencies.pdf`. Never overwrite old snapshots.

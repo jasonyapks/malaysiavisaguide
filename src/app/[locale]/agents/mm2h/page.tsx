@@ -16,7 +16,7 @@ export async function generateMetadata({
     canonicalPath: "/agents/mm2h/",
     locale,
     title: meta.title,
-    description: meta.description(registerCount("mm2h")),
+    description: meta.description(registerCount("mm2h"), 0),
   });
 }
 

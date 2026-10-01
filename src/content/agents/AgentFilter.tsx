@@ -11,19 +11,11 @@ import type { FilterCopy } from "./types";
  * by their data attributes; it never receives the agent data, which keeps a
  * 250-row register out of the client bundle and the RSC payload.
  */
-/** Collapses the four licence states into the dropdown's two choices. */
-const GROUP: Record<string, string> = {
-  valid: "current",
-  expiring: "current",
-  expired: "lapsed",
-  unlisted: "lapsed",
-};
-
 export function AgentFilter({
   listId,
   states,
   total,
-  statusCounts,
+  statusOptions,
   label,
   copy,
 }: {
@@ -34,10 +26,11 @@ export function AgentFilter({
   /** "MM2H" or "PVIP", for the search hint. */
   label: string;
   copy: FilterCopy;
-  /** MM2H only: companies per licence status, for the status dropdown. */
-  statusCounts: Partial<
-    Record<"valid" | "expiring" | "expired" | "unlisted", number>
-  > | null;
+  /**
+   * The status dropdown's choices, labels already counted. Values match the
+   * cards' `data-group` ("current" | "lapsed"); null hides the dropdown.
+   */
+  statusOptions: { value: string; label: string }[] | null;
 }) {
   const [state, setState] = useState("");
   const [query, setQuery] = useState("");
@@ -62,7 +55,7 @@ export function AgentFilter({
         (!nextState ||
           (el.dataset.states ?? "").split("|").includes(nextState)) &&
         (!q || (el.dataset.search ?? "").includes(q)) &&
-        (!nextStatus || GROUP[el.dataset.status ?? ""] === nextStatus);
+        (!nextStatus || el.dataset.group === nextStatus);
       el.hidden = !match;
       if (match) count++;
     }
@@ -70,13 +63,11 @@ export function AgentFilter({
   };
 
   const filtered = state !== "" || query !== "" || status !== "";
-  const n = (k: keyof NonNullable<typeof statusCounts>) =>
-    statusCounts?.[k] ?? 0;
 
   return (
     <div className="space-y-3 rounded-xl border border-sand-200 bg-sand-50 p-4 sm:p-5">
       <div
-        className={`grid gap-3 ${statusCounts ? "sm:grid-cols-2 lg:grid-cols-[1fr_12rem_16rem]" : "sm:grid-cols-[1fr_14rem]"}`}
+        className={`grid gap-3 ${statusOptions ? "sm:grid-cols-2 lg:grid-cols-[1fr_12rem_16rem]" : "sm:grid-cols-[1fr_14rem]"}`}
       >
         <div className="space-y-1">
           <label
@@ -116,7 +107,7 @@ export function AgentFilter({
             ))}
           </select>
         </div>
-        {statusCounts && (
+        {statusOptions && (
           <div className="space-y-1 sm:col-span-2 lg:col-span-1">
             <label
               htmlFor={`${id}-v`}
@@ -131,12 +122,11 @@ export function AgentFilter({
               className="min-h-11 w-full rounded-lg border border-sand-400 bg-white px-3 text-body-sm text-ink transition-colors duration-150 hover:border-forest-700 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-forest-700"
             >
               <option value="">{copy.anyStatus}</option>
-              <option value="current">
-                {copy.validNow.replace("{n}", String(n("valid") + n("expiring")))}
-              </option>
-              <option value="lapsed">
-                {copy.lapsed.replace("{n}", String(n("expired") + n("unlisted")))}
-              </option>
+              {statusOptions.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
             </select>
           </div>
         )}

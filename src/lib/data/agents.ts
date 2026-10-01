@@ -12,6 +12,7 @@
  * relationship (SPEC.md §1).
  */
 import data from "@/lib/data/agents.json";
+import { PVIP_TERMINATED } from "@/lib/data/agent-status";
 
 export type AgentProgramme = "mm2h" | "pvip";
 
@@ -145,10 +146,47 @@ export function companyStatus(a: Agent, today: string): LicenceStatus {
 
 const byId = new Map(agents.map((a) => [a.id, a]));
 
+// A terminated id that matches no company means a re-import renamed it, and
+// the status would silently vanish from the page. Fail the build instead.
+for (const id of PVIP_TERMINATED.ids) {
+  if (!byId.get(id)?.pvip) {
+    throw new Error(
+      `agent-status.ts: "${id}" is not a PVIP agency in agents.json. Re-check the id after a re-import.`,
+    );
+  }
+}
+
+const terminated = new Set<string>(PVIP_TERMINATED.ids);
+
+/** PVIP only: on Immigration's list and active, or reported terminated. */
+export type PvipStatus = "active" | "terminated";
+export const pvipStatus = (a: Agent): PvipStatus =>
+  terminated.has(a.id) ? "terminated" : "active";
+
+/**
+ * The filter's two choices, for either register: "current" (valid MM2H
+ * licence / active PVIP agency) or "lapsed" (expired or unlisted / terminated).
+ */
+export function statusGroup(
+  a: Agent,
+  programme: AgentProgramme,
+  today: string,
+): "current" | "lapsed" {
+  if (programme === "pvip")
+    return pvipStatus(a) === "active" ? "current" : "lapsed";
+  const s = companyStatus(a, today);
+  return s === "valid" || s === "expiring" ? "current" : "lapsed";
+}
+
 /** Which list a related company appears on, preferring the current one. */
 export function relatedHref(r: Related, current: AgentProgramme): string {
   const a = byId.get(r.id);
-  const on = (p: AgentProgramme) => (p === "mm2h" ? !!a?.mm2h.length : !!a?.pvip);
-  const programme = on(current) ? current : current === "mm2h" ? "pvip" : "mm2h";
+  const on = (p: AgentProgramme) =>
+    p === "mm2h" ? !!a?.mm2h.length : !!a?.pvip;
+  const programme = on(current)
+    ? current
+    : current === "mm2h"
+      ? "pvip"
+      : "mm2h";
   return `/agents/${programme}/#${r.id}`;
 }

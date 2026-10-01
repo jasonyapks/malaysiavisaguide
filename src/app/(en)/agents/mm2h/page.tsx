@@ -8,7 +8,7 @@ export const metadata: Metadata = pageMetadata({
   canonicalPath: "/agents/mm2h/",
   locale: "en",
   title: copy.list.mm2h.meta.title,
-  description: copy.list.mm2h.meta.description(registerCount("mm2h")),
+  description: copy.list.mm2h.meta.description(registerCount("mm2h"), 0),
 });
 
 export default function Page() {

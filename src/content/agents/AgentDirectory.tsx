@@ -2,17 +2,18 @@ import Link from "next/link";
 import {
   agentsFor,
   agentStates,
-  companyStatus,
   licenceStatus,
   mainLicences,
+  pvipStatus,
+  statusGroup,
   MM2HGOV_SOURCE,
   registers,
   relatedHref,
   type Agent,
   type AgentProgramme,
-  type LicenceStatus,
   type Mm2hLicence,
 } from "@/lib/data/agents";
+import { PVIP_TERMINATED } from "@/lib/data/agent-status";
 import { reviewDate } from "@/lib/format";
 import { localeUrl, type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
@@ -55,16 +56,33 @@ export function AgentDirectory({
   // Licence status is worked out when the page is built; the site rebuilds
   // with every news commit, so this is rarely more than a day old.
   const today = new Date().toISOString().slice(0, 10);
-  const counts =
-    programme === "mm2h"
-      ? list.reduce(
-          (n, a) => ({
-            ...n,
-            [companyStatus(a, today)]: (n[companyStatus(a, today)] ?? 0) + 1,
-          }),
-          {} as Partial<Record<LicenceStatus, number>>,
-        )
-      : null;
+  const current = list.filter(
+    (a) => statusGroup(a, programme, today) === "current",
+  ).length;
+  const f = copy.filter;
+  const statusOptions = [
+    {
+      value: "current",
+      label: (programme === "mm2h" ? f.validNow : f.pvipActive).replace(
+        "{n}",
+        String(current),
+      ),
+    },
+    {
+      value: "lapsed",
+      label: (programme === "mm2h" ? f.lapsed : f.pvipTerminated).replace(
+        "{n}",
+        String(list.length - current),
+      ),
+    },
+  ];
+  const month = new Date(
+    `${PVIP_TERMINATED.month}-01T00:00:00Z`,
+  ).toLocaleDateString(locale === "en" ? "en-GB" : "zh-CN", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 
   const schema = {
     "@context": "https://schema.org",
@@ -107,6 +125,14 @@ export function AgentDirectory({
           mm2hgov:
             programme === "mm2h" ? ext(MM2HGOV_SOURCE, "mm2h.gov.my") : null,
         })}
+        {programme === "pvip" &&
+          t.pvipTerminations({
+            count: PVIP_TERMINATED.ids.length,
+            month,
+            by: PVIP_TERMINATED.reportedBy,
+            on: reviewDate(PVIP_TERMINATED.reportedOn, locale),
+            listDated: reviewDate(PVIP_TERMINATED.listDated, locale),
+          })}
       </p>
 
       <AgentDisclosure locale={locale} copy={copy} />
@@ -125,7 +151,7 @@ export function AgentDirectory({
         listId={listId}
         states={agentStates(programme).map((s) => [s, copy.states[s] ?? s])}
         total={list.length}
-        statusCounts={counts}
+        statusOptions={statusOptions}
         label={LABEL[programme]}
         copy={copy.filter}
       />
@@ -189,9 +215,7 @@ function AgentCard({
       data-agent=""
       data-states={[...new Set(states)].join("|")}
       data-search={searchKey(agent.name)}
-      data-status={
-        programme === "mm2h" ? companyStatus(agent, today) : undefined
-      }
+      data-group={statusGroup(agent, programme, today)}
       className="agent-card"
     >
       <h3>{agent.name}</h3>
@@ -208,6 +232,23 @@ function AgentCard({
           ))
         : agent.pvip && (
             <dl>
+              <Row label={t.row.status}>
+                <span
+                  className="lic-status"
+                  data-status={
+                    pvipStatus(agent) === "terminated" ? "expired" : "valid"
+                  }
+                >
+                  {t.pvipStatus[pvipStatus(agent)]}
+                </span>
+                {pvipStatus(agent) === "terminated" && (
+                  <span className="block text-caption text-ink-muted">
+                    {t.terminatedNote(
+                      reviewDate(PVIP_TERMINATED.listDated, locale),
+                    )}
+                  </span>
+                )}
+              </Row>
               <Row label={t.row.address}>{agent.pvip.address}</Row>
               <Row label={t.row.phone}>
                 <Phones value={agent.pvip.phone} />
@@ -254,7 +295,10 @@ function AgentCard({
         >
           {t.shares(
             t.joinList(r.shared.map((k) => t.shared[k])),
-            <Link href={anchor(relatedHref(r, programme))} className="font-medium">
+            <Link
+              href={anchor(relatedHref(r, programme))}
+              className="font-medium"
+            >
               {r.name}
             </Link>,
           )}

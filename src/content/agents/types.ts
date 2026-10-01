@@ -1,5 +1,10 @@
 import type { ReactNode } from "react";
-import type { AgentProgramme, LicenceStatus, Related } from "@/lib/data/agents";
+import type {
+  AgentProgramme,
+  LicenceStatus,
+  PvipStatus,
+  Related,
+} from "@/lib/data/agents";
 
 /**
  * The licensed-agent directory's copy, per locale.
@@ -26,6 +31,8 @@ export type FilterCopy = {
   /** "{n}" is replaced with the count. */
   validNow: string;
   lapsed: string;
+  pvipActive: string;
+  pvipTerminated: string;
   /** "{shown}" and "{total}" are replaced. */
   showing: string;
   total: string;
@@ -45,7 +52,11 @@ export type AgentsCopy = {
   list: Record<
     AgentProgramme,
     {
-      meta: { title: string; description: (count: number) => string };
+      /** `terminated`: PVIP agencies reported terminated (0 for MM2H). */
+      meta: {
+        title: string;
+        description: (count: number, terminated: number) => string;
+      };
       title: string;
       standfirst: ReactNode;
       guideLabel: string;
@@ -68,6 +79,17 @@ export type AgentsCopy = {
     searchHeading: (label: string) => string;
     statusAsAt: (date: ReactNode) => ReactNode;
     status: Record<LicenceStatus, string>;
+    pvipStatus: Record<PvipStatus, string>;
+    /** Caption under a terminated agency's badge. */
+    terminatedNote: (listDated: string) => string;
+    /** Added to the PVIP source paragraph: who reported the terminations, when. */
+    pvipTerminations: (p: {
+      count: number;
+      month: string;
+      by: string;
+      on: string;
+      listDated: string;
+    }) => ReactNode;
     row: {
       licence: string;
       status: string;
