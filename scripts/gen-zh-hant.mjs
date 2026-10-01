@@ -75,6 +75,10 @@ const TERMINOLOGY = [
   ["籤核", "簽核"],
   ["落地籤", "落地簽"],
   ["免籤", "免簽"],
+  // 列明了 ("sets out") segments as 列 + 明了, and 明了 becomes 明瞭 ("clear").
+  ["列明瞭", "列明了"],
+  // OpenCC leaves 伙伴; Taiwan writes 夥伴.
+  ["合作伙伴", "合作夥伴"],
 ];
 
 const converter = OpenCC.ConverterFactory(

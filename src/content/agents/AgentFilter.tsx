@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import type { FilterCopy } from "./types";
 
 /**
  * State dropdown + name search over a server-rendered list.
@@ -23,14 +24,17 @@ export function AgentFilter({
   states,
   total,
   statusCounts,
-  placeholder,
+  label,
+  copy,
 }: {
   listId: string;
-  states: string[];
+  /** [register value, display name] — the value is what the cards carry. */
+  states: [string, string][];
   total: number;
+  /** "MM2H" or "PVIP", for the search hint. */
+  label: string;
+  copy: FilterCopy;
   /** MM2H only: companies per licence status, for the status dropdown. */
-  /** Search box hint, e.g. "e.g. MM2H company". */
-  placeholder: string;
   statusCounts: Partial<
     Record<"valid" | "expiring" | "expired" | "unlisted", number>
   > | null;
@@ -79,14 +83,14 @@ export function AgentFilter({
             htmlFor={`${id}-q`}
             className="block text-caption font-medium text-ink"
           >
-            Search by company name
+            {copy.searchLabel}
           </label>
           <input
             id={`${id}-q`}
             type="search"
             value={query}
             onChange={(e) => apply(state, e.target.value)}
-            placeholder={placeholder}
+            placeholder={copy.placeholder.replace("{label}", label)}
             autoComplete="off"
             className="min-h-11 w-full rounded-lg border border-sand-400 bg-white px-3 text-body-sm text-ink placeholder:text-ink-muted transition-colors duration-150 hover:border-forest-700 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-forest-700"
           />
@@ -96,7 +100,7 @@ export function AgentFilter({
             htmlFor={`${id}-s`}
             className="block text-caption font-medium text-ink"
           >
-            State
+            {copy.stateLabel}
           </label>
           <select
             id={`${id}-s`}
@@ -104,10 +108,10 @@ export function AgentFilter({
             onChange={(e) => apply(e.target.value, query)}
             className="min-h-11 w-full rounded-lg border border-sand-400 bg-white px-3 text-body-sm text-ink transition-colors duration-150 hover:border-forest-700 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-forest-700"
           >
-            <option value="">All states</option>
-            {states.map((s) => (
-              <option key={s} value={s}>
-                {s}
+            <option value="">{copy.allStates}</option>
+            {states.map(([value, name]) => (
+              <option key={value} value={value}>
+                {name}
               </option>
             ))}
           </select>
@@ -118,7 +122,7 @@ export function AgentFilter({
               htmlFor={`${id}-v`}
               className="block text-caption font-medium text-ink"
             >
-              Licence status
+              {copy.statusLabel}
             </label>
             <select
               id={`${id}-v`}
@@ -126,13 +130,12 @@ export function AgentFilter({
               onChange={(e) => apply(state, query, e.target.value)}
               className="min-h-11 w-full rounded-lg border border-sand-400 bg-white px-3 text-body-sm text-ink transition-colors duration-150 hover:border-forest-700 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-forest-700"
             >
-              <option value="">Any status</option>
+              <option value="">{copy.anyStatus}</option>
               <option value="current">
-                Valid now ({n("valid") + n("expiring")})
+                {copy.validNow.replace("{n}", String(n("valid") + n("expiring")))}
               </option>
               <option value="lapsed">
-                Expired or not on current register (
-                {n("expired") + n("unlisted")})
+                {copy.lapsed.replace("{n}", String(n("expired") + n("unlisted")))}
               </option>
             </select>
           </div>
@@ -140,9 +143,9 @@ export function AgentFilter({
       </div>
       <div className="flex min-h-11 flex-wrap items-center justify-between gap-2">
         <p aria-live="polite" className="text-caption text-ink-muted">
-          {filtered
-            ? `Showing ${shown} of ${total} companies`
-            : `${total} companies`}
+          {(filtered ? copy.showing : copy.total)
+            .replace("{shown}", String(shown))
+            .replace("{total}", String(total))}
         </p>
         {filtered && (
           <button
@@ -150,16 +153,13 @@ export function AgentFilter({
             onClick={() => apply("", "", "")}
             className="min-h-11 rounded-lg px-3 text-caption font-medium text-forest-700 underline underline-offset-2 transition-colors duration-150 hover:bg-forest-50 hover:text-forest-900 active:scale-[0.98] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-forest-700"
           >
-            Clear filters
+            {copy.clear}
           </button>
         )}
       </div>
       {filtered && shown === 0 && (
         <p className="rounded-lg border border-sand-200 bg-white px-4 py-3 text-body-sm text-ink">
-          No company on this register matches. Check the spelling against the
-          name on the agent&apos;s contract or letterhead. If it is still not
-          here, it is not on the register this page was copied from. Check the
-          official source linked above before you pay anything.
+          {copy.noMatch}
         </p>
       )}
     </div>

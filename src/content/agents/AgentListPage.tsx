@@ -1,66 +1,27 @@
 import Link from "next/link";
-import { registerCount, type AgentProgramme } from "@/lib/data/agents";
+import { type AgentProgramme } from "@/lib/data/agents";
+import { type Locale } from "@/lib/i18n";
+import { linkPath } from "@/lib/translated";
 import { AgentDirectory } from "./AgentDirectory";
 import { VettingChecklist } from "./AgentsHub";
+import type { AgentsCopy } from "./types";
 
 /**
- * /agents/mm2h/ and /agents/pvip/. Same layout, one register each.
- * English only for now: the cn. and tw. hosts fall back to these pages.
+ * /agents/mm2h/ and /agents/pvip/, shared by all three locales. Same layout,
+ * one register each. Every word comes in through `copy`; register data is
+ * printed as published.
  */
-const COPY: Record<
-  AgentProgramme,
-  {
-    title: string;
-    standfirst: React.ReactNode;
-    guide: string;
-    guideLabel: string;
-  }
-> = {
-  mm2h: {
-    title: "Licensed MM2H agents",
-    standfirst: (
-      <>
-        MOTAC&apos;s current guide routes every MM2H application through a
-        tour-operating company it has licensed for MM2H. If the company you are
-        talking to is not on its register, it cannot take your file to MOTAC.
-        Search the full register below by name, or narrow it by state.
-      </>
-    ),
-    guide: "/visas/mm2h/",
-    guideLabel: "MM2H guide",
-  },
-  pvip: {
-    title: "Authorised PVIP agencies",
-    standfirst: (
-      <>
-        Immigration does not accept PVIP applications directly. Every
-        application goes through an agency the government has appointed, and
-        Immigration publishes the list. If the company you are talking to is not
-        on it, it cannot lodge your application. Search the full list below by
-        name, or narrow it by state.
-      </>
-    ),
-    guide: "/visas/pvip/",
-    guideLabel: "PVIP guide",
-  },
-};
-
-export const listMeta: Record<
-  AgentProgramme,
-  { title: string; description: string }
-> = {
-  mm2h: {
-    title: "Licensed MM2H agents: the MOTAC register",
-    description: `All ${registerCount("mm2h")} MOTAC-licensed MM2H companies, searchable by name and state, with licence numbers, validity status and contact details, cross-checked against mm2h.gov.my.`,
-  },
-  pvip: {
-    title: "Authorised PVIP agents: Immigration's list",
-    description: `All ${registerCount("pvip")} Immigration-authorised PVIP application agencies, searchable by name and state, with addresses and contact details copied from the official list.`,
-  },
-};
-
-export function AgentListPage({ programme }: { programme: AgentProgramme }) {
-  const c = COPY[programme];
+export function AgentListPage({
+  programme,
+  locale,
+  copy,
+}: {
+  programme: AgentProgramme;
+  locale: Locale;
+  copy: AgentsCopy;
+}) {
+  const c = copy.list[programme];
+  const href = (path: string) => linkPath(path, locale);
   return (
     // Wider than the site's reading column, to fit the card grid: the page
     // takes the header's max-w-6xl so every block shares the logo's left edge.
@@ -70,8 +31,8 @@ export function AgentListPage({ programme }: { programme: AgentProgramme }) {
       <div className="mx-auto max-w-6xl space-y-10 px-6">
         <header className="space-y-6">
           <p className="text-caption text-ink-muted">
-            <Link href="/agents/" className="text-forest-700 underline">
-              Licensed agents
+            <Link href={href("/agents/")} className="text-forest-700 underline">
+              {copy.list.breadcrumb}
             </Link>{" "}
             / {programme === "mm2h" ? "MM2H" : "PVIP"}
           </p>
@@ -81,16 +42,19 @@ export function AgentListPage({ programme }: { programme: AgentProgramme }) {
           </p>
         </header>
 
-        <AgentDirectory programme={programme} />
+        <AgentDirectory programme={programme} locale={locale} copy={copy} />
 
-        <VettingChecklist />
+        <VettingChecklist locale={locale} copy={copy} />
 
         <p className="text-body-sm text-ink-muted">
-          Costs, requirements and timelines are in the{" "}
-          <Link href={c.guide} className="text-forest-700 underline">
-            {c.guideLabel}
-          </Link>
-          .
+          {copy.list.guideLine(
+            <Link
+              href={href(programme === "mm2h" ? "/visas/mm2h/" : "/visas/pvip/")}
+              className="text-forest-700 underline"
+            >
+              {c.guideLabel}
+            </Link>,
+          )}
         </p>
       </div>
     </article>

@@ -14,8 +14,10 @@ import {
   type Mm2hLicence,
 } from "@/lib/data/agents";
 import { reviewDate } from "@/lib/format";
-import { site } from "@/lib/site";
+import { localeUrl, type Locale } from "@/lib/i18n";
+import { linkPath } from "@/lib/translated";
 import { AgentFilter } from "./AgentFilter";
+import type { AgentsCopy } from "./types";
 
 const LABEL: Record<AgentProgramme, string> = { mm2h: "MM2H", pvip: "PVIP" };
 
@@ -23,26 +25,33 @@ const searchKey = (name: string) =>
   name.toLowerCase().replace(/[^a-z0-9]/g, "");
 
 /** Disclosure shown above every list. SPEC.md §1: disclosed, not hidden. */
-export function AgentDisclosure() {
+export function AgentDisclosure({
+  locale,
+  copy,
+}: {
+  locale: Locale;
+  copy: AgentsCopy;
+}) {
   return (
-    <aside className="rounded-xl border-l-4 border-forest-600 bg-forest-50 px-5 py-4 text-body-sm leading-relaxed text-forest-900">
-      <strong>Disclosure.</strong> This guide is written by the Managing
-      Director of MYPVIP. Two of its companies, MY PR Program Sdn. Bhd. (PVIP)
-      and My Premium (MM2H) Sdn. Bhd., appear on these registers. Every listing
-      here is copied from the official government register. Companies are in
-      alphabetical order, and a listing is not an endorsement.{" "}
-      <Link href="/about/" className="text-forest-700 underline">
-        About this guide
-      </Link>
+    <aside className="rounded-xl border-l-4 border-forest-600 bg-forest-50 px-5 py-4 text-body-sm leading-relaxed text-forest-900 [&_a]:text-forest-700 [&_a]:underline">
+      {copy.disclosure((p) => linkPath(p, locale))}
     </aside>
   );
 }
 
-export function AgentDirectory({ programme }: { programme: AgentProgramme }) {
+export function AgentDirectory({
+  programme,
+  locale,
+  copy,
+}: {
+  programme: AgentProgramme;
+  locale: Locale;
+  copy: AgentsCopy;
+}) {
+  const t = copy.directory;
   const reg = registers[programme];
   const list = agentsFor(programme);
   const listId = `agents-${programme}`;
-  const other: AgentProgramme = programme === "mm2h" ? "pvip" : "mm2h";
   // Licence status is worked out when the page is built; the site rebuilds
   // with every news commit, so this is rarely more than a day old.
   const today = new Date().toISOString().slice(0, 10);
@@ -60,7 +69,7 @@ export function AgentDirectory({ programme }: { programme: AgentProgramme }) {
   const schema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `${LABEL[programme]} agents on the ${reg.name}`,
+    name: t.schemaName(LABEL[programme], reg.name),
     numberOfItems: list.length,
     itemListElement: list.map((a, i) => ({
       "@type": "ListItem",
@@ -68,67 +77,57 @@ export function AgentDirectory({ programme }: { programme: AgentProgramme }) {
       item: {
         "@type": "Organization",
         name: a.name,
-        url: `${site.url}/agents/${programme}/#${a.id}`,
+        url: `${localeUrl(`/agents/${programme}/`, locale)}#${a.id}`,
       },
     })),
   };
 
+  const ext = (href: string, label: string) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-forest-700 underline"
+    >
+      {label}
+    </a>
+  );
+
   return (
     <div className="space-y-6">
       <p className="text-body-sm text-ink-muted">
-        Source:{" "}
-        <a
-          href={reg.source}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-forest-700 underline"
-        >
-          {reg.name}
-        </a>
-        , {reg.publisher}. Copied in full and checked on{" "}
-        <strong className="text-ink">{reviewDate(reg.lastVerified)}</strong>.
-        {programme === "mm2h" && (
-          <>
-            {" "}
-            Cross-checked against MOTAC&apos;s other list, on{" "}
-            <a
-              href={MM2HGOV_SOURCE}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-forest-700 underline"
-            >
-              mm2h.gov.my
-            </a>
-            , which lags behind it. Where the two show different validity dates,
-            both are printed. Companies that appear only on mm2h.gov.my are
-            included and marked, so you can tell a lapsed licence from a
-            misspelt name.
-          </>
-        )}{" "}
-        Where two differently named companies print the same email domain, phone
-        number or office address, both cards say so. That is a fact from the
-        registers, not a finding that the companies are connected, so ask if it
-        matters to you. Licences are granted and withdrawn between our checks,
-        so confirm on the official source before you sign anything.
+        {t.source({
+          register: ext(reg.source, reg.name),
+          publisher: copy.publisher[programme],
+          checked: (
+            <strong className="text-ink">
+              {reviewDate(reg.lastVerified, locale)}
+            </strong>
+          ),
+          mm2hgov:
+            programme === "mm2h" ? ext(MM2HGOV_SOURCE, "mm2h.gov.my") : null,
+        })}
       </p>
 
-      <AgentDisclosure />
+      <AgentDisclosure locale={locale} copy={copy} />
       <h2 className="font-serif text-h3 font-semibold text-ink">
-        Search the {LABEL[programme]} register
+        {t.searchHeading(LABEL[programme])}
       </h2>
       {programme === "mm2h" && (
         <p className="text-body-sm text-ink-muted">
-          Licence status is worked out against the validity dates as at{" "}
-          <strong className="text-ink">{reviewDate(today)}</strong>.
+          {t.statusAsAt(
+            <strong className="text-ink">{reviewDate(today, locale)}</strong>,
+          )}
         </p>
       )}
 
       <AgentFilter
         listId={listId}
-        states={agentStates(programme)}
+        states={agentStates(programme).map((s) => [s, copy.states[s] ?? s])}
         total={list.length}
         statusCounts={counts}
-        placeholder={`e.g. ${LABEL[programme]} company`}
+        label={LABEL[programme]}
+        copy={copy.filter}
       />
 
       <ul
@@ -140,8 +139,9 @@ export function AgentDirectory({ programme }: { programme: AgentProgramme }) {
             key={a.id}
             agent={a}
             programme={programme}
-            other={other}
             today={today}
+            locale={locale}
+            copy={copy}
           />
         ))}
       </ul>
@@ -157,14 +157,18 @@ export function AgentDirectory({ programme }: { programme: AgentProgramme }) {
 function AgentCard({
   agent,
   programme,
-  other,
   today,
+  locale,
+  copy,
 }: {
   agent: Agent;
   programme: AgentProgramme;
-  other: AgentProgramme;
   today: string;
+  locale: Locale;
+  copy: AgentsCopy;
 }) {
+  const t = copy.directory;
+  const other: AgentProgramme = programme === "mm2h" ? "pvip" : "mm2h";
   const states =
     programme === "mm2h"
       ? mainLicences(agent).map((l) => l.state)
@@ -173,6 +177,11 @@ function AgentCard({
         : [];
   const onOther =
     other === "mm2h" ? agent.mm2h.length > 0 : agent.pvip !== null;
+  // Hash links: resolve the page for this locale, then append the anchor.
+  const anchor = (target: string) => {
+    const [path, hash] = target.split("#");
+    return `${linkPath(path, locale)}#${hash}`;
+  };
 
   return (
     <li
@@ -189,16 +198,22 @@ function AgentCard({
 
       {programme === "mm2h"
         ? mainLicences(agent).map((l) => (
-            <Licence key={l.licence} l={l} today={today} />
+            <Licence
+              key={l.licence}
+              l={l}
+              today={today}
+              locale={locale}
+              copy={copy}
+            />
           ))
         : agent.pvip && (
             <dl>
-              <Row label="Address">{agent.pvip.address}</Row>
-              <Row label="Phone">
+              <Row label={t.row.address}>{agent.pvip.address}</Row>
+              <Row label={t.row.phone}>
                 <Phones value={agent.pvip.phone} />
               </Row>
               {agent.pvip.email.length > 0 && (
-                <Row label="Email">
+                <Row label={t.row.email}>
                   {agent.pvip.email.map((e, i) => (
                     <span key={e}>
                       {i > 0 && ", "}
@@ -220,10 +235,15 @@ function AgentCard({
 
       {onOther && (
         <p className="mt-3 border-t border-sand-200 pt-3 text-caption text-ink-muted">
-          Also on the {LABEL[other]} register:{" "}
-          <Link href={`/agents/${other}/#${agent.id}`} className="font-medium">
-            see {LABEL[other]} listing
-          </Link>
+          {t.alsoOn(
+            LABEL[other],
+            <Link
+              href={anchor(`/agents/${other}/#${agent.id}`)}
+              className="font-medium"
+            >
+              {t.alsoOnLink(LABEL[other])}
+            </Link>,
+          )}
         </p>
       )}
 
@@ -232,64 +252,67 @@ function AgentCard({
           key={r.id}
           className="mt-3 border-t border-sand-200 pt-3 text-caption text-ink-muted"
         >
-          Shares its {joinAnd(r.shared)} with{" "}
-          <Link href={relatedHref(r, programme)} className="font-medium">
-            {r.name}
-          </Link>{" "}
-          on the registers
+          {t.shares(
+            t.joinList(r.shared.map((k) => t.shared[k])),
+            <Link href={anchor(relatedHref(r, programme))} className="font-medium">
+              {r.name}
+            </Link>,
+          )}
         </p>
       ))}
     </li>
   );
 }
 
-const STATUS: Record<LicenceStatus, string> = {
-  valid: "\u2713 Valid",
-  expiring: "! Expires within 60 days",
-  expired: "\u2715 Expired",
-  unlisted: "! Not on motac.gov.my register",
-};
-
-function Licence({ l, today }: { l: Mm2hLicence; today: string }) {
+function Licence({
+  l,
+  today,
+  locale,
+  copy,
+}: {
+  l: Mm2hLicence;
+  today: string;
+  locale: Locale;
+  copy: AgentsCopy;
+}) {
+  const t = copy.directory;
   const status = licenceStatus(l, today);
   const [from, to] = l.motac ?? l.mm2hgov!;
   const govDiffers = l.motac && l.mm2hgov && l.mm2hgov[1] !== l.motac[1];
+  const range = (v: [string, string]) =>
+    `${reviewDate(v[0], locale)} \u2013 ${reviewDate(v[1], locale)}`;
   return (
     <dl>
-      <Row label="Licence no.">
+      <Row label={t.row.licence}>
         <span className="font-mono">{l.licence}</span>
         {l.mm2hgovLicence && (
           <span className="block text-caption text-ink-muted">
-            mm2h.gov.my prints this licence as{" "}
-            <span className="font-mono">{l.mm2hgovLicence}</span>
+            {t.mm2hgovPrints(
+              <span className="font-mono">{l.mm2hgovLicence}</span>,
+            )}
           </span>
         )}
       </Row>
-      <Row label="Status">
+      <Row label={t.row.status}>
         <span className="lic-status" data-status={status}>
-          {STATUS[status]}
+          {t.status[status]}
         </span>
       </Row>
-      <Row label="Validity">
-        {reviewDate(from)} &ndash; {reviewDate(to)}
+      <Row label={t.row.validity}>
+        {range([from, to])}
         <span className="block text-caption text-ink-muted">
-          {l.motac ? "motac.gov.my register" : "mm2h.gov.my only"}
-          {govDiffers && (
-            <>
-              ; mm2h.gov.my shows {reviewDate(l.mm2hgov![0])} &ndash;{" "}
-              {reviewDate(l.mm2hgov![1])}
-            </>
-          )}
+          {l.motac ? t.validityFrom.motac : t.validityFrom.mm2hgov}
+          {govDiffers && t.mm2hgovShows(range(l.mm2hgov!))}
         </span>
       </Row>
-      <Row label="Address">{l.address}</Row>
+      <Row label={t.row.address}>{l.address}</Row>
       {l.phone && (
-        <Row label="Phone">
+        <Row label={t.row.phone}>
           <Phones value={l.phone} />
         </Row>
       )}
       {l.email.length > 0 && (
-        <Row label="Email">
+        <Row label={t.row.email}>
           {l.email.map((e, i) => (
             <span key={e}>
               {i > 0 && ", "}
@@ -301,11 +324,6 @@ function Licence({ l, today }: { l: Mm2hLicence; today: string }) {
     </dl>
   );
 }
-
-const joinAnd = (xs: string[]) =>
-  xs.length < 2
-    ? xs.join("")
-    : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`;
 
 function Row({
   label,
