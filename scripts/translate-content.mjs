@@ -680,8 +680,13 @@ async function ask(system, user, retry) {
  * Batches are cut on string boundaries and reassembled in order, so a batch
  * boundary can never move a paragraph — the failure a naive character split
  * would produce.
+ *
+ * Small enough that a reasoning model finishes inside Workers AI's request
+ * timeout: at 5000 chars / 30 strings, four ~2,000-word insights answered 408
+ * on every attempt (2026-10-02), and Gemini dropped a string from a 30-string
+ * batch. Batch size does not enter the sourceHash, so nothing re-translates.
  */
-function batches(strings, maxChars = 5000, maxItems = 30) {
+function batches(strings, maxChars = 2000, maxItems = 12) {
   const out = [];
   let cur = [];
   let size = 0;
