@@ -13,6 +13,7 @@ keyPoints:
   - "The government said the aim is to attract top talent without requiring their spouses to give up their careers."
   - "A new MyABE status will let listed companies expanding across ASEAN get preliminary Employment Pass applications facilitated by the Securities Commission and TalentCorp, with a target of five working days."
   - "New Global Services Hub companies will get a 5% tax rate on qualifying income from 1 January 2027."
+  - "Resident individual income tax rates fall by one percentage point in the middle bands, while the rate on income above RM1 million is adjusted to 30%."
 whatItMeans:
   - "Only spouses of Category I holders are covered. Spouses of Category II and Category III holders were not mentioned."
   - "The conditions, such as which jobs are allowed, whether employers must apply and what it costs, have not yet been published. Expect the details from the Immigration Department's Expatriate Services Division (ESD) before 1 January 2027."
@@ -37,6 +38,12 @@ Until now, a Dependant Pass has not by itself allowed the holder to work. A spou
 The budget also introduces MyABE status for Malaysian companies expanding across ASEAN. For listed MyABE companies, the Securities Commission will work with TalentCorp to facilitate preliminary Employment Pass applications, with a target processing time of five working days.
 
 Separately, the Global Services Hub incentive will be enhanced from 1 January 2027. New companies will pay a 5% tax rate on income from qualifying hub activities, and the incentive period can be extended in five-year increments up to 30 years. Regional hubs of this kind are a common route for Category I expatriates into Malaysia.
+
+## Personal tax changes for resident expatriates
+
+Expatriates who are Malaysian tax residents, generally those in Malaysia for 182 days or more in a year, are taxed at the same resident rates as Malaysians. Budget 2027 cuts those rates by one percentage point in the middle bands: chargeable income from RM70,001 to RM100,000 will be taxed at 18%, and from RM100,001 to RM150,000 at 24%. The individual tax relief rises from RM9,000 to RM12,000.
+
+At the top end, the speech said the rate for high-income earners with income above RM1 million will be adjusted to 30%. Most Category I salaries sit well below that, but senior executives with large bonuses or equity awards should check where their total income falls.
 
 ## What it means if you are considering Malaysia
 
