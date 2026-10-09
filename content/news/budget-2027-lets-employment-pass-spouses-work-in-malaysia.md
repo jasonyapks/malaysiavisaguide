@@ -1,31 +1,32 @@
 ---
 headline: "Budget 2027 lets spouses of Category I Employment Pass holders work in Malaysia"
-dek: "From 1 January 2027, spouses of Category I Employment Pass holders who hold a Dependant Pass will be allowed to work in Malaysia, subject to conditions, under a Budget 2027 measure aimed at attracting senior foreign talent."
+dek: "From 1 January 2027, spouses of Category I Employment Pass holders who themselves hold a Dependant Pass will be allowed to work in Malaysia, subject to prescribed conditions, under a Budget 2027 measure aimed at attracting senior foreign talent."
 category: "employment-pass"
 sourceName: "Prime Minister's Office"
 sourceUrl: "https://www.pmo.gov.my/en/speeches-en/speech-the-fifth-madani-budget-2027-by-yab-pm/"
 publishedAt: "2026-10-09T00:00:00.000Z"
 updatedAt: "2026-10-09T00:00:00.000Z"
 readingMinutes: 3
+sourceExcerpt: "“From 1 January 2027, spouses of expatriates holding a Category I Employment Pass who themselves hold a Dependant Pass will be allowed to work in Malaysia, subject to the prescribed conditions.” — Budget 2027 speech, 9 October 2026."
 keyPoints:
-  - "From 1 January 2027, spouses of Category I Employment Pass holders who hold a Dependant Pass will be allowed to work in Malaysia, subject to conditions."
+  - "From 1 January 2027, spouses of Category I Employment Pass holders who themselves hold a Dependant Pass will be allowed to work in Malaysia, subject to prescribed conditions."
   - "Category I covers expatriates earning at least RM20,000 a month under the salary policy in force since 1 June 2026."
-  - "The government said the aim is to attract top talent without requiring their spouses to give up their careers."
-  - "A new MyABE status will let listed companies expanding across ASEAN get preliminary Employment Pass applications facilitated by the Securities Commission and TalentCorp, with a target of five working days."
+  - "The government said this will help Malaysia remain a destination of choice for top talent without their spouses having to give up their careers."
+  - "A new MyABE status lets listed Malaysian companies expanding across ASEAN have their initial Employment Pass applications facilitated by the Securities Commission and TalentCorp, with a target of five working days."
   - "New Global Services Hub companies will get a 5% tax rate on qualifying income from 1 January 2027."
   - "Resident individual income tax rates fall by one percentage point in the middle bands, while the rate on income above RM1 million is adjusted to 30%."
 whatItMeans:
   - "Only spouses of Category I holders are covered. Spouses of Category II and Category III holders were not mentioned."
-  - "The conditions, such as which jobs are allowed, whether employers must apply and what it costs, have not yet been published. Expect the details from the Immigration Department's Expatriate Services Division (ESD) before 1 January 2027."
+  - "The prescribed conditions, such as which jobs are allowed, whether employers must apply and what it costs, have not yet been published. Expect the details from the Immigration Department's Expatriate Services Division (ESD) before 1 January 2027."
   - "For senior hires choosing between Malaysia and Singapore or Dubai, a working spouse can make a relocation decision much easier. Employers can raise it when making an offer."
   - "Until the rules are published, a spouse who wants to work should not take up a job on a Dependant Pass alone."
 ---
 
 ## Dependant spouses of senior expatriates can work
 
-Malaysia will allow the spouses of its most senior foreign employees to work. In his Budget 2027 speech on 9 October 2026, Prime Minister and Finance Minister Anwar Ibrahim said that from 1 January 2027, spouses of expatriates holding a Category I Employment Pass and a Dependant Pass will be allowed to work in Malaysia, subject to conditions.
+Malaysia will allow the spouses of its most senior foreign employees to work. In his Budget 2027 speech on 9 October 2026, Prime Minister and Finance Minister Anwar Ibrahim said that from 1 January 2027, spouses of expatriates holding a Category I Employment Pass who themselves hold a Dependant Pass will be allowed to work in Malaysia, subject to the prescribed conditions.
 
-The government said the aim was to keep Malaysia a preferred destination for top talent, without requiring their spouses to give up their careers.
+The speech said this will help Malaysia remain a destination of choice for top talent without their spouses having to give up their careers. It was one of six initiatives aimed at making it easier for global companies to operate in Malaysia and bring in the best skilled talent.
 
 ## Who is covered
 
@@ -35,9 +36,9 @@ Until now, a Dependant Pass has not by itself allowed the holder to work. A spou
 
 ## Faster Employment Passes for ASEAN-expanding companies
 
-The budget also introduces MyABE status for Malaysian companies expanding across ASEAN. For listed MyABE companies, the Securities Commission will work with TalentCorp to facilitate preliminary Employment Pass applications, with a target processing time of five working days.
+The government has introduced Malaysian ASEAN Business Entity (MyABE) status to support Malaysian companies expanding across ASEAN. For listed MyABE companies, the Securities Commission, working with TalentCorp, will now facilitate the initial Employment Pass application process, with a target of five working days.
 
-Separately, the Global Services Hub incentive will be enhanced from 1 January 2027. New companies will pay a 5% tax rate on income from qualifying hub activities, and the incentive period can be extended in five-year increments up to 30 years. Regional hubs of this kind are a common route for Category I expatriates into Malaysia.
+Separately, the Global Services Hub (GSH) incentive will be improved from 1 January 2027. New companies will pay a preferential 5% tax rate on income from GSH activities, existing Principal Hub or GSH companies will pay 5% on income above a specified baseline, and the incentive period can be extended in five-year increments up to 30 years. GSH companies managing treasury and funds will also be exempt from withholding tax on interest payments and stamp duty on intercompany loan agreements, including for such activities under the Johor-Singapore Special Economic Zone (JS-SEZ) package. Regional hubs of this kind are a common route for Category I expatriates into Malaysia.
 
 ## Personal tax changes for resident expatriates
 
