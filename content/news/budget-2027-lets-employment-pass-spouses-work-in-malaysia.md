@@ -1,0 +1,53 @@
+---
+headline: "Budget 2027 lets spouses of Category I Employment Pass holders work in Malaysia"
+dek: "From 1 January 2027, spouses of Category I Employment Pass holders who themselves hold a Dependant Pass will be allowed to work in Malaysia, subject to prescribed conditions, under a Budget 2027 measure aimed at attracting senior foreign talent."
+category: "employment-pass"
+sourceName: "Prime Minister's Office"
+sourceUrl: "https://www.pmo.gov.my/en/speeches-en/speech-the-fifth-madani-budget-2027-by-yab-pm/"
+publishedAt: "2026-10-09T00:00:00.000Z"
+updatedAt: "2026-10-09T00:00:00.000Z"
+readingMinutes: 3
+sourceExcerpt: "“From 1 January 2027, spouses of expatriates holding a Category I Employment Pass who themselves hold a Dependant Pass will be allowed to work in Malaysia, subject to the prescribed conditions.” — Budget 2027 speech, 9 October 2026."
+keyPoints:
+  - "From 1 January 2027, spouses of Category I Employment Pass holders who themselves hold a Dependant Pass will be allowed to work in Malaysia, subject to prescribed conditions."
+  - "Category I covers expatriates earning at least RM20,000 a month under the salary policy in force since 1 June 2026."
+  - "The government said this will help Malaysia remain a destination of choice for top talent without their spouses having to give up their careers."
+  - "A new MyABE status lets listed Malaysian companies expanding across ASEAN have their initial Employment Pass applications facilitated by the Securities Commission and TalentCorp, with a target of five working days."
+  - "New Global Services Hub companies will get a 5% tax rate on qualifying income from 1 January 2027."
+  - "Resident individual income tax rates fall by one percentage point in the middle bands, while the rate on income above RM1 million is adjusted to 30%."
+whatItMeans:
+  - "Only spouses of Category I holders are covered. Spouses of Category II and Category III holders were not mentioned."
+  - "The prescribed conditions, such as which jobs are allowed, whether employers must apply and what it costs, have not yet been published. Expect the details from the Immigration Department's Expatriate Services Division (ESD) before 1 January 2027."
+  - "For senior hires choosing between Malaysia and Singapore or Dubai, a working spouse can make a relocation decision much easier. Employers can raise it when making an offer."
+  - "Until the rules are published, a spouse who wants to work should not take up a job on a Dependant Pass alone."
+---
+
+## Dependant spouses of senior expatriates can work
+
+Malaysia will allow the spouses of its most senior foreign employees to work. In his Budget 2027 speech on 9 October 2026, Prime Minister and Finance Minister Anwar Ibrahim said that from 1 January 2027, spouses of expatriates holding a Category I Employment Pass who themselves hold a Dependant Pass will be allowed to work in Malaysia, subject to the prescribed conditions.
+
+The speech said this will help Malaysia remain a destination of choice for top talent without their spouses having to give up their careers. It was one of six initiatives aimed at making it easier for global companies to operate in Malaysia and bring in the best skilled talent.
+
+## Who is covered
+
+Category I is the highest Employment Pass tier. Under the revised expatriate salary policy that took effect on 1 June 2026, it covers foreign employees earning at least RM20,000 a month. Category II starts at RM10,000 and Category III at RM5,000. The budget measure was announced for Category I only.
+
+Until now, a Dependant Pass has not by itself allowed the holder to work. A spouse who wanted a job generally needed to be sponsored for an employment pass of their own. That often means a two-income family must find two employers willing to sponsor them, which has put off senior candidates whose partners have careers.
+
+## Faster Employment Passes for ASEAN-expanding companies
+
+The government has introduced Malaysian ASEAN Business Entity (MyABE) status to support Malaysian companies expanding across ASEAN. For listed MyABE companies, the Securities Commission, working with TalentCorp, will now facilitate the initial Employment Pass application process, with a target of five working days.
+
+Separately, the Global Services Hub (GSH) incentive will be improved from 1 January 2027. New companies will pay a preferential 5% tax rate on income from GSH activities, existing Principal Hub or GSH companies will pay 5% on income above a specified baseline, and the incentive period can be extended in five-year increments up to 30 years. GSH companies managing treasury and funds will also be exempt from withholding tax on interest payments and stamp duty on intercompany loan agreements, including for such activities under the Johor-Singapore Special Economic Zone (JS-SEZ) package. Regional hubs of this kind are a common route for Category I expatriates into Malaysia.
+
+## Personal tax changes for resident expatriates
+
+Expatriates who are Malaysian tax residents, generally those in Malaysia for 182 days or more in a year, are taxed at the same resident rates as Malaysians. Budget 2027 cuts those rates by one percentage point in the middle bands: chargeable income from RM70,001 to RM100,000 will be taxed at 18%, and from RM100,001 to RM150,000 at 24%. The individual tax relief rises from RM9,000 to RM12,000.
+
+At the top end, the speech said the rate for high-income earners with income above RM1 million will be adjusted to 30%. Most Category I salaries sit well below that, but senior executives with large bonuses or equity awards should check where their total income falls.
+
+## What it means if you are considering Malaysia
+
+For senior executives weighing a move to Kuala Lumpur, this removes one of the most common objections: that a spouse's career has to stop. Employers recruiting at Category I level now have a stronger offer to make, from January 2027.
+
+The details still matter. Until the Expatriate Services Division publishes the conditions, families should plan around the current rules. Senior professionals who want to work or run a business without being tied to one sponsoring employer can also compare the Employment Pass with a residency route such as the Premium Visa Programme (PVIP).
