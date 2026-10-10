@@ -4,7 +4,7 @@ dek: "Every quote starts at about RM2,500, and the registration really is that c
 published: "2026-10-10"
 reviewed: "2026-10-10"
 readingMinutes: 9
-draft: true
+draft: false
 relatedGuides:
   - path: "/visas/pvip/"
     title: "the PVIP guide"
