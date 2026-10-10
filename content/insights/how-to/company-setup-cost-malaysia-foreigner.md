@@ -1,6 +1,6 @@
 ---
 title: "How much does it cost to set up a company in Malaysia as a foreigner? (2026)"
-dek: "Every quote starts at about RM1,500, and the registration really is that cheap. What a foreign owner actually pays in year one is decided by three things no quote mentions: where you live, whether the company has to sponsor your own work pass, and what it sells."
+dek: "Every quote starts at about RM2,500, and the registration really is that cheap. What a foreign owner actually pays in year one is decided by three things no quote mentions: where you live, whether the company has to sponsor your own work pass, and what it sells."
 published: "2026-10-10"
 reviewed: "2026-10-10"
 readingMinutes: 9
@@ -42,9 +42,9 @@ sources:
     verified: "2026-10-10"
 ---
 
-You've asked three firms what it costs to open a company in Malaysia and got three versions of the same answer: "from RM1,500". It's true, and it's almost useless. The registration is the cheapest line on the bill, and the firms quoting it know that.
+You've asked three firms what it costs to open a company in Malaysia and got three versions of the same answer: "from RM2,500". It's true, and it's almost useless. The registration is the cheapest line on the bill, and the firms quoting it know that.
 
-Here's the part nobody writes down. For a foreign owner, the number that decides everything usually isn't a fee at all. It's the RM500,000 of capital the company has to hold before it can sponsor your own work pass. If you need that pass, the question isn't whether you can afford RM1,500. If you don't need it, you may be able to run the whole thing for less than a month's rent in Mont Kiara.
+Here's the part nobody writes down. For a foreign owner, the number that decides everything usually isn't a fee at all. It's the RM500,000 of capital the company has to hold before it can sponsor your own work pass. If you need that pass, the question isn't whether you can afford RM2,500. If you don't need it, you may be able to run the whole thing for less than a month's rent in Mont Kiara.
 
 **The short answer:** registering a Malaysian private company costs about RM1,600 to RM3,100, including the RM1,000 government fee. A foreign owner's real first-year cost runs from roughly RM5,000 if you already live in Malaysia on a pass that allows business, to RM15,000–26,000 if you need a resident director, plus RM500,000 or more in capital if the company must sponsor your work pass.
 
@@ -100,7 +100,7 @@ To register a company, capital is a formality. The figures that frighten people 
 | 100% foreign-owned | RM500,000 |
 | Foreign-owned, in wholesale, retail and trade | RM1,000,000 |
 
-Paid-up capital is your money, in your company's account, and the company can spend it on running the business. But it has to be there, it has to be real, and you can't quietly take it back out later. If you're the founder who is moving here, this is your true cost of entry. Plan around RM500,000, not RM1,500.
+Paid-up capital is your money, in your company's account, and the company can spend it on running the business. But it has to be there, it has to be real, and you can't quietly take it back out later. If you're the founder who is moving here, this is your true cost of entry. Plan around RM500,000, not RM2,500.
 
 ## The costs nobody quotes
 
@@ -152,7 +152,7 @@ If you're **staying abroad**, budget RM15,000 to RM26,000 for the first year plu
 
 If you're **moving here to run it**, your real number is RM500,000 of capital, or RM1,000,000 if you'll trade, sell or serve food. The fees are a rounding error next to it. Decide whether the business justifies that before you register anything.
 
-If you **already live here** on a pass that allows business, you're looking at RM5,000 to RM16,000 and no capital hurdle, unless you're going into distributive trade. You're the one person for whom "from RM1,500" is nearly honest.
+If you **already live here** on a pass that allows business, you're looking at RM5,000 to RM16,000 and no capital hurdle, unless you're going into distributive trade. You're the one person for whom "from RM2,500" is nearly honest.
 
 And if you're still choosing a pass, choose it with the business in mind. The cheapest company in Malaysia belongs to the founder who sorted out their own right to be here first.
 
