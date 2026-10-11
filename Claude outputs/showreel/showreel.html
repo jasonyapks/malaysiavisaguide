@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MVG Showreel</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+:root{--navy:#071D3A;--royal:#124E9E;--royal2:#2e6dc2;--gold:#D4A017;--gold7:#8A6508;--mist:#E6E8EB;--off:#F7F7F9;--ink:#0f1823;--muted:#55606e}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#000}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;font-family:Inter,'WenQuanYi Zen Hei',sans-serif;color:var(--off);background:#020812}
+#world{position:absolute;inset:0}
+.abs{position:absolute}
+.scene{position:absolute;left:0;top:0;width:1920px;height:1080px;display:none;overflow:hidden}
+.P{font-family:Poppins,'WenQuanYi Zen Hei',sans-serif}
+.DS{font-family:'DM Serif Display',serif}
+.ch{display:inline-block;will-change:transform}
+.mask{overflow:hidden}
+.center{left:0;width:1920px;text-align:center}
+canvas{position:absolute;left:0;top:0}
+.kick{font:600 22px/1 Inter,sans-serif;letter-spacing:.32em;text-transform:uppercase}
+/* cards */
+.card{position:absolute;width:440px;height:580px;border-radius:26px;overflow:hidden;background:#0b2650;box-shadow:0 40px 80px rgba(0,0,0,.45);border:1.5px solid rgba(212,160,23,.25);transform-style:preserve-3d}
+.card .img{position:absolute;left:0;top:0;width:100%;height:330px;background-size:cover;background-position:center}
+.card .shade{position:absolute;left:0;top:0;width:100%;height:330px;background:linear-gradient(180deg,rgba(7,29,58,0) 40%,rgba(11,38,80,1) 100%)}
+.card .num{position:absolute;left:34px;top:300px;font:800 64px/1 Poppins;color:var(--gold);letter-spacing:-.02em}
+.card .name{position:absolute;left:34px;top:382px;width:380px;font:600 33px/1.1 Poppins;color:#fff}
+.card .line{position:absolute;left:34px;top:430px;width:370px;font:400 19px/1.45 Inter;color:rgba(230,232,235,.78)}
+.card .chip{position:absolute;left:34px;bottom:30px;padding:9px 16px;border:1.5px solid var(--gold);border-radius:99px;font:600 16px/1 Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+/* tools */
+.win{position:absolute;width:1000px;height:580px;border-radius:22px;background:#fff;box-shadow:0 60px 120px rgba(7,29,58,.28),0 10px 30px rgba(7,29,58,.12);overflow:hidden}
+.bar{height:56px;background:var(--mist);display:flex;align-items:center;padding:0 22px;gap:10px}
+.dot{width:14px;height:14px;border-radius:50%}
+.url{margin-left:24px;height:34px;flex:1;border-radius:10px;background:#fff;display:flex;align-items:center;padding:0 16px;font:500 17px Inter;color:var(--muted)}
+.opt{position:relative;width:880px;height:74px;border:2px solid #d3d8df;border-radius:16px;margin-top:16px;display:flex;align-items:center;padding:0 26px;font:500 25px Inter;color:var(--ink);overflow:hidden;background:#fff}
+.opt .rad{width:26px;height:26px;border-radius:50%;border:2px solid #9aa4b1;margin-right:20px;flex:none;position:relative}
+.opt .fill{position:absolute;inset:0;background:var(--royal);transform-origin:left center}
+.opt span{position:relative}
+.chipL{display:inline-block;padding:14px 26px;border-radius:99px;background:var(--navy);color:#fff;font:600 24px Poppins;margin-right:14px}
+.calc{position:absolute;width:600px;height:330px;border-radius:22px;background:var(--navy);box-shadow:0 50px 100px rgba(7,29,58,.4);overflow:hidden;color:#fff}
+#hud{position:absolute;inset:0;pointer-events:none;font:500 15px/1 Inter;letter-spacing:.24em;text-transform:uppercase}
+.crop{position:absolute;width:34px;height:34px;border-color:currentColor;border-style:solid;border-width:0}
+</style>
+</head>
+<body>
+<div id="stage"><div id="world"></div><canvas id="fx" width="1920" height="1080"></canvas><div id="hud"></div><canvas id="grain" width="1920" height="1080"></canvas><div id="flash" class="abs" style="inset:0;background:#fff;opacity:0"></div><div id="fade" class="abs" style="inset:0;background:#000;opacity:0"></div></div>
+<script>
+'use strict';
+const DUR = 25, W = 1920, H = 1080;
+const IMG = '../../public/images/';
+// ───────────────────────── maths ─────────────────────────
+const clamp = (x, a = 0, b = 1) => x < a ? a : x > b ? b : x;
+const lerp = (a, b, x) => a + (b - a) * x;
+const P = (t, a, b) => clamp((t - a) / (b - a));
+const E = {
+  outCubic: x => 1 - Math.pow(1 - x, 3),
+  inCubic: x => x * x * x,
+  inOutCubic: x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+  outQuart: x => 1 - Math.pow(1 - x, 4),
+  outQuint: x => 1 - Math.pow(1 - x, 5),
+  inOutQuart: x => x < .5 ? 8 * x ** 4 : 1 - Math.pow(-2 * x + 2, 4) / 2,
+  outExpo: x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x),
+  inExpo: x => x <= 0 ? 0 : Math.pow(2, 10 * x - 10),
+  inOutExpo: x => x <= 0 ? 0 : x >= 1 ? 1 : x < .5 ? Math.pow(2, 20 * x - 10) / 2 : (2 - Math.pow(2, -20 * x + 10)) / 2,
+  outBack: (x, s = 1.70158) => 1 + (s + 1) * Math.pow(x - 1, 3) + s * Math.pow(x - 1, 2),
+  inBack: (x, s = 1.70158) => (s + 1) * x * x * x - s * x * x,
+};
+const spring = (dt, damp = 7, freq = 14) => dt <= 0 ? 0 : 1 - Math.exp(-damp * dt) * Math.cos(freq * dt);
+function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const fmt = n => n.toLocaleString('en-US');
+// ───────────────────────── dom ─────────────────────────
+const stage = document.getElementById('stage'), world = document.getElementById('world');
+function el(tag, cls, parent, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; (parent || world).appendChild(e); return e; }
+function S(e, o) { for (const k in o) e.style[k] = o[k]; return e; }
+function T(e, { x = 0, y = 0, z = 0, s = 1, sx, sy, r = 0, rx = 0, ry = 0, o, b } = {}) {
+  e.style.transform = `translate3d(${x}px,${y}px,${z}px) rotateX(${rx}deg) rotateY(${ry}deg) rotate(${r}deg) scale(${sx ?? s},${sy ?? s})`;
+  if (o !== undefined) e.style.opacity = o;
+  if (b !== undefined) e.style.filter = b > 0.05 ? `blur(${b}px)` : 'none';
+}
+const vis = (e, v) => { e.style.display = v ? 'block' : 'none'; return v; };
+function letters(parent, text) { parent.innerHTML = ''; return [...text].map(c => { const s = el('span', 'ch', parent); s.textContent = c === ' ' ? ' ' : c; return s; }); }
+const svgNS = 'http://www.w3.org/2000/svg';
+const tf = (cx, cy, { x = 0, y = 0, s = 1, r = 0 } = {}) => `translate(${x + cx} ${y + cy}) rotate(${r}) scale(${s}) translate(${-cx} ${-cy})`;
+
+// ───────────────────────── the logo, rebuilt in vector ─────────────────────────
+function star14(cx, cy, R, r) { let d = ''; for (let i = 0; i < 28; i++) { const a = -Math.PI / 2 + i * Math.PI / 14, rr = i % 2 ? r : R; d += (i ? 'L' : 'M') + (cx + rr * Math.cos(a)).toFixed(2) + ' ' + (cy + rr * Math.sin(a)).toFixed(2); } return d + 'Z'; }
+function facet(cx, cy, deg, L, w) {
+  const a = deg * Math.PI / 180, tx = cx + L * Math.cos(a), ty = cy + L * Math.sin(a);
+  const lx = cx + w * Math.cos(a - Math.PI / 2), ly = cy + w * Math.sin(a - Math.PI / 2);
+  const rx = cx + w * Math.cos(a + Math.PI / 2), ry = cy + w * Math.sin(a + Math.PI / 2);
+  return `<path d="M${cx} ${cy}L${tx} ${ty}L${lx} ${ly}Z" fill="#F6D366"/><path d="M${cx} ${cy}L${tx} ${ty}L${rx} ${ry}Z" fill="#B9850C"/>`;
+}
+function logoSVG(id) {
+  const C = { x: 60, y: 110, w: 380, h: 540, r: 34 };
+  const page = k => `<rect x="${C.x + 17 * k}" y="${C.y - 15 * k}" width="${C.w}" height="${C.h}" rx="${C.r}" fill="#fff" stroke="#0a2a57" stroke-width="7"/>`;
+  const cx = 440, cy = 440;
+  let comp = '';
+  for (const d of [0, 90, 180, 270]) comp += facet(cx, cy, d - 90, 112, 25);
+  for (const d of [45, 225]) comp += facet(cx, cy, d - 90, 72, 16);
+  return `<svg id="${id}" viewBox="0 0 700 700" width="700" height="700" style="overflow:visible">
+  <defs>
+    <linearGradient id="${id}-cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#123a78"/><stop offset=".55" stop-color="#0a2753"/><stop offset="1" stop-color="#071D3A"/></linearGradient>
+    <linearGradient id="${id}-gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F8D978"/><stop offset=".5" stop-color="#D4A017"/><stop offset="1" stop-color="#A97C0A"/></linearGradient>
+    <clipPath id="${id}-cc"><rect x="${C.x}" y="${C.y}" width="${C.w}" height="${C.h}" rx="${C.r}"/></clipPath>
+    <mask id="${id}-cm"><rect x="0" y="0" width="700" height="700" fill="#fff"/><circle cx="212" cy="336" r="79" fill="#000"/></mask>
+  </defs>
+  <g id="${id}-pages">${page(3)}${page(2)}${page(1)}</g>
+  <g id="${id}-cover"><rect x="${C.x}" y="${C.y}" width="${C.w}" height="${C.h}" rx="${C.r}" fill="url(#${id}-cg)"/>
+    <rect x="${C.x + 14}" y="${C.y + 14}" width="10" height="${C.h - 28}" rx="5" fill="#fff" opacity=".07"/></g>
+  <g clip-path="url(#${id}-cc)"><g id="${id}-wedge"><path d="M226 650L440 222L440 650Z" fill="#fff"/><path d="M226 650L440 222" stroke="#071D3A" stroke-width="6" fill="none"/><path d="M262 650L440 296L440 650Z" fill="#E6E8EB" opacity=".55"/></g></g>
+  <g id="${id}-cres"><circle cx="176" cy="350" r="93" fill="url(#${id}-gg)" mask="url(#${id}-cm)"/></g>
+  <g id="${id}-star"><path d="${star14(287, 346, 60, 27)}" fill="url(#${id}-gg)"/></g>
+  <g id="${id}-comp"><g id="${id}-needle">${facet(cx, cy, -45, 300, 25)}${facet(cx, cy, 135, 290, 22)}</g>${comp}
+    <circle cx="${cx}" cy="${cy}" r="25" fill="#fff" stroke="url(#${id}-gg)" stroke-width="10"/></g>
+  </svg>`;
+}
+function logoParts(id) { const q = s => document.getElementById(`${id}-${s}`); return { root: document.getElementById(id), pages: q('pages'), cover: q('cover'), wedge: q('wedge'), cres: q('cres'), star: q('star'), comp: q('comp'), needle: q('needle') }; }
+function setLogo(L, u) { // u = local time since build start; full build ~1.6s
+  const pg = [...L.pages.children];
+  pg.forEach((p, i) => { const k = P(u, .18 + (2 - i) * .07, .62 + (2 - i) * .07), e = E.outBack(k, 2.2); p.setAttribute('transform', `translate(${(1 - e) * -40} ${(1 - e) * 40})`); p.style.opacity = k > 0 ? 1 : 0; });
+  const c = P(u, 0, .45); L.cover.setAttribute('transform', tf(250, 650, { sx: 1, s: 1 }) + ` translate(250 650) scale(${lerp(.82, 1, E.outBack(c))} ${E.outExpo(c)}) translate(-250 -650)`); L.cover.style.opacity = c > 0 ? 1 : 0;
+  const w = E.outExpo(P(u, .3, .75)); L.wedge.setAttribute('transform', `translate(${(1 - w) * 220} ${(1 - w) * 440})`);
+  const cr = P(u, .45, 1.0); L.cres.setAttribute('transform', tf(176, 350, { s: E.outBack(cr, 2.4), r: (1 - E.outCubic(cr)) * -160 })); L.cres.style.opacity = cr > 0 ? 1 : 0;
+  const st = P(u, .62, 1.12); L.star.setAttribute('transform', tf(287, 346, { s: E.outBack(st, 3), r: (1 - E.outCubic(st)) * 200 })); L.star.style.opacity = st > 0 ? 1 : 0;
+  const cp = P(u, .8, 1.45), ce = E.outQuart(cp), land = u - 1.45;
+  const wob = land > 0 ? Math.exp(-6 * land) * Math.sin(land * 22) * 9 : 0;
+  L.comp.setAttribute('transform', tf(440, 440, { x: (1 - ce) * 760, y: (1 - ce) * -560, s: lerp(2.6, 1, ce), r: (1 - ce) * 600 + wob }));
+  L.comp.style.opacity = cp > 0 ? 1 : 0;
+}
+
+// ───────────────────────── scenes ─────────────────────────
+const scenes = [];
+function scene(a, b, bg) { const e = el('div', 'scene'); if (bg) e.style.background = bg; scenes.push({ e, a, b }); return e; }
+
+// S1 — cold open
+const s1 = scene(0, 2.0, 'radial-gradient(ellipse 70% 60% at 50% 50%, #0b2650 0%, #04112a 55%, #020812 100%)');
+const s1dot = S(el('div', 'abs', s1), { left: '950px', top: '530px', width: '20px', height: '20px', borderRadius: '50%', background: '#D4A017', boxShadow: '0 0 30px 6px rgba(212,160,23,.8)' });
+const s1line = S(el('div', 'abs', s1), { left: '210px', top: '538px', width: '1500px', height: '4px', background: 'linear-gradient(90deg,rgba(212,160,23,0),#D4A017 14%,#FBE29A 50%,#D4A017 86%,rgba(212,160,23,0))', boxShadow: '0 0 26px rgba(212,160,23,.85)' });
+const s1flare = S(el('div', 'abs', s1), { left: '0', top: '440px', width: '1920px', height: '200px', background: 'radial-gradient(ellipse 50% 50% at 50% 50%, rgba(251,226,154,.35), rgba(212,160,23,0) 70%)', mixBlendMode: 'screen' });
+const s1tm = S(el('div', 'abs mask center', s1), { top: '318px', height: '214px' });
+const s1t = S(el('div', 'P', s1tm), { font: '800 196px/214px Poppins', letterSpacing: '.07em', color: '#F7F7F9', paddingLeft: '.07em' });
+const s1L = letters(s1t, 'SHOWREEL');
+const s1bm = S(el('div', 'abs mask center', s1), { top: '566px', height: '50px' });
+const s1b = S(el('div', '', s1bm), { font: '500 28px/50px Inter', letterSpacing: '.55em', color: '#D4A017', paddingLeft: '.55em' });
+s1b.textContent = 'FEATURING  MALAYSIAVISAGUIDE.COM';
+function R1(t) {
+  const d = E.outBack(P(t, 0, .18), 3) * (1 - P(t, .25, .5));
+  T(s1dot, { s: d, o: d > 0 ? 1 : 0 });
+  const ln = E.outExpo(P(t, .15, 1.0)) * (1 - E.inExpo(P(t, 1.55, 1.95)));
+  T(s1line, { sx: ln, sy: 1 });
+  s1flare.style.opacity = (Math.sin(P(t, .15, 1.2) * Math.PI) * .9 + ln * .3).toFixed(3);
+  s1L.forEach((c, i) => {
+    const inn = E.outExpo(P(t, .45 + i * .045, 1.25 + i * .045)), out = E.inCubic(P(t, 1.45 + i * .03, 1.8 + i * .03));
+    T(c, { y: 214 * (1 - inn) - 240 * out, r: (1 - inn) * 8 });
+  });
+  const bi = E.outExpo(P(t, .75, 1.4)), bo = E.inCubic(P(t, 1.5, 1.8));
+  T(s1b, { y: -50 * (1 - bi) + 50 * bo }); s1b.style.letterSpacing = lerp(.9, .55, bi) + 'em';
+}
+
+// S2 — kinetic brand promise: "Clarity for your journey to Malaysia."
+const s2 = scene(2.0, 4.06, '#020812');
+const s2ghost = S(el('div', 'abs P', s2), { left: '0', top: '200px', font: '800 640px/1 Poppins', whiteSpace: 'nowrap', color: 'transparent', WebkitTextStroke: '2px rgba(46,109,194,.22)' });
+const s2bars = [0, 1].map(i => S(el('div', 'abs', s2), { left: '0', top: (i ? 812 : 262) + 'px', width: '1920px', height: '3px', background: '#D4A017', transformOrigin: i ? 'right center' : 'left center' }));
+const s2star = el('div', 'abs', s2); S(s2star, { left: '660px', top: '240px', width: '600px', height: '600px' });
+s2star.innerHTML = `<svg viewBox="0 0 600 600" width="600" height="600"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBE29A"/><stop offset=".5" stop-color="#D4A017"/><stop offset="1" stop-color="#A97C0A"/></linearGradient></defs><path d="${star14(300, 300, 290, 135)}" fill="url(#sg)"/></svg>`;
+const WORDS = [
+  { t: 2.0, txt: 'CLARITY', bg: '#020812', size: 300 },
+  { t: 2.5, txt: 'FOR YOUR', bg: '#071D3A', size: 250 },
+  { t: 3.0, txt: 'JOURNEY', bg: '#D4A017', size: 300 },
+  { t: 3.25, txt: 'TO', bg: '#F7F7F9', size: 460 },
+  { t: 3.5, txt: 'MALAYSIA', bg: '#071D3A', size: 236 },
+];
+WORDS.forEach((w, i) => {
+  w.e = S(el('div', 'abs P center', s2), { top: (540 - w.size * .56) + 'px', font: `800 ${w.size}px/${w.size * 1.12}px Poppins`, whiteSpace: 'nowrap' });
+  if (i === 2) w.L = letters(w.e, w.txt); else w.e.textContent = w.txt;
+  w.end = i < WORDS.length - 1 ? WORDS[i + 1].t : 4.06;
+});
+S(WORDS[0].e, { color: '#F7F7F9' });
+S(WORDS[1].e, { color: 'transparent', WebkitTextStroke: '4px #D4A017' });
+S(WORDS[2].e, { color: '#071D3A' });
+S(WORDS[3].e, { color: '#124E9E' });
+S(WORDS[4].e, { color: '#F7F7F9', letterSpacing: '.08em' });
+function R2(t) {
+  const cur = WORDS.findLast(w => t >= w.t) || WORDS[0];
+  s2.style.background = cur.bg;
+  const dark = cur.bg !== '#D4A017' && cur.bg !== '#F7F7F9';
+  s2ghost.textContent = cur.txt; s2ghost.style.WebkitTextStroke = dark ? '2px rgba(46,109,194,.25)' : '2px rgba(7,29,58,.12)';
+  T(s2ghost, { x: 300 - (t - 2) * 420 });
+  s2bars.forEach((b, i) => { const k = (t - cur.t) / (cur.end - cur.t); T(b, { sx: E.outExpo(clamp(k * 1.6)) * (1 - E.inExpo(clamp(k * 1.2 - .2))), sy: 1 }); b.style.background = cur.bg === '#D4A017' ? '#071D3A' : '#D4A017'; });
+  WORDS.forEach((w, i) => {
+    const on = t >= w.t && t < w.end; vis(w.e, on); if (!on) return;
+    const dt = t - w.t;
+    if (i === 0) { const k = E.outExpo(P(dt, 0, .2)); T(w.e, { s: lerp(1.7, 1, k) - dt * .12 }); const ca = 22 * (1 - E.outCubic(P(dt, 0, .4))); w.e.style.textShadow = `${-ca}px 0 rgba(255,40,90,.7), ${ca}px 0 rgba(40,200,255,.7)`; }
+    if (i === 1) { const k = E.outExpo(P(dt, 0, .25)); T(w.e, { x: lerp(520, 0, k) - dt * 90, s: 1 }); }
+    if (i === 2) w.L.forEach((c, j) => { const k = E.outExpo(P(dt, j * .018, .2 + j * .018)); T(c, { y: (1 - k) * 260, r: (1 - k) * -12 }); });
+    if (i === 3) { const k = E.outBack(P(dt, 0, .16), 2); T(w.e, { rx: (1 - k) * 90, s: 1 + dt * .5 }); }
+    if (i === 4) { const k = E.outExpo(P(dt, 0, .35)), z = E.inExpo(P(t, 3.72, 3.9)); w.e.style.letterSpacing = lerp(.55, .08, k) + 'em'; T(w.e, { s: 1 + z * 1.5, o: 1 - z }); }
+  });
+  const sIn = E.outBack(P(t, 3.5, 3.72), 1.6), zoom = E.inExpo(P(t, 3.7, 4.0));
+  vis(s2star, t >= 3.5);
+  T(s2star, { s: sIn * .82 + zoom * 34, r: (t - 3.5) * 220 + zoom * 120, o: 1 });
+  s2star.style.zIndex = 0; WORDS[4].e.style.zIndex = 2;
+}
+
+// S3 — identity: the logo assembles
+const s3 = scene(3.98, 6.9, 'radial-gradient(ellipse 60% 70% at 40% 50%, #ffffff 0%, #F7F7F9 50%, #E6E8EB 100%)');
+const s3grid = S(el('div', 'abs', s3), { inset: '0', backgroundImage: 'radial-gradient(rgba(18,78,158,.16) 1.6px, transparent 1.8px)', backgroundSize: '36px 36px' });
+const s3bez = el('div', 'abs', s3); S(s3bez, { left: '0', top: '0', width: '1920px', height: '1080px' });
+function bezelSVG(id, cx, cy, col, col2) {
+  let ticks = ''; for (let i = 0; i < 120; i++) { const a = i * 3 * Math.PI / 180, l = i % 10 === 0 ? 34 : i % 5 === 0 ? 20 : 10, r = 470; ticks += `<line x1="${cx + r * Math.cos(a)}" y1="${cy + r * Math.sin(a)}" x2="${cx + (r - l) * Math.cos(a)}" y2="${cy + (r - l) * Math.sin(a)}"/>`; }
+  return `<svg width="1920" height="1080"><g id="${id}-t" stroke="${col}" stroke-width="2">${ticks}</g>
+  <circle id="${id}-c1" cx="${cx}" cy="${cy}" r="500" fill="none" stroke="${col}" stroke-width="2" pathLength="1" stroke-dasharray="1 1"/>
+  <circle id="${id}-c2" cx="${cx}" cy="${cy}" r="410" fill="none" stroke="${col2}" stroke-width="3" stroke-dasharray="4 14"/>
+  <circle id="${id}-c3" cx="${cx}" cy="${cy}" r="560" fill="none" stroke="${col2}" stroke-width="1.5" pathLength="1" stroke-dasharray=".18 .07"/></svg>`;
+}
+s3bez.innerHTML = bezelSVG('bz3', 960, 540, 'rgba(18,78,158,.28)', 'rgba(212,160,23,.55)');
+const s3logoBox = S(el('div', 'abs', s3), { left: '610px', top: '190px', width: '700px', height: '700px' });
+s3logoBox.innerHTML = logoSVG('lg3'); const L3 = logoParts('lg3');
+const s3shock = S(el('div', 'abs', s3), { left: '1050px', top: '280px', width: '20px', height: '20px', borderRadius: '50%', border: '6px solid #D4A017', opacity: 0 });
+const s3wm = S(el('div', 'abs', s3), { left: '900px', top: '330px', width: '980px' });
+const s3m1 = S(el('div', 'mask', s3wm), { height: '150px' });
+const s3a = S(el('div', 'P', s3m1), { font: '800 148px/150px Poppins', color: '#071D3A', letterSpacing: '.02em' }); const s3aL = letters(s3a, 'MALAYSIA');
+const s3m2 = S(el('div', 'mask', s3wm), { height: '118px', marginTop: '-4px' });
+const s3b = S(el('div', 'P', s3m2), { font: '700 106px/118px Poppins', color: '#8A6508', letterSpacing: '.13em' }); const s3bL = letters(s3b, 'VISA GUIDE');
+const s3rule = S(el('div', '', s3wm), { marginTop: '14px', width: '880px', height: '5px', background: 'linear-gradient(90deg,#D4A017,#F3CF63 60%,#D4A017)', transformOrigin: 'left center' });
+const s3tag = S(el('div', '', s3wm), { marginTop: '20px', font: '500 36px/1.2 Inter', color: '#071D3A', letterSpacing: '.01em' }); const s3tagL = letters(s3tag, 'Your Guide. Your Future. Malaysia.');
+function R3(t) {
+  const u = t - 4.0;
+  setLogo(L3, u);
+  const mv = E.inOutQuart(P(t, 5.45, 6.05));
+  T(s3logoBox, { x: mv * -560, y: mv * 10, s: lerp(1, .78, mv) });
+  const bz = E.outExpo(P(t, 4.0, 5.0));
+  document.getElementById('bz3-c1').style.strokeDashoffset = (1 - bz);
+  document.getElementById('bz3-c1').setAttribute('stroke-dasharray', `${bz} 1`);
+  document.getElementById('bz3-t').setAttribute('transform', `rotate(${(t - 4) * 14 + (1 - bz) * -60} 960 540)`);
+  document.getElementById('bz3-t').style.opacity = bz;
+  document.getElementById('bz3-c2').setAttribute('transform', `rotate(${(t - 4) * -22} 960 540)`);
+  document.getElementById('bz3-c3').setAttribute('transform', `rotate(${(t - 4) * 9} 960 540)`);
+  T(s3bez, { x: mv * -560, s: lerp(1.15, 1, bz) - mv * .1, o: 1 });
+  T(s3grid, { x: -(t - 4) * 30, o: .8 });
+  const sk = P(t, 5.45, 6.0), sr = 10 + E.outCubic(sk) * 520; S(s3shock, { left: (1050 - sr) + 'px', top: (630 - sr) + 'px', width: sr * 2 + 'px', height: sr * 2 + 'px', borderWidth: lerp(8, 1, sk) + 'px', opacity: sk > 0 && sk < 1 ? (1 - sk) : 0 });
+  s3aL.forEach((c, i) => { const k = E.outExpo(P(t, 5.75 + i * .035, 6.35 + i * .035)); T(c, { y: (1 - k) * 160 }); });
+  s3bL.forEach((c, i) => { const k = E.outExpo(P(t, 5.9 + i * .03, 6.5 + i * .03)); T(c, { y: (1 - k) * 130 }); });
+  T(s3rule, { sx: E.outExpo(P(t, 6.05, 6.6)), sy: 1 });
+  s3tagL.forEach((c, i) => { const k = E.outCubic(P(t, 6.15 + i * .012, 6.4 + i * .012)); T(c, { y: (1 - k) * 18, o: k }); });
+}
+
+// S4 — six programmes
+const PROGS = [
+  { img: 'pvip.webp', name: 'PVIP', line: '20-year residence, full work rights, the premium tier.', chip: 'RM1M fixed deposit' },
+  { img: 'mm2h.webp', name: 'MM2H', line: 'Silver, Gold and Platinum — the deposit-based classic.', chip: 'From US$150K' },
+  { img: 'sarawak-mm2h.webp', name: 'Sarawak MM2H', line: 'The cheapest serious long-stay route, via Sarawak.', chip: '10-year pass' },
+  { img: 'de-rantau.webp', name: 'DE Rantau', line: 'The nomad pass for remote, foreign-paid workers.', chip: 'US$24K / year' },
+  { img: 'employment-pass.webp', name: 'Employment Pass', line: 'For a job with a Malaysian employer.', chip: 'Work' },
+  { img: 'student-pass.webp', name: 'Student Pass', line: 'For enrolment at a Malaysian institution.', chip: 'Study' },
+];
+const s4 = scene(6.85, 10.56, 'radial-gradient(ellipse 80% 70% at 60% 60%, #0f3470 0%, #071D3A 55%, #030c1d 100%)');
+const s4lines = S(el('div', 'abs', s4), { inset: '0', backgroundImage: 'linear-gradient(90deg, rgba(46,109,194,.10) 1px, transparent 1px)', backgroundSize: '120px 100%' });
+const s4head = S(el('div', 'abs', s4), { left: '120px', top: '128px' });
+const s4kick = S(el('div', 'kick', s4head), { color: '#D4A017' }); s4kick.textContent = 'Six programmes covered';
+const s4hm = S(el('div', 'mask', s4head), { marginTop: '18px', height: '92px' });
+const s4h = S(el('div', 'P', s4hm), { font: '700 76px/92px Poppins', color: '#fff', whiteSpace: 'nowrap' });
+s4h.innerHTML = 'Every route. <span class="DS" style="font-style:italic;font-weight:400;color:#D4A017">One guide.</span>';
+const s4cnt = S(el('div', 'abs P', s4), { right: '120px', top: '116px', font: '800 120px/1 Poppins', color: 'transparent', WebkitTextStroke: '2px rgba(212,160,23,.9)', textAlign: 'right' });
+const s4cntS = S(el('div', 'abs', s4), { right: '124px', top: '246px', font: '600 18px/1 Inter', letterSpacing: '.3em', color: 'rgba(230,232,235,.6)' }); s4cntS.textContent = 'OF 06';
+const s4row = S(el('div', 'abs', s4), { left: '0', top: '352px', width: '1920px', height: '640px', perspective: '1600px', perspectiveOrigin: '960px 290px' });
+PROGS.forEach((p, i) => {
+  const c = el('div', 'card', s4row); p.e = c;
+  p.img_ = S(el('div', 'img', c), { backgroundImage: `url(${IMG}${p.img})` });
+  el('div', 'shade', c); el('div', 'num', c, String(i + 1).padStart(2, '0'));
+  el('div', 'name', c, p.name); el('div', 'line', c, p.line); el('div', 'chip', c, p.chip);
+  p.glow = S(el('div', 'abs', c), { inset: '0', borderRadius: '26px', border: '2.5px solid #D4A017', boxShadow: 'inset 0 0 40px rgba(212,160,23,.25)' });
+});
+function R4(t) {
+  const hi = E.outExpo(P(t, 6.95, 7.6));
+  T(s4kick, { x: (1 - hi) * -60, o: hi });
+  T(s4h, { y: (1 - E.outExpo(P(t, 7.05, 7.7))) * 92 });
+  T(s4lines, { x: -(t - 7) * 60 });
+  const pan = E.inOutCubic(P(t, 7.0, 10.3));
+  const off = lerp(260, -1220, pan);
+  let near = 0, best = 1e9;
+  PROGS.forEach((p, i) => {
+    const k = P(t, 7.0 + i * .13, 7.85 + i * .13), e = E.outExpo(k);
+    const baseX = off + i * 490, cx = baseX + 220, rel = (cx - 960) / 960;
+    if (Math.abs(rel) < best && k > .5) { best = Math.abs(rel); near = i; }
+    const fall = E.inBack(P(t, 10.05 + i * .045, 10.45 + i * .045), 1.4);
+    const ry = -rel * 22 + (1 - e) * 70 + fall * 0, rx = fall * -70;
+    T(p.e, { x: baseX + (1 - e) * 500, y: 20 + (1 - e) * 120 + fall * 900, z: (1 - e) * -1400 - Math.abs(rel) * 160, ry, rx, o: Math.min(1, k * 3) });
+    T(p.img_, { s: lerp(1.25, 1.05, e) + Math.sin(t + i) * .01, x: rel * -30 });
+  });
+  PROGS.forEach((p, i) => { const g = i === near ? 1 : 0; p.glow.style.opacity = g * E.outExpo(P(t, 7.6, 8.0)); });
+  const count = Math.min(6, Math.max(1, PROGS.filter((p, i) => t >= 7.35 + i * .13).length));
+  s4cnt.textContent = String(t < 7.3 ? 0 : count).padStart(2, '0');
+  T(s4cnt, { o: hi }); T(s4cntS, { o: hi });
+  const out = E.inCubic(P(t, 10.05, 10.45)); s4head.style.opacity = 1 - out; s4cnt.style.opacity = hi * (1 - out); s4cntS.style.opacity = hi * (1 - out);
+}
+
+// S5 — data: every figure sourced
+const s5 = scene(10.25, 14.16, 'radial-gradient(ellipse 80% 80% at 50% 45%, #0c2b5c 0%, #05152f 60%, #020a18 100%)');
+const s5grid = S(el('div', 'abs', s5), { left: '-200px', top: '-200px', width: '2400px', height: '1500px', backgroundImage: 'linear-gradient(rgba(46,109,194,.13) 1px, transparent 1px),linear-gradient(90deg, rgba(46,109,194,.13) 1px, transparent 1px)', backgroundSize: '60px 60px' });
+// part A — the slot-machine number
+const s5a = el('div', 'abs', s5); S(s5a, { left: '0', top: '0', width: '1920px', height: '1080px' });
+const s5ak = S(el('div', 'abs kick center', s5a), { top: '258px', color: '#D4A017' }); s5ak.textContent = 'PVIP · Fixed deposit';
+const s5num = S(el('div', 'abs P', s5a), { left: '0', top: '330px', width: '1920px', height: '250px', display: 'flex', justifyContent: 'center', font: '800 230px/250px Poppins', color: '#fff' });
+const NUM = 'RM1,000,000'; const s5cols = [];
+const svgDefs = document.createElementNS(svgNS, 'svg'); svgDefs.setAttribute('width', 0); svgDefs.setAttribute('height', 0); svgDefs.style.position = 'absolute'; stage.appendChild(svgDefs);
+[...NUM].forEach((ch, i) => {
+  const box = S(el('div', 'mask', s5num), { height: '250px', position: 'relative' });
+  if (/\d/.test(ch)) {
+    const strip = el('div', '', box); let html = ''; for (let k = 0; k < 30; k++) html += `<div style="height:250px">${k % 10}</div>`; strip.innerHTML = html;
+    S(box, { width: '.64em', textAlign: 'center' });
+    const f = document.createElementNS(svgNS, 'filter'); f.setAttribute('id', 'mb' + i); f.setAttribute('x', '-20%'); f.setAttribute('y', '-50%'); f.setAttribute('width', '140%'); f.setAttribute('height', '200%');
+    const g = document.createElementNS(svgNS, 'feGaussianBlur'); g.setAttribute('stdDeviation', '0 0'); f.appendChild(g); svgDefs.appendChild(f);
+    s5cols.push({ strip, digit: +ch, i, blur: g, box });
+  } else { const s = el('div', '', box); s.textContent = ch; if (ch === ',') S(box, { width: '.3em' }); else S(s, { color: ch === 'R' || ch === 'M' ? '#D4A017' : '#fff' }); s5cols.push({ fixed: s, i, box }); }
+});
+const s5arc = el('div', 'abs', s5a); S(s5arc, { left: '0', top: '0', width: '1920px', height: '1080px' });
+s5arc.innerHTML = `<svg width="1920" height="1080"><path id="arcA" d="M360 640 Q960 760 1560 640" fill="none" stroke="#D4A017" stroke-width="5" stroke-linecap="round" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1"/></svg>`;
+const s5sub = S(el('div', 'abs center', s5a), { top: '720px', font: '500 40px/1.3 Inter', color: 'rgba(230,232,235,.9)' });
+s5sub.innerHTML = '<b class="P" style="color:#fff;font-weight:700">20-year</b> residence &nbsp;·&nbsp; <b class="P" style="color:#fff;font-weight:700">full</b> work rights';
+// part B — MM2H tiers
+const s5b = el('div', 'abs', s5); S(s5b, { left: '0', top: '0', width: '1920px', height: '1080px' });
+const s5bk = S(el('div', 'abs kick', s5b), { left: '160px', top: '120px', color: '#D4A017' }); s5bk.textContent = 'MM2H · Fixed deposit by tier';
+const s5bhm = S(el('div', 'abs mask', s5b), { left: '160px', top: '158px', height: '90px' });
+const s5bh = S(el('div', 'P', s5bhm), { font: '700 70px/90px Poppins', color: '#fff', whiteSpace: 'nowrap' }); s5bh.innerHTML = 'Compared <span class="DS" style="font-style:italic;font-weight:400;color:#D4A017">side by side.</span>';
+const TIERS = [
+  { n: 'Silver', v: 150, lab: 'US$150K', yrs: '5-year pass', col: 'linear-gradient(180deg,#e9edf3,#9aa6b6)' },
+  { n: 'Gold', v: 500, lab: 'US$500K', yrs: '15-year pass', col: 'linear-gradient(180deg,#FBE29A,#D4A017 45%,#9c7208)' },
+  { n: 'Platinum', v: 1000, lab: 'US$1M', yrs: '20-year pass', col: 'linear-gradient(180deg,#ffffff,#cfd6e0 50%,#7d8a9c)' },
+];
+const BASE = 880, MAXH = 470;
+TIERS.forEach((tr, i) => {
+  const x = 220 + i * 330;
+  tr.bar = S(el('div', 'abs', s5b), { left: x + 'px', top: (BASE - MAXH * tr.v / 1000) + 'px', width: '230px', height: (MAXH * tr.v / 1000) + 'px', background: tr.col, borderRadius: '14px 14px 0 0', transformOrigin: 'bottom center', boxShadow: i === 2 ? '0 0 60px rgba(212,160,23,.35)' : 'none' });
+  tr.val = S(el('div', 'abs P', s5b), { left: x - 40 + 'px', width: '310px', textAlign: 'center', top: (BASE - MAXH * tr.v / 1000 - 78) + 'px', font: '700 54px/1 Poppins', color: '#fff' });
+  tr.name = S(el('div', 'abs', s5b), { left: x + 'px', width: '230px', textAlign: 'center', top: BASE + 22 + 'px', font: '600 30px/1 Poppins', color: '#fff' }); tr.name.textContent = tr.n;
+  tr.yr = S(el('div', 'abs', s5b), { left: x + 'px', width: '230px', textAlign: 'center', top: BASE + 66 + 'px', font: '500 18px/1 Inter', letterSpacing: '.2em', textTransform: 'uppercase', color: '#D4A017' }); tr.yr.textContent = tr.yrs;
+});
+const s5base = S(el('div', 'abs', s5b), { left: '180px', top: BASE + 'px', width: '1030px', height: '3px', background: 'rgba(230,232,235,.5)', transformOrigin: 'left center' });
+const s5side = S(el('div', 'abs', s5b), { left: '1330px', top: '400px', width: '470px' });
+const s5sideT = S(el('div', '', s5side), { font: '500 34px/1.35 Inter', color: 'rgba(247,247,249,.92)' }); s5sideT.innerHTML = 'Every figure carries its <b style="color:#D4A017">source</b> and its <b style="color:#D4A017">standing</b>.';
+const s5stamp = S(el('div', 'abs P', s5b), { left: '1330px', top: '610px', padding: '20px 34px', border: '5px solid #D4A017', borderRadius: '16px', font: '800 46px/1 Poppins', letterSpacing: '.14em', color: '#D4A017', transformOrigin: 'center' }); s5stamp.innerHTML = 'SOURCED<span style="opacity:.5"> · </span>DATED';
+const s5stamp2 = S(el('div', 'abs', s5b), { left: '1336px', top: '750px', font: '500 18px/1.4 Inter', letterSpacing: '.18em', textTransform: 'uppercase', color: 'rgba(230,232,235,.65)' }); s5stamp2.textContent = 'Official sources · named & dated';
+function R5(t) {
+  T(s5grid, { x: -(t - 10) * 40, y: -(t - 10) * 20 });
+  const aIn = t < 12.0; vis(s5a, t < 12.35); vis(s5b, t >= 11.95);
+  const ao = E.inCubic(P(t, 11.95, 12.3));
+  T(s5ak, { y: (1 - E.outExpo(P(t, 10.4, 10.9))) * 30 - ao * 200, o: E.outExpo(P(t, 10.4, 10.9)) * (1 - ao) });
+  s5cols.forEach((c, j) => {
+    const st = 10.35 + j * .035, en = st + .75 + j * .06, k = P(t, st, en), e = E.outExpo(k);
+    const appear = E.outExpo(P(t, st - .05, st + .3));
+    const up = ao * (260 + j * 18);
+    if (c.strip) {
+      const idx = e * (20 + c.digit), y = -idx * 250;
+      const vel = k > 0 && k < 1 ? (Math.pow(2, -10 * k) * 10 * Math.LN2 * (20 + c.digit) / (en - st)) : 0;
+      c.blur.setAttribute('stdDeviation', `0 ${Math.min(40, vel * .9).toFixed(2)}`);
+      c.strip.style.filter = vel > .5 ? `url(#mb${c.i})` : 'none';
+      T(c.strip, { y });
+    } else T(c.fixed, { y: (1 - appear) * 250 });
+    T(c.box, { y: -up, o: (k > 0 || c.fixed ? appear : 0) * (1 - ao) });
+  });
+  const arc = E.inOutCubic(P(t, 11.0, 11.6)); const ap = document.getElementById('arcA'); ap.style.strokeDashoffset = 1 - arc; ap.style.opacity = 1 - ao;
+  const si = E.outExpo(P(t, 11.2, 11.7)); T(s5sub, { y: (1 - si) * 40 - ao * 300, o: si * (1 - ao) });
+  // part B
+  const bi = E.outExpo(P(t, 12.05, 12.6));
+  T(s5bk, { x: (1 - bi) * -60, o: bi }); T(s5bh, { y: (1 - E.outExpo(P(t, 12.1, 12.7))) * 90 });
+  T(s5base, { sx: E.outExpo(P(t, 12.05, 12.7)), sy: 1 });
+  TIERS.forEach((tr, i) => {
+    const k = P(t, 12.25 + i * .16, 13.05 + i * .16), e = E.outExpo(k);
+    T(tr.bar, { sy: e, sx: 1 });
+    const v = Math.round(tr.v * e);
+    tr.val.textContent = k <= 0 ? '' : (v >= 1000 ? 'US$1M' : 'US$' + v + 'K');
+    T(tr.val, { y: MAXH * tr.v / 1000 * (1 - e), o: Math.min(1, k * 4) });
+    const ni = E.outExpo(P(t, 12.4 + i * .16, 12.9 + i * .16)); T(tr.name, { y: (1 - ni) * 30, o: ni }); T(tr.yr, { y: (1 - ni) * 30, o: ni });
+  });
+  const sdi = E.outExpo(P(t, 12.6, 13.1)); T(s5side, { x: (1 - sdi) * 60, o: sdi });
+  const sp = P(t, 13.1, 13.32); T(s5stamp, { s: lerp(2.6, 1, E.outQuart(sp)), r: lerp(-14, -4, E.outQuart(sp)), o: sp > 0 ? Math.min(1, sp * 3) : 0 });
+  T(s5stamp2, { o: E.outCubic(P(t, 13.3, 13.6)) });
+}
+
+// S6 — tools
+const s6 = scene(13.7, 17.52, 'radial-gradient(ellipse 70% 80% at 70% 50%, #ffffff 0%, #F7F7F9 55%, #E6E8EB 100%)');
+const s6grid = S(el('div', 'abs', s6), { inset: '0', backgroundImage: 'radial-gradient(rgba(18,78,158,.14) 1.6px, transparent 1.8px)', backgroundSize: '36px 36px' });
+const s6txt = S(el('div', 'abs', s6), { left: '120px', top: '300px', width: '660px' });
+const s6k = S(el('div', 'kick', s6txt), { color: '#124E9E' }); s6k.textContent = 'Interactive tools';
+const s6h1m = S(el('div', 'mask', s6txt), { marginTop: '22px', height: '104px' }); const s6h1 = S(el('div', 'P', s6h1m), { font: '700 86px/104px Poppins', color: '#071D3A', whiteSpace: 'nowrap' }); s6h1.textContent = 'Six questions.';
+const s6h2m = S(el('div', 'mask', s6txt), { height: '112px' }); const s6h2 = S(el('div', 'DS', s6h2m), { font: 'italic 400 100px/112px "DM Serif Display"', color: '#124E9E' }); s6h2.textContent = 'No sign-up.';
+const s6p = S(el('div', '', s6txt), { marginTop: '26px', font: '400 28px/1.5 Inter', color: '#55606e' }); s6p.textContent = 'Eligibility and cost, run on the same verified figures as the guides.';
+const s6persp = S(el('div', 'abs', s6), { left: '0', top: '0', width: '1920px', height: '1080px', perspective: '2200px', perspectiveOrigin: '1300px 540px' });
+const win = S(el('div', 'win', s6persp), { left: '820px', top: '190px' });
+win.innerHTML = `<div class="bar"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#febc2e"></div><div class="dot" style="background:#28c840"></div>
+<div class="url"><svg width="14" height="16" viewBox="0 0 14 16" style="margin-right:10px"><rect x="1" y="7" width="12" height="9" rx="2" fill="#55606e"/><path d="M4 7V5a3 3 0 016 0v2" stroke="#55606e" stroke-width="2" fill="none"/></svg>malaysiavisaguide.com<span style="color:#9aa4b1">/tools/eligibility/</span></div></div>`;
+const wb = S(el('div', 'abs', win), { left: '60px', top: '96px', width: '880px', height: '520px' });
+const wk = S(el('div', 'abs', wb), { left: '0', top: '0', width: '880px', display: 'flex', justifyContent: 'space-between', font: '600 18px/1 Inter', letterSpacing: '.22em', textTransform: 'uppercase', color: '#124E9E' });
+wk.innerHTML = '<span>Eligibility check</span><span id="qn" style="color:#55606e">Question 5 of 6</span>';
+const wtrack = S(el('div', 'abs', wb), { left: '0', top: '36px', width: '880px', height: '8px', borderRadius: '8px', background: '#E6E8EB' });
+const wfill = S(el('div', 'abs', wtrack), { left: '0', top: '0', height: '8px', width: '880px', borderRadius: '8px', background: 'linear-gradient(90deg,#124E9E,#2e6dc2)', transformOrigin: 'left center' });
+const QS = [
+  { q: 'How will you support yourself here?', o: ['Income from abroad', 'A Malaysian employer', 'Investments & savings'], pick: 2 },
+  { q: 'How much could you place on deposit?', o: ['Under US$150K', 'US$150K – US$500K', 'US$500K and above'], pick: 2 },
+];
+QS.forEach(q => {
+  q.e = S(el('div', 'abs', wb), { left: '0', top: '78px', width: '880px' });
+  S(el('div', 'P', q.e, q.q), { font: '600 40px/1.2 Poppins', color: '#071D3A', marginBottom: '14px' });
+  q.opts = q.o.map(o => { const r = el('div', 'opt', q.e); const f = el('div', 'fill', r); const rad = el('div', 'rad', r); const s = el('span', '', r, o); return { r, f, rad, s }; });
+});
+const wres = S(el('div', 'abs', wb), { left: '0', top: '78px', width: '880px' });
+S(el('div', 'P', wres, 'Programmes worth reading first'), { font: '600 40px/1.2 Poppins', color: '#071D3A' });
+S(el('div', '', wres, 'Based on your six answers — every figure links to its source.'), { font: '400 22px/1.4 Inter', color: '#55606e', margin: '12px 0 30px' });
+const wchips = ['PVIP', 'MM2H Gold', 'MM2H Platinum'].map((c, i) => { const e = el('span', 'chipL', wres, c); if (i === 0) S(e, { background: '#D4A017', color: '#071D3A' }); return e; });
+const wbtn = S(el('div', '', wres, 'Read the guides →'), { marginTop: '40px', display: 'inline-block', padding: '20px 34px', borderRadius: '14px', background: '#124E9E', color: '#fff', font: '600 24px Poppins' });
+const calc = S(el('div', 'calc', s6persp), { left: '700px', top: '640px' });
+calc.innerHTML = `<div style="position:absolute;left:36px;top:32px;font:600 16px/1 Inter;letter-spacing:.24em;color:#D4A017">COST CALCULATOR</div>
+<div style="position:absolute;left:36px;top:62px;font:600 28px/1.2 Poppins">PVIP · dependants, 20-year term</div>`;
+const ctrack = S(el('div', 'abs', calc), { left: '36px', top: '150px', width: '528px', height: '8px', borderRadius: '8px', background: 'rgba(255,255,255,.18)' });
+const cfill = S(el('div', 'abs', ctrack), { left: '0', top: '0', width: '528px', height: '8px', borderRadius: '8px', background: '#D4A017', transformOrigin: 'left center' });
+const cticks = [0, 1, 2, 3, 4].map(i => S(el('div', 'abs', calc, String(i)), { left: 36 + i * 132 - 10 + 'px', width: '20px', textAlign: 'center', top: '176px', font: '500 16px Inter', color: 'rgba(255,255,255,.55)' }));
+const chandle = S(el('div', 'abs', calc), { left: '20px', top: '138px', width: '32px', height: '32px', borderRadius: '50%', background: '#fff', boxShadow: '0 0 0 6px rgba(212,160,23,.45)' });
+const clab = S(el('div', 'abs', calc), { left: '36px', top: '222px', font: '500 18px Inter', color: 'rgba(230,232,235,.75)' }); clab.textContent = 'Dependant fees · RM100,000 each';
+const cval = S(el('div', 'abs P', calc), { left: '36px', top: '254px', font: '800 52px/1 Poppins', color: '#fff' });
+const cursor = el('div', 'abs', s6); cursor.innerHTML = `<svg width="44" height="44" viewBox="0 0 24 24"><path d="M4 2l15 11-6.5 1.2L16 21l-3 1.4-3.6-6.8L4 20z" fill="#071D3A" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+const ripple = S(el('div', 'abs', s6), { width: '20px', height: '20px', marginLeft: '-10px', marginTop: '-10px', borderRadius: '50%', border: '3px solid #2e6dc2' });
+function centerOf(e) { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }
+function R6(t) {
+  const ti = E.outExpo(P(t, 14.0, 14.6));
+  T(s6k, { x: (1 - ti) * -40, o: ti });
+  T(s6h1, { y: (1 - E.outExpo(P(t, 14.05, 14.65))) * 104 }); T(s6h2, { y: (1 - E.outExpo(P(t, 14.15, 14.75))) * 112 });
+  T(s6p, { y: (1 - E.outExpo(P(t, 14.3, 14.9))) * 20, o: E.outCubic(P(t, 14.3, 14.9)) });
+  T(s6grid, { x: (t - 14) * 20 });
+  const wi = E.outExpo(P(t, 13.95, 14.75));
+  const fl = Math.sin(t * 1.6) * 6;
+  T(win, { x: (1 - wi) * 700, y: (1 - wi) * 200 + fl, ry: -16 + (1 - wi) * -30 + (t - 14) * 1.2, rx: 6, r: (1 - wi) * 6 });
+  const ci = E.outExpo(P(t, 15.55, 16.15));
+  T(calc, { x: (1 - ci) * -400, y: (1 - ci) * 300 - fl * .6, ry: -10 + (t - 14) * 1.0, rx: 8, z: 120, o: Math.min(1, ci * 2) });
+  // quiz state
+  const c1 = 15.05, c2 = 15.72, sw1 = 15.3, done = 16.0;
+  const sl1 = E.inOutExpo(P(t, sw1, sw1 + .4)), sl2 = E.inOutExpo(P(t, c2 + .22, c2 + .62));
+  T(QS[0].e, { x: -sl1 * 960 }); T(QS[1].e, { x: (1 - sl1) * 960 - sl2 * 960 }); T(wres, { x: (1 - sl2) * 960 });
+  document.getElementById('qn').textContent = t < sw1 + .2 ? 'Question 5 of 6' : t < c2 + .42 ? 'Question 6 of 6' : 'Complete';
+  const prog = t < c1 ? 4 / 6 : t < c2 ? lerp(4 / 6, 5 / 6, E.outExpo(P(t, c1, c1 + .5))) : lerp(5 / 6, 1, E.outExpo(P(t, c2, c2 + .5)));
+  T(wfill, { sx: prog, sy: 1 });
+  [[QS[0], c1], [QS[1], c2]].forEach(([q, c]) => q.opts.forEach((o, i) => {
+    const sel = i === q.pick ? E.outExpo(P(t, c, c + .35)) : 0;
+    T(o.f, { sx: sel, sy: 1 }); o.s.style.color = sel > .5 ? '#fff' : '#0f1823'; o.rad.style.borderColor = sel > .5 ? '#fff' : '#9aa4b1'; o.rad.style.background = sel > .5 ? 'radial-gradient(#fff 35%, transparent 40%)' : 'none';
+  }));
+  wchips.forEach((c, i) => { const k = E.outBack(P(t, c2 + .55 + i * .09, c2 + .95 + i * .09), 2); T(c, { s: k, o: k > 0 ? 1 : 0 }); c.style.display = 'inline-block'; });
+  T(wbtn, { y: (1 - E.outExpo(P(t, c2 + .8, c2 + 1.2))) * 30, o: E.outCubic(P(t, c2 + .8, c2 + 1.2)) });
+  // slider
+  const sv = 3 * E.inOutCubic(P(t, 16.35, 17.0)), hx = 36 + sv * 132 - 16;
+  S(chandle, { left: hx + 'px' }); T(cfill, { sx: sv / 4, sy: 1 });
+  const n = Math.round(sv); cval.textContent = 'RM' + fmt(n * 100000);
+  cticks.forEach((c, i) => c.style.color = i <= n && t > 16.35 ? '#D4A017' : 'rgba(255,255,255,.55)');
+  // cursor path, aimed at live element positions
+  const tgt1 = centerOf(QS[0].opts[2].r), tgt2 = centerOf(QS[1].opts[2].r), tgt3 = centerOf(chandle);
+  const keys = [[14.4, [1700, 1000]], [14.95, tgt1], [15.1, tgt1], [15.6, tgt2], [15.78, tgt2], [16.25, tgt3], [16.35, tgt3]];
+  let cx = keys[0][1][0], cy = keys[0][1][1];
+  for (let i = 0; i < keys.length - 1; i++) { const [ta, pa] = keys[i], [tb, pb] = keys[i + 1]; if (t >= ta) { const k = E.inOutCubic(P(t, ta, tb)); cx = lerp(pa[0], pb[0], k); cy = lerp(pa[1], pb[1], k); } }
+  if (t >= 16.35) { cx = tgt3[0]; cy = tgt3[1]; }
+  const press = [c1, c2, 16.33].some(c => t > c - .06 && t < c + .08);
+  T(cursor, { x: cx - 8, y: cy - 6, s: press ? .86 : 1, o: E.outCubic(P(t, 14.4, 14.6)) });
+  const rp = [c1, c2].map(c => P(t, c, c + .45)).find(k => k > 0 && k < 1);
+  if (rp !== undefined) { const lc = t < c2 ? tgt1 : tgt2; S(ripple, { left: lc[0] + 'px', top: lc[1] + 'px', display: 'block' }); T(ripple, { s: E.outCubic(rp) * 9, o: 1 - rp }); } else ripple.style.display = 'none';
+}
+
+// S7 — reach: the globe
+const s7 = scene(17.42, 21.06, 'radial-gradient(ellipse 60% 70% at 66% 52%, #0e3168 0%, #061633 50%, #020812 100%)');
+const gc = el('canvas', '', s7); gc.width = 1920; gc.height = 1080; const g = gc.getContext('2d');
+const s7txt = S(el('div', 'abs', s7), { left: '120px', top: '330px', width: '700px' });
+const s7k = S(el('div', 'kick', s7txt), { color: '#D4A017' }); s7k.textContent = 'Built for a global audience';
+const s7l1m = S(el('div', 'mask', s7txt), { marginTop: '22px', height: '100px' }); const s7l1 = S(el('div', 'P', s7l1m), { font: '700 86px/100px Poppins', color: '#fff', whiteSpace: 'nowrap' });
+s7l1.innerHTML = 'From <span id="city" style="color:#D4A017"></span>';
+const s7l2m = S(el('div', 'mask', s7txt), { height: '110px' }); const s7l2 = S(el('div', 'DS', s7l2m), { font: 'italic 400 92px/110px "DM Serif Display"', color: '#F7F7F9', whiteSpace: 'nowrap' }); s7l2.textContent = 'to Kuala Lumpur.';
+const s7lang = S(el('div', '', s7txt), { marginTop: '40px', display: 'flex', gap: '14px' });
+const langs = ['English', '简体中文', '繁體中文'].map(l => S(el('div', '', s7lang, l), { padding: '12px 22px', border: '1.5px solid rgba(212,160,23,.7)', borderRadius: '99px', font: '500 24px/1 Inter, "WenQuanYi Zen Hei"', color: '#F7F7F9' }));
+const CITIES = [['Dubai', 25.2, 55.27], ['London', 51.5, -0.13], ['Hong Kong', 22.3, 114.17], ['Mumbai', 19.07, 72.88], ['Singapore', 1.35, 103.82], ['New York', 40.7, -74], ['Toronto', 43.65, -79.38], ['Tokyo', 35.68, 139.69], ['Seoul', 37.57, 126.98], ['Taipei', 25.03, 121.56], ['Sydney', -33.87, 151.2]];
+const KL = [3.14, 101.69];
+const toV = (lat, lon) => { const a = lat * Math.PI / 180, b = lon * Math.PI / 180; return [Math.cos(a) * Math.sin(b), Math.sin(a), Math.cos(a) * Math.cos(b)]; };
+const SPH = []; { const N = 2200, gr = Math.PI * (3 - Math.sqrt(5)); for (let i = 0; i < N; i++) { const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(1 - y * y), th = gr * i; SPH.push([Math.cos(th) * r, y, Math.sin(th) * r]); } }
+function slerp(a, b, s) { const d = Math.acos(clamp(a[0] * b[0] + a[1] * b[1] + a[2] * b[2], -1, 1)); if (d < 1e-5) return a; const sa = Math.sin((1 - s) * d) / Math.sin(d), sb = Math.sin(s * d) / Math.sin(d); return [a[0] * sa + b[0] * sb, a[1] * sa + b[1] * sb, a[2] * sa + b[2] * sb]; }
+function R7(t) {
+  const zoom = E.inExpo(P(t, 20.55, 21.0));
+  const lon0 = lerp(30, KL[1] - 18, E.inOutCubic(P(t, 17.4, 20.4))), lat0 = lerp(22, 10, E.inOutCubic(P(t, 17.4, 20.4)));
+  const R = 400 * (E.outExpo(P(t, 17.4, 18.2)) * .25 + .75), GX = 1290, GY = 560;
+  const cb = Math.cos(-lon0 * Math.PI / 180), sb = Math.sin(-lon0 * Math.PI / 180), ca = Math.cos(lat0 * Math.PI / 180), sa = Math.sin(lat0 * Math.PI / 180);
+  const rot = v => { const x = v[0] * cb + v[2] * sb, z = -v[0] * sb + v[2] * cb; const y = v[1] * ca - z * sa, z2 = v[1] * sa + z * ca; return [x, y, z2]; };
+  // camera zoom into KL at the end
+  const klS = rot(toV(...KL));
+  const zs = 1 + zoom * 9, zx = GX + klS[0] * R, zy = GY - klS[1] * R;
+  const pr = v => { const p = rot(v); return [GX + p[0] * R, GY - p[1] * R, p[2]]; };
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
+  g.setTransform(zs, 0, 0, zs, zx - zx * zs + (960 - zx) * zoom, zy - zy * zs + (540 - zy) * zoom);
+  // halo
+  const hg = g.createRadialGradient(GX, GY, R * .8, GX, GY, R * 1.35); hg.addColorStop(0, 'rgba(46,109,194,.35)'); hg.addColorStop(1, 'rgba(46,109,194,0)'); g.fillStyle = hg; g.beginPath(); g.arc(GX, GY, R * 1.35, 0, 7); g.fill();
+  const bg = g.createRadialGradient(GX - R * .35, GY - R * .4, R * .1, GX, GY, R); bg.addColorStop(0, '#173f80'); bg.addColorStop(1, '#071D3A'); g.fillStyle = bg; g.beginPath(); g.arc(GX, GY, R, 0, 7); g.fill();
+  // graticule
+  g.lineWidth = 1;
+  for (let la = -60; la <= 60; la += 30) { g.beginPath(); let pen = false; for (let lo = -180; lo <= 180; lo += 4) { const p = pr(toV(la, lo)); if (p[2] > 0) { pen ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); pen = true; } else pen = false; } g.strokeStyle = 'rgba(120,160,230,.18)'; g.stroke(); }
+  for (let lo = -180; lo < 180; lo += 30) { g.beginPath(); let pen = false; for (let la = -90; la <= 90; la += 4) { const p = pr(toV(la, lo)); if (p[2] > 0) { pen ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); pen = true; } else pen = false; } g.strokeStyle = 'rgba(120,160,230,.18)'; g.stroke(); }
+  // dot sphere
+  for (const v of SPH) { const p = pr(v); if (p[2] <= 0) continue; g.fillStyle = `rgba(170,200,255,${(.12 + p[2] * .45).toFixed(3)})`; g.fillRect(p[0] - 1.2, p[1] - 1.2, 2.4, 2.4); }
+  // rim
+  g.strokeStyle = 'rgba(140,180,255,.5)'; g.lineWidth = 2; g.beginPath(); g.arc(GX, GY, R, 0, 7); g.stroke();
+  // arcs
+  const klv = toV(...KL), klp = pr(klv);
+  let landed = 0, cityIdx = -1;
+  CITIES.forEach((c, i) => {
+    const st = 17.75 + i * .16, k = P(t, st, st + .75), e = E.inOutCubic(k);
+    if (t >= st) cityIdx = i;
+    const cv = toV(c[1], c[2]), cp = pr(cv);
+    if (cp[2] > 0) { g.fillStyle = 'rgba(247,247,249,.9)'; g.beginPath(); g.arc(cp[0], cp[1], 3.5, 0, 7); g.fill(); if (k > 0 && zoom < .3) { g.font = '600 14px Inter'; g.fillStyle = `rgba(247,247,249,${(.75 * Math.min(1, k * 4)).toFixed(2)})`; g.fillText(c[0].toUpperCase(), cp[0] + 9, cp[1] - 8); } }
+    if (k <= 0) return;
+    const d = Math.acos(clamp(cv[0] * klv[0] + cv[1] * klv[1] + cv[2] * klv[2], -1, 1));
+    const n = 60, s0 = Math.max(0, e - .45);
+    g.beginPath(); let pen = false, head = null;
+    for (let j = 0; j <= n; j++) {
+      const s = s0 + (e - s0) * j / n, v = slerp(cv, klv, s), alt = 1 + Math.sin(Math.PI * s) * d * .22, p = rot([v[0] * alt, v[1] * alt, v[2] * alt]);
+      const X = GX + p[0] * R, Y = GY - p[1] * R, hidden = p[2] < 0 && Math.hypot(p[0], p[1]) < 1;
+      if (!hidden) { pen ? g.lineTo(X, Y) : g.moveTo(X, Y); pen = true; head = [X, Y]; } else pen = false;
+    }
+    const fade = 1 - P(t, st + .75, st + 1.3) * .6;
+    g.strokeStyle = `rgba(212,160,23,${(.95 * fade).toFixed(3)})`; g.lineWidth = 3; g.shadowColor = 'rgba(251,226,154,.9)'; g.shadowBlur = 14; g.stroke(); g.shadowBlur = 0;
+    if (head && k < 1) { g.fillStyle = '#FBE29A'; g.shadowColor = '#FBE29A'; g.shadowBlur = 24; g.beginPath(); g.arc(head[0], head[1], 5, 0, 7); g.fill(); g.shadowBlur = 0; }
+    if (k >= 1) { landed++; const pk = P(t, st + .75, st + 1.35); if (pk < 1) { g.strokeStyle = `rgba(251,226,154,${(1 - pk).toFixed(3)})`; g.lineWidth = 2.5; g.beginPath(); g.arc(klp[0], klp[1], 6 + pk * 60, 0, 7); g.stroke(); } }
+  });
+  // KL beacon
+  const pulse = (Math.sin(t * 8) + 1) / 2;
+  g.fillStyle = '#D4A017'; g.shadowColor = '#FBE29A'; g.shadowBlur = 30 + pulse * 20; g.beginPath(); g.arc(klp[0], klp[1], 9, 0, 7); g.fill(); g.shadowBlur = 0;
+  g.fillStyle = '#fff'; g.beginPath(); g.arc(klp[0], klp[1], 3.5, 0, 7); g.fill();
+  if (zoom < .2) { g.font = '700 18px Poppins'; g.fillStyle = '#FBE29A'; g.fillText('KUALA LUMPUR', klp[0] + 18, klp[1] + 30); }
+  // copy
+  const ti = E.outExpo(P(t, 17.6, 18.2));
+  T(s7k, { x: (1 - ti) * -40, o: ti });
+  T(s7l1, { y: (1 - E.outExpo(P(t, 17.65, 18.25))) * 100 });
+  T(s7l2, { y: (1 - E.outExpo(P(t, 19.65, 20.15))) * 110 });
+  document.getElementById('city').textContent = t >= 19.55 ? 'anywhere' : cityIdx < 0 ? CITIES[0][0] : CITIES[cityIdx][0];
+  langs.forEach((l, i) => { const k = E.outBack(P(t, 19.85 + i * .08, 20.25 + i * .08), 2); T(l, { y: (1 - k) * 30, o: Math.min(1, k * 2) }); });
+  T(s7txt, { o: 1 - zoom * 1.5, x: -zoom * 200 });
+}
+
+// S8 — resolve: lockup and URL
+const s8 = scene(20.96, 25.01, 'radial-gradient(ellipse 70% 70% at 50% 46%, #11397a 0%, #071D3A 55%, #020a18 100%)');
+const s8bez = el('div', 'abs', s8); S(s8bez, { left: '0', top: '0', width: '1920px', height: '1080px' }); s8bez.innerHTML = bezelSVG('bz8', 960, 470, 'rgba(120,160,230,.22)', 'rgba(212,160,23,.5)');
+const s8lock = S(el('div', 'abs', s8), { left: '0', top: '0', width: '1920px', height: '1080px' });
+const s8logoBox = S(el('div', 'abs', s8lock), { left: '330px', top: '140px', width: '700px', height: '700px', transform: 'scale(.62)', transformOrigin: '0 0' });
+s8logoBox.innerHTML = logoSVG('lg8'); const L8 = logoParts('lg8');
+const s8wm = S(el('div', 'abs', s8lock), { left: '800px', top: '262px', width: '980px' });
+const s8m1 = S(el('div', 'mask', s8wm), { height: '150px' }); const s8a = S(el('div', 'P', s8m1), { font: '800 148px/150px Poppins', color: '#fff', letterSpacing: '.02em' }); const s8aL = letters(s8a, 'MALAYSIA');
+const s8m2 = S(el('div', 'mask', s8wm), { height: '118px', marginTop: '-4px' }); const s8b = S(el('div', 'P', s8m2), { font: '700 106px/118px Poppins', color: '#D4A017', letterSpacing: '.13em' }); const s8bL = letters(s8b, 'VISA GUIDE');
+const s8rule = S(el('div', '', s8wm), { marginTop: '14px', width: '880px', height: '5px', background: 'linear-gradient(90deg,#D4A017,#FBE29A 60%,#D4A017)', transformOrigin: 'left center' });
+s8bL.forEach(c => S(c, { backgroundImage: 'linear-gradient(100deg,#D4A017 0,#D4A017 1930px,#FFF4CC 2000px,#D4A017 2070px,#D4A017 4000px)', backgroundSize: '4000px 100%', backgroundRepeat: 'no-repeat', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }));
+s8aL.forEach(c => S(c, { backgroundImage: 'linear-gradient(100deg,#fff 0,#fff 1940px,#FBE29A 2000px,#fff 2060px,#fff 4000px)', backgroundSize: '4000px 100%', backgroundRepeat: 'no-repeat', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }));
+const s8url = S(el('div', 'abs P center', s8), { top: '770px', font: '600 64px/1 Poppins', color: '#fff', letterSpacing: '.01em' });
+const URL_ = 'malaysiavisaguide.com';
+const s8caret = S(el('span', '', null), { display: 'inline-block', width: '5px', height: '62px', background: '#D4A017', marginLeft: '6px', verticalAlign: '-8px' });
+const s8under = S(el('div', 'abs', s8), { left: '560px', top: '862px', width: '800px', height: '4px', background: '#D4A017', transformOrigin: 'center' });
+const s8tag = S(el('div', 'abs center', s8), { top: '900px', font: '500 28px/1 Inter', letterSpacing: '.06em', color: 'rgba(230,232,235,.85)' }); s8tag.innerHTML = 'Clarity for your journey to Malaysia.';
+const s8ind = S(el('div', 'abs center kick', s8), { top: '958px', fontSize: '17px', color: '#D4A017' }); s8ind.textContent = 'Independent · every figure sourced and dated';
+function R8(t) {
+  const u = t - 21.0;
+  setLogo(L8, u * 1.45 + .15);
+  const bz = E.outExpo(P(t, 21.0, 22.0));
+  const c1 = document.getElementById('bz8-c1'); c1.setAttribute('stroke-dasharray', `${bz} 1`);
+  document.getElementById('bz8-t').setAttribute('transform', `rotate(${(t - 21) * 12 + (1 - bz) * -80} 960 470)`); document.getElementById('bz8-t').style.opacity = bz;
+  document.getElementById('bz8-c2').setAttribute('transform', `rotate(${(t - 21) * -18} 960 470)`);
+  document.getElementById('bz8-c3').setAttribute('transform', `rotate(${(t - 21) * 8} 960 470)`);
+  T(s8bez, { s: lerp(1.3, 1, bz), o: .9 });
+  s8aL.forEach((c, i) => { const k = E.outExpo(P(t, 21.55 + i * .03, 22.15 + i * .03)); T(c, { y: (1 - k) * 160 }); });
+  s8bL.forEach((c, i) => { const k = E.outExpo(P(t, 21.7 + i * .028, 22.3 + i * .028)); T(c, { y: (1 - k) * 130 }); });
+  T(s8rule, { sx: E.outExpo(P(t, 21.85, 22.4)), sy: 1 });
+  T(s8lock, { s: lerp(1.05, 1, E.outCubic(P(t, 21, 25))), y: -6 * E.outCubic(P(t, 22, 25)) });
+  // typed URL
+  const n = Math.floor(clamp((t - 22.2) / .55) * URL_.length);
+  const typed = URL_.slice(0, n), dot = typed.indexOf('.com');
+  s8url.innerHTML = (dot >= 0 ? typed.slice(0, dot) + '<span style="color:#D4A017">' + typed.slice(dot) + '</span>' : typed.replace('.co', '<span style="color:#D4A017">.co</span>').replace(/\.c$/, '<span style="color:#D4A017">.c</span>').replace(/\.$/, '<span style="color:#D4A017">.</span>'));
+  const blink = t < 22.8 || Math.floor((t - 22.8) * 3) % 2 === 0; s8caret.style.opacity = blink && t > 22.15 ? 1 : 0; s8url.appendChild(s8caret);
+  T(s8under, { sx: E.inOutExpo(P(t, 22.75, 23.25)), sy: 1 });
+  const tg = E.outExpo(P(t, 23.0, 23.5)); T(s8tag, { y: (1 - tg) * 24, o: tg });
+  const id = E.outExpo(P(t, 23.2, 23.7)); T(s8ind, { y: (1 - id) * 20, o: id });
+  const sh = E.inOutCubic(P(t, 23.3, 24.2)), sx = lerp(-900, 1100, sh);
+  [...s8aL, ...s8bL].forEach(c => { c.style.backgroundPosition = `${sx - 2000 - c.offsetLeft}px 0`; });
+}
+
+// ───────────────────────── global layers ─────────────────────────
+const RENDER = [R1, R2, R3, R4, R5, R6, R7, R8];
+// transitions
+const wipeA = S(el('div', 'abs', world), { left: '0', top: '-200px', width: '2600px', height: '1480px', background: '#D4A017', zIndex: 50 });
+const wipeB = S(el('div', 'abs', world), { left: '0', top: '-200px', width: '2600px', height: '1480px', background: '#124E9E', zIndex: 51 });
+const iris = S(el('div', 'abs', world), { inset: '0', zIndex: 52, background: '#F7F7F9' });
+const shutters = [0, 1, 2, 3, 4, 5].map(i => S(el('div', 'abs', world), { left: '0', top: i * 180 + 'px', width: '1920px', height: '182px', background: i % 2 ? '#0d3b78' : '#071D3A', zIndex: 53 }));
+function transitions(t) {
+  // S3→S4 diagonal double wipe
+  const a = P(t, 6.6, 7.08), b = P(t, 6.66, 7.16);
+  vis(wipeA, a > 0 && a < 1); vis(wipeB, b > 0 && b < 1);
+  wipeA.style.transform = `translateX(${lerp(2100, -2900, E.inOutQuart(a))}px) skewX(-18deg)`;
+  wipeB.style.transform = `translateX(${lerp(2300, -2900, E.inOutQuart(b))}px) skewX(-18deg)`;
+  wipeB.style.width = '2200px';
+  // S5→S6 iris
+  const ir = P(t, 13.7, 14.1); vis(iris, false); s6.style.clipPath = ir < 1 ? `circle(${E.inOutExpo(ir) * 1150}px at 960px 540px)` : 'none';
+  s5.style.opacity = E.outCubic(P(t, 10.25, 10.42));
+  // S6→S7 venetian shutters
+  shutters.forEach((s, i) => {
+    const k1 = E.inOutQuart(P(t, 17.12 + i * .025, 17.42 + i * .025)), k2 = E.inOutQuart(P(t, 17.46 + i * .025, 17.8 + i * .025));
+    const dir = i % 2 ? 1 : -1; vis(s, k1 > 0 && k2 < 1);
+    s.style.transform = `translateX(${dir * (1 - k1) * 1920 - dir * k2 * 1920}px)`;
+  });
+}
+// HUD
+const hud = document.getElementById('hud');
+const crops = [[60, 60, 'Top', 'Left'], [60, 60, 'Top', 'Right'], [60, 60, 'Bottom', 'Left'], [60, 60, 'Bottom', 'Right']].map(([x, y, v, h]) => { const c = el('div', 'crop', hud); c.style[v.toLowerCase()] = y + 'px'; c.style[h.toLowerCase()] = x + 'px'; c.style[`border${v}Width`] = '2px'; c.style[`border${h}Width`] = '2px'; return c; });
+const hTL = S(el('div', 'abs', hud), { left: '110px', top: '66px' });
+const hTR = S(el('div', 'abs', hud), { right: '110px', top: '66px', textAlign: 'right', fontVariantNumeric: 'tabular-nums' });
+const hBL = S(el('div', 'abs', hud), { left: '110px', bottom: '66px' }); hBL.textContent = 'malaysiavisaguide.com';
+const hBR = S(el('div', 'abs', hud), { right: '110px', bottom: '66px', textAlign: 'right' });
+const hProg = S(el('div', 'abs', hud), { left: '0', bottom: '0', height: '4px', width: '1920px', background: '#D4A017', transformOrigin: 'left center' });
+const hRec = S(el('span', '', null), { display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', background: '#e5484d', marginRight: '12px', verticalAlign: '1px' });
+const CHAPTERS = [[0, '01 — Open'], [2, '02 — Promise'], [4, '03 — Identity'], [6.875, '04 — Programmes'], [10.3, '05 — Data'], [13.92, '06 — Tools'], [17.44, '07 — Reach'], [21, '08 — Resolve']];
+const LIGHT = t => (t >= 4.0 && t < 6.875) || (t >= 13.92 && t < 17.44) || (t >= 3.0 && t < 3.5);
+function HUD(t) {
+  const light = LIGHT(t);
+  hud.style.color = light ? 'rgba(7,29,58,.55)' : 'rgba(247,247,249,.55)';
+  const o = E.outCubic(P(t, .2, .8)) * (1 - E.inCubic(P(t, 23.6, 24.2)));
+  hud.style.opacity = o;
+  hTL.innerHTML = ''; hTL.appendChild(hRec); hRec.style.opacity = Math.floor(t * 2) % 2 ? .25 : 1; hTL.appendChild(document.createTextNode('Showreel · 2026'));
+  const f = Math.floor(t * 30), ss = Math.floor(f / 30), ff = f % 30;
+  hTR.textContent = `TC 00:00:${String(ss).padStart(2, '0')}:${String(ff).padStart(2, '0')}`;
+  const ch = CHAPTERS.findLast(c => t >= c[0]); hBR.textContent = ch[1];
+  T(hProg, { sx: t / DUR, sy: 1 }); hProg.style.opacity = 1;
+}
+// FX canvas: particle bursts + streaks
+const fx = document.getElementById('fx').getContext('2d');
+const BURSTS = [{ t: 5.45, x: 1050, y: 630, n: 90, seed: 3, col: '212,160,23' }, { t: 4.0, x: 960, y: 540, n: 70, seed: 9, col: '251,226,154' }, { t: 21.62, x: 603, y: 413, n: 110, seed: 5, col: '212,160,23' }, { t: 13.12, x: 1560, y: 650, n: 40, seed: 12, col: '212,160,23' }];
+function FX(t) {
+  fx.setTransform(1, 0, 0, 1, 0, 0); fx.clearRect(0, 0, W, H);
+  for (const b of BURSTS) {
+    const dt = t - b.t; if (dt < 0 || dt > 1.6) continue;
+    const r = rng(b.seed);
+    for (let i = 0; i < b.n; i++) {
+      const a = r() * Math.PI * 2, sp = 300 + r() * 1300, k = 3 + r() * 2, life = .7 + r() * .9, sz = 1.5 + r() * 4;
+      if (dt > life) continue;
+      const d = sp * (1 - Math.exp(-k * dt)) / k, x = b.x + Math.cos(a) * d, y = b.y + Math.sin(a) * d + 120 * dt * dt;
+      const v = sp * Math.exp(-k * dt) * .03, al = 1 - dt / life;
+      fx.strokeStyle = `rgba(${b.col},${al.toFixed(3)})`; fx.lineWidth = sz; fx.lineCap = 'round';
+      fx.beginPath(); fx.moveTo(x, y); fx.lineTo(x - Math.cos(a) * v, y - Math.sin(a) * v); fx.stroke();
+    }
+  }
+  // ambient gold dust in the outro
+  if (t > 21) { const r = rng(77); for (let i = 0; i < 60; i++) { const x = r() * W, y0 = r() * H, sp = 20 + r() * 50, ph = r() * 6; const y = (y0 - (t - 21) * sp + H) % H; const al = (.25 + .35 * Math.sin(t * 2 + ph)) * E.outCubic(P(t, 21.2, 22)); fx.fillStyle = `rgba(212,160,23,${Math.max(0, al).toFixed(3)})`; fx.beginPath(); fx.arc(x, y, 1 + r() * 2.2, 0, 7); fx.fill(); } }
+}
+// film grain + vignette
+const grain = document.getElementById('grain'), gx = grain.getContext('2d');
+const GRAINS = []; { const r = rng(42); for (let k = 0; k < 8; k++) { const c = document.createElement('canvas'); c.width = 480; c.height = 270; const cx = c.getContext('2d'), id = cx.createImageData(480, 270); for (let i = 0; i < id.data.length; i += 4) { const v = r() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; } cx.putImageData(id, 0, 0); GRAINS.push(c); } }
+S(grain, { mixBlendMode: 'overlay', opacity: .09 });
+const vig = S(el('div', 'abs', stage), { inset: '0', background: 'radial-gradient(ellipse 75% 75% at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,.38) 100%)', pointerEvents: 'none' });
+stage.insertBefore(vig, document.getElementById('grain'));
+function GRAIN(t) { vig.style.opacity = LIGHT(t) ? .4 : 1; gx.imageSmoothingEnabled = false; gx.drawImage(GRAINS[Math.floor(t * 60) % 8], 0, 0, W, H); }
+// camera shake on impacts
+const IMPACTS = [[2.0, 10], [3.0, 7], [3.5, 8], [4.0, 16], [5.45, 12], [7.0, 6], [10.35, 6], [13.12, 14], [21.0, 18], [21.62, 10]];
+function shake(t) { let x = 0, y = 0, r = 0; for (const [ti, a] of IMPACTS) { const d = t - ti; if (d < 0 || d > .6) continue; const m = a * Math.exp(-d * 9); x += Math.sin(d * 73 + ti) * m; y += Math.cos(d * 91 + ti * 2) * m; r += Math.sin(d * 57) * m * .03; } return [x, y, r]; }
+const flash = document.getElementById('flash'), fade = document.getElementById('fade');
+function FLASH(t) {
+  const fl = (c, a, d) => { const k = (t - c) / d; return k >= 0 && k <= 1 ? a * (1 - E.outCubic(k)) : 0; };
+  const w = Math.max(fl(4.0, 1, .35), fl(2.0, .35, .18), fl(21.0, 1, .45), fl(13.12, .12, .2));
+  flash.style.opacity = w; flash.style.background = t > 20.9 && t < 21.6 ? '#FBE29A' : '#fff';
+  fade.style.opacity = E.inCubic(P(t, 24.55, 25.0)) * .96;
+}
+
+// ───────────────────────── render ─────────────────────────
+window.__render = function (t) {
+  for (const sc of scenes) vis(sc.e, t >= sc.a && t < sc.b);
+  scenes.forEach((sc, i) => { if (t >= sc.a && t < sc.b) RENDER[i](t); });
+  transitions(t); HUD(t); FX(t); GRAIN(t); FLASH(t);
+  const [x, y, r] = shake(t); world.style.transform = `translate(${x}px,${y}px) rotate(${r}deg)`;
+  document.getElementById('fx').style.transform = world.style.transform;
+};
+window.__ready = Promise.all([document.fonts.ready, ...PROGS.map(p => new Promise(res => { const i = new Image(); i.onload = i.onerror = res; i.src = IMG + p.img; }))]).then(() => document.fonts.load('800 100px Poppins')).then(() => true);
+if (!/render/.test(location.search)) { // live preview
+  const t0 = performance.now(); const loop = () => { const t = ((performance.now() - t0) / 1000) % DUR; window.__render(t); requestAnimationFrame(loop); }; window.__ready.then(loop);
+}
+</script>
+</body>
+</html>
