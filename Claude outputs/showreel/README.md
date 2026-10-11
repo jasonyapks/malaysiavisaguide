@@ -33,7 +33,7 @@ Needs Node with Playwright (Chromium), Python 3 with numpy and scipy, and ffmpeg
 ```bash
 python3 tools/score.py score.wav                       # soundtrack
 node tools/render.mjs video.mp4 --sub 5 --workers 4    # picture, about 20 minutes
-ffmpeg -i video.mp4 -i score.wav -map 0:v -map 1:a -c:v libx264 -crf 17 \
+ffmpeg -i video.mp4 -i score.wav -map 0:v -map 1:a -c:v libx264 -crf 19 \
   -c:a aac -b:a 256k -af volume=-2.3dB -movflags +faststart -shortest out.mp4
 ```
 
