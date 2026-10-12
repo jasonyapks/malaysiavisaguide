@@ -179,18 +179,22 @@ def imi():
     for page in fitz.open(IMI):
         for table in page.find_tables().tables:
             for row in table.extract():
-                if not (row[0] or "").strip().isdigit():
+                # The 5 Oct 2026 reissue numbers its rows "1." where the
+                # August one printed "1".
+                no = (row[0] or "").strip().rstrip(".")
+                if not no.isdigit():
                     continue  # header and spacer rows
                 _, name, address, phone, email = [(c or "").strip() for c in row]
                 address = re.sub(r"\s*\n\s*", " ", address)
                 out.append({
-                    "no": int(row[0]),
+                    "no": int(no),
                     "name": re.sub(r"\s*\n\s*", " ", name),
                     "address": address,
                     "state": state_from_postcode(address),
                     "phone": " / ".join(p.strip() for p in phone.split("\n") if p.strip()),
                     "email": [e.strip() for e in email.split("\n") if e.strip()],
                 })
+    assert out, "PVIP: no rows parsed; the PDF layout has changed"
     nos = [r["no"] for r in out]
     assert nos == list(range(1, len(out) + 1)), f"PVIP rows out of sequence: {nos}"
     for r in out:

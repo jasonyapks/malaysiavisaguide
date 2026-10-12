@@ -1,5 +1,5 @@
 {
- "checked": "2026-10-01",
+ "checked": "2026-10-12",
  "companies": [
   {
    "name": "1 ACHIEVERSE (MM2H) SDN BHD",
@@ -98,7 +98,14 @@
      ]
     }
    ],
-   "pvip": null,
+   "pvip": {
+    "address": "B-10-1, MEGAN AVENUE 2, JALAN YAP KWAN SENG, 50450 KUALA LUMPUR.",
+    "state": "Kuala Lumpur",
+    "phone": "012-7741335",
+    "email": [
+     "ck@sevenstar.group"
+    ]
+   },
    "id": "7starmm2h"
   },
   {
@@ -177,26 +184,6 @@
    "id": "aaliamm2h"
   },
   {
-   "name": "ABADI IMPIAN (MM2H) SDN BHD",
-   "mm2h": [
-    {
-     "licence": "MM2H978",
-     "office": "HQ",
-     "address": "NO. 38, TINGKAT 2, JALAN TELUK SISEK, 25000, KUANTAN, Pahang",
-     "state": "Pahang",
-     "phone": "012-3454977 / 0172881010",
-     "email": [],
-     "motac": [
-      "2025-10-02",
-      "2026-10-01"
-     ],
-     "mm2hgov": null
-    }
-   ],
-   "pvip": null,
-   "id": "abadiimpianmm2h"
-  },
-  {
    "name": "ABLE MIGRATION (MM2H) SDN. BHD.",
    "mm2h": [
     {
@@ -227,7 +214,7 @@
     {
      "licence": "MM2H851",
      "office": "HQ",
-     "address": "ISLAND PLAZA 118, UNIT NO. M-18 JALAN TANJUNG TOKONG, 10470, GEORGETOWN, Pulau Pinang",
+     "address": "ISLAND PLAZA 118, UNIT NO.LG-01 & 02, JALAN TANJUNG TOKONG 10470 GEORGETOWN PULAU PINANG, Pulau Pinang",
      "state": "Penang",
      "phone": "016-4401199 / 013-4783666",
      "email": [
@@ -270,7 +257,7 @@
    "name": "AGENSI AESTAR MIGRATION CONSULTANCY (MM2H) SDN. BHD.",
    "mm2h": [],
    "pvip": {
-    "address": "15-4 LOT 419, JALAN KLANG LAMA, 58000 KUALA LUMPUR",
+    "address": "15-4 LOT 419, JALAN KLANG LAMA, 58000 KUALA LUMPUR.",
     "state": "Kuala Lumpur",
     "phone": "016-5046088",
     "email": [
@@ -280,36 +267,32 @@
    "id": "agensiaestarmigrationconsultancymm2h"
   },
   {
-   "name": "AGENSI CRESCO MARKETING SDN. BHD.",
+   "name": "AGENSI PEKERJAAN ECOWORKS SOLUTIONS SDN. BHD.",
    "mm2h": [],
    "pvip": {
-    "address": "PA-S-09-1, PEARL AVENUE SHOP JALAN PASIR EMAS, SUNGAI CHUA, 43000 KAJANG, SELANGOR",
-    "state": "Selangor",
-    "phone": "016-2522525",
+    "address": "UNIT C-04-11, PLAZA BUKIT JALIL 1, PERSIARAN JALIL 1, BANDAR BUKIT JALIL, 57000 KUALA LUMPUR.",
+    "state": "Kuala Lumpur",
+    "phone": "011-16694486",
     "email": [
-     "crescomarketingsb@gmail.com"
+     "alex@ecoworkssolutions.com"
     ]
    },
-   "id": "agensicrescomarketing"
-  },
-  {
-   "name": "AGENSI PEKERJAAN GLOBAL ACE SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "NO 16 JALAN SS 21/1, DAMANSARA UTAMA, 47400 PETALING JAYA, SELANGOR",
-    "state": "Selangor",
-    "phone": "012-2237336",
-    "email": [
-     "pa@globalace.com.my"
-    ]
-   },
-   "id": "agensipekerjaanglobalace"
+   "id": "agensipekerjaanecoworkssolutions",
+   "related": [
+    {
+     "id": "ecoworkssolutionsmm2h",
+     "name": "ECOWORKS SOLUTIONS (MM2H) SDN. BHD.",
+     "shared": [
+      "office address"
+     ]
+    }
+   ]
   },
   {
    "name": "AGENSI PEKERJAAN GLOBAL LINK (KL) SDN. BHD.",
    "mm2h": [],
    "pvip": {
-    "address": "E203, METROPOLITAN SQUARE, (OFFICE MALL), JALAN PJU 8/1, DAMANSARA PERDANA, 47820 PETALING JAYA, SELANGOR",
+    "address": "E203, METROPOLITAN SQUARE, (OFFICE MALL), JALAN PJU 8/1, DAMANSARA PERDANA, 47820 PETALING JAYA, SELANGOR.",
     "state": "Selangor",
     "phone": "016-7712768",
     "email": [
@@ -322,7 +305,7 @@
    "name": "AGENSI PEKERJAAN HR RESOURCES SDN. BHD.",
    "mm2h": [],
    "pvip": {
-    "address": "B-03-13A, PLAZA BUKIT JALIL (AURORA PLACE) NO 1, PERSIARAN JALIL 1, BANDAR BUKIT JALIL, 57000 KUALA LUMPUR",
+    "address": "B-03-13A, PLAZA BUKIT JALIL (AURORA PLACE) NO 1, PERSIARAN JALIL 1, BANDAR BUKIT JALIL, 57000 KUALA LUMPUR.",
     "state": "Kuala Lumpur",
     "phone": "012-3913222",
     "email": [
@@ -369,23 +352,10 @@
    "id": "agensipekerjaantitansworkforce"
   },
   {
-   "name": "AGENSI PELANCONGAN MASJOHAN SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "22A-2, JALAN OP 1/5, PUSAT PERDAGANGAN ONE PUCHONG 47160 PUCHONG, SELANGOR.",
-    "state": "Selangor",
-    "phone": "012-5060009",
-    "email": [
-     "agensimasjohan@hotmail.com"
-    ]
-   },
-   "id": "agensipelanconganmasjohan"
-  },
-  {
    "name": "AGENSI REVENUE MONSTER SDN. BHD.",
    "mm2h": [],
    "pvip": {
-    "address": "B-2-30, 2ND FLOOR, BLOCK BOUGAINVILLEA, 10 BOULEVARD 47400 PETALING JAYA, SELANGOR",
+    "address": "B-2-30, 2ND FLOOR, BLOCK BOUGAINVILLEA, 10 BOULEVARD 47400 PETALING JAYA, SELANGOR.",
     "state": "Selangor",
     "phone": "017-5527628",
     "email": [
@@ -398,7 +368,7 @@
    "name": "AGENSI WODE (MM2H) SDN. BHD.",
    "mm2h": [],
    "pvip": {
-    "address": "LEVEL 30, SOUTH WING, MENARA TM, 50572 KUALA LUMPUR",
+    "address": "LEVEL 30, SOUTH WING, MENARA TM, 50572 KUALA LUMPUR.",
     "state": "Kuala Lumpur",
     "phone": "011-33218117",
     "email": [
@@ -645,7 +615,7 @@
    "name": "ANJUNG JASA SDN. BHD.",
    "mm2h": [],
    "pvip": {
-    "address": "15A, JALAN ANGGERIK VANILLA AB 31/AB KOTA KEMUNING, SEKSYEN 31, 40460 SHAH ALAM SELANGOR",
+    "address": "15A, JALAN ANGGERIK VANILLA AB, 31/AB KOTA KEMUNING, SEKSYEN 31, 40460 SHAH ALAM SELANGOR.",
     "state": "Selangor",
     "phone": "012-2778808",
     "email": [
@@ -687,7 +657,7 @@
      "office": "HQ",
      "address": "N-19-8, SUBPLACE BOULEVARD, NO. 6, JALAN JURUANALISIS U1/35, SEKSYEN U1, 40150 SHAH ALAM,, Selangor",
      "state": "Selangor",
-     "phone": "016-6611334",
+     "phone": "0176242377",
      "email": [
       "armaniglobalmm2h@gmail.com"
      ],
@@ -782,19 +752,6 @@
    "id": "asiahomeservicesmm2h"
   },
   {
-   "name": "ASIANA KENCANA SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "6-2, JALAN PJS 8/12A, DATARAN MENTARI, 46150 PETALING JAYA, SELANGOR.",
-    "state": "Selangor",
-    "phone": "013-3487161",
-    "email": [
-     "asianakencana@gmail.com"
-    ]
-   },
-   "id": "asianakencana"
-  },
-  {
    "name": "ASPIRE (MM2H) SDN. BHD.",
    "mm2h": [
     {
@@ -886,14 +843,7 @@
      ]
     }
    ],
-   "pvip": {
-    "address": "7-3 SRI WELD 3A PENGKALAN WELD, 10300 GEORGETOWN, PULAU PINANG.",
-    "state": "Penang",
-    "phone": "012-4077533",
-    "email": [
-     "vincent.fong@aubella.com"
-    ]
-   },
+   "pvip": null,
    "id": "aubellamm2h"
   },
   {
@@ -1096,19 +1046,6 @@
    "id": "bpinternationalmm2h"
   },
   {
-   "name": "CAHAYA VIP SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "A-1-29, IOI BOULEVARD, JALAN KENARI 5, BANDAR PUCHONG JAYA, 47170 PUCHONG, SELANGOR.",
-    "state": "Selangor",
-    "phone": "012-2269128",
-    "email": [
-     "cahayaPVIP@gmail.com"
-    ]
-   },
-   "id": "cahayavip"
-  },
-  {
    "name": "CAN ADVISORY SDN. BHD.",
    "mm2h": [],
    "pvip": {
@@ -1147,19 +1084,6 @@
    "id": "casahomemm2h"
   },
   {
-   "name": "CENTURY AGENCY SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "NO. 7-72, LEVEL 7, BERJAYA TIMES SQUARE, NO.1, JALAN IMBI, 55100 KUALA LUMPUR.",
-    "state": "Kuala Lumpur",
-    "phone": "012-6360068",
-    "email": [
-     "weizunpua2619@gmail.com"
-    ]
-   },
-   "id": "centuryagency"
-  },
-  {
    "name": "CENTURY PHOENIX DEVELOPMENT (MM2H) SDN BHD",
    "mm2h": [
     {
@@ -1192,7 +1116,7 @@
     "state": "Selangor",
     "phone": "019-3315477",
     "email": [
-     "lor_may@hotmail.com"
+     "lormay@hotmail.com"
     ]
    },
    "id": "cermatria"
@@ -1287,7 +1211,7 @@
    "pvip": {
     "address": "NO.1 JALAN SELAT SELATAN 4, OFF JALAN BANTING, LANDPAC INDUSTRIAL PARK, 42000 KLANG, SELANGOR.",
     "state": "Selangor",
-    "phone": "012--2995268",
+    "phone": "012-2995268",
     "email": [
      "ck7139@gmail.com"
     ]
@@ -1329,19 +1253,6 @@
    "id": "cmibmm2h"
   },
   {
-   "name": "CO-WISE (M) SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "NO 23, JALAN MUTIARA EMAS, 5/2 TAMAN MOUNT AUSTIN, 81100 JOHOR BAHRU, JOHOR",
-    "state": "Johor",
-    "phone": "607-3510000",
-    "email": [
-     "enquiry@cowise.net"
-    ]
-   },
-   "id": "cowisem"
-  },
-  {
    "name": "COLORFUL CONSULTANCY (MM2H) SDN BHD",
    "mm2h": [
     {
@@ -1374,7 +1285,7 @@
    "name": "COLOURFUL PRIVILEGE SDN. BHD.",
    "mm2h": [],
    "pvip": {
-    "address": "E-7-06, THE GAMUDA BIZ SUITES, JALAN ANGGERIK VANILLA 31/99, KOTA KEMUNING, 40460 SHAH ALAM SELANGOR",
+    "address": "E-7-06, THE GAMUDA BIZ SUITES, JALAN ANGGERIK VANILLA 31/99, KOTA KEMUNING, 40460 SHAH ALAM SELANGOR.",
     "state": "Selangor",
     "phone": "016-3955550",
     "email": [
@@ -2000,28 +1911,6 @@
    "id": "dzhmm2h"
   },
   {
-   "name": "ECOWORKS SOLUTIONS",
-   "mm2h": [],
-   "pvip": {
-    "address": "UNIT C-04-11, PLAZA BUKIT JALIL 1, PERSIARAN JALIL 1, BANDAR BUKIT JALIL, 57000 KUALA LUMPUR",
-    "state": "Kuala Lumpur",
-    "phone": "011-16694486",
-    "email": [
-     "alex@ecoworkssolutions.com"
-    ]
-   },
-   "id": "ecoworkssolutions",
-   "related": [
-    {
-     "id": "ecoworkssolutionsmm2h",
-     "name": "ECOWORKS SOLUTIONS (MM2H) SDN. BHD.",
-     "shared": [
-      "office address"
-     ]
-    }
-   ]
-  },
-  {
    "name": "ECOWORKS SOLUTIONS (MM2H) SDN. BHD.",
    "mm2h": [
     {
@@ -2047,8 +1936,8 @@
    "id": "ecoworkssolutionsmm2h",
    "related": [
     {
-     "id": "ecoworkssolutions",
-     "name": "ECOWORKS SOLUTIONS",
+     "id": "agensipekerjaanecoworkssolutions",
+     "name": "AGENSI PEKERJAAN ECOWORKS SOLUTIONS SDN. BHD.",
      "shared": [
       "office address"
      ]
@@ -2151,19 +2040,6 @@
    "id": "emeraldcapitalmm2h"
   },
   {
-   "name": "ENDAU GEMILANG SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "C4-3-12 SOLARIS DUTAMAS NO.1, JALAN DUTAMAS 1, 50480 KUALA LUMPUR",
-    "state": "Kuala Lumpur",
-    "phone": "012-2213022",
-    "email": [
-     "endaugemilang@gmail.com"
-    ]
-   },
-   "id": "endaugemilang"
-  },
-  {
    "name": "EP PENINSULAR (MM2H) SDN. BHD.",
    "mm2h": [
     {
@@ -2237,19 +2113,6 @@
    ],
    "pvip": null,
    "id": "eserencmm2h"
-  },
-  {
-   "name": "ESPLANADE SQUARE SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "NO.6-1 JALAN PPAK 2 PUSAT PERNIAGAAN AIR KUNING, 31920 PERAK",
-    "state": "Perak",
-    "phone": "011-10800832",
-    "email": [
-     "esplanade.square@gmail.com"
-    ]
-   },
-   "id": "esplanadesquare"
   },
   {
    "name": "ESSENTIAL VERSION (MM2H) SDN. BHD.",
@@ -2439,19 +2302,6 @@
    ],
    "pvip": null,
    "id": "faceveilmm2h"
-  },
-  {
-   "name": "FELCRA TRAVELS ND TOURS SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "32A-1-1, JALAN MEGAN SETAPAK, MEGAN SETAPAK, 53300 KUALA LUMPUR",
-    "state": "Kuala Lumpur",
-    "phone": "019-2733202",
-    "email": [
-     "mohammadyarisuni@gmail.com"
-    ]
-   },
-   "id": "felcratravelsndtours"
   },
   {
    "name": "FIRST HOME PROPERTIES (MM2H) SDN. BHD.",
@@ -2733,6 +2583,7 @@
      "id": "glpinternationaltravel",
      "name": "GLP INTERNATIONAL TRAVEL SDN. BHD.",
      "shared": [
+      "phone number",
       "office address"
      ]
     }
@@ -2744,7 +2595,7 @@
    "pvip": {
     "address": "NO 10-1, BLOCK 4 JALAN JALIL, JAYA 4, JALIL LINK, BUKIT JALIL, 57000 KUALA LUMPUR.",
     "state": "Kuala Lumpur",
-    "phone": "017-2452699",
+    "phone": "03-89992944",
     "email": [
      "glptravel33@gmail.com"
     ]
@@ -2755,6 +2606,7 @@
      "id": "glpinternationalmm2h",
      "name": "GLP INTERNATIONAL (MM2H) SDN. BHD.",
      "shared": [
+      "phone number",
       "office address"
      ]
     }
@@ -3202,9 +3054,9 @@
    "pvip": {
     "address": "D5-U6-6 SOLARIS DUTAMAS, NO.1 JALAN DUTAMAS 1, 50480 KUALA LUMPUR",
     "state": "Kuala Lumpur",
-    "phone": "019-7969083",
+    "phone": "016-4404318",
     "email": [
-     "hymgroup6@gmail.com"
+     "koaycheeling@hymgroup.com.my"
     ]
    },
    "id": "hymcorporateservices"
@@ -3327,7 +3179,7 @@
     }
    ],
    "pvip": {
-    "address": "NO.29 (2ND FLOOR), JALAN MOLEK 1/29, TAMAN MOLEH 81100 JOHOR JOHOR BAHRU",
+    "address": "NO.29 (2ND FLOOR), JALAN MOLEK 1/29, TAMAN MOLEH 81100 JOHOR JOHOR BAHRU.",
     "state": "Johor",
     "phone": "07-3591049",
     "email": [
@@ -3507,19 +3359,6 @@
    ],
    "pvip": null,
    "id": "jcharmonymm2h"
-  },
-  {
-   "name": "JDH DEVELOPMENT SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "D12-3A, MENARA MITRALAND, JALAN PJU 5/1, KOTA DAMANSARA, 47810 PETALING JAYA, SELANGOR",
-    "state": "Selangor",
-    "phone": "017-7306820",
-    "email": [
-     "eagrace89@gmail.com"
-    ]
-   },
-   "id": "jdhdevelopment"
   },
   {
    "name": "JDN GLOBAL (MM2H) SDN. BHD.",
@@ -3840,7 +3679,7 @@
    "name": "KILAT JALUR SDN. BHD.",
    "mm2h": [],
    "pvip": {
-    "address": "NO.8 JALAN SUNGAI BURUNG U 32/U BUKIT RIMAU, 40460 SHAH ALAM SELANGOR",
+    "address": "NO.8 JALAN SUNGAI BURUNG U 32/U BUKIT RIMAU, 40460 SHAH ALAM, SELANGOR.",
     "state": "Selangor",
     "phone": "012-3951688",
     "email": [
@@ -4239,19 +4078,6 @@
    ],
    "pvip": null,
    "id": "madanimm2h"
-  },
-  {
-   "name": "MAGNA SUCCESS LEISURE",
-   "mm2h": [],
-   "pvip": {
-    "address": "11-3, SUBANG BUSINESS CENTRE, JALAN USJ 9/5Q, SUBANG JAYA, 47620 SELANGOR.",
-    "state": "Selangor",
-    "phone": "019-5518686",
-    "email": [
-     "pvip@mslteam.com.my"
-    ]
-   },
-   "id": "magnasuccessleisure"
   },
   {
    "name": "MAINHOME SOLUTION (MM2H) SDN. BHD.",
@@ -4993,19 +4819,6 @@
    ]
   },
   {
-   "name": "MY PREMIER SETTLERS SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "93-01 JALAN MOLEK 1/29, TAMAN MOLEK, 81100 JOHOR BAHRU, JOHOR",
-    "state": "Johor",
-    "phone": "011-10990843",
-    "email": [
-     "roundtheworld80s@gmail.com"
-    ]
-   },
-   "id": "mypremiersettlers"
-  },
-  {
    "name": "MY PREMIUM (MM2H) SDN. BHD.",
    "mm2h": [
     {
@@ -5224,19 +5037,6 @@
    "id": "mysetiahomemm2h"
   },
   {
-   "name": "MYUS VENTURE PARTNERS SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "UNIT 09-02, LEVEL 9, MENARA MBMR, NO 1, JALAN SYED PUTRA, 58000 KUALA LUMPUR.",
-    "state": "Kuala Lumpur",
-    "phone": "012-9040288",
-    "email": [
-     "liana@myusventures.com"
-    ]
-   },
-   "id": "myusventurepartners"
-  },
-  {
    "name": "MYWAY (MM2H) SDN BHD",
    "mm2h": [
     {
@@ -5313,19 +5113,6 @@
      ]
     }
    ]
-  },
-  {
-   "name": "NAGAMAS LAND DEVELOPMENT SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "V03-13-09, DESIGNER OFFICE SUNWAY, VELOCITY LINGKARAN SV, 55100 KUALA LUMPUR.",
-    "state": "Kuala Lumpur",
-    "phone": "012-2903988",
-    "email": [
-     "nldmega9@gmail.com"
-    ]
-   },
-   "id": "nagamaslanddevelopment"
   },
   {
    "name": "NARA TRAVEL (MM2H) SDN. BHD.",
@@ -5453,19 +5240,6 @@
    "id": "newlifemm2h"
   },
   {
-   "name": "NOOR SETIA (M) SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "PT 9950, 2ND FLOOR, PUTRA POINT, PHASE 2A, JALAN BBN 1/3K, BANDAR BARU NILAI, 71800 NEGERI SEMBILAN.",
-    "state": "Negeri Sembilan",
-    "phone": "013-3390099",
-    "email": [
-     "datonoor@nsmsb.com"
-    ]
-   },
-   "id": "noorsetiam"
-  },
-  {
    "name": "NORTHTRADE CONSULTANCY (MM2H) SDN. BHD.",
    "mm2h": [
     {
@@ -5550,32 +5324,6 @@
    ]
   },
   {
-   "name": "OCTAGON ENGINEERING (M) SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "1ST FLOOR, WISMA MEPRO, 29 & 31 JALAN SULTAN AZLAN SHAH, 51200, KUALA LUMPUR",
-    "state": "Kuala Lumpur",
-    "phone": "012-3327667",
-    "email": [
-     "info@oe.com.my"
-    ]
-   },
-   "id": "octagonengineeringm"
-  },
-  {
-   "name": "OKAY PVIP ACADEMY SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "149-2 JALAN RADIN BAGUS, BANDAR BARU SERI PETALING, 57000 KUALA LUMPUR.",
-    "state": "Kuala Lumpur",
-    "phone": "016-3176006",
-    "email": [
-     "amw6117@yahoo.com"
-    ]
-   },
-   "id": "okaypvipacademy"
-  },
-  {
    "name": "OLE (MM2H) SDN. BHD.",
    "mm2h": [
     {
@@ -5623,7 +5371,7 @@
     }
    ],
    "pvip": {
-    "address": "1F-03, 1ST FLOOR, TOWER 2 @ PFCC, JALAN PUTERI ½, BANDAR PUTERI 47100 PUCHONG SELANGOR",
+    "address": "1F-03, 1ST FLOOR, TOWER 2 @ PFCC, JALAN PUTERI ½, BANDAR PUTERI 47100 PUCHONG, SELANGOR.",
     "state": "Selangor",
     "phone": "012-2345429",
     "email": [
@@ -5631,19 +5379,6 @@
     ]
    },
    "id": "optimalhomemm2h"
-  },
-  {
-   "name": "OSCAR TRAVEL SERVICES SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "UNIT 1. 02 LEVEL 1, MENARA MULTIPURPOSE CAPITAL SQUARE, NO. 8 JALAN MUNSHI ABDULLAH, 50100 KUALA LUMPUR",
-    "state": "Kuala Lumpur",
-    "phone": "017-6916405",
-    "email": [
-     "kalai@oscarholidays.com.my"
-    ]
-   },
-   "id": "oscartravelservices"
   },
   {
    "name": "OVD SOLUTIONS SDN. BHD.",
@@ -5682,19 +5417,6 @@
    ],
    "pvip": null,
    "id": "overseaslivingmm2h"
-  },
-  {
-   "name": "P-EXCELL MANAGEMENT",
-   "mm2h": [],
-   "pvip": {
-    "address": "NO.78, TINGKAT 1 MENARA PMINT, JALAN SULTAN ISMAIL, 20200 KUALA TERENGGANU.",
-    "state": "Terengganu",
-    "phone": "019-9638856",
-    "email": [
-     "admin@pexcell.com.my"
-    ]
-   },
-   "id": "pexcellmanagement"
   },
   {
    "name": "PAKS (MM2H) SDN BHD",
@@ -5840,9 +5562,9 @@
     {
      "licence": "MM2H879",
      "office": "HQ",
-     "address": "UNIT 11-02, MENARA K1 NO 1.LORONG 3/137C, OFF JALAN KLANG LAMA, 58000 AMPANG WP KUALA LUMPUR, Wilayah Persekutuan Kuala Lumpur",
+     "address": "UNIT 13-01, MENARA K1, LORONG 3/137C, OFF JALAN KLANG LAMA, 58200 WP KUALA LUMPUR, Wilayah Persekutuan Kuala Lumpur",
      "state": "Kuala Lumpur",
-     "phone": "012-7126163 / 03-77734375",
+     "phone": "013-913 1145 / 03-77734375",
      "email": [
       "hellomm2h@gmail.com"
      ],
@@ -6136,19 +5858,6 @@
    "id": "ritonhospitalitymm2h"
   },
   {
-   "name": "RIZ INTELLIGENT HOLDING SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "N-4-08 CONEZION COMMERCIAL, PERSIARAN IRC 3, IOI RESORT CITY, 62502 PUTRAJAYA",
-    "state": "Putrajaya",
-    "phone": "012-4013766",
-    "email": [
-     "rizholding@gmail.com"
-    ]
-   },
-   "id": "rizintelligentholding"
-  },
-  {
    "name": "RP (MM2H) SDN BHD",
    "mm2h": [
     {
@@ -6299,7 +6008,7 @@
     }
    ],
    "pvip": {
-    "address": "NO.59, JALAN BUKIT IMPIAN 1, TAMAN IMPIAN EMAS, 81300 SKUDAI, JOHOR JOHOR BAHRU",
+    "address": "NO.59, JALAN BUKIT IMPIAN 1, TAMAN IMPIAN EMAS, 81300 SKUDAI, JOHOR JOHOR BAHRU.",
     "state": "Johor",
     "phone": "012-7679583",
     "email": [
@@ -6489,7 +6198,7 @@
    "name": "SMART WORLD TRAVEL & TOURS SDN. BHD.",
    "mm2h": [],
    "pvip": {
-    "address": "UNIT 19-06 SERVICED SUITE BINJAI 8 NO.2 LORONG BINJAI, 50450 KUALA LUMPUR",
+    "address": "UNIT 19-06 SERVICED SUITE BINJAI 8 NO.2 LORONG BINJAI, 50450 KUALA LUMPUR.",
     "state": "Kuala Lumpur",
     "phone": "012-2051748",
     "email": [
@@ -6759,19 +6468,6 @@
    ],
    "pvip": null,
    "id": "sunshineharmonymm2h"
-  },
-  {
-   "name": "SYCC SOLUTIONS SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "J-3A-08, SOHO KL SOLARIS MONT KIARA, 50480 WP KUALA LUMPUR",
-    "state": "Kuala Lumpur",
-    "phone": "012-8268365",
-    "email": [
-     "info@pvipvisa2u.com"
-    ]
-   },
-   "id": "syccsolutions"
   },
   {
    "name": "TERRAIN (MM2H) SDN. BHD.",
@@ -7131,18 +6827,21 @@
    "id": "vhomemm2h"
   },
   {
-   "name": "VANTAGE (MM2H) SDN. BHD.",
+   "name": "VANTAGE (MM2H) SDN BHD",
    "mm2h": [
     {
      "licence": "MM2H1022",
      "office": "HQ",
-     "address": "OFFICE SUITE 19-13-5, LEVEL 13 UOA CENTRE, NO 19 JALAN PINANG,, 50450 KUALA LUMPUR, WP KUALA LUMPUR",
+     "address": "OFFICE SUITE 19-13-5, LEVEL 13 UOA CENTRE, NO 19 JALAN PINANG, 50450, Wilayah Persekutuan Kuala Lumpur",
      "state": "Kuala Lumpur",
-     "phone": "+60330074383",
+     "phone": "0330074383",
      "email": [
       "mm2h@vantageglobal.com.my"
      ],
-     "motac": null,
+     "motac": [
+      "2026-10-07",
+      "2027-10-07"
+     ],
      "mm2hgov": [
       "2025-06-20",
       "2026-06-23"
@@ -7176,19 +6875,6 @@
    ],
    "pvip": null,
    "id": "vantageabtmm2h"
-  },
-  {
-   "name": "VETO CONSORTIUM SDN. BHD.",
-   "mm2h": [],
-   "pvip": {
-    "address": "LEVEL 18 MENARA 2, MENARA KEMBAR BANK RAKYAT, NO 33 JALAN RAKYAT KUALA LUMPUR, 50470 KUALA LUMPUR.",
-    "state": "Kuala Lumpur",
-    "phone": "012-2307474",
-    "email": [
-     "siti.a@mfigroup.com.my"
-    ]
-   },
-   "id": "vetoconsortium"
   },
   {
    "name": "VILLAS (MM2H) SDN BHD",
@@ -7428,14 +7114,7 @@
      ]
     }
    ],
-   "pvip": {
-    "address": "C-18- LEVEL, 18 KL TRILLION, 338 JALAN TUN RAZAK, 50400 KUALA LUMPUR",
-    "state": "Kuala Lumpur",
-    "phone": "019-2333960",
-    "email": [
-     "xeroadvisorsmy.gmail.com"
-    ]
-   },
+   "pvip": null,
    "id": "xeroadvisorsmm2h"
   },
   {

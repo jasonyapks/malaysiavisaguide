@@ -122,6 +122,7 @@ export function AgentDirectory({
             programme === "mm2h" ? ext(MM2HGOV_SOURCE, "mm2h.gov.my") : null,
         })}
         {programme === "pvip" &&
+          PVIP_TERMINATED.ids.length > 0 &&
           t.pvipTerminations({
             count: PVIP_TERMINATED.ids.length,
             month,

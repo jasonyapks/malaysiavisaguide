@@ -74,7 +74,7 @@ export const copy: AgentsCopy = {
       meta: {
         title: "Authorised PVIP agents: Immigration's list",
         description: (n, t) =>
-          `All ${n} active agencies on Immigration's PVIP list, searchable by name and state, with addresses and contact details. ${t} agencies terminated in September 2026 are left out.`,
+          `All ${n} active agencies on Immigration's PVIP list, searchable by name and state, with addresses and contact details.${t ? ` ${t} agencies terminated in September 2026 are left out.` : ""}`,
       },
       title: "Authorised PVIP agencies",
       standfirst: (
