@@ -6,6 +6,8 @@ reviewed: "2026-10-10"
 readingMinutes: 9
 draft: false
 relatedGuides:
+  - path: "/insights/how-to/foreigner-100-percent-ownership-sdn-bhd/"
+    title: "whether a foreigner can own 100% of a Malaysian company"
   - path: "/visas/pvip/"
     title: "the PVIP guide"
   - path: "/visas/employment-pass/"
@@ -106,7 +108,7 @@ Paid-up capital is your money, in your company's account, and the company can sp
 
 **Service tax on everything.** Professional fees carry 8% service tax. Add it to every service line in the table.
 
-**The trading licence.** If your foreign-owned company will sell goods, import and distribute, or run a shop, café or restaurant, it falls under the Ministry of Domestic Trade's rules on foreign participation in distributive trade. That means ministry approval and RM1,000,000 of paid-up capital before you open, whichever pass you hold. The ministry has said these guidelines are under review, so check the current version before you sign a lease.
+**The trading licence.** If your foreign-owned company will sell goods, import and distribute, or run a shop, café or restaurant, it falls under the Ministry of Domestic Trade's rules on foreign participation in distributive trade. That means ministry approval and RM1,000,000 of paid-up capital before you open, whichever pass you hold. The ministry has said these guidelines are under review, so check the current version before you sign a lease. Some formats are closed to foreign owners altogether; we set out which in [can a foreigner own 100% of a Malaysian company?](/insights/how-to/foreigner-100-percent-ownership-sdn-bhd/).
 
 **The tax rate you don't get.** Small Malaysian companies pay 15% and 17% on their first RM600,000 of profit. A company that is more than 20% foreign-owned doesn't qualify and pays 24% from the first ringgit. We explain that test in [our guide to Malaysian tax for expats](/insights/expat-living/malaysian-tax-for-expats/).
 
