@@ -1,10 +1,10 @@
 ---
 title: "Can a foreigner own 100% of a Malaysian company? (2026)"
 dek: "Usually yes. The advice that you need a Malaysian partner is out of date for most businesses. What you need is a director who lives in Malaysia, and in a few sectors a licence with its own capital rule. Mixing those two up is how foreigners end up giving away half a company they could have owned outright."
-published: "2026-10-10"
-reviewed: "2026-10-10"
+published: "2026-10-12"
+reviewed: "2026-10-12"
 readingMinutes: 8
-draft: true
+draft: false
 relatedGuides:
   - path: "/insights/how-to/company-setup-cost-malaysia-foreigner/"
     title: "what it costs to set up a company in Malaysia"
@@ -18,7 +18,7 @@ faq:
   - q: "Do I need a Malaysian partner to start a business in Malaysia?"
     a: "Not as a shareholder, in most businesses. You need at least one director who ordinarily resides in Malaysia, which is a rule about where a director lives, not about who owns the shares. A foreigner who lives in Malaysia can fill that seat."
   - q: "Which businesses have restrictions on foreign ownership?"
-    a: "The one most foreign founders meet is distributive trade: wholesale, retail, restaurants and food and beverage. Any foreign involvement needs approval from the Ministry of Domestic Trade, the business must be a locally incorporated company, and it must hold at least RM1,000,000 in shareholders' funds per outlet. Regulated industries such as banking, insurance, telecommunications, education and oil and gas have their own licensing conditions."
+    a: "The one most foreign founders meet is distributive trade: wholesale, retail, restaurants and food and beverage. Any foreign involvement needs approval from the Ministry of Domestic Trade, the business must be a locally incorporated company, and it must hold at least RM1,000,000 in shareholders' funds per outlet. Some small formats, such as mini-markets, convenience stores and ordinary restaurants and bistros, are listed as closed to foreign participation altogether. Regulated industries such as banking, insurance, telecommunications, education and oil and gas have their own licensing conditions."
   - q: "Can I use a Malaysian nominee shareholder to get around the rules?"
     a: "You can, and it is the arrangement most likely to go wrong. On paper the nominee owns the company. Your claim rests on a private trust deed you would have to enforce against them. Malaysia's beneficial ownership rules also require the company to identify and record the real person who ultimately owns or controls it, so the arrangement is not hidden from the regulator."
   - q: "What is the difference between a nominee director and a nominee shareholder?"
@@ -26,16 +26,19 @@ faq:
 sources:
   - label: "MIDA — Malaysia: Investment in the Services Sector, Booklet 1, Chapter 1: Establishing your business presence in Malaysia (equity policy; no equity conditions under the Companies Act 2016)"
     url: "https://www.mida.gov.my/wp-content/uploads/2023/11/Booklet-1-General-Policies-2021_CHAPTER-1-ESTABLISHING-YOUR-BUSINESS-PRESENCE-IN-MALAYSIA.pdf"
-    verified: "2026-10-10"
+    verified: "2026-10-12"
   - label: "MIDA — Malaysia: Investment in the Services Sector, Booklet 8: Distributive Trade Services (ministry approval, local incorporation, RM1 million minimum capital per outlet)"
     url: "https://www.mida.gov.my/wp-content/uploads/2023/11/Booklet-8-Distributive-Trade-2021.pdf"
-    verified: "2026-10-10"
+    verified: "2026-10-12"
   - label: "SSM — Guidelines for Incorporation of a Local Company (minimum one director ordinarily resident in Malaysia)"
     url: "https://www.ssm.com.my/Pages/Legal_Framework/GUIDELINES/4.-Guidelines-For-Incorporation-Of-A-Local-Company.pdf"
-    verified: "2026-10-10"
+    verified: "2026-10-12"
   - label: "SSM — Frequently Asked Questions on the beneficial ownership reporting framework under the Companies Act 2016"
     url: "https://www.ssm.com.my/Pages/Legal_Framework/FAQs%20on%20BO%20(English).pdf"
-    verified: "2026-10-10"
+    verified: "2026-10-12"
+  - label: "Bernama — KPDN Reviewing Guidelines, Amending E-commerce Act To Protect Local MSMEs (Deputy Minister Fuziah Salleh, Dewan Rakyat, 22 January 2026)"
+    url: "https://www.bernama.com/en/news.php?id=2515531"
+    verified: "2026-10-12"
 ---
 
 Somebody has told you that you need a Malaysian partner. It might have been an agent, a friend who set up here in 2005, or a local businessman who would be happy to hold 51% for you. They all said it with complete confidence.
@@ -58,7 +61,7 @@ So "you need a local" is half right. You need a local resident on the board. You
 
 **Your business is open to 100% foreign ownership.** Consulting, software, design, marketing, most professional and business services, and manufacturing fall here for most founders. You can hold every share yourself. Your only structural question is the resident director.
 
-**Your business sells goods or food.** If you'll wholesale, retail, import and distribute, or run a café or restaurant, you're in distributive trade and a different rulebook applies. You can still own 100%, but it costs more.
+**Your business sells goods or food.** If you'll wholesale, retail, import and distribute, or run a café or restaurant, you're in distributive trade and a different rulebook applies. You can often still own 100%, but it needs approval and it costs more.
 
 **Your business is in a regulated industry.** Banking, insurance, telecommunications, private education, healthcare, logistics, oil and gas and a few others are licensed by their own regulators, some of which do cap foreign equity. Ask the regulator, not an incorporation agent.
 
@@ -74,7 +77,9 @@ Since 2010, all foreign involvement in distributive trade needs the approval of 
 
 "Specialty stores" in these guidelines include restaurants and food catering outside hotels, food and beverage, household goods, furniture, electrical goods, healthcare products and footwear. Larger formats such as hypermarkets, superstores and department stores face heavier conditions still.
 
-Two cautions. The ministry has said it is reviewing these guidelines, so read the current version before you commit. And the capital is per outlet: a second café is a second million.
+Not every format is open, either. The same guidelines list activities where foreign participation is not allowed at all, among them supermarkets and mini-markets under 3,000 square metres, provision shops, 24-hour convenience stores, and textile shops, bistros and restaurants that are "non-exclusive". A restaurant built around a distinct brand or concept is assessed as a specialty store; an ordinary one may simply be refused. Ask the ministry which side of that line yours falls on before you sign anything.
+
+Two cautions. In January 2026 the deputy minister told Parliament the ministry is reviewing these guidelines, after a wave of foreign food and beverage brands, so read the current version before you commit. And the capital is per outlet: a second café is a second million.
 
 This is the honest reason some foreigners take a local majority partner. It's a way around the RM1,000,000. Whether it's worth half your company is the question to ask before you agree, not after.
 
@@ -106,4 +111,4 @@ If you're in a **regulated industry**, your first conversation is with the regul
 
 And if your plan is to live in Malaysia and run the company yourself, the director question and the visa question are the same question. A company doesn't give you the right to live here; a pass does. Start with [the PVIP guide](/visas/pvip/) or [the Employment Pass guide](/visas/employment-pass/).
 
-Sector rules change and this is general information, not legal advice. The sources below were checked on 10 October 2026.
+Sector rules change and this is general information, not legal advice. The sources below were checked on 12 October 2026.
