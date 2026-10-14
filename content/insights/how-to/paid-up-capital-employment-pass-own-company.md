@@ -1,10 +1,10 @@
 ---
 title: "Paid-up capital for an Employment Pass through your own company (2026)"
 dek: "You can register a Malaysian company with almost nothing in it. You cannot hire yourself through it until it holds RM500,000. The figure appears in no incorporation quote, and most founders learn it after the company already exists."
-published: "2026-10-10"
-reviewed: "2026-10-10"
+published: "2026-10-14"
+reviewed: "2026-10-14"
 readingMinutes: 8
-draft: true
+draft: false
 relatedGuides:
   - path: "/visas/employment-pass/"
     title: "the Employment Pass guide"
@@ -26,13 +26,19 @@ faq:
 sources:
   - label: "Immigration Department of Malaysia, Expatriate Services Division — FAQs on ESD company registration (paid-up capital by equity structure)"
     url: "https://esd.imi.gov.my/portal/faq/esd-company-registration/index.php?query="
-    verified: "2026-10-10"
+    verified: "2026-10-14"
   - label: "MIDA — Procedures and Guidelines on Application for Employment Pass for the Manufacturing and Selected Services Sectors (1 June 2026)"
     url: "https://www.mida.gov.my/wp-content/uploads/2026/06/Guidelines-EP_1-June-2026_latest.pdf"
-    verified: "2026-10-10"
+    verified: "2026-10-14"
   - label: "SSM — Guidelines for Incorporation of a Local Company"
     url: "https://www.ssm.com.my/Pages/Legal_Framework/GUIDELINES/4.-Guidelines-For-Incorporation-Of-A-Local-Company.pdf"
-    verified: "2026-10-10"
+    verified: "2026-10-14"
+  - label: "Immigration Department of Malaysia, Expatriate Services Division — Revised Employment Pass Salary Policy Effective 1 June 2026 (announcement of 15 January 2026)"
+    url: "https://esd.imi.gov.my/portal/latest-news/announcement/announcement-266-ep-salary-policy-2026/"
+    verified: "2026-10-14"
+  - label: "MIDA — Malaysia: Investment in the Services Sector, Booklet 8: Distributive Trade Services (RM1 million minimum capital per outlet)"
+    url: "https://www.mida.gov.my/wp-content/uploads/2023/11/Booklet-8-Distributive-Trade-2021.pdf"
+    verified: "2026-10-14"
 ---
 
 The company was the easy part. It took a week and cost less than a flight home. Then you asked how it sponsors your work pass, and someone mentioned a number with five zeros that nobody had brought up before.
@@ -80,7 +86,7 @@ So the real question isn't whether you have RM500,000. It's whether you have RM5
 
 ## The salary comes with it
 
-The pass has its own floor. Under the salary policy in force since 1 June 2026, Category I needs at least RM20,000 a month, Category II at least RM10,000, and Category III at least {{employment-pass:salaryFloor:money}}.
+The pass has its own floor. Under the salary policy in force since 1 June 2026, Category I needs at least RM20,000 a month, Category II at least RM10,000, and Category III at least {{employment-pass:salaryFloor:money}}. MIDA asks for RM7,000 for a term post in manufacturing.
 
 Your company has to actually pay you that, every month, and you'll pay Malaysian income tax on it. A founder planning to draw nothing for the first year can't do that on an Employment Pass. Budget for the salary and the tax as well as the capital.
 
@@ -104,8 +110,8 @@ This is where you decide which founder you are.
 
 **You're a consultant with a laptop.** Your business needs RM20,000, not RM500,000. Parking half a million in a company so that it can employ you is an expensive way to get a pass that ends the day the company does. Look at a pass you hold in your own right first.
 
-**You want to live here and keep options open.** The Premium Visa Programme asks for a fixed deposit of {{pvip:fixedDeposit:money}} and a participation fee of {{pvip:participationFee.principal:money}}, and its work rights are recorded in our guide as: {{pvip:workRights:text}}. That's more money than the capital requirement. But the pass is yours for {{pvip:tenureYears:years}}, it doesn't depend on any company surviving, and a PVIP holder who lives here can be their own resident director. Compare them properly in [which Malaysian visa lets you run a business?](/insights/comparisons/which-visa-lets-you-run-a-business/)
+**You want to live here and keep options open.** The Premium Visa Programme asks for a fixed deposit of {{pvip:fixedDeposit:money}} and a participation fee of {{pvip:participationFee.principal:money}}, and its work rights are recorded in our guide as: {{pvip:workRights:text}}. That's more money than the capital requirement. But the pass is yours for {{pvip:tenureYears:years}}, it doesn't depend on any company surviving, and a PVIP holder who lives here can be their own resident director.
 
 The Employment Pass is the cheaper door. It's also the one that closes behind your company. If the business fails, so does your right to stay, and that's worth knowing before you choose it for the price.
 
-Rules and thresholds change. The figures above were checked against the official sources below on 10 October 2026.
+Rules and thresholds change. The figures above were checked against the official sources below on 14 October 2026.
