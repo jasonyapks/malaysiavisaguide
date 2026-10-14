@@ -8,6 +8,8 @@ draft: false
 relatedGuides:
   - path: "/insights/how-to/foreigner-100-percent-ownership-sdn-bhd/"
     title: "外籍人士能否100%持有马来西亚公司"
+  - path: "/insights/how-to/paid-up-capital-employment-pass-own-company/"
+    title: "通过自己的公司申请工作准证所需的实缴资本"
   - path: "/visas/pvip/"
     title: "PVIP 指南"
   - path: "/visas/employment-pass/"
@@ -106,7 +108,7 @@ SSM 的规定很简短。一家私人有限公司必须至少有一名常驻董�
 | 100%外资持股 | RM500,000 |
 | 外资持股，经营批发、零售及贸易业务 | RM1,000,000 |
 
-实缴资本是您自己的钱，存在公司账户里，公司可以动用它来维持日常运营。但这笔钱必须真实存在，而且您不能悄悄把它取回来。如果您是即将搬来这里的创办人，这就是您进入市场的真实成本。要按RM500,000来规划，而不是RM2,500。
+实缴资本是您自己的钱，存在公司账户里，公司可以动用它来维持日常运营。但这笔钱必须真实存在，而且您不能悄悄把它取回来。如果您是即将搬来这里的创办人，这就是您进入市场的真实成本。要按RM500,000来规划，而不是RM2,500。各档门槛，以及这笔钱能用来做什么、不能用来做什么，我们在[通过自己的公司申请工作准证所需的实缴资本](/insights/how-to/paid-up-capital-employment-pass-own-company/)一文中逐一说明。
 
 ## 无人提及的成本
 

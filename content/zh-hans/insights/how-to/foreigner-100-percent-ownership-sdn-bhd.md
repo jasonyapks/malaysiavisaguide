@@ -8,6 +8,8 @@ draft: false
 relatedGuides:
   - path: "/insights/how-to/company-setup-cost-malaysia-foreigner/"
     title: "在马来西亚成立公司需要多少费用"
+  - path: "/insights/how-to/paid-up-capital-employment-pass-own-company/"
+    title: "通过自己的公司申请工作准证所需的实缴资本"
   - path: "/visas/pvip/"
     title: "高端签证计划（PVIP）指南"
   - path: "/visas/employment-pass/"

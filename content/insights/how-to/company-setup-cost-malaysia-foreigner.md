@@ -8,6 +8,8 @@ draft: false
 relatedGuides:
   - path: "/insights/how-to/foreigner-100-percent-ownership-sdn-bhd/"
     title: "whether a foreigner can own 100% of a Malaysian company"
+  - path: "/insights/how-to/paid-up-capital-employment-pass-own-company/"
+    title: "paid-up capital for an Employment Pass through your own company"
   - path: "/visas/pvip/"
     title: "the PVIP guide"
   - path: "/visas/employment-pass/"
@@ -102,7 +104,7 @@ To register a company, capital is a formality. The figures that frighten people 
 | 100% foreign-owned | RM500,000 |
 | Foreign-owned, in wholesale, retail and trade | RM1,000,000 |
 
-Paid-up capital is your money, in your company's account, and the company can spend it on running the business. But it has to be there, it has to be real, and you can't quietly take it back out later. If you're the founder who is moving here, this is your true cost of entry. Plan around RM500,000, not RM2,500.
+Paid-up capital is your money, in your company's account, and the company can spend it on running the business. But it has to be there, it has to be real, and you can't quietly take it back out later. If you're the founder who is moving here, this is your true cost of entry. Plan around RM500,000, not RM2,500. We go through the tiers, and what the money can and can't be used for, in [paid-up capital for an Employment Pass through your own company](/insights/how-to/paid-up-capital-employment-pass-own-company/).
 
 ## The costs nobody quotes
 

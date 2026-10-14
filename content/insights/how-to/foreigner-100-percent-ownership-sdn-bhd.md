@@ -8,6 +8,8 @@ draft: false
 relatedGuides:
   - path: "/insights/how-to/company-setup-cost-malaysia-foreigner/"
     title: "what it costs to set up a company in Malaysia"
+  - path: "/insights/how-to/paid-up-capital-employment-pass-own-company/"
+    title: "paid-up capital for an Employment Pass through your own company"
   - path: "/visas/pvip/"
     title: "the PVIP guide"
   - path: "/visas/employment-pass/"
