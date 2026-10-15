@@ -324,6 +324,14 @@ async function sources() {
       .filter((f) => f.endsWith(".md"))
       .sort();
     for (const file of files) {
+      // A draft is noindex and unlisted, so it needs no Chinese yet — and the
+      // long drafts of the set-up series timed out on Workers AI on every push
+      // (10–15 Oct 2026), failing the run each time. It is picked up the push
+      // after `draft: true` is removed. `--only` still translates one on demand.
+      if (!ONLY) {
+        const { data } = splitContentFile(await readFile(path.join(insightsDir, dir, file), "utf8"));
+        if (data.draft === true) continue;
+      }
       items.push({
         kind: "insight",
         slug: file.replace(/\.md$/, ""),
