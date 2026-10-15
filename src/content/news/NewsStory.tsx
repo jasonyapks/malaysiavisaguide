@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { Byline } from "@/components/Byline";
 import { Figure } from "@/components/Figure";
 import { GuideHead, Lozenge } from "@/components/GuideHead";
@@ -165,7 +166,7 @@ export function NewsStory({
                 key={p}
                 className="text-body-sm leading-relaxed text-ink-muted"
               >
-                {p}
+                <ParagraphText text={p} />
               </p>
             ))}
           </section>
@@ -388,4 +389,33 @@ function Schemas({
       />
     </>
   );
+}
+
+/** A news paragraph is plain prose; the one inline syntax it understands is a
+ *  markdown link, `[label](https://…)` or `[label](/path/)`. Outbound links get
+ *  the same nofollow noopener as an insight's, so naming an organisation never
+ *  passes it ranking. */
+const NEWS_LINK = /\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]*)\)/g;
+
+function ParagraphText({ text }: { text: string }) {
+  const parts: ReactNode[] = [];
+  let last = 0;
+  for (const m of text.matchAll(NEWS_LINK)) {
+    const [whole, label, href] = m;
+    parts.push(text.slice(last, m.index));
+    parts.push(
+      /^https?:/.test(href) ? (
+        <a key={m.index} href={href} className="text-forest-700 underline" rel="nofollow noopener" target="_blank">
+          {label}
+        </a>
+      ) : (
+        <Link key={m.index} href={href} className="text-forest-700 underline">
+          {label}
+        </Link>
+      ),
+    );
+    last = m.index + whole.length;
+  }
+  parts.push(text.slice(last));
+  return <>{parts}</>;
 }

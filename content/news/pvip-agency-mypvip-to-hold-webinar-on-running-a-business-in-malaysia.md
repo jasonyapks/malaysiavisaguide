@@ -25,7 +25,7 @@ sourceExcerpt: "From PVIP Visa to Business Owner: Unlocking Malaysia's Business 
 
 If you're thinking about moving to Malaysia and starting a company here, you've probably found that the visa and the business get explained separately, by people who sell one or the other. A free webinar on 1 November sets out to cover both in one session.
 
-The PVIP agency MYPVIP is hosting "From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities" on Zoom on Sunday 1 November 2026 at 8pm Malaysia time. MYPVIP appears on the Immigration Department's list of approved PVIP agencies. The session is in English, free to join, and ends with a Q&A.
+The PVIP agency [MYPVIP](https://mypvip.com/) is hosting "From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities" on Zoom on Sunday 1 November 2026 at 8pm Malaysia time. MYPVIP appears on the Immigration Department's list of approved PVIP agencies. The session is in English, free to join, and ends with a Q&A.
 
 The speakers are two MYPVIP business associates: PVIP consultant Chee Mee Ho, and Datin Jiniy Seelan, managing partner of JS Partners Chartered Accountant.
 
