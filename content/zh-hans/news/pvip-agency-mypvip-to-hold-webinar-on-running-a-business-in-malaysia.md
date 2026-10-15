@@ -43,3 +43,5 @@ PVIP代理机构[MYPVIP](https://mypvip.com/)将于2026年11月1日（星期日�
 PVIP的费用也不低，而且并非唯一的途径。参加之前先了解定期存款、参与费和收入要求，问清楚它们如何适用于自己的计划，并将听到的信息与官方条款逐一核对。本文末尾链接的高端签证计划（PVIP）指南列明了费用、收入要求和时间安排。
 
 披露：本网站作者Jason Yap是MYPVIP的董事总经理，MYPVIP正是本次网络研讨会的主办方。
+
+[点此报名参加网络研讨会](https://us06web.zoom.us/webinar/register/WN_XbhE1GMSQEece99jR8iMZg#/registration)。

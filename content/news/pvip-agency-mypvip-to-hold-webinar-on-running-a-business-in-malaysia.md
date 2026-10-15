@@ -39,3 +39,5 @@ The premise holds. PVIP holders may live, work and run a business in Malaysia on
 PVIP is also expensive, and it isn't the only route. Go in knowing the fixed deposit, the participation fee and the income requirement, ask how they apply to your plans, and check what you hear against the official terms. The PVIP guide linked at the end of this article sets out the fees, the income requirement and the timeline.
 
 Disclosure: Jason Yap, who writes this site, is managing director of MYPVIP, which is hosting this webinar.
+
+[Join the webinar here](https://us06web.zoom.us/webinar/register/WN_XbhE1GMSQEece99jR8iMZg#/registration).
