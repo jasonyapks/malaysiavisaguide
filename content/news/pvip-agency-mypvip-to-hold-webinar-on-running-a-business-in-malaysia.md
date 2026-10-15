@@ -1,6 +1,6 @@
 ---
 headline: "PVIP agency MYPVIP to hold webinar on running a business in Malaysia"
-dek: "The free Zoom session on 1 November covers the Premium Visa Programme, company incorporation and the route from visa to operating business. It comes from an agency that sells PVIP applications, so the basics are worth knowing before you join."
+dek: "The free Zoom session on 1 November covers the Premium Visa Programme, company incorporation and the route from visa to operating business. MYPVIP is the author's own agency."
 category: "pvip"
 sourceName: "MYPVIP webinar registration (Zoom)"
 sourceUrl: "https://us06web.zoom.us/webinar/register/WN_XbhE1GMSQEece99jR8iMZg#/registration"
@@ -15,9 +15,8 @@ keyPoints:
   - "The session is in English and free to join, with registration through Zoom, and ends with a Q&A."
 whatItMeans:
   - "PVIP holders may live, work and run a business in Malaysia on the pass itself, so the session's premise is sound."
-  - "An agency webinar is a sales channel as well as an information session. Treat it as one view, not the only one."
-  - "If PVIP's cost is out of reach, an Employment Pass through your own company is the usual alternative, and it brings a RM500,000 paid-up capital requirement for a foreign-owned company."
-  - "Before committing money to either route, check the figures against the official sources and our PVIP and Employment Pass guides."
+  - "This is MYPVIP's own event, so weigh what you hear alongside the official terms."
+  - "Before committing money, check the fees, the income requirement and the timeline against the official sources and our PVIP guide."
 sourceExcerpt: "From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities"
 ---
 
@@ -37,6 +36,6 @@ The advertised agenda runs from an overview of the Premium Visa Programme and it
 
 The premise holds. PVIP holders may live, work and run a business in Malaysia on the pass itself, without a separate work permit and without their company sponsoring them. That is the main reason founders look at PVIP rather than MM2H, whose Silver and Gold tiers do not allow work.
 
-PVIP is also expensive, and an agency that sells PVIP applications has a reason to lead with it. The usual alternative for a founder is an Employment Pass issued through their own company. That route needs no fixed deposit or participation fee, but the Immigration Department expects a 100% foreign-owned company to hold RM500,000 in paid-up capital before it can employ a foreigner, including its owner, and RM1,000,000 in wholesale, retail and trade.
+PVIP is also expensive, and it isn't the only route. Go in knowing the fixed deposit, the participation fee and the income requirement, ask how they apply to your plans, and check what you hear against the official terms. The PVIP guide linked at the end of this article sets out the fees, the income requirement and the timeline.
 
-Neither route is right for everyone. Go in knowing the two numbers, ask how each applies to your business, and check what you hear against the official terms. The PVIP guide linked at the end of this article sets out the fees, the income requirement and the timeline.
+Disclosure: Jason Yap, who writes this site, is managing director of MYPVIP, which is hosting this webinar.
