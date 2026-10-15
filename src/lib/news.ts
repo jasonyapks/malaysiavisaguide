@@ -55,6 +55,26 @@ export interface NewsArticle {
 export interface FullNewsArticle extends NewsArticle {
   body: ArticleBody;
   sourceExcerpt: string | null;
+  /** An optional call to action — a registration link for an event story —
+   *  rendered as a button under the hero and again after the body. Only an
+   *  https URL is accepted. */
+  cta: NewsCta | null;
+}
+
+export interface NewsCta {
+  label: string;
+  href: string;
+  note: string | null;
+}
+
+/** Flat `ctaLabel` / `ctaHref` / `ctaNote` keys, because the frontmatter
+ *  parser takes no nested mapping at the top level. */
+function asCta(data: Record<string, unknown>): NewsCta | null {
+  const text = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+  const label = text(data.ctaLabel);
+  const href = text(data.ctaHref);
+  if (!label || !/^https:\/\//.test(href)) return null;
+  return { label, href, note: text(data.ctaNote) || null };
 }
 
 /**
@@ -330,6 +350,7 @@ async function readArticle(
     },
     sourceExcerpt:
       typeof data.sourceExcerpt === "string" ? data.sourceExcerpt : null,
+    cta: asCta(data),
   };
 }
 

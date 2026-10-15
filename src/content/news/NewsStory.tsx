@@ -17,6 +17,7 @@ import {
   categoryPath,
   newsDate,
   type FullNewsArticle,
+  type NewsCta,
 } from "@/lib/news";
 import { site } from "@/lib/site";
 import { getUi } from "@/lib/ui";
@@ -133,6 +134,8 @@ export function NewsStory({
           landed on the right story. `priority` because it is then the LCP. */}
       {hero && <Figure image={hero} aspect="aspect-[16/9]" priority />}
 
+      {article.cta && <NewsCtaBlock cta={article.cta} />}
+
       {/* The takeaways, first and scannable. This is the block a reader in a
           hurry reads, and the block AI Overviews lift when they cite a page. */}
       {article.body.keyPoints.length > 0 && (
@@ -172,6 +175,8 @@ export function NewsStory({
           </section>
         ))}
       </div>
+
+      {article.cta && <NewsCtaBlock cta={article.cta} />}
 
       {/* The publisher's one quote, unmistakably theirs: attributed inline, set
           apart typographically, and followed by a link to the original. */}
@@ -418,4 +423,24 @@ function ParagraphText({ text }: { text: string }) {
   }
   parts.push(text.slice(last));
   return <>{parts}</>;
+}
+
+/** The registration button for an event story: navy card, gold pill, so it is
+ *  the one thing on the page that reads as an action. */
+function NewsCtaBlock({ cta }: { cta: NewsCta }) {
+  return (
+    <aside className="on-navy flex flex-col items-start gap-4 rounded-2xl bg-forest-900 px-7 py-6 text-sand-50 sm:flex-row sm:items-center sm:justify-between">
+      {cta.note && (
+        <p className="text-body-sm font-semibold leading-relaxed">{cta.note}</p>
+      )}
+      <a
+        href={cta.href}
+        target="_blank"
+        rel="nofollow noopener"
+        className="accent-fill inline-flex min-h-11 shrink-0 items-center rounded-full px-8 py-3 font-bold transition-transform hover:-translate-y-px focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-gold-500"
+      >
+        {cta.label}
+      </a>
+    </aside>
+  );
 }
