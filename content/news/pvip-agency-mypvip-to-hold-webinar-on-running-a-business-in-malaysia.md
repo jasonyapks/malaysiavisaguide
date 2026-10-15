@@ -1,6 +1,6 @@
 ---
 headline: "PVIP agency MYPVIP to hold webinar on running a business in Malaysia"
-dek: "The Zoom session on 1 November covers the Premium Visa Programme, company incorporation and the route from visa to operating business. It comes from an agency that sells PVIP applications, so the basics are worth knowing before you join."
+dek: "The free Zoom session on 1 November covers the Premium Visa Programme, company incorporation and the route from visa to operating business. It comes from an agency that sells PVIP applications, so the basics are worth knowing before you join."
 category: "pvip"
 sourceName: "MYPVIP webinar registration (Zoom)"
 sourceUrl: "https://us06web.zoom.us/webinar/register/WN_XbhE1GMSQEece99jR8iMZg#/registration"
@@ -11,7 +11,8 @@ keyPoints:
   - "MYPVIP, a PVIP agency on the Immigration Department's list of approved agencies, is hosting a Zoom webinar on Sunday 1 November 2026 at 8pm Malaysia time."
   - "The session is titled \"From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities\"."
   - "Advertised topics include an overview of PVIP, Malaysia as a regional business hub, the steps to incorporate a company, and a roadmap from visa to operations."
-  - "Places are reserved through a Zoom registration page."
+  - "Speakers are Chee Mee, described by the organisers as an immigration expert, and Datin Jiniy Seelan of JS Partners, described as a finance professional and entrepreneur."
+  - "The session is in English and free to join, with registration through Zoom."
 whatItMeans:
   - "PVIP holders may live, work and run a business in Malaysia on the pass itself, so the session's premise is sound."
   - "An agency webinar is a sales channel as well as an information session. Treat it as one view, not the only one."
@@ -22,9 +23,11 @@ sourceExcerpt: "From PVIP Visa to Business Owner: Unlocking Malaysia's Business 
 
 ## A webinar for founders weighing PVIP
 
-If you're thinking about moving to Malaysia and starting a company here, you've probably found that the visa and the business get explained separately, by people who sell one or the other. A webinar on 1 November sets out to cover both in one session.
+If you're thinking about moving to Malaysia and starting a company here, you've probably found that the visa and the business get explained separately, by people who sell one or the other. A free webinar on 1 November sets out to cover both in one session.
 
-The PVIP agency MYPVIP is hosting "From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities" on Zoom on Sunday 1 November 2026 at 8pm Malaysia time. MYPVIP appears on the Immigration Department's list of approved PVIP agencies.
+The PVIP agency MYPVIP is hosting "From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities" on Zoom on Sunday 1 November 2026 at 8pm Malaysia time. MYPVIP appears on the Immigration Department's list of approved PVIP agencies. The session is in English and free to join.
+
+The speakers are Chee Mee, whom the organisers describe as an immigration expert, and Datin Jiniy Seelan of JS Partners, described as a finance professional and entrepreneur.
 
 ## What it says it will cover
 
