@@ -12,7 +12,7 @@ keyPoints:
   - "此次研讨会的主题为“从PVIP签证到企业主：解锁马来西亚的商业机遇”。"
   - "宣传的议题包括：PVIP概览、马来西亚作为区域商业枢纽的角色、公司注册的步骤，以及从签证到运营的路线图。"
   - "主讲人是两位MYPVIP的业务伙伴：PVIP顾问Chee Mee Ho，以及JS Partners Chartered Accountant的管理合伙人Datin Jiniy Seelan。"
-  - "本次研讨会以英语进行，免费参加，须通过Zoom报名。"
+  - "本次研讨会以英语进行，免费参加，须通过Zoom报名，最后设有问答环节。"
 whatItMeans:
   - "PVIP持有人可凭此准证本身在马来西亚居住、工作并经营企业，因此本次研讨会的前提是成立的。"
   - "代理机构举办的网络研讨会既是信息分享会，也是一种销售渠道。应将其视为一种观点，而非唯一的观点。"
@@ -29,7 +29,7 @@ translationLocked: true
 
 如果您正考虑移居马来西亚并在此创业，大概会发现签证和生意这两件事通常是分开讲的，而且讲的人往往只卖其中一项。11月1日的一场免费网络研讨会打算把两者一并讲清楚。
 
-PVIP代理机构MYPVIP将于2026年11月1日（星期日）马来西亚时间晚上8点，在Zoom上举办网络研讨会《From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities》（从PVIP签证到企业主：解锁马来西亚的商业机遇）。MYPVIP出现在马来西亚移民局批准的PVIP代理机构名单上。本次研讨会以英语进行，免费参加。
+PVIP代理机构MYPVIP将于2026年11月1日（星期日）马来西亚时间晚上8点，在Zoom上举办网络研讨会《From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities》（从PVIP签证到企业主：解锁马来西亚的商业机遇）。MYPVIP出现在马来西亚移民局批准的PVIP代理机构名单上。本次研讨会以英语进行，免费参加，最后设有问答环节。
 
 主讲人是MYPVIP的两位业务伙伴：PVIP顾问Chee Mee Ho，以及JS Partners Chartered Accountant的管理合伙人Datin Jiniy Seelan。
 

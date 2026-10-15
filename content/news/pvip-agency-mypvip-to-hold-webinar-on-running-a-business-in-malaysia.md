@@ -12,7 +12,7 @@ keyPoints:
   - "The session is titled \"From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities\"."
   - "Advertised topics include an overview of PVIP, Malaysia as a regional business hub, the steps to incorporate a company, and a roadmap from visa to operations."
   - "The speakers are two MYPVIP business associates: PVIP consultant Chee Mee Ho, and Datin Jiniy Seelan, managing partner of JS Partners Chartered Accountant."
-  - "The session is in English and free to join, with registration through Zoom."
+  - "The session is in English and free to join, with registration through Zoom, and ends with a Q&A."
 whatItMeans:
   - "PVIP holders may live, work and run a business in Malaysia on the pass itself, so the session's premise is sound."
   - "An agency webinar is a sales channel as well as an information session. Treat it as one view, not the only one."
@@ -25,7 +25,7 @@ sourceExcerpt: "From PVIP Visa to Business Owner: Unlocking Malaysia's Business 
 
 If you're thinking about moving to Malaysia and starting a company here, you've probably found that the visa and the business get explained separately, by people who sell one or the other. A free webinar on 1 November sets out to cover both in one session.
 
-The PVIP agency MYPVIP is hosting "From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities" on Zoom on Sunday 1 November 2026 at 8pm Malaysia time. MYPVIP appears on the Immigration Department's list of approved PVIP agencies. The session is in English and free to join.
+The PVIP agency MYPVIP is hosting "From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities" on Zoom on Sunday 1 November 2026 at 8pm Malaysia time. MYPVIP appears on the Immigration Department's list of approved PVIP agencies. The session is in English, free to join, and ends with a Q&A.
 
 The speakers are two MYPVIP business associates: PVIP consultant Chee Mee Ho, and Datin Jiniy Seelan, managing partner of JS Partners Chartered Accountant.
 
