@@ -158,6 +158,6 @@ If you're **moving here to run it**, your real number is RM500,000 of capital, o
 
 If you **already live here** on a pass that allows business, you're looking at RM5,000 to RM16,000 and no capital hurdle, unless you're going into distributive trade. You're the one person for whom "from RM2,500" is nearly honest.
 
-And if you're still choosing a pass, choose it with the business in mind. The cheapest company in Malaysia belongs to the founder who sorted out their own right to be here first.
+And if you're still choosing a pass, choose it with the business in mind. [Which Malaysian visa lets you run a business?](/insights/comparisons/which-visa-lets-you-run-a-business/) compares them. The cheapest company in Malaysia belongs to the founder who sorted out their own right to be here first.
 
 Rules and fees change. The government figures above were checked against the official sources listed below on 10 October 2026; confirm them, and get a written quote, before you commit.

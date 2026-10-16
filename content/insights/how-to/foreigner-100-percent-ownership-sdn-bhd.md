@@ -111,6 +111,6 @@ If you're in **retail, trading or food**, decide between two honest options: fun
 
 If you're in a **regulated industry**, your first conversation is with the regulator.
 
-And if your plan is to live in Malaysia and run the company yourself, the director question and the visa question are the same question. A company doesn't give you the right to live here; a pass does. Start with [the PVIP guide](/visas/pvip/) or [the Employment Pass guide](/visas/employment-pass/).
+And if your plan is to live in Malaysia and run the company yourself, the director question and the visa question are the same question. A company doesn't give you the right to live here; a pass does. Start with [the PVIP guide](/visas/pvip/) or [the Employment Pass guide](/visas/employment-pass/), or compare every pass in [which Malaysian visa lets you run a business?](/insights/comparisons/which-visa-lets-you-run-a-business/)
 
 Sector rules change and this is general information, not legal advice. The sources below were checked on 12 October 2026.

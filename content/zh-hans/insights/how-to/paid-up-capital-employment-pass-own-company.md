@@ -114,7 +114,7 @@ MIDA负责为制造业及部分服务业公司办理工作准证（Employment Pa
 
 **您是一名带着笔记本电脑工作的顾问。** 您的企业需要的是 RM20,000，不是 RM500,000。把 RM50万 放进一家公司，只为了让它来雇用您，这是一种代价高昂的方式，换来的准证会在公司倒闭的当天同时失效。应该先考虑一张以您个人名义持有的准证。
 
-**您想在这里生活，同时保留灵活选择的空间。** 高端签证计划（PVIP）要求缴纳定期存款 {{pvip:fixedDeposit:money}} 以及参与费 {{pvip:participationFee.principal:money}}，其工作权利在我们的指南中记录为：{{pvip:workRights:text}}。这笔金额高于资本要求。但该准证的有效期为 {{pvip:tenureYears:years}}，不依赖于任何公司的存续，而且居住在本地的 PVIP 持有人可以担任自己公司的常驻董事。
+**您想在这里生活，同时保留灵活选择的空间。** 高端签证计划（PVIP）要求缴纳定期存款 {{pvip:fixedDeposit:money}} 以及参与费 {{pvip:participationFee.principal:money}}，其工作权利在我们的指南中记录为：{{pvip:workRights:text}}。这笔金额高于资本要求。但该准证的有效期为 {{pvip:tenureYears:years}}，不依赖于任何公司的存续，而且居住在本地的 PVIP 持有人可以担任自己公司的常驻董事。详细比较请参阅[哪种马来西亚签证允许您经营企业？](/insights/comparisons/which-visa-lets-you-run-a-business/)
 
 工作准证（Employment Pass）是较便宜的选择，但也是会随您的公司一同关闭的那一道门。企业一旦经营失败，您的居留权也会随之丧失，这一点值得在您仅因价格而选择它之前先弄清楚。
 

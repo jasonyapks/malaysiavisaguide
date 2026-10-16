@@ -1,10 +1,9 @@
 ---
 title: "Which Malaysian visa lets you run a business? PVIP vs MM2H vs Employment Pass vs DE Rantau"
 dek: "Most long-stay passes let you live in Malaysia and say nothing reassuring about working in your own company. Two let you run a business in your own right, one lets you run exactly one, and the rest are for living here, not for earning here."
-published: "2026-10-10"
-reviewed: "2026-10-10"
+published: "2026-10-16"
+reviewed: "2026-10-16"
 readingMinutes: 8
-draft: true
 relatedGuides:
   - path: "/visas/pvip/"
     title: "the PVIP guide"
@@ -28,10 +27,10 @@ faq:
 sources:
   - label: "Immigration Department of Malaysia, Expatriate Services Division — FAQs on ESD company registration (paid-up capital by equity structure)"
     url: "https://esd.imi.gov.my/portal/faq/esd-company-registration/index.php?query="
-    verified: "2026-10-10"
+    verified: "2026-10-16"
   - label: "SSM — Guidelines for Incorporation of a Local Company (director ordinarily resident in Malaysia)"
     url: "https://www.ssm.com.my/Pages/Legal_Framework/GUIDELINES/4.-Guidelines-For-Incorporation-Of-A-Local-Company.pdf"
-    verified: "2026-10-10"
+    verified: "2026-10-16"
 ---
 
 You've found the visa you can afford and the business you want to start. Then you read the conditions and can't find a sentence that says you're allowed to do both.

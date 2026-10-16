@@ -115,6 +115,6 @@ translationLocked: true
 
 如果您身处**受监管行业**，您首先要找的是监管机构。
 
-如果您的计划是住在马来西亚并亲自经营公司，那么董事身份问题与签证问题其实是同一个问题。公司本身并不赋予您在此居住的权利；准证才可以。请先参考[高端签证计划（PVIP）指南](/visas/pvip/)或[工作准证（Employment Pass）指南](/visas/employment-pass/)。
+如果您的计划是住在马来西亚并亲自经营公司，那么董事身份问题与签证问题其实是同一个问题。公司本身并不赋予您在此居住的权利；准证才可以。请先参考[高端签证计划（PVIP）指南](/visas/pvip/)或[工作准证（Employment Pass）指南](/visas/employment-pass/)，也可以在[哪种马来西亚签证允许您经营企业？](/insights/comparisons/which-visa-lets-you-run-a-business/)中比较所有准证。
 
 各行业的规定会不断变化，本文仅为一般性信息，并非法律意见。以下资料来源的核实日期为2026年10月12日。

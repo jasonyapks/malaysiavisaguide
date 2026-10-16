@@ -110,7 +110,7 @@ This is where you decide which founder you are.
 
 **You're a consultant with a laptop.** Your business needs RM20,000, not RM500,000. Parking half a million in a company so that it can employ you is an expensive way to get a pass that ends the day the company does. Look at a pass you hold in your own right first.
 
-**You want to live here and keep options open.** The Premium Visa Programme asks for a fixed deposit of {{pvip:fixedDeposit:money}} and a participation fee of {{pvip:participationFee.principal:money}}, and its work rights are recorded in our guide as: {{pvip:workRights:text}}. That's more money than the capital requirement. But the pass is yours for {{pvip:tenureYears:years}}, it doesn't depend on any company surviving, and a PVIP holder who lives here can be their own resident director.
+**You want to live here and keep options open.** The Premium Visa Programme asks for a fixed deposit of {{pvip:fixedDeposit:money}} and a participation fee of {{pvip:participationFee.principal:money}}, and its work rights are recorded in our guide as: {{pvip:workRights:text}}. That's more money than the capital requirement. But the pass is yours for {{pvip:tenureYears:years}}, it doesn't depend on any company surviving, and a PVIP holder who lives here can be their own resident director. Compare them properly in [which Malaysian visa lets you run a business?](/insights/comparisons/which-visa-lets-you-run-a-business/)
 
 The Employment Pass is the cheaper door. It's also the one that closes behind your company. If the business fails, so does your right to stay, and that's worth knowing before you choose it for the price.
 
