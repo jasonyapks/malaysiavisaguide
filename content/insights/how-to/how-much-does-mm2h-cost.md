@@ -16,7 +16,7 @@ faq:
   - q: "Are MM2H agent fees negotiable?"
     a: "No. MM2H agency fees are fixed by the government, not by the agency: RM40,000 on Silver, RM55,000 on Gold and RM70,000 on Platinum, inclusive of 8% SST. A quote above those figures is wrong, not just expensive. The fee covers the main applicant's processing fee, their first five years of pass and visa fees, and their security bond. Stated by MYPVIP from the government MM2H fee schedule, as at 28 July 2026."
   - q: "How much does it cost to add my spouse or children to MM2H?"
-    a: "The participation fee is per application, so dependants add nothing there. Each dependant pays a government processing fee of RM2,500, a pass fee of RM500 for each year of the pass, a visa fee set by their nationality, and a RM10 security bond. The agency fee already covers the first dependant. From the second dependant onwards it adds RM2,160 each."
+    a: "The participation fee is per application, so dependants add nothing there. Each dependant pays a government processing fee of RM2,500, a pass fee of RM500 for each year of the initial five-year approval, on every tier, a visa fee set by their nationality, and a RM10 security bond. The agency fee already covers the first dependant. From the second dependant onwards it adds RM2,160 each."
   - q: "Do I get the MM2H fixed deposit back?"
     a: "It stays yours. It sits in a Malaysian bank in your name. Up to 50% can be withdrawn as soon as your visa is endorsed, against proof of a qualifying expense such as a signed Sale and Purchase Agreement, for the property itself or for education, medical or tourism spending in Malaysia. The rest stays in the account for as long as you hold the pass. MOTAC's guide publishes the permitted uses. The timing is MYPVIP practice, as at 17 October 2026."
   - q: "Is the MM2H property purchase compulsory?"
@@ -57,7 +57,7 @@ The payment terms are fixed as well: {{mm2h-silver:agencyFee.paymentTerms:text}}
 The headline fee is for one person. Bring your spouse, children or parents and each of them adds their own charges:
 
 - **Processing fee:** {{mm2h-silver:processingFee.dependant:money}} per dependant, paid to the government.
-- **Pass fee:** {{mm2h-silver:passFeePerYear.dependant:money}} per dependant for each year of the pass.
+- **Pass fee:** {{mm2h-silver:passFeePerYear.dependant:money}} per dependant for each year of the initial five-year approval, on Gold and Platinum as well as Silver.
 - **Visa fee:** per dependant per year, set by their nationality. For most passports it's a small sum, but it varies.
 - **Security bond:** a nominal RM10 per dependant.
 - **Extra agency fee:** the main fee already covers your first dependant. From the second one onwards it's {{mm2h-silver:agencyFee.perDependant:money}} each.
