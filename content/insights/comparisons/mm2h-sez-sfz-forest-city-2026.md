@@ -2,7 +2,7 @@
 title: "MM2H SEZ and SFZ 2026: the Forest City zone route compared with Silver, Gold and Platinum"
 dek: "The Special Economic Zone and Special Financial Zone routes are the cheapest way into MM2H, and the cheapness is real. What they cost against Silver, Gold and Platinum, why the property comes before the approval rather than after it, who they suit, and the catches that a deposit figure does not show."
 published: "2026-10-01"
-reviewed: "2026-10-01"
+reviewed: "2026-10-17"
 readingMinutes: 8
 draft: false
 relatedGuides:
@@ -20,7 +20,7 @@ faq:
   - q: "Can I work in Malaysia on the SEZ/SFZ route?"
     a: "No. MOTAC's guide marks business and investment activities and career opportunities as not allowed on the SEZ/SFZ category, the same as Silver and Gold. Platinum is the only MM2H category that permits them."
   - q: "When can I withdraw half of the fixed deposit on the SEZ/SFZ route?"
-    a: "The permitted uses are published: MOTAC's guide allows up to 50% of the principal to be withdrawn for purchasing a residence, education, medical and tourism activities in Malaysia, on the SEZ/SFZ page as on the others. When that window opens on this route is an open question we have not been able to settle. On the main tiers it opens once the purchase completes, but on the zone route the purchase comes first, so the same rule does not translate, and we would rather say so than guess."
+    a: "The permitted uses are published: MOTAC's guide allows up to 50% of the principal to be withdrawn for purchasing a residence, education, medical and tourism activities in Malaysia, on the SEZ/SFZ page as on the others. When that window opens on this route is an open question we have not been able to settle. On the main tiers it opens once the visa is endorsed and a qualifying expense such as a signed purchase agreement can be shown, but on the zone route the purchase comes before approval, so the same rule does not translate, and we would rather say so than guess."
   - q: "Can I sell the Forest City property and keep the visa?"
     a: "Not freely. MOTAC's guide says the residence may not be sold for ten years, except to upgrade to a residence of higher value, and that failure to comply with any of the terms results in the pass being revoked. Treat the purchase as a ten-year hold in a single development."
 sources:
@@ -75,7 +75,7 @@ If the purchase comes first, you are committing a property price to a single dev
 Ask whoever is handling the application to state in writing which comes first in your case, the purchase or the approval, and what happens to the purchase if the application is refused. If the answer is that the purchase comes first, read the sale agreement for what it says about a refused visa before you sign it, not after.
 {% endcallout %}
 
-The fixed-deposit withdrawal is affected too. MOTAC's guide allows up to 50% of the principal to be withdrawn for purchasing a residence, education, medical and tourism activities in Malaysia, and the SEZ/SFZ page carries that clause in the same words as the others. On the main tiers the window opens once the purchase completes, which follows approval. On the zone route the purchase precedes approval, so that rule does not carry across, and when the window opens here is a question we have not been able to settle. Budget as though the deposit and the property price must both be available in full at the same time.
+The fixed-deposit withdrawal is affected too. MOTAC's guide allows up to 50% of the principal to be withdrawn for purchasing a residence, education, medical and tourism activities in Malaysia, and the SEZ/SFZ page carries that clause in the same words as the others. On the main tiers the window opens once the visa is endorsed, against a qualifying expense such as a signed purchase agreement. On the zone route the purchase precedes approval, so that rule does not carry across, and when the window opens here is a question we have not been able to settle. Budget as though the deposit and the property price must both be available in full at the same time.
 
 {% programmeNotice programme="mm2h-silver" %}
 

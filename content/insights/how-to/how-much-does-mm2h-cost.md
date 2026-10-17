@@ -18,7 +18,7 @@ faq:
   - q: "How much does it cost to add my spouse or children to MM2H?"
     a: "The participation fee is per application, so dependants add nothing there. Each dependant pays a government processing fee of RM2,500, a pass fee of RM500 for each year of the pass, a visa fee set by their nationality, and a RM10 security bond. The agency fee already covers the first dependant. From the second dependant onwards it adds RM2,160 each."
   - q: "Do I get the MM2H fixed deposit back?"
-    a: "It stays yours. It sits in a Malaysian bank in your name. Up to 50% can be withdrawn once your property purchase completes, for the property itself or for education, medical or tourism spending in Malaysia. The rest stays in the account for as long as you hold the pass. MOTAC's guide publishes the permitted uses. Withdrawals opening on completion of the purchase, rather than on approval, is MYPVIP practice as at 23 August 2026."
+    a: "It stays yours. It sits in a Malaysian bank in your name. Up to 50% can be withdrawn as soon as your visa is endorsed, against proof of a qualifying expense such as a signed Sale and Purchase Agreement, for the property itself or for education, medical or tourism spending in Malaysia. The rest stays in the account for as long as you hold the pass. MOTAC's guide publishes the permitted uses. The timing is MYPVIP practice, as at 17 October 2026."
   - q: "Is the MM2H property purchase compulsory?"
     a: "Yes, on Silver, Gold and Platinum. The purchase has to complete within the first year after your visa is endorsed, and the property must be held for ten years unless immigration authorises a sale in order to buy one of higher value. The programme minimum is only a floor. The state's own floor for foreign buyers often binds instead: RM1,000,000 in Kuala Lumpur and RM2,000,000 in Selangor."
   - q: "When do I pay the MM2H fees?"
@@ -68,13 +68,13 @@ So a retired couple on Silver, five years, pays about RM46,000 in fees, not RM41
 
 This is where the real money is, and where most budgets go wrong.
 
-**The fixed deposit.** {{mm2h-silver:fixedDeposit:money}} on Silver, {{mm2h-gold:fixedDeposit:money}} on Gold, {{mm2h-platinum:fixedDeposit:money}} on Platinum, placed in a Malaysian bank in your name. It earns interest and it's still your money. {{mm2h-silver:fixedDepositWithdrawable:text}} The bank may ask you to convert it to ringgit at the market rate, so currency movement is a real cost if your life is priced in dollars or pounds. The withdrawal opening on completion of the purchase, rather than on approval, is MYPVIP practice as at 23 August 2026; the permitted uses are in MOTAC's guide.
+**The fixed deposit.** {{mm2h-silver:fixedDeposit:money}} on Silver, {{mm2h-gold:fixedDeposit:money}} on Gold, {{mm2h-platinum:fixedDeposit:money}} on Platinum, placed in a Malaysian bank in your name. It earns interest and it's still your money. {{mm2h-silver:fixedDepositWithdrawable:text}} The bank may ask you to convert it to ringgit at the market rate, so currency movement is a real cost if your life is priced in dollars or pounds. The timing is MYPVIP practice, as at 17 October 2026; the permitted uses are in MOTAC's guide.
 
 **The property.** Compulsory on all three tiers. The programme minimum is {{mm2h-silver:propertyPurchaseMin:money}} on Silver, {{mm2h-gold:propertyPurchaseMin:money}} on Gold and {{mm2h-platinum:propertyPurchaseMin:money}} on Platinum. {{mm2h-silver:propertyStateFloorNote:text}}
 
 Two conditions come with it. The purchase has to complete within the first year after your visa is endorsed, and you have to hold the property for ten years. Selling earlier needs immigration's approval, and only to buy something of higher value. On Silver, that ten years outlasts your first five-year pass. Both conditions are stated by MYPVIP practice, as at 3 August 2026.
 
-Here's the trap: the deposit can't pay for the house. The 50% withdrawal only opens once the purchase has completed, so it can reimburse you afterwards but can't fund the down payment. **Budget the deposit and the purchase price as two sums you need at the same time.**
+Here's the trap: the money has to be there twice. The deposit goes in first, in full. Half of it can come back once your visa is endorsed and you've signed the Sale and Purchase Agreement, and that can help with the balance of the price. But the booking fee and the payment on signing come out of your own pocket. **Budget the full deposit plus the opening payments on the property as cash you need at the same time.**
 
 ## The costs nobody puts on the quote
 

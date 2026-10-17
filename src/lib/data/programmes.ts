@@ -354,14 +354,14 @@ const MM2H_COMMON = {
   // dates the document, not our departures from it. See §4.1 of SPEC.md.
   //
   // `changedOn` stays at 3 August — the date the terms themselves changed.
-  // `asAt` moved to 23 August, when Jason restated the withdrawal item and
-  // struck the permitted-use claim it used to carry; the age-34 item below is
+  // `asAt` moved to 17 October, when Jason replaced the withdrawal item with
+  // the endorsement-plus-qualifying-expense rule; the age-34 item below is
   // unchanged from 3 August and was not re-confirmed on that date.
   superseded: {
     changedOn: "2026-08-03",
-    attribution: { by: "MYPVIP practice", asAt: "2026-08-23" },
+    attribution: { by: "MYPVIP practice", asAt: "2026-10-17" },
     whatChanged: [
-      "The 50% fixed-deposit withdrawal opens once the property purchase completes, not on approval of the application. On Silver, Gold and Platinum the purchase follows approval, so the sequence is approval, then purchase, then withdrawal. SEZ and SFZ run the other way round: the in-zone purchase is a condition of approval rather than a step after it. Only the timing departs from the guide: the permitted uses, the purchase of a residence among them, are published in it.",
+      "A partial withdrawal of the fixed deposit can be applied for as soon as the visa is endorsed in the passport, with no waiting period, against proof of a qualifying expense such as a signed Sale and Purchase Agreement for a residence. The guide anchors the window to approval on its category pages and to the second year on its summary page. Only the timing departs from the guide: the permitted uses, the purchase of a residence among them, are published in it. This describes Silver, Gold and Platinum; on SEZ and SFZ the in-zone purchase is a condition of approval, and when the withdrawal opens there is not settled.",
       "Dependent children qualify up to age 34, meaning before the 35th birthday. The guide's \"up to age 35\" reads a year wider than the counter applies.",
     ],
     figuresPending: false,
@@ -377,26 +377,20 @@ const MM2H_COMMON = {
 export const MM2H_FD_TIMING_ATTRIBUTION: Attribution =
   MM2H_COMMON.superseded.attribution;
 
-// Corrected three times. This string covers Silver, Gold and Platinum only.
+// Corrected four times. This string covers Silver, Gold and Platinum only.
 //
-// The per-category pages (pp.28, 33, 37) read as though the withdrawal right
-// opens on approval; the summary page (p.18) adds a "second year onwards"
-// gloss. This site quoted the p.18 gloss until 2026-07-28, when Jason replaced
-// it with "from approval". On 2026-08-03 he corrected it again: in practice the
-// window opens once the property purchase completes.
+// History, so nobody reinstates a superseded version: the p.18 "second year
+// onwards" gloss until 2026-07-28; "from approval" until 2026-08-03; "once the
+// property purchase completes" (approval → purchase → withdrawal, so the deposit
+// could only reimburse a completed purchase) from 2026-08-03 to 2026-10-17.
+// On 2026-10-17 Jason replaced all of those: the trigger is visa ENDORSEMENT
+// plus proof of a qualifying expense — a signed SPA, or education, medical or
+// tourism spending — with no waiting period. So the withdrawal can now go
+// towards the balance of a purchase once the SPA is signed; only what is paid
+// before or on signing must come from the applicant's own funds.
 //
-// Between 2026-08-03 and 2026-08-23 this string also asserted that purchasing a
-// residence had dropped off the permitted-use list, reasoning that money
-// released by completion cannot have funded that completion. Jason struck that
-// on 2026-08-23: the purchase IS a permitted use — the withdrawal reimburses a
-// completed purchase rather than funding one. Timing and permitted use are two
-// separate questions, and the deleted sentence answered the second by deducing
-// it from the first.
-//
-// The order on these three tiers is approval → purchase → withdrawal. SEZ/SFZ
-// inverts the first two — the in-zone purchase is a condition of approval, not
-// something that follows it — so this string does not describe SEZ, and the
-// SEZ withdrawal trigger is deliberately unstated until Jason confirms it.
+// SEZ/SFZ is deliberately not covered: the in-zone purchase there precedes
+// approval, and Jason has not confirmed what opens the window on that route.
 //
 // Two standings in one sentence, and they are not the same strength:
 //
@@ -405,17 +399,13 @@ export const MM2H_FD_TIMING_ATTRIBUTION: Attribution =
 //     approval as MM2H participant has been obtained for the purposes of
 //     purchasing a residence, education, medical and tourism activities in
 //     Malaysia" — Silver p.37, Gold p.33, Platinum p.29, SEZ p.43 of the
-//     December 2025 guide (printed folios, checked 2026-09-15). Purchasing a
-//     residence is in the document verbatim;
-//     it is not something this site deduced or took on practice.
+//     December 2025 guide (printed folios, checked 2026-09-15).
 //   * The TIMING rests on attribution. The guide anchors the window to
-//     approval; practice opens it on completion of the purchase. That half, and
-//     only that half, is what the `superseded` block on MM2H_COMMON covers.
-//
-// Do not collapse the two. Attributing the permitted-use list to practice
-// understates it — a reader who checks the guide finds it there.
+//     approval; practice opens it on endorsement against a qualifying expense.
+//     That half, and only that half, is what the `superseded` block on
+//     MM2H_COMMON covers.
 export const MM2H_FD_WITHDRAWAL =
-  "Up to 50% of the principal may be withdrawn once the property purchase completes, which on Silver, Gold and Platinum follows approval of the application. It may go towards the property purchase itself, or towards education, medical or tourism activities in Malaysia.";
+  "Up to 50% of the principal may be withdrawn as soon as the visa is endorsed in your passport, with no waiting period, provided you can show a qualifying expense: a signed Sale and Purchase Agreement for a residence, or education, medical or tourism spending in Malaysia.";
 
 /**
  * The state-law floor that sits on top of every MM2H property minimum.

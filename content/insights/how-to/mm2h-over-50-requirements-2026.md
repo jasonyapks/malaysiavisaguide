@@ -2,7 +2,7 @@
 title: "MM2H (Malaysia My Second Home) for applicants aged 50 and over: 2026 requirements, tiers and costs"
 dek: "At 50 the minimum stay falls away, and almost nothing else changes. What an applicant aged 50 and over still has to do in person, which tier suits a retirement, what a spouse and parents add to the bill, and how the insurance and income rules read for an older applicant."
 published: "2026-10-01"
-reviewed: "2026-10-01"
+reviewed: "2026-10-17"
 readingMinutes: 9
 draft: false
 relatedGuides:
@@ -135,7 +135,7 @@ Take a couple: the principal is 66, the spouse 63, both living on pensions and s
 [^2]: {{mm2h-silver:propertyStateFloorNote:text}}
 [^3]: Both are over 60, the age to which MOTAC's document list applies the insurance requirement (p.23). The renewal list asks for health insurance without that qualifier (p.24), so budget for cover from the first renewal unless told otherwise in writing.
 
-Read the table in three layers. The deposit is still the couple's money, and up to half of it can be drawn back once the purchase completes, for the purchase itself or for medical, education or tourism spending in Malaysia. The property is an asset, but the minimum in the table is unlikely to be the price they pay once the state floor is applied. The fees are the only true cost, and on both tiers they are dominated by the agency fee rather than the participation fee.
+Read the table in three layers. The deposit is still the couple's money, and up to half of it can be drawn back once the visa is endorsed, against a signed purchase agreement or medical, education or tourism spending in Malaysia. The property is an asset, but the minimum in the table is unlikely to be the price they pay once the state floor is applied. The fees are the only true cost, and on both tiers they are dominated by the agency fee rather than the participation fee.
 
 For this couple the deciding question is not the fee line. It is whether they want to commit capital for {{mm2h-silver:tenureYears:years}} with a property they must keep for ten, or for {{mm2h-gold:tenureYears:years}} with the property obligation comfortably inside the pass. The five-month stay pattern works on either tier, because neither has a minimum stay at their age.
 
