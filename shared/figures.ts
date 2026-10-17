@@ -66,6 +66,7 @@ export interface ProgrammeLike {
   governmentExtras?: {
     agencyFee?: {
       principal: number;
+      perDependant?: number;
       currency: CurrencyLike;
       paymentTerms?: string;
       /** Whose word the fee schedule is on. See `attribution` below. */
@@ -206,6 +207,11 @@ export const FIGURE_FIELDS = [
   {
     id: "agencyFee.principal",
     label: "Agency fee — principal",
+    kind: "money",
+  },
+  {
+    id: "agencyFee.perDependant",
+    label: "Agency fee — each dependant beyond those included",
     kind: "money",
   },
   {
@@ -375,6 +381,12 @@ export function figureValue(
       const fee = p.governmentExtras?.agencyFee;
       return fee
         ? { kind: "money", amount: fee.principal, currency: fee.currency }
+        : null;
+    }
+    case "agencyFee.perDependant": {
+      const fee = p.governmentExtras?.agencyFee;
+      return fee?.perDependant
+        ? { kind: "money", amount: fee.perDependant, currency: fee.currency }
         : null;
     }
     case "agencyFee.paymentTerms": {
