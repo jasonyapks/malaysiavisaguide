@@ -225,6 +225,14 @@ export const copy: GuideCopy = {
           answers the first question in six questions; the state&apos;s floor
           you have to look up for the state you have chosen.
         </p>
+        <p>
+          For what each tier actually changes, and how to tell which one fits
+          you, read{" "}
+          <Link href={href("/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/")}>
+            MM2H Silver vs Gold vs Platinum
+          </Link>
+          .
+        </p>
       </Section>
 
       <Section title="MM2H age requirements: the rule most guides get wrong">

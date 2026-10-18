@@ -190,6 +190,13 @@ export const copy: GuideCopy = {
           <Link href={href("/tools/eligibility/")}>資格自測</Link>
           六道題就能回答；州屬門檻則要按你選定的州自行查證。
         </p>
+        <p>
+          每個等級到底改變了什麼、哪一級適合你，請閱讀
+          <Link href={href("/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/")}>
+            MM2H 白銀級、黃金級與白金級對比
+          </Link>
+          。
+        </p>
       </Section>
 
       <Section title="MM2H 年齡要求：大多數指南都寫錯了">

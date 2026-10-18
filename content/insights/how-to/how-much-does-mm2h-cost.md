@@ -10,6 +10,8 @@ relatedGuides:
     title: "the MM2H guide"
   - path: "/tools/cost-calculator/"
     title: "the MM2H and PVIP cost calculator"
+  - path: "/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/"
+    title: "MM2H Silver vs Gold vs Platinum"
 faq:
   - q: "How much does MM2H cost in total?"
     a: "For one main applicant, the fees come to about RM41,000 on Silver, RM58,000 on Gold and RM270,000 on Platinum. That is the government-fixed agency fee plus the participation fee. On top of that you place a fixed deposit (USD 150,000, USD 500,000 or USD 1,000,000) and buy a property in Malaysia (from RM600,000, RM1,000,000 or RM2,000,000, and more in some states). The deposit and the property are capital you keep, not fees you lose."
@@ -98,4 +100,4 @@ The timings, the medical figure and the insurance exemption above are MYPVIP pra
 
 **You're not sure MM2H is the right programme at all.** Then the fees are the wrong place to start. [MM2H vs PVIP vs DE Rantau](/insights/comparisons/mm2h-vs-pvip-vs-de-rantau/) compares what each one asks of you, and Sarawak runs its own version on different terms: see [Federal MM2H vs Sarawak MM2H](/insights/comparisons/federal-mm2h-vs-sarawak-mm2h/).
 
-Once you know your tier, [how to apply for MM2H in 2026](/insights/how-to/apply-for-mm2h-2026/) takes you through the steps in order.
+If you're still choosing between tiers, [MM2H Silver vs Gold vs Platinum](/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/) sets out what each one changes. Once you know your tier, [how to apply for MM2H in 2026](/insights/how-to/apply-for-mm2h-2026/) takes you through the steps in order.

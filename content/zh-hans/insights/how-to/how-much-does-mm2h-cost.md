@@ -10,6 +10,8 @@ relatedGuides:
     title: "MM2H 指南"
   - path: "/tools/cost-calculator/"
     title: "MM2H 与高端签证计划（PVIP）费用计算器"
+  - path: "/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/"
+    title: "MM2H 白银级、黄金级与白金级对比"
 faq:
   - q: "MM2H 的总费用是多少？"
     a: "对单一主申请人而言，白银级的费用约为RM41,000，黄金级约为RM58,000，白金级约为RM270,000。这是政府规定的代理费加上参与费。除此之外，你还需要存入一笔定期存款（USD 150,000、USD 500,000或USD 1,000,000），并在马来西亚购买一处房产（起价RM600,000、RM1,000,000或RM2,000,000，部分州属更高）。这笔定期存款和房产是你保留的资本，不是你损失的费用。"
@@ -27,7 +29,7 @@ sources:
   - label: "MOTAC — Guide to Malaysia My Second Home, December 2025 (category table, per-category pages for Silver, Gold and Platinum, fixed-deposit withdrawal terms)"
     url: "https://www.motac.gov.my/wp-content/uploads/2025/12/Guide-Malaysia-My-Second-Home.pdf"
     verified: "2026-10-17"
-sourceHash: "sha256:7e78a0fa26ef26522ceb7489e655d7f2"
+sourceHash: "sha256:dabb7f333321c19766f6bbec15dd0abc"
 translatedAt: "2026-10-18T09:28:59.789Z"
 translationModel: "claude-sonnet-5"
 translationLocked: true
@@ -102,4 +104,4 @@ translationLocked: true
 
 **你根本不确定 MM2H 第二家园计划是否是合适的项目。** 那么，费用就不该是你的起点。[MM2H 第二家园计划、高端签证计划（PVIP）与 DE Rantau 数字游民准证对比](/insights/comparisons/mm2h-vs-pvip-vs-de-rantau/)比较了各项目对申请人的要求，而砂拉越则以不同条件运作自己的版本：请参阅 [联邦 MM2H 对比砂拉越 MM2H（S-MM2H）](/insights/comparisons/federal-mm2h-vs-sarawak-mm2h/)。
 
-确定了你的级别后，[2026年如何申请 MM2H 第二家园计划](/insights/how-to/apply-for-mm2h-2026/)将按顺序为你讲解各项步骤。
+如果你还在几个级别之间犹豫，[MM2H 白银级、黄金级与白金级对比](/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/)讲清了每一级到底改变了什么。确定了你的级别后，[2026年如何申请 MM2H 第二家园计划](/insights/how-to/apply-for-mm2h-2026/)将按顺序为你讲解各项步骤。

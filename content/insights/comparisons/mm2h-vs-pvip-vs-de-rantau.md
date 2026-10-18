@@ -12,6 +12,8 @@ relatedGuides:
     title: "the PVIP guide"
   - path: "/visas/de-rantau/"
     title: "the DE Rantau guide"
+  - path: "/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/"
+    title: "MM2H Silver vs Gold vs Platinum"
 faq:
   - q: "Does MM2H really have no income requirement?"
     a: "Correct, for all three federal tiers. Qualification is capital: the fixed deposit, and where you buy, the property threshold. Sarawak MM2H is the exception — it does test income. One practical caveat: no income threshold is published and none is applied. That is not the same as bringing nothing: an applicant is still expected to show they can sustain themselves in Malaysia, so bank statements or proof of income are worth attaching even though no figure has to be met. (MYPVIP practice, 28 July 2026.)"

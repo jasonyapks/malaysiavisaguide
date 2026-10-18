@@ -10,6 +10,8 @@ relatedGuides:
     title: "the MM2H guide"
   - path: "/insights/how-to/how-much-does-mm2h-cost/"
     title: "how much MM2H costs in 2026"
+  - path: "/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/"
+    title: "MM2H Silver vs Gold vs Platinum"
 faq:
   - q: "Can MM2H Silver be renewed after 5 years?"
     a: "Yes. MOTAC's Guide: Malaysia My Second Home (December 2025) says the pass can be renewed for every five years after the maximum years of the programme have been completed. On Silver the maximum is five years, so the first renewal falls at the end of year five and then every five years after that, with a renewal fee of RM1,500 for the principal and for each dependant."

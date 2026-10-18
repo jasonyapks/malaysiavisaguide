@@ -12,6 +12,8 @@ relatedGuides:
     title: "高端签证计划（PVIP）指南"
   - path: "/visas/de-rantau/"
     title: "DE Rantau 数字游民准证指南"
+  - path: "/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/"
+    title: "MM2H 白银级、黄金级与白金级对比"
 faq:
   - q: "MM2H 第二家园计划真的没有收入要求吗？"
     a: "没错，联邦级的三个级别均是如此。资格审核看的是资本：定期存款，以及若您购置房产，还有房产门槛。砂拉越 MM2H（S-MM2H）是例外——它确实考察收入。有一点实务提醒：官方并未公布收入门槛，也不适用任何门槛。但这不等于无需证明任何经济能力：申请人仍需展示其在马来西亚的自给能力，因此即便没有具体数字要求，附上银行对账单或收入证明仍是值得的。（MYPVIP 实务，2026年7月28日。）"
@@ -40,7 +42,7 @@ sources:
   - label: "MTCP Sarawak — S-MM2H guidelines"
     url: "https://mtcp.sarawak.gov.my/web/attachment/show/?docid=REt0S0kvVFpidEtubkZUT09mcWFSZz09OjpeOuewhViH0oQ6MBHzQtpV"
     verified: "2026-09-30"
-sourceHash: "sha256:4aa5eded0b5ff08844907ffbede2fb8a"
+sourceHash: "sha256:22a4f7540ab6ca488760e3b0cf4a180f"
 translatedAt: "2026-09-15T15:22:13.255Z"
 translationModel: "claude-sonnet-5"
 ---
