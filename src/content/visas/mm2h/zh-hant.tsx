@@ -130,6 +130,13 @@ export const copy: GuideCopy = {
           </li>
         </ul>
         <p>
+          想按等級看清整筆賬單，包括每名家屬另外增加的費用，請閱讀
+          <Link href={href("/insights/how-to/how-much-does-mm2h-cost/")}>
+            2026 年 MM2H 要花多少錢
+          </Link>
+          。
+        </p>
+        <p>
           續簽另行收費：白銀級 RM1,500，黃金級 RM3,000，白金級 RM5,000。
         </p>
       </Section>

@@ -6,6 +6,8 @@ reviewed: "2026-10-17"
 readingMinutes: 8
 draft: false
 relatedGuides:
+  - path: "/insights/how-to/how-much-does-mm2h-cost/"
+    title: "how much MM2H costs in 2026"
   - path: "/visas/mm2h/"
     title: "the MM2H guide"
   - path: "/visas/pvip/"

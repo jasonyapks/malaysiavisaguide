@@ -8,6 +8,8 @@ draft: false
 relatedGuides:
   - path: "/visas/mm2h/"
     title: "MM2H 指南"
+  - path: "/insights/how-to/how-much-does-mm2h-cost/"
+    title: "2026年申请 MM2H 第二家园计划需要多少钱"
 faq:
   - q: "MM2H 白银级满5年后可以续签吗？"
     a: "是的。《MOTAC's Guide: Malaysia My Second Home》（2025年12月）指出，在计划规定的最长年限届满后，该准证可每五年续签一次。白银级的最长年限为5年，因此首次续签在第五年末进行，此后每五年一次。续签费为 RM1,500，主申请人及每位受养人各需缴付。"
@@ -25,7 +27,7 @@ sources:
   - label: "MOTAC — Guide to Malaysia My Second Home, December 2025 (section 12 MM2H Pass, section 13 Terms of Renewal of MM2H Pass, per-category renewal terms)"
     url: "https://www.motac.gov.my/wp-content/uploads/2025/12/Guide-Malaysia-My-Second-Home.pdf"
     verified: "2026-10-01"
-sourceHash: "sha256:ed76c00d521ab8c8c5541e0a7b1e570a"
+sourceHash: "sha256:0e075493feae747459e207bb1a994249"
 translatedAt: "2026-10-05T04:25:54.727Z"
 translationModel: "claude-sonnet-5"
 ---

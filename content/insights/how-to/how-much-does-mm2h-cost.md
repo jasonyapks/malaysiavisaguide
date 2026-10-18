@@ -4,7 +4,7 @@ dek: "You've had three quotes and none of them adds up the same way. That's beca
 published: "2026-10-17"
 reviewed: "2026-10-17"
 readingMinutes: 8
-draft: true
+draft: false
 relatedGuides:
   - path: "/visas/mm2h/"
     title: "the MM2H guide"
@@ -84,9 +84,9 @@ None of these is large, but together they're real:
 - **The medical.** A consultation at a Malaysian clinic, usually under RM100 per person.
 - **Medical insurance.** Required for each person and priced by the insurer, not the government. Over-60s are exempt.
 - **Documents from home.** A police clearance certificate, certified copies and sometimes translation or legalisation. The police certificate is usually the slowest part.
+- **Renewal.** Not a cost today, but it is coming. See [MM2H renewal requirements and fees](/insights/how-to/mm2h-renewal-requirements-and-fees/).
 
 The timings, the medical figure and the insurance exemption above are MYPVIP practice, as at July 2026.
-- **Renewal.** Not a cost today, but it is coming. See [MM2H renewal requirements and fees](/insights/how-to/mm2h-renewal-requirements-and-fees/).
 
 ## Which bill is yours?
 

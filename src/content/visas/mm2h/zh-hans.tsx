@@ -127,6 +127,13 @@ export const copy: GuideCopy = {
           </li>
         </ul>
         <p>
+          想按等级看清整笔账单，包括每名家属另外增加的费用，请阅读
+          <Link href={href("/insights/how-to/how-much-does-mm2h-cost/")}>
+            2026 年 MM2H 要花多少钱
+          </Link>
+          。
+        </p>
+        <p>
           续签另行收费：白银级 RM1,500，黄金级 RM3,000，白金级 RM5,000。
         </p>
       </Section>

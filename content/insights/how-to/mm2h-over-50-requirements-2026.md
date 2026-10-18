@@ -139,7 +139,7 @@ Read the table in three layers. The deposit is still the couple's money, and up 
 
 For this couple the deciding question is not the fee line. It is whether they want to commit capital for {{mm2h-silver:tenureYears:years}} with a property they must keep for ten, or for {{mm2h-gold:tenureYears:years}} with the property obligation comfortably inside the pass. The five-month stay pattern works on either tier, because neither has a minimum stay at their age.
 
-To add the fees up for your own family, including parents, use the [cost calculator](/tools/cost-calculator/). It prices each dependant separately and keeps the deposit and property apart from the fees.
+To add the fees up for your own family, including parents, use the [cost calculator](/tools/cost-calculator/). It prices each dependant separately and keeps the deposit and property apart from the fees. For the whole bill by tier, and the costs no quote includes, read [how much MM2H costs in 2026](/insights/how-to/how-much-does-mm2h-cost/).
 
 {% programmeNotice programme="mm2h-silver" %}
 

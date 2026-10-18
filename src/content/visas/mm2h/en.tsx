@@ -138,6 +138,14 @@ export const copy: GuideCopy = {
           </li>
         </ul>
         <p>
+          For the whole bill, tier by tier, including what each dependant adds,
+          read{" "}
+          <Link href={href("/insights/how-to/how-much-does-mm2h-cost/")}>
+            how much MM2H costs in 2026
+          </Link>
+          .
+        </p>
+        <p>
           Renewal is charged separately: RM1,500 on Silver, RM3,000 on Gold and
           RM5,000 on Platinum.
         </p>
