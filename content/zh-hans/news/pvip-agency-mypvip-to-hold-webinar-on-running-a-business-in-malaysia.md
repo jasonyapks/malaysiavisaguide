@@ -6,6 +6,7 @@ sourceName: "MYPVIP webinar registration (Zoom)"
 sourceUrl: "https://us06web.zoom.us/webinar/register/WN_XbhE1GMSQEece99jR8iMZg#/registration"
 publishedAt: "2026-10-15T00:00:00.000Z"
 updatedAt: "2026-10-15T00:00:00.000Z"
+pinnedUntil: "2026-11-01T14:00:00.000Z"
 readingMinutes: 2
 ctaLabel: "免费在Zoom报名"
 ctaHref: "https://us06web.zoom.us/webinar/register/WN_XbhE1GMSQEece99jR8iMZg#/registration"

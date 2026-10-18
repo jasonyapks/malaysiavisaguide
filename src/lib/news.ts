@@ -50,6 +50,11 @@ export interface NewsArticle {
   publishedAt: string | null;
   updatedAt: string | null;
   readingMinutes: number;
+  /** Optional `pinnedUntil` frontmatter. While the build runs before this
+   *  instant, the story sorts above everything else — for an event story that
+   *  must not slide down the page under daily news before the event. It lapses
+   *  by itself on the first build after the date; nothing has to be unpinned. */
+  pinnedUntil: string | null;
 }
 
 export interface FullNewsArticle extends NewsArticle {
@@ -189,6 +194,7 @@ function toSummary(a: FullNewsArticle): NewsArticle {
     publishedAt: a.publishedAt,
     updatedAt: a.updatedAt,
     readingMinutes: a.readingMinutes,
+    pinnedUntil: a.pinnedUntil,
   };
 }
 
@@ -250,7 +256,8 @@ export async function getNewsIndex(
 }
 
 /**
- * Newest first, ties broken by slug.
+ * Pinned stories first (see `pinnedUntil`), then newest first, ties broken by
+ * slug.
  *
  * The tie-break is the part worth stating: two articles can share a
  * `publishedAt` to the second, and without a second key their order would come
@@ -303,8 +310,14 @@ async function readArticles(locale: Locale): Promise<FullNewsArticle[]> {
     );
   }
 
+  // Evaluated once per build: a static export has no later moment to check at.
+  const now = new Date().toISOString();
+  const pinned = (a: FullNewsArticle) =>
+    a.pinnedUntil !== null && a.pinnedUntil > now ? 1 : 0;
+
   return articles.sort(
     (a, b) =>
+      pinned(b) - pinned(a) ||
       (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "") ||
       a.slug.localeCompare(b.slug),
   );
@@ -343,6 +356,7 @@ async function readArticle(
     updatedAt: toIso(str(data.updatedAt) || null),
     readingMinutes:
       typeof data.readingMinutes === "number" ? data.readingMinutes : 3,
+    pinnedUntil: toIso(str(data.pinnedUntil) || null),
     body: {
       keyPoints: strings(data.keyPoints),
       sections,
