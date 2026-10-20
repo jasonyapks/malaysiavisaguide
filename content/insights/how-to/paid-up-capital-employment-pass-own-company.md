@@ -80,7 +80,7 @@ Three things it is not:
 
 - **It isn't a fee.** Nobody keeps it.
 - **It isn't a government deposit.** It isn't lodged with Immigration or frozen in a fixed deposit.
-- **It isn't yours to take back on a whim.** Returning capital to a shareholder means a formal capital reduction or closing the company. Paying it out to yourself as a "loan" the month after approval is the kind of thing that invites questions at renewal.
+- **It isn't yours to take back on a whim.** Returning capital to a shareholder means a formal capital reduction or closing the company. We price the ways to close one in [what a Sdn Bhd costs to keep running every year](/insights/how-to/sdn-bhd-annual-running-costs/). Paying it out to yourself as a "loan" the month after approval is the kind of thing that invites questions at renewal.
 
 So the real question isn't whether you have RM500,000. It's whether you have RM500,000 you're prepared to commit to this business.
 

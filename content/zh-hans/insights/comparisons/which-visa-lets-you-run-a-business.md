@@ -105,6 +105,6 @@ translationLocked: true
 
 请按以下顺序做决定。首先，您本人是否会在马来西亚的企业中工作？如果是，您的候选名单是高端签证计划（PVIP）、MM2H 白金级或工作准证（Employment Pass）。其次，您是否希望自己的居留权取决于该企业？如果不希望，答案就是高端签证计划（PVIP）或白金级。只有到这一步，才比较价格。
 
-至于公司方面的决定，请先阅读[在马来西亚成立公司需要多少费用](/insights/how-to/company-setup-cost-malaysia-foreigner/)。
+至于公司方面的决定，请先阅读[在马来西亚成立公司需要多少费用](/insights/how-to/company-setup-cost-malaysia-foreigner/)，再阅读[公司每年的维持费用](/insights/how-to/sdn-bhd-annual-running-costs/)。
 
 准证条件会发生变化，个别的批准信也可能附带自己的条款。在依赖它之前，请阅读您自己的批准信，并向发证机关确认。

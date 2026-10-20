@@ -1,10 +1,10 @@
 ---
 title: "What a Malaysian Sdn Bhd costs to keep running every year (2026)"
 dek: "Opening the company is a one-off. Keeping it costs money every year whether it trades or not, and a company you've stopped using keeps billing you until someone formally closes it. Here's the annual bill for a foreign-owned company, line by line."
-published: "2026-10-10"
-reviewed: "2026-10-10"
+published: "2026-10-20"
+reviewed: "2026-10-20"
 readingMinutes: 8
-draft: true
+draft: false
 relatedGuides:
   - path: "/insights/how-to/company-setup-cost-malaysia-foreigner/"
     title: "what it costs to set up a company in Malaysia"
@@ -26,16 +26,22 @@ faq:
 sources:
   - label: "MIDA — Malaysia: Investment in the Services Sector, Booklet 1, Chapter 1 (annual return within 30 days of the incorporation anniversary; accounting records)"
     url: "https://www.mida.gov.my/wp-content/uploads/2023/11/Booklet-1-General-Policies-2021_CHAPTER-1-ESTABLISHING-YOUR-BUSINESS-PRESENCE-IN-MALAYSIA.pdf"
-    verified: "2026-10-10"
+    verified: "2026-10-20"
   - label: "SSM — Guidelines for Incorporation of a Local Company (company secretary requirement)"
     url: "https://www.ssm.com.my/Pages/Legal_Framework/GUIDELINES/4.-Guidelines-For-Incorporation-Of-A-Local-Company.pdf"
-    verified: "2026-10-10"
+    verified: "2026-10-20"
   - label: "SSM — Frequently Asked Questions on the beneficial ownership reporting framework under the Companies Act 2016"
     url: "https://www.ssm.com.my/Pages/Legal_Framework/FAQs%20on%20BO%20(English).pdf"
-    verified: "2026-10-10"
+    verified: "2026-10-20"
   - label: "EPF (KWSP) — mandatory contributions for non-Malaysian citizen employees effective October 2025"
     url: "https://www.kwsp.gov.my/en/w/news/epf-begins-mandatory-contributions-for-non-malaysian-citizen-employees-effective-october-2025"
-    verified: "2026-10-10"
+    verified: "2026-10-20"
+  - label: "SSM — Table of Fees (annual return RM150; financial statements RM50 audited, RM20 unaudited, for a private company)"
+    url: "https://www.ssm.com.my/Pages/Services/Registration-of-Company-(ROC)/Table-of-Fees.aspx"
+    verified: "2026-10-20"
+  - label: "SSM — Practice Directive No. 10/2024: qualifying criteria for audit exemption for certain private companies"
+    url: "https://www.ssm.com.my/Pages/Legal_Framework/Document/PD10_2024%20Qualifying%20Criteria%20for%20Audit%20Exemption%20for%20Certain%20Private%20Companies%20in%20MY161224.pdf"
+    verified: "2026-10-20"
 ---
 
 You budgeted for the incorporation. Then the invoices started: a retainer every quarter, a filing fee you'd never heard of, an accountant, an auditor, a tax agent. None of them is large. Together they come to more than the company cost to open, and they come every year.
@@ -53,7 +59,7 @@ All figures are in ringgit before 8% service tax, and are indicative ranges base
 | **Company secretary retainer** | 1,200–1,450 | Every company must have one. Usually includes the registered office. |
 | **Annual return** | 300–500, plus a RM150 SSM fee | Due within 30 days of each incorporation anniversary. |
 | **Beneficial ownership filing** | About 50 per shareholder | The company must record who ultimately owns or controls it. |
-| **Lodging financial statements** | 200–600, plus SSM fees | Required every year, audited or not. |
+| **Lodging financial statements** | 200–600, plus a RM20–50 SSM fee | Required every year, audited or not. |
 | **Bookkeeping and accounts** | 1,000 a year to 550 a month | Someone has to produce the numbers. |
 | **Audit** | 1,000–2,500, or nil if exempt | See below. |
 | **Company tax return** | 700–1,200 | Filed every year, even with no income. |
@@ -76,7 +82,7 @@ Some firms fold the annual return and lodgements into a higher monthly retainer.
 
 **Audit exemption is real, and it still costs something.** A private company can now skip the statutory audit if it meets two of three size tests on revenue, total assets and number of employees. The revenue test is RM2,000,000 for financial years starting in 2026 and RM3,000,000 from 2027. If you qualify, you save the audit fee, but you'll still pay a few hundred ringgit for the exemption paperwork and you still lodge unaudited accounts. Ask your secretary to confirm you qualify before you assume it.
 
-**Your foreign staff cost more than their salary.** Employers must now make provident fund contributions for non-citizen employees as well as Malaysians. If your company employs you on an Employment Pass, that includes you.
+**Your foreign staff cost more than their salary.** Since October 2025, employers must make provident fund contributions for non-citizen employees as well as Malaysians, at 2% of wages from each side. If your company employs you on an Employment Pass, that includes you.
 
 ## Changes cost extra
 
@@ -100,7 +106,7 @@ You can't abandon a Malaysian company. Until it's formally closed, the filings k
 
 **Members' voluntary winding up** is the proper exit where there's money or property to return to shareholders. Expect about RM12,000 to RM18,000 and a liquidator.
 
-If you put RM500,000 of paid-up capital into the company for an Employment Pass and later want it back, this is how it comes out. Budget for the exit when you budget for the entrance.
+If you put RM500,000 of [paid-up capital](/insights/how-to/paid-up-capital-employment-pass-own-company/) into the company for an Employment Pass and later want it back, this is how it comes out. Budget for the exit when you budget for the entrance.
 
 ## So what should you plan for?
 
@@ -112,4 +118,4 @@ If it **employs people, including you**, budget RM15,000, and set aside the tax 
 
 And if you're paying for a nominee director only because you don't live here yet, the cheapest saving on this whole page is becoming a resident yourself. That's a visa decision, and we compare the options in [which Malaysian visa lets you run a business?](/insights/comparisons/which-visa-lets-you-run-a-business/)
 
-Fees and thresholds change. Government figures were checked against the sources below on 10 October 2026; service fees are indicative, so get a written quote.
+Fees and thresholds change. Government figures were checked against the sources below on 20 October 2026; service fees are indicative, so get a written quote.

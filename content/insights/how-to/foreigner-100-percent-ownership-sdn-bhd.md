@@ -89,7 +89,7 @@ This is the honest reason some foreigners take a local majority partner. It's a 
 
 If you live in Malaysia, you can be the resident director yourself. Nationality isn't the test, residence is. Company secretaries in practice accept a foreigner who lives here on an Employment Pass or the Premium Visa Programme as meeting it.
 
-If you live abroad, someone else has to take the seat. That can be a business partner or employee in Malaysia, or a paid nominee director. A nominee typically costs about RM3,000 to set up and about RM600 a month, with a refundable deposit of around RM5,000. We break down the full first-year bill in [what it costs to set up a company in Malaysia](/insights/how-to/company-setup-cost-malaysia-foreigner/).
+If you live abroad, someone else has to take the seat. That can be a business partner or employee in Malaysia, or a paid nominee director. A nominee typically costs about RM3,000 to set up and about RM600 a month, with a refundable deposit of around RM5,000. We break down the full first-year bill in [what it costs to set up a company in Malaysia](/insights/how-to/company-setup-cost-malaysia-foreigner/), and the bill for every year after in [what a Sdn Bhd costs to keep running every year](/insights/how-to/sdn-bhd-annual-running-costs/).
 
 Understand what you're buying. A nominee director is a real director. They carry the legal duties of the office and personal liability for a company they don't control, which is why a careful one will ask what the business does, limit their own signing authority and want that deposit. You still own the shares and you can remove them.
 

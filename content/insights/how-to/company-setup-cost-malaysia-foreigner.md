@@ -116,7 +116,7 @@ Paid-up capital is your money, in your company's account, and the company can sp
 
 **Audit.** A private company can now skip the audit if it meets two of three size tests on revenue, assets and staff, with the revenue test at RM2,000,000 for financial years starting in 2026 and RM3,000,000 from 2027. Ask your company secretary to confirm you qualify. If you don't, expect about RM1,200 to RM2,500 for a small company. Exempt or not, you still file accounts and a tax return every year.
 
-**Annual filings.** Some firms bundle the annual return and the lodging of your accounts into the secretary's retainer. Others charge them separately, and that adds roughly RM500 to RM1,000 a year from the second year. Ask which you're being quoted before you compare two monthly fees.
+**Annual filings.** Some firms bundle the annual return and the lodging of your accounts into the secretary's retainer. Others charge them separately, and that adds roughly RM500 to RM1,000 a year from the second year. Ask which you're being quoted before you compare two monthly fees. The full yearly bill, line by line, is in [what a Sdn Bhd costs to keep running every year](/insights/how-to/sdn-bhd-annual-running-costs/).
 
 **Changes after the fact.** Appointing or removing a director, moving the registered address, transferring shares and raising capital are each charged separately on a basic secretarial plan, typically RM250 to RM750 a time. A founder who replaces a nominee and injects capital in the first year will use several of them.
 

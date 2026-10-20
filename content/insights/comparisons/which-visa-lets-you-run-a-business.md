@@ -101,6 +101,6 @@ The expensive mistake is choosing the pass on price, moving here, and then disco
 
 Decide in this order. First, will you personally work in a Malaysian business? If yes, your shortlist is PVIP, MM2H Platinum or an Employment Pass. Second, do you want your right to live here to depend on that business? If not, it's PVIP or Platinum. Only then compare the price.
 
-For the company side of the decision, start with [what it costs to set up a company in Malaysia](/insights/how-to/company-setup-cost-malaysia-foreigner/).
+For the company side of the decision, start with [what it costs to set up a company in Malaysia](/insights/how-to/company-setup-cost-malaysia-foreigner/), then [what it costs to keep running every year](/insights/how-to/sdn-bhd-annual-running-costs/).
 
 Pass conditions change, and individual approval letters can carry their own terms. Read yours, and confirm with the issuing authority before you rely on it.
