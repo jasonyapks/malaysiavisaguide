@@ -1,0 +1,12 @@
+Dalat International School, Penang — https://www.dalat.org/admissions/fee-structure ("2026-2027 Fees", curl 200, 2026-10-23)
+One-time: application RM800; placement test RM300; position holding deposit RM1,500 (refundable subject to notice).
+Annual tuition (semester x2): Pre-School 3-4 22,000 | Kindergarten 27,000 | Grade 1-2 31,800 | Grade 3-4 42,000 | Grade 5-6 51,500 | Grade 7-8 57,200 | Grade 9-12 59,000. Technology fee K-4 400, Gr5-6 2,100, Gr7-12 400. Lunch optional 1,980 (K-4) / 2,430 (5-12). Room & board 45,200.
+Note on page: "A 6% Sales and Service Tax (SST) may apply to your fees, depending on the grade level and specific services provided."
+
+MOTAC — MM2H Application Guidelines Booklet (uploads/2026/05), saved as 2026-10-23-motac-mm2h-application-guidelines-booklet-2026-05.pdf
+Item 6 "Permission to Study (Dependent)": processing 14 working days (client charter); documents include school offer letter and proof of enrolment fee payment.
+Item 1 Renewal: "Health insurance (if below 60 years old)".
+
+Dependant child age limits (src/lib/data/programmes.ts, dependants arrays, as at 2026-10-23):
+MM2H: children up to 34, unmarried | PVIP: children under 25 (no limit if disabled) | Sarawak MM2H: children 21 and under (SMM2H_TERMS.childMaxAge) | Employment Pass: children under 18 | DE Rantau: "Children" (no age stated).
+Student pass for school-age dependants under other passes: university/immigration-adjacent sources conflict (IIUM says children 7+ apply for a student pass through the school; UKM form only asks for a school letter). Not stated as fact in the article.

@@ -1,0 +1,13 @@
+Source: KPDN PriceCatcher open data, data.gov.my — https://storage.data.gov.my/pricecatcher/pricecatcher_2026-10.parquet (dates 2026-10-10 to 2026-10-23, 880,120 price records) joined to lookup_item.parquet and lookup_premise.parquet. Computed 2026-10-23. Median, 25th–75th percentile of recorded prices, items with >=5 premises in the state.
+W.P. Kuala Lumpur:
+AYAM BERSIH - STANDARD 1kg: med 9.39 (8.80–9.89), 120 premises
+AYAM BERSIH - SUPER 1kg: med 11.29, 33 premises
+TELUR AYAM GRED A 30 biji: med 15.30 (15.00–15.50), 130 premises
+TOMATO 1kg: med 6.20 (5.50–6.99), 161 premises
+IKAN KEMBUNG (8–12 per kg) 1kg: med 18.90 (15.90–22.00), 65 premises
+SUSU SEGAR KURMA FARM FRESH 700g: med 9.40, 76 premises
+BERAS SUPER CAP JATI TWR 5% (IMPORT) 10kg: med 34.99, 15 premises
+DAGING KERBAU IMPORT (INDIA) TOP SIDE 1kg: med 24.79 (22.99–28.99), 29 premises
+Pulau Pinang: chicken standard 9.19; eggs 30 Gred A 15.90; local beef (paha) 40.00; imported beef block 32.99
+Johor: chicken standard 8.78; eggs 15.00; local beef (paha) 39.00; imported beef block 32.99
+Not found with >=5 KL premises in this file: cooked hawker meals (nasi lemak, roti canai, teh tarik), local/imported beef in KL.
