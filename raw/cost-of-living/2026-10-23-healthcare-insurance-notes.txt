@@ -1,0 +1,22 @@
+Healthcare and insurance sources read 2026-10-23.
+
+PRIVATE HOSPITAL PRICES (curl, 200):
+- Pantai Hospital Kuala Lumpur eShop, "Health Screening Package (Health Screening Doctor)" RM329.00 (also RM439, RM999 variants on page): https://eshop-kuala-lumpur.pantai.com.my/products/health-screening-package-health-screening-doctor
+- Pantai Hospital Kuala Lumpur eShop, "Health Screening Package (Specialist Doctor)" RM680.00: https://eshop-kuala-lumpur.pantai.com.my/products/health-screening-package-specialist-doctor
+- Gleneagles Hospital Kuala Lumpur, heart screening: Male RM1,975, Female RM2,189 (higher tiers RM2,456–2,801 on page; page undated): https://gleneagles.com.my/kuala-lumpur/health-screening-unit/heart-screening
+
+PRIVATE GP FEES:
+- P.U.(A) 150/2026, Private Healthcare Facilities and Services (Private Medical Clinics or Private Dental Clinics) (Amendment of Fee Schedule) Order 2026, in operation 2 April 2026 (MOH listing page title; PDF 403 to curl).
+- GP consultation fee range RM10–RM80: Malay Mail headline 3 Apr 2026 "Private GPs welcome revised RM10–RM80 consultation fee after 30-year freeze" (https://www.malaymail.com/news/malaysia/2026/04/03/private-gps-welcome-revised-rm10rm80-consultation-fee-after-30-year-freeze/214926 — 403 to fetch; figure from search snippet). RinggitPlus 3 Apr 2026 confirms the order and Schedule 7 but gives no figures.
+
+SST ON PRIVATE HEALTHCARE FOR NON-CITIZENS: see 2026-10-23-mysst-faq-expansion-service-tax-2025.html — 6% from 1 July 2025; Malaysian citizens not subject; "No service tax exemption is given to non-citizen categories."
+
+BNM MEDICAL INSURANCE:
+- BNM press release 20 Dec 2024, "Interim measures to assist policyholders..." https://www.bnm.gov.my/-/mhit-pr-bm — premium adjustments from medical claims inflation spread over at least three years, in place until end-2026; policyholders 60+ on minimum plan get a one-year pause; age-band increases excluded.
+- BNM Annual Report 2025, ch1c https://www.bnm.gov.my/publications/ar2025/ch1c — by June 2025 nearly 200,000 policyholders aged 60+ had premium hikes deferred; >15,000 reinstated without extra underwriting; "premium increase for over 90% of repriced policies due to medical inflation was below 10%"; base MHIT plan pilot 2H 2026, full rollout early 2027, DRG payment a core feature.
+- BNM Budget 2027 statement, 9 Oct 2026 https://www.bnm.gov.my/-/belanjawan2027 — "MediAsas will be rolled out to the public in January 2027." Eligibility of non-citizens not stated in any source found.
+
+VISA INSURANCE RULES (site's own content):
+- MM2H: medical insurance required for each person, over-60s exempt — MYPVIP practice as at July 2026 (content/insights/how-to/how-much-does-mm2h-cost.md).
+- S-MM2H: local medical insurance required for main applicant under 60, dependants at any age (src/lib/data/programmes.ts SMM2H_TERMS.principalInsuranceBelowAge).
+- PVIP: health insurance held for the whole life of the pass (src/content/visas/pvip/en.tsx).

@@ -1,0 +1,17 @@
+Source: https://www.moh.gov.my/en/core/health-information/service-rates/caj-bagi-warga-asing
+Ministry of Health Malaysia — "Caj Bagi Warga Asing" (charges for foreigners). Page "Last Updated: 23 September 2025". Read in browser 2026-10-23 (plain fetch returns 403).
+Legal basis per MOH statement (NST, 15 Oct 2026): Fees (Medical) (Cost of Services) Order 2014.
+
+Bahagian 1 - Fi Pesakit Luar (RM per visit)
+Hospital: Pesakit Luar Am 40 | Pesakit Luar Pakar 120 | Jabatan Kecemasan 100
+Klinik Kesihatan: Pesakit Luar Am 40 | Pesakit Luar Pakar 120 | Klinik 1 Malaysia 40 | Klinik Desa 40
+Lain-lain: Perkhidmatan Kesihatan Kanak-kanak 40 | Rawatan Obstetrik & Ginekologi 40 | Perkhidmatan Postnatum 40 | Calitan Pap 45 | Perkhidmatan Bersalin 200 | Perkhidmatan perubatan di luar hospital 300 per visit plus travel/subsistence/lodging
+
+Bahagian 2 - Fi Wad (RM per day)
+Eksekutif: 1-bed VIP 500 | 1-bed 400 | 2-bed 340
+Kelas Satu: 1-bed 320 | 2-bed 240 | 3+ beds 200
+Kelas Dua 180 | Kelas Tiga 160
+Bilik Bersalin 300 | ICU/CCU adult 360 | ICU/CCU child 300 | Nurseri 60 | Nurseri rawatan khas 140 | Nurseri incubator 170
+Wad Psikiatri: by ward class and number of beds
+
+Comparison (Health Minister, NST 15 Jun 2026): Malaysians pay as little as RM1 to see a doctor and RM5 for specialist treatment.

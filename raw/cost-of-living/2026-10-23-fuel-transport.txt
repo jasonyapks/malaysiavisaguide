@@ -1,0 +1,10 @@
+FUEL — source: https://paultan.org/fuel-price/ (weekly tracker of Ministry of Finance pump prices; read 2026-10-23). MOF release itself not retrieved (MOF feed empty).
+Week of 22–28 October 2026, Peninsular Malaysia:
+RON95 BUDI95 RM1.99/l — subsidised, Malaysians via MyKad (unchanged)
+RON95 SKPS RM2.05/l — public transport & freight vehicles
+RON95 unsubsidised RM4.32/l (down 30 sen) — market price, non-eligible buyers
+RON97 RM4.80/l (down 30 sen); Diesel RM5.07/l (down 10 sen)
+Earlier context: unsubsidised RON95 RM4.52 for 1–7 Oct 2026 (secondary report citing paultan).
+
+PUBLIC TRANSPORT (Rapid KL passes from 1 Jan 2026) — sources: malaymail 16 Dec 2025 (https://malaymail.com/news/malaysia/2025/12/16/rapid-kl-transport-passes-prices-go-up-from-jan-1-but-my50-pass-stays-at-rm50/202162); soyacincau 21 Jun 2026 (Rapid Bulanan RM150 via TNG eWallet).
+My50 RM50 / 30 days — Malaysians only (MyKad-verified). Rapid Bulanan RM150 / 30 days — open to non-Malaysians. Rapid Kembara RM25 (1 day) / RM55 (3 days). MyCity tourist pass discontinued 1 Jan 2026.
