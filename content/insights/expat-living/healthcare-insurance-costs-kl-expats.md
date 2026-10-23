@@ -39,6 +39,9 @@ sources:
   - label: "Bank Negara Malaysia — Budget 2027 statement, 9 October 2026 (MediAsas rollout January 2027)"
     url: "https://www.bnm.gov.my/-/belanjawan2027"
     verified: "2026-10-23"
+  - label: "MOTAC — MM2H Application Guidelines Booklet (May 2026), item 1, renewal documents: health insurance if below 60 years old"
+    url: "https://www.motac.gov.my/wp-content/uploads/2026/05/Mm2h-Application-Guidelines-Booklet.pdf"
+    verified: "2026-10-23"
   - label: "Malay Mail — private GPs' revised RM10 to RM80 consultation fee, P.U.(A) 150/2026 (3 April 2026)"
     url: "https://www.malaymail.com/news/malaysia/2026/04/03/private-gps-welcome-revised-rm10rm80-consultation-fee-after-30-year-freeze/214926"
     verified: "2026-10-23"
@@ -90,7 +93,7 @@ What private care costs, before the 6%:
 
 Before you decide anything, check what your pass already requires:
 
-- **MM2H:** medical insurance is required for the main applicant and each dependant, and it's priced by the insurer, not the government. Applicants aged 60 and over are exempt. That's MYPVIP practice, as at July 2026.
+- **MM2H:** medical insurance is required for the main applicant and each dependant, and it's priced by the insurer, not the government. Applicants aged 60 and over are exempt. That's MYPVIP practice as at July 2026, and MOTAC's May 2026 booklet likewise asks for health insurance at renewal only "if below 60 years old".
 - **Sarawak MM2H:** local medical insurance for the main applicant under 60, and for every dependant at any age.
 - **PVIP:** health insurance held for the whole life of the pass.
 
