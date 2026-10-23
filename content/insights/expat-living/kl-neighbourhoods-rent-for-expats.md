@@ -1,6 +1,6 @@
 ---
 title: "Where foreigners live in Kuala Lumpur, and what rent really costs (October 2026)"
-dek: "Every relocation guide sends you to Mont Kiara. Sometimes that's the right call and sometimes you're paying for a bubble you won't use. Asking rents for ten Kuala Lumpur neighbourhoods from a dated sample of listings, what each area is actually for, and the cash you need up front."
+dek: "Every relocation guide sends you to Mont Kiara. Sometimes that's the right call and sometimes you're paying for a bubble you won't use. Asking rents for nine Kuala Lumpur neighbourhoods from a dated sample of listings, what each area is actually for, and the cash you need up front."
 published: "2026-10-23"
 reviewed: "2026-10-23"
 readingMinutes: 8
@@ -16,13 +16,13 @@ faq:
   - q: "How much is rent for a condo in Mont Kiara?"
     a: "In a sample of PropertyGuru listings read on 23 October 2026, the middle half of asking rents in Mont Kiara was RM1,750 to RM2,000 for one bedroom, RM2,800 to RM3,200 for two, and RM3,500 to RM5,800 for three. The medians were RM1,899, RM3,000 and RM4,300. These are asking rents, and agreed rents are often lower."
   - q: "What is the cheapest area in Kuala Lumpur for expats?"
-    a: "Of the ten areas sampled, Cheras and Bukit Jalil had the lowest asking rents: two-bedroom units in Cheras had a median of RM2,100, and three-bedroom units in Bukit Jalil a median of RM2,400. Both are further from the international schools and the expat restaurant scene, which is most of what you pay for in Mont Kiara and Bangsar."
+    a: "Of the nine areas compared, Cheras and Bukit Jalil had the lowest asking rents: two-bedroom units in Cheras had a median of RM2,100, and three-bedroom units in Bukit Jalil a median of RM2,400. Both are further from the international schools and the expat restaurant scene, which is most of what you pay for in Mont Kiara and Bangsar."
   - q: "How much deposit do I need to rent in Kuala Lumpur?"
     a: "The usual arrangement is two months' rent as a security deposit and half a month as a utility deposit, plus the first month's rent in advance: three and a half months' rent in cash before you move in. No statute sets this. Malaysia has no residential tenancy act in force, so the tenancy agreement decides, and some landlords ask for more."
   - q: "Is there tax on residential rent in Malaysia?"
     a: "There's no service tax. The 2025 expansion of service tax to rental covers commercial property, and the Customs Department's FAQ says residential rental is not subject to it. The tenancy agreement must be stamped, and stamp duty is paid on it, usually by the tenant."
 sources:
-  - label: "PropertyGuru Malaysia — asking rents for apartments, condominiums and serviced residences, first 200 listings per area across ten Kuala Lumpur areas (about 1,200 listings after de-duplication), read 23 October 2026"
+  - label: "PropertyGuru Malaysia — asking rents for apartments, condominiums and serviced residences, first 200 listings per area across nine Kuala Lumpur areas (about 1,050 listings after de-duplication), read 23 October 2026"
     url: "https://www.propertyguru.com.my/property-for-rent"
     verified: "2026-10-23"
   - label: "Royal Malaysian Customs Department — FAQ, Expansion of Service Tax Scope 2025, Rental or Leasing Services (residential rental not subject to service tax)"
@@ -36,9 +36,9 @@ Mont Kiara exists, as a place to live, because of two international schools and 
 
 **The short answer:** as at October 2026, a two-bedroom condo lists for about RM2,800 to RM3,200 a month in Mont Kiara, RM3,200 to RM4,800 in Bangsar, RM3,400 to RM4,200 in the KLCC area and about RM2,100 in Cheras. The right area depends less on the rent than on where your days happen: a school, an office, or nowhere in particular.
 
-## Asking rents in ten areas
+## Asking rents in nine areas
 
-On 23 October 2026 we read the first 200 rental listings for apartments, condos and serviced residences in each of ten Kuala Lumpur areas on PropertyGuru, removed duplicates, and kept only listings actually located in the area. The ranges below are the middle half of asking rents, with the median in brackets.
+On 23 October 2026 we read the first 200 rental listings for apartments, condos and serviced residences in each of nine Kuala Lumpur areas on PropertyGuru, removed duplicates, and kept only listings actually located in the area. The ranges below are the middle half of asking rents, with the median in brackets.
 
 | Area | 1 bedroom | 2 bedrooms | 3 bedrooms | Listings (buildings) |
 | --- | --- | --- | --- | --- |

@@ -4,7 +4,7 @@ dek: "Most KL budgets online are either years out of date or an average of local
 published: "2026-10-23"
 reviewed: "2026-10-23"
 readingMinutes: 9
-draft: true
+draft: false
 relatedGuides:
   - path: "/insights/how-to/how-much-does-mm2h-cost/"
     title: "how much MM2H costs"
@@ -14,7 +14,7 @@ relatedGuides:
     title: "Malaysian tax for expats"
 faq:
   - q: "How much do I need per month to live in Kuala Lumpur as a foreigner?"
-    a: "A retired couple renting a two-bedroom condo in an expat area spends roughly RM7,500 to RM8,500 a month before health cover. A single remote worker can live on roughly RM4,500 to RM7,000. A family with two children at a British-curriculum international school needs RM25,000 a month or more, and school fees are about two-thirds of that. These are October 2026 figures, built from listing rents, published school fees and Department of Statistics spending data."
+    a: "A retired couple renting a two-bedroom condo in an expat area spends roughly RM7,500 to RM8,500 a month before health cover. A single remote worker can live on roughly RM4,500 to RM7,000. A family with two children at a British-curriculum international school needs RM26,000 a month or more, and school fees are about two-thirds of that. These are October 2026 figures, built from listing rents, published school fees and Department of Statistics spending data."
   - q: "What does the average household in Kuala Lumpur spend?"
     a: "RM8,178 a month in 2024, the mean in the Department of Statistics Malaysia's Household Expenditure Survey. The median was RM6,789. That covers every household in the city, most of them Malaysian, and it includes the imputed rent of people who own their homes."
   - q: "Do foreigners pay more than Malaysians for the same things?"
@@ -27,7 +27,7 @@ sources:
   - label: "Department of Statistics Malaysia — Household Expenditure Survey Report, Malaysia 2024 (Table 1.3 median and mean by state; Table 1.4 per capita; Table 3.1 composition by state)"
     url: "https://storage.dosm.gov.my/hies/household_expenditure_2024.pdf"
     verified: "2026-10-23"
-  - label: "PropertyGuru Malaysia — asking rents for apartments, condominiums and serviced residences, sample of about 1,200 Kuala Lumpur listings across ten areas, read 23 October 2026"
+  - label: "PropertyGuru Malaysia — asking rents for apartments, condominiums and serviced residences, sample of about 1,050 Kuala Lumpur listings across nine areas, read 23 October 2026"
     url: "https://www.propertyguru.com.my/property-for-rent"
     verified: "2026-10-23"
   - label: "Royal Malaysian Customs Department — FAQ, Expansion of Service Tax Scope 2025 (private healthcare and private education for non-citizens; residential rental not taxable)"
@@ -54,7 +54,7 @@ Everyone tells you Kuala Lumpur is cheap. Then you price a condo near a decent i
 
 The figures you'll usually find don't help much. They tend to be one person's budget from a few years back, or a crowd-sourced average that lumps a student in a shared flat together with a family in Mont Kiara. Neither one is you. So we've built three budgets that might be.
 
-**The short answer:** as at October 2026, a retired couple in a two-bedroom condo in an expat area spends roughly RM7,500 to RM8,500 a month before health cover. A single remote worker can live well on RM4,500 to RM7,000. A family with two children at a British-curriculum international school needs RM25,000 a month or more, and about two-thirds of that goes on school fees.
+**The short answer:** as at October 2026, a retired couple in a two-bedroom condo in an expat area spends roughly RM7,500 to RM8,500 a month before health cover. A single remote worker can live well on RM4,500 to RM7,000. A family with two children at a British-curriculum international school needs RM26,000 a month or more, and about two-thirds of that goes on school fees.
 
 ## What the average Kuala Lumpur household actually spends
 
@@ -110,9 +110,9 @@ You're in your sixties. You've sold up or let out your house at home, and you wa
 | **Before health cover** | **about 7,500–8,500** |
 [^2]: Rent is the middle half of 35 two-bedroom asking rents in Mont Kiara on 23 October 2026 (median RM3,000). Asking rents, not agreed rents.
 
-Whether this budget works depends on a line that isn't in the table, which is health. Past 60, insurance gets expensive and harder to buy, and every private bill carries the 6% service tax that foreigners pay. [Healthcare and insurance costs in KL](/insights/expat-living/healthcare-insurance-costs-kl-expats/) sets out the real choice.
+Whether this budget works depends on a line that isn't in the table, which is health. Past 60, insurance gets expensive and harder to buy, and every private bill carries the 6% service tax that foreigners pay.
 
-Mont Kiara may also be more than you need. Next door in Sri Hartamas, two-bedrooms list at RM3,000 to RM3,800, and further out, in areas such as Cheras, they list at around RM2,100. [Where foreigners live in KL, and what rent costs](/insights/expat-living/kl-neighbourhoods-rent-for-expats/) compares ten areas.
+Mont Kiara may also be more than you need. Next door in Sri Hartamas, two-bedrooms list at RM3,000 to RM3,800, and further out, in areas such as Cheras, they list at around RM2,100.
 
 **The visa that fits:** MM2H Silver, which has no income requirement. You place a fixed deposit of {{mm2h-silver:fixedDeposit:money}} instead, and you buy a property, which in Kuala Lumpur must cost at least RM1,000,000. Once you own it, the rent line disappears, and both the deposit and the house stay yours. Spread over the five-year pass, the fees come to roughly RM700 a month. [How much MM2H costs](/insights/how-to/how-much-does-mm2h-cost/) has the full bill.
 
@@ -129,7 +129,7 @@ You're relocating for a job or a business, and your children are seven and ten.
 | **Before health cover and school extras** | **about 26,000–29,000** |
 [^3]: Garden International School's 2026/27 tuition is RM97,830 a year for Year 3 and RM102,300 for Year 6, both above the RM60,000 service-tax threshold. Uniforms, buses, meals, trips and devices are extra. Rent is the middle half of 65 three-bedroom asking rents in Mont Kiara on 23 October 2026 (median RM4,300).
 
-Look at the school line. **It's bigger than everything else in the table put together.** Most families research rent first, yet here rent hardly registers next to the fees. Choosing a different school can move this budget by RM10,000 a month either way. Uplands in Penang charges RM46,400 a year for Years 3 and 4. For a child of the same age, ISKL in Kuala Lumpur charges RM115,600, plus a one-off registration fee of RM59,000. [International school fees in KL](/insights/expat-living/international-school-fees-kl/) compares them and explains which pass your children need to enrol.
+Look at the school line. **It's bigger than everything else in the table put together.** Most families research rent first, yet here rent hardly registers next to the fees. Choosing a different school can move this budget by RM10,000 a month either way. Uplands in Penang charges RM46,400 a year for Years 3 and 4. For a child of the same age, ISKL in Kuala Lumpur charges RM115,600, plus a one-off registration fee of RM59,000.
 
 **The visa that fits:** if a company is hiring you, an Employment Pass. The lowest category starts at {{employment-pass:salaryFloor:money}} a month, but before you count on it for a family, check that your category lets you bring dependants. If you're coming on your own money, look at MM2H Gold or PVIP. Both allow longer terms and let you bring the family, and PVIP also lets you work. Before you choose, read [which Malaysian visa lets you run a business?](/insights/comparisons/which-visa-lets-you-run-a-business/)
 
