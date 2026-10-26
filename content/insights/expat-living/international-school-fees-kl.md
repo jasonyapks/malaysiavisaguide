@@ -84,12 +84,12 @@ Tuition isn't the whole bill. Every school charges something when you join, and 
 
 - **ISKL:** RM1,800 to apply, then a **one-off RM59,000 registration fee** for a new student from Prep Senior to Grade 12. It's non-refundable, and 6% SST applies to it.
 - **The Alice Smith School:** RM1,500 to apply, a RM20,000 enrolment fee, and a refundable parent deposit of RM24,000 from Year 1.
-- **Nexus:** RM1,300 to apply, a RM20,000 registration fee from Year 1, and a refundable deposit equal to one term's tuition.
+- **Nexus:** RM1,300 to apply, a registration fee of RM10,000 in Early Years plus another RM10,000 on entering Year 1, and a refundable deposit equal to one term's tuition.
 - **Uplands:** about RM800 to apply, RM1,000 association membership, a RM7,000 entrance fee and a refundable RM5,000 deposit.
 - **Dalat:** RM800 to apply, RM300 for the placement test and a refundable RM1,500 deposit.
-- **Garden International School** charges an application fee, a registration fee and a deposit, but its fees page works them out by your child's date of birth rather than listing them.
+- **Garden International School:** RM1,590 to apply, including service tax, a RM20,000 registration fee from Year 1, and a refundable deposit that is topped up as your child moves up the school.
 
-For a family with two children moving to Kuala Lumpur, the joining fees alone can come to RM40,000 to RM130,000 before the first term's tuition. Some of it comes back as a deposit when you leave, as long as you give the notice the school asks for. Most of it doesn't.
+For a family with two children moving to Kuala Lumpur, the non-refundable joining fees alone can come to RM40,000 to RM130,000 before the first term's tuition. Deposits come on top. Those come back when you leave, as long as you give the notice the school asks for. The rest doesn't.
 
 ## Your child's pass: what each visa allows
 
