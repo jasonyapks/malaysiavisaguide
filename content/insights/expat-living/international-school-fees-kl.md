@@ -16,7 +16,7 @@ faq:
   - q: "How much are international school fees in Kuala Lumpur?"
     a: "For 2026/27, the established schools in and around Kuala Lumpur charge roughly RM59,000 to RM116,000 a year for a child starting primary and RM108,000 to RM143,000 in the final years, before 6% service tax. Garden International School charges RM85,590 for Year 1 and RM126,870 for Years 12 and 13. ISKL charges RM115,600 from Prep Senior to Grade 5 and RM143,400 for Grades 9 to 12, plus a one-off RM59,000 registration fee. Penang is far cheaper: Uplands charges RM31,800 for Year 1."
   - q: "Do foreigners pay SST on international school fees in Malaysia?"
-    a: "Yes, on fees above RM60,000 per student per academic year. Since 1 July 2025, private schools charging more than that collect 6% service tax. The Customs Department's exemption covers Malaysian citizens and holders of a Malaysian OKU card, so a foreign family pays it."
+    a: "Yes, on fees above RM60,000 per student per academic year. Since 1 July 2025, private schools charging more than that collect 6% service tax. A foreign family pays it."
   - q: "Can my child attend an international school on an MM2H dependant pass?"
     a: "Yes, but you need to apply for permission first. MOTAC's MM2H booklet lists a 'Permission to Study (Dependent)' application, processed in 14 working days, that needs the school's offer letter and proof that you've paid the enrolment fee. Apply as soon as you have the offer."
   - q: "Until what age can my children stay on my pass?"
@@ -42,7 +42,7 @@ sources:
   - label: "Dalat International School, Penang — fee structure 2026-2027"
     url: "https://www.dalat.org/admissions/fee-structure"
     verified: "2026-10-23"
-  - label: "Royal Malaysian Customs Department — FAQ, Expansion of Service Tax Scope 2025, Private Education Services (6% above RM60,000 per student per academic year; exemption for Malaysian citizens and OKU card holders)"
+  - label: "Royal Malaysian Customs Department — FAQ, Expansion of Service Tax Scope 2025, Private Education Services (6% above RM60,000 per student per academic year)"
     url: "https://mysst.customs.gov.my/faq-expansion-of-service-tax-scope-2025/"
     verified: "2026-10-23"
   - label: "MOTAC — MM2H Application Guidelines Booklet (May 2026), item 6, Permission to Study (Dependent)"
@@ -72,9 +72,9 @@ We've compared six schools that publish their 2026/27 fees in full, four in or n
 
 The gap between the cities is the first thing to see. A child starting Year 1 costs about RM31,800 a year in Penang and RM85,000 to RM116,000 in Kuala Lumpur. If your work doesn't tie you to the capital, that difference alone can decide where you live.
 
-## The 6% that local families don't pay
+## The 6% service tax on top
 
-Since 1 July 2025, private and international schools charging more than **RM60,000 per student per academic year** collect 6% service tax on their fees. The Customs Department's exemption covers Malaysian citizens and holders of a Malaysian disability (OKU) card. A foreign family pays it.
+Since 1 July 2025, private and international schools charging more than **RM60,000 per student per academic year** collect 6% service tax on their fees. As a foreign family, you pay it.
 
 On the numbers above, that's an extra **RM5,000 to RM9,000 a year per child** at the Kuala Lumpur schools. ISKL's top fee of RM143,400 becomes about RM152,000. The tax also applies to application and registration fees for new students, which is why the next section matters.
 
