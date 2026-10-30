@@ -17,7 +17,7 @@ whatItMeans:
   - "Malaysia now has two cities in the top three, and both are reachable on the same DE Rantau pass."
   - "The pass lets eligible foreign remote workers stay for 12 months, and holders can apply to extend it."
   - "The figures are a study's estimates for one person. Your own budget will depend on where you live and how you spend."
-sourceExcerpt: "槟城获评全球最实惠数位游牧城市　每月生活费估约3860令吉"
+sourceExcerpt: "Penang named the world's most affordable city for digital nomads, with monthly living costs estimated at about RM3,860"
 ---
 
 ## Top of a 26-city list
