@@ -41,6 +41,9 @@ export type SiteImage = {
   credit?: { name: string; url?: string; prefix?: string };
   /** True once a real photo sits at `src`. */
   ready?: boolean;
+  /** Pixel size, when known. Set for article figures, which keep their own shape. */
+  width?: number;
+  height?: number;
 };
 
 /**

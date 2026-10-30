@@ -39,10 +39,43 @@ var SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function insightSlot(category, slug) { return "insights/" + category + "/" + slug; }
 
+// A figure is an asset with no slot and no social card. The og check matters:
+// a hero displaced by a newer upload also loses its slot, and it is not a
+// figure anybody chose.
+function figureSnippet(id) { return '{% figure asset="' + id + '" caption="" %}'; }
+
+function renderFigures(assets) {
+  var el = $("#figureImgList");
+  var figs = assets.filter(function (a) { return !a.slot && !a.og_key; });
+  if (!figs.length) {
+    el.innerHTML = '<div class="empty">No photos uploaded for use inside articles yet.</div>';
+    return;
+  }
+  el.innerHTML = figs.map(function (a) {
+    return '<div class="doc">' +
+      '<div class="row">' +
+        '<img src="' + SITE_API + "/api/images/" + esc(a.id) + '/hero" alt="" ' +
+          'style="height:56px;width:56px;object-fit:contain;border-radius:4px;background:#0001">' +
+        '<div>' +
+          '<div class="muted" style="font-size:.75rem">' +
+            esc(a.alt) + (a.credit ? " · " + esc(a.credit) : "") +
+            (a.width && a.height ? " · " + a.width + "×" + a.height : "") +
+          '</div>' +
+          '<input type="text" readonly value="' + esc(figureSnippet(a.id)) + '" ' +
+            'onclick="this.select()" style="width:100%;font-family:monospace;font-size:.75rem">' +
+        '</div>' +
+      '</div>' +
+      '<button class="delete mini" data-iidel="' + esc(a.id) + '">Remove</button>' +
+    '</div>';
+  }).join("");
+}
+
 async function loadInsightImages() {
   var el = $("#insightImgList");
   var data = await api("/api/admin/assets");
-  var mine = ((data && data.assets) || []).filter(function (a) {
+  var all = (data && data.assets) || [];
+  renderFigures(all);
+  var mine = all.filter(function (a) {
     return a.slot && a.slot.indexOf("insights/") === 0;
   });
   if (!mine.length) {
@@ -67,19 +100,30 @@ async function loadInsightImages() {
   }).join("");
 }
 
-$("#insightImgList").addEventListener("click", async function (e) {
-  var btn = e.target.closest("[data-iidel]");
-  if (!btn) return;
+$("#iiKind").addEventListener("change", function () {
+  $("#iiWhich").style.display = this.value === "figure" ? "none" : "";
+});
+
+// One remove handler for both lists.
+["#insightImgList", "#figureImgList"].forEach(function (sel) {
+  $(sel).addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-iidel]");
+    if (btn) removeAsset(btn);
+  });
+});
+
+async function removeAsset(btn) {
   if (!armed(btn, "Remove — click again")) return;
   btn.disabled = true;
   var r = await api("/api/admin/assets/" + btn.getAttribute("data-iidel"), { method: "DELETE" });
   if (r && r.ok !== false) { toast("Image removed. The article keeps publishing, without a picture.", "good"); await loadInsightImages(); return; }
   btn.disabled = false;
   toast((r && r.error) || "Could not remove it.", "bad");
-});
+}
 
 $("#iiSave").addEventListener("click", async function () {
   var b = this;
+  var figure = $("#iiKind").value === "figure";
   var slug = ($("#iiSlug").value || "").trim().toLowerCase();
   var file = $("#iiFile").files[0];
   var url = ($("#iiUrl").value || "").trim();
@@ -89,8 +133,8 @@ $("#iiSave").addEventListener("click", async function () {
   // Checked here rather than server-side because a mistyped slug is not an
   // error anywhere — it stores cleanly against an article that does not exist
   // and simply never shows up. Cheaper to refuse the shape than to explain the
-  // silence later.
-  if (!SLUG_RE.test(slug)) {
+  // silence later. A figure has no slug: the article points at it by id.
+  if (!figure && !SLUG_RE.test(slug)) {
     toast("Enter the article's slug — the last part of its URL, like malaysian-tax-for-expats.", "bad");
     return;
   }
@@ -105,16 +149,18 @@ $("#iiSave").addEventListener("click", async function () {
     b.textContent = url && !file ? "Fetching…" : "Resizing…";
     var source = file ? (file.name || null) : url;
     var picked = file || await fileFromUrl(url);
-    var derived = await derive(picked);
+    var derived = await derive(picked, { figure: figure });
     b.textContent = "Uploading…";
     await uploadAsset(derived, {
-      slot: insightSlot($("#iiCategory").value, slug),
+      slot: figure ? null : insightSlot($("#iiCategory").value, slug),
       alt: alt, credit: credit || null, source: source,
     });
     $("#iiFile").value = ""; $("#iiUrl").value = "";
     $("#iiAlt").value = ""; $("#iiCredit").value = "";
     await loadInsightImages();
-    toast("Image saved. It reaches the site on the next deploy.", "good");
+    toast(figure
+      ? "Photo saved. Copy its line from \"Photos inside articles\" into the article."
+      : "Image saved. It reaches the site on the next deploy.", "good");
   } catch (err) {
     toast(String((err && err.message) || err), "bad");
   }

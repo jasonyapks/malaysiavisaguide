@@ -16,6 +16,15 @@ export function Figure({
   image,
   /** Tailwind aspect class, e.g. "aspect-[3/2]". */
   aspect = "aspect-[3/2]",
+  /**
+   * The picture's own width ÷ height. When set it replaces `aspect`, so the box
+   * is the photo's shape and `object-cover` has nothing to cut off. A portrait
+   * is also narrowed and centred: at full column width a tall photo would fill
+   * two screens.
+   */
+  ratio,
+  /** What the picture shows, in the article's words. Sits above the credit. */
+  caption,
   className = "",
   rounded = "rounded-2xl",
   /** Set on the one above-the-fold image per page (the hero) for LCP. */
@@ -24,15 +33,19 @@ export function Figure({
 }: {
   image: SiteImage;
   aspect?: string;
+  ratio?: number;
+  caption?: string;
   className?: string;
   rounded?: string;
   priority?: boolean;
   sizes?: string;
 }) {
+  const portrait = ratio !== undefined && ratio < 1;
   return (
-    <figure className={className}>
+    <figure className={`${className} ${portrait ? "mx-auto max-w-sm" : ""}`}>
       <div
-        className={`relative ${aspect} ${rounded} overflow-hidden ring-1 ring-sand-200`}
+        className={`relative ${ratio ? "" : aspect} ${rounded} overflow-hidden ring-1 ring-sand-200`}
+        style={ratio ? { aspectRatio: String(ratio) } : undefined}
       >
         {image.ready ? (
           <Image
@@ -47,20 +60,27 @@ export function Figure({
           <Placeholder brief={image.brief} />
         )}
       </div>
-      {image.ready && image.credit && (
+      {image.ready && (caption || image.credit) && (
         <figcaption className="mt-2 text-eyebrow text-ink-muted">
-          {image.credit.prefix ?? "Photo"}:{" "}
-          {image.credit.url ? (
-            <a
-              href={image.credit.url}
-              className="underline"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {image.credit.name}
-            </a>
-          ) : (
-            image.credit.name
+          {caption && <span className="block text-caption text-ink">{caption}</span>}
+          {image.credit && (
+            // A separate line, never replaced by the caption: most licences on
+            // these photos (CC BY, CC BY-SA) require the credit to be shown.
+            <span className={caption ? "mt-0.5 block" : undefined}>
+              {image.credit.prefix ?? "Photo"}:{" "}
+              {image.credit.url ? (
+                <a
+                  href={image.credit.url}
+                  className="underline"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {image.credit.name}
+                </a>
+              ) : (
+                image.credit.name
+              )}
+            </span>
           )}
         </figcaption>
       )}

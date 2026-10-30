@@ -265,8 +265,11 @@ function BlockNode({
       }
       return (
         <Figure
-          image={block.caption ? { ...image, credit: { name: block.caption } } : image}
+          image={image}
+          caption={block.caption}
           aspect={block.aspect ?? "aspect-[16/9]"}
+          // An explicit aspect in the block wins; otherwise the photo's own shape.
+          ratio={!block.aspect && image.width && image.height ? image.width / image.height : undefined}
         />
       );
     }

@@ -59,6 +59,24 @@ export const OG = {
 } as const;
 
 /**
+ * A photo inside an article — a `{% figure %}` block, filed with no slot.
+ *
+ * Not cropped. A hero is a fixed 16:9 band and can afford to lose the top and
+ * bottom of a picture; a figure is there to show the thing the paragraph is
+ * about, and a cover crop took the spire off Merdeka 118 and the head off the
+ * Batu Caves statue. So it is scaled to fit inside this box and keeps its own
+ * shape. The width matches the hero (720 CSS px at 2×); the height cap stops a
+ * tall portrait from shipping 2,000+ pixels the page never shows. Never
+ * enlarged. No OG rendition — nothing renders a figure as a social card.
+ */
+export const FIGURE = {
+  maxWidth: 1440,
+  maxHeight: 1600,
+  mime: "image/webp",
+  quality: 0.76,
+} as const;
+
+/**
  * A ceiling on a single uploaded object, in bytes.
  *
  * Nothing like D1's limit — R2 would take five gigabytes without noticing. This

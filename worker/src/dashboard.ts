@@ -1,5 +1,5 @@
 import { INSIGHT_CATEGORIES } from "../../shared/blocks";
-import { HERO as HERO_SPEC, OG as OG_SPEC } from "./assets";
+import { FIGURE as FIGURE_SPEC, HERO as HERO_SPEC, OG as OG_SPEC } from "./assets";
 import { INSIGHT_IMAGES_JS } from "./insight-images";
 
 /**
@@ -340,10 +340,22 @@ export function dashboardHtml(
     <div class="imgbox" id="insightImages">
       <h4>Hero images</h4>
       <div id="insightImgList"><div class="empty">Loading…</div></div>
-      <label>Which article — category and the last part of its URL</label>
-      <div class="row">
-        <select id="iiCategory"></select>
-        <input type="text" id="iiSlug" placeholder="malaysian-tax-for-expats">
+      <h4>Photos inside articles</h4>
+      <div class="muted" style="font-size:.8rem">
+        Paste the line under a photo into the article where it belongs, and fill in the caption.
+      </div>
+      <div id="figureImgList"><div class="empty">Loading…</div></div>
+      <label>Use as</label>
+      <select id="iiKind">
+        <option value="hero">Hero image at the top of an article — cropped to 16:9</option>
+        <option value="figure">Photo inside an article — keeps its shape, nothing cropped</option>
+      </select>
+      <div id="iiWhich">
+        <label>Which article — category and the last part of its URL</label>
+        <div class="row">
+          <select id="iiCategory"></select>
+          <input type="text" id="iiSlug" placeholder="malaysian-tax-for-expats">
+        </div>
       </div>
       <label>Upload a file</label>
       <input type="file" accept="image/*" id="iiFile">
@@ -946,6 +958,12 @@ const OG = ${JSON.stringify({
   type: OG_SPEC.mime,
   q: OG_SPEC.quality,
 })};
+const FIGURE = ${JSON.stringify({
+  maxW: FIGURE_SPEC.maxWidth,
+  maxH: FIGURE_SPEC.maxHeight,
+  type: FIGURE_SPEC.mime,
+  q: FIGURE_SPEC.quality,
+})};
 
 /**
  * Crop-to-fill, reproducing sharp's \`fit: "cover"\` with the default centre
@@ -984,6 +1002,25 @@ function coverCrop(bitmap, spec) {
 }
 
 /**
+ * Scale to fit inside a box, keeping the picture's own shape — the figure
+ * rendition. Nothing is cut off, and a picture already smaller than the box is
+ * re-encoded at its own size rather than enlarged.
+ */
+function fitInside(bitmap, spec) {
+  const scale = Math.min(1, spec.maxW / bitmap.width, spec.maxH / bitmap.height);
+  const w = Math.max(1, Math.round(bitmap.width * scale));
+  const h = Math.max(1, Math.round(bitmap.height * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(bitmap, 0, 0, w, h);
+  return new Promise((res, rej) =>
+    canvas.toBlob(b => b ? res(b) : rej(new Error("The browser could not encode " + spec.type)), spec.type, spec.q));
+}
+
+/**
  * Turn one picked file into the three objects R2 stores.
  *
  * This is where \`sharp\` went. It used to run on the Pages build machine, which
@@ -995,11 +1032,17 @@ function coverCrop(bitmap, spec) {
  * \`orig\` is the file untouched. It is what makes a re-crop possible later
  * without asking Jason for the photo again — the reason the bucket keeps three
  * objects instead of two.
+ *
+ * A figure (opts.figure) is the exception: its "hero" is the whole picture
+ * scaled to fit, not a 16:9 crop, and it has no social card, so it stores two.
  */
-async function derive(file) {
+async function derive(file, opts) {
+  const figure = !!(opts && opts.figure);
   const bitmap = await createImageBitmap(file);
   try {
-    const [hero, og] = await Promise.all([coverCrop(bitmap, HERO), coverCrop(bitmap, OG)]);
+    const [hero, og] = figure
+      ? [await fitInside(bitmap, FIGURE), null]
+      : await Promise.all([coverCrop(bitmap, HERO), coverCrop(bitmap, OG)]);
     return {
       id: crypto.randomUUID(),
       orig: file,
@@ -1031,14 +1074,14 @@ async function uploadAsset(d, meta) {
     if (!r.ok) throw new Error(r.error || ("Could not upload the " + variant + " image."));
   };
   await put("orig", d.orig, d.mime);
-  await put("hero", d.hero, HERO.type);
-  await put("og", d.og, OG.type);
+  await put("hero", d.hero, d.hero.type || HERO.type);
+  if (d.og) await put("og", d.og, OG.type);
 
   const r = await api("/api/admin/assets/" + d.id, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({
       slot: meta.slot, alt: meta.alt, credit: meta.credit, source: meta.source ?? d.source,
-      mime: d.mime, width: d.width, height: d.height,
+      mime: d.mime, width: d.width, height: d.height, hasOg: !!d.og,
     }),
   });
   if (!r.ok) throw new Error(r.error || "Could not save the image details.");

@@ -31,6 +31,12 @@ type Entry = {
   alt: string;
   /** Photographer or agency, rendered as a caption. null renders none. */
   credit: string | null;
+  /**
+   * The original's pixel size, recorded for `asset/<id>` figures only. A figure
+   * is scaled, never cropped, so this ratio is the rendition's ratio too.
+   */
+  width?: number;
+  height?: number;
   /** The source's image_updated_at, so the pull can tell what has changed. */
   stamp: string;
   updated: string;
@@ -62,6 +68,7 @@ export function articleImage(key: string): SiteImage | null {
     brief: entry.alt,
     ready: true,
     ...(entry.credit && { credit: { name: entry.credit } }),
+    ...(entry.width && entry.height ? { width: entry.width, height: entry.height } : {}),
   };
 }
 

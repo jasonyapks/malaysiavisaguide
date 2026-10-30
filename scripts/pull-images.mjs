@@ -119,8 +119,16 @@ async function main() {
       existsSync(join(ROOT, "public", src)) &&
       (!og || existsSync(join(ROOT, "public", og)));
 
+    // A figure keeps its own shape (FIGURE in worker/src/assets.ts), so the page
+    // needs the ratio to reserve the right box. A slotted hero is always the
+    // 16:9 crop whatever the original was, so its dimensions would only mislead.
+    const dims =
+      entry.key.startsWith("asset/") && entry.width && entry.height
+        ? { width: entry.width, height: entry.height }
+        : {};
+
     if (unchanged) {
-      next[entry.key] = have;
+      next[entry.key] = { ...have, ...dims };
       kept++;
       continue;
     }
@@ -136,6 +144,7 @@ async function main() {
       og,
       alt: entry.alt ?? "",
       credit: entry.credit ?? null,
+      ...dims,
       stamp,
       updated: new Date().toISOString().slice(0, 10),
     };
