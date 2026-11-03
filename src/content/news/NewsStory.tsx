@@ -136,6 +136,10 @@ export function NewsStory({
 
       {article.cta && <NewsCtaBlock cta={article.cta} />}
 
+      {article.youtubeId && (
+        <NewsVideo id={article.youtubeId} title={article.headline} />
+      )}
+
       {/* The takeaways, first and scannable. This is the block a reader in a
           hurry reads, and the block AI Overviews lift when they cite a page. */}
       {article.body.keyPoints.length > 0 && (
@@ -442,5 +446,23 @@ function NewsCtaBlock({ cta }: { cta: NewsCta }) {
         {cta.label}
       </a>
     </aside>
+  );
+}
+
+/** A YouTube recording, from the no-cookie domain so nothing is set until the
+ *  reader presses play. Lazy, because it always sits below the standfirst. */
+function NewsVideo({ id, title }: { id: string; title: string }) {
+  return (
+    <div className="aspect-video overflow-clip rounded-2xl bg-forest-900">
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${id}`}
+        title={title}
+        loading="lazy"
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
+        className="size-full border-0"
+      />
+    </div>
   );
 }

@@ -64,6 +64,9 @@ export interface FullNewsArticle extends NewsArticle {
    *  rendered as a button under the hero and again after the body. Only an
    *  https URL is accepted. */
   cta: NewsCta | null;
+  /** An optional YouTube video id — a webinar recording — embedded under the
+   *  hero. Only a bare 11-character id is accepted. */
+  youtubeId: string | null;
 }
 
 export interface NewsCta {
@@ -365,6 +368,9 @@ async function readArticle(
     sourceExcerpt:
       typeof data.sourceExcerpt === "string" ? data.sourceExcerpt : null,
     cta: asCta(data),
+    youtubeId: /^[A-Za-z0-9_-]{11}$/.test(str(data.youtubeId))
+      ? str(data.youtubeId)
+      : null,
   };
 }
 
