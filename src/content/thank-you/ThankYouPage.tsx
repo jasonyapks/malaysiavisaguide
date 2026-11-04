@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
+import { LeadEvent } from "./LeadEvent";
 import type { ThankYouCopy } from "./types";
 
 /**
@@ -42,29 +43,8 @@ export function ThankYouPage({
         {copy.cta.tail}
       </p>
 
-      {/*
-       * The GA4 key event.
-       *
-       * A page_view on this URL is already countable as a destination-style
-       * conversion, but `generate_lead` is GA4's own recommended event name for
-       * exactly this, and a named event survives a URL change. Both are useful;
-       * this costs one line.
-       *
-       * Guarded on `window.gtag` because the tag is loaded behind Consent Mode
-       * (RootShell) and does not exist until the reader has been asked. When it
-       * does exist, consent state is gtag's problem, not ours — a denied reader
-       * sends nothing, which is the correct outcome.
-       *
-       * `lead_topic` ("quote" | "general") comes from the contact form via
-       * sessionStorage — key is LEAD_TOPIC_KEY in lib/analytics.ts — and is
-       * cleared so a reload does not re-attribute.
-       */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html:
-            "var t;try{t=sessionStorage.getItem('mvg-lead-topic');sessionStorage.removeItem('mvg-lead-topic')}catch(e){}window.gtag&&window.gtag('event','generate_lead',{form:'contact',lead_topic:t||'general'});",
-        }}
-      />
+      {/* The GA4 key event — see ./LeadEvent.tsx for why it is an effect. */}
+      <LeadEvent />
     </article>
   );
 }

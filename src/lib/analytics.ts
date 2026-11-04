@@ -5,13 +5,16 @@
  * - `quote_cta_click` — a reader pressed the quote CTA (<QuoteCta />).
  * - `agency_click`    — a reader followed a link to MYPVIP's own site or
  *                       WhatsApp (<OutboundLeadTracker />).
- * - `generate_lead`   — a contact form was sent. Fired inline by the
- *                       thank-you page, not through here; see ThankYouPage.tsx.
+ * - `generate_lead`   — a contact form was sent. Fired by the thank-you
+ *                       page; see content/thank-you/LeadEvent.tsx.
  *
  * Browser-only. `window.gtag` is absent until RootShell's bootstrap has run and
  * is a no-op under denied consent, so a missing tag is not an error.
  */
-export type AnalyticsEvent = "quote_cta_click" | "agency_click";
+export type AnalyticsEvent =
+  | "quote_cta_click"
+  | "agency_click"
+  | "generate_lead";
 
 export function track(name: AnalyticsEvent, params: Record<string, string>) {
   window.gtag?.("event", name, params);
@@ -26,6 +29,6 @@ export const AGENCY_HOSTS = ["mypvip.com", "wa.me", "api.whatsapp.com"];
 /**
  * sessionStorage key carrying the enquiry topic from the contact form to the
  * thank-you page, so `generate_lead` can say whether it was a quote request.
- * The thank-you page reads it in an inline script — keep the literal in sync.
+ * Read and cleared by content/thank-you/LeadEvent.tsx.
  */
 export const LEAD_TOPIC_KEY = "mvg-lead-topic";
