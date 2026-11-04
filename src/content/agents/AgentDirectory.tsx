@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   agentsFor,
   agentStates,
+  isAuthorCompany,
   licenceStatus,
   mainLicences,
   statusGroup,
@@ -218,6 +219,11 @@ function AgentCard({
       className="agent-card"
     >
       <h3>{agent.name}</h3>
+      {isAuthorCompany(agent) && (
+        <p className="mt-1 inline-block rounded-full border border-forest-600 bg-forest-50 px-3 py-0.5 text-caption font-semibold text-forest-900">
+          {t.authorBadge}
+        </p>
+      )}
 
       {programme === "mm2h"
         ? mainLicences(agent).map((l) => (

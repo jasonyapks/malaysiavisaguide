@@ -2,6 +2,7 @@ import { SupersededNotices } from "@/components/SupersededNotice";
 import { programmes } from "@/lib/data/programmes";
 import type { Locale } from "@/lib/i18n";
 import { localiseProgramme } from "@/lib/programme-locale";
+import { QuoteCta } from "@/content/quote/QuoteCta";
 import { CostCalculator } from "./CostCalculator";
 import type { CalculatorCopy } from "./types";
 
@@ -20,6 +21,8 @@ export function CalculatorPage({
       </header>
 
       <CostCalculator locale={locale} />
+
+      <QuoteCta locale={locale} placement="calculator" />
 
       {/* Below the calculator, not above it. The estimate renders above this
           point, so the caveat still reaches the reader before they act on a

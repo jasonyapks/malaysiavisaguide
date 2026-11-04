@@ -193,6 +193,7 @@ export const copy: AgentsCopy = {
     pvipStatus: {
       active: "\u2713 On Immigration's list",
     },
+    authorBadge: "Run by this site's author",
     pvipTerminations: ({ count, month, by, on, listDated }) => (
       <>
         {" "}

@@ -9,7 +9,8 @@
  *
  * No ratings, no featured placement. MYPVIP's own companies sit in the
  * alphabetical order like everyone else, and the page discloses the
- * relationship (SPEC.md §1).
+ * relationship (SPEC.md §1). Their cards carry an "author's company" badge —
+ * a disclosure on the card itself, not a reordering (see isAuthorCompany).
  */
 import data from "@/lib/data/agents.json";
 import { PVIP_TERMINATED } from "@/lib/data/agent-status";
@@ -192,4 +193,18 @@ export function relatedHref(
   const programme = on(current) ? current : on(other) ? other : null;
   if (!programme) return null;
   return `/agents/${programme}/#${r.id}`;
+}
+
+/**
+ * The two companies run by the site's author, trading as MYPVIP. Matched on
+ * the register's own spelling, so a re-import that renames either one drops
+ * the badge rather than putting it on someone else.
+ */
+const AUTHOR_COMPANIES = new Set([
+  "MY PR PROGRAM SDN. BHD.",
+  "MY PREMIUM (MM2H) SDN. BHD.",
+]);
+
+export function isAuthorCompany(agent: { name: string }): boolean {
+  return AUTHOR_COMPANIES.has(agent.name);
 }

@@ -25,6 +25,7 @@ export const copy: ContactCopy = {
     programme: "这个问题与哪一项计划有关？",
     programmeAny: "还不确定／一般咨询",
     message: "你的问题",
+    messageQuote: "你的国籍、年龄，以及哪些家人会一起申请",
   },
 
   submit: "发送查询",

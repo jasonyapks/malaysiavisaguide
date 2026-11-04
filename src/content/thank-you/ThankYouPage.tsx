@@ -54,11 +54,15 @@ export function ThankYouPage({
        * (RootShell) and does not exist until the reader has been asked. When it
        * does exist, consent state is gtag's problem, not ours — a denied reader
        * sends nothing, which is the correct outcome.
+       *
+       * `lead_topic` ("quote" | "general") comes from the contact form via
+       * sessionStorage — key is LEAD_TOPIC_KEY in lib/analytics.ts — and is
+       * cleared so a reload does not re-attribute.
        */}
       <script
         dangerouslySetInnerHTML={{
           __html:
-            "window.gtag&&window.gtag('event','generate_lead',{form:'contact'});",
+            "var t;try{t=sessionStorage.getItem('mvg-lead-topic');sessionStorage.removeItem('mvg-lead-topic')}catch(e){}window.gtag&&window.gtag('event','generate_lead',{form:'contact',lead_topic:t||'general'});",
         }}
       />
     </article>

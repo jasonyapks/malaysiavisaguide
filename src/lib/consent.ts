@@ -10,6 +10,8 @@
  * default. STORAGE_KEY must stay identical in both places.
  */
 
+import type { AnalyticsEvent } from "./analytics";
+
 const STORAGE_KEY = "mvg-consent";
 
 export type Choice = "granted" | "denied";
@@ -43,6 +45,11 @@ declare global {
         command: "event",
         name: "page_view",
         params: { page_location: string; page_title: string },
+      ): void;
+      (
+        command: "event",
+        name: AnalyticsEvent,
+        params: Record<string, string>,
       ): void;
     };
     __mvgConsentRegion?: ConsentRegion;

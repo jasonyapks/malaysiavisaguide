@@ -23,6 +23,8 @@ export const copy: ContactCopy = {
     programme: "Which programme is this about?",
     programmeAny: "Not sure yet / general question",
     message: "Your question",
+    messageQuote:
+      "Your nationality, your age, and who would apply with you",
   },
 
   submit: "Send enquiry",

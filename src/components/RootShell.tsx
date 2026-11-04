@@ -17,6 +17,7 @@ import { getUi } from "@/lib/ui";
 import { SiteNav } from "@/components/SiteNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import CookieConsent from "@/components/CookieConsent";
+import { OutboundLeadTracker } from "@/components/OutboundLeadTracker";
 
 /**
  * The document shell — `<html>` down to `</body>`, shared by every root layout.
@@ -430,6 +431,7 @@ document.head.appendChild(s);`,
           strings={ui.consent}
           privacyHref={linkPath("/privacy/", locale)}
         />
+        <OutboundLeadTracker />
       </body>
     </html>
   );

@@ -73,6 +73,8 @@ export type AgentsCopy = {
     statusAsAt: (date: ReactNode) => ReactNode;
     status: Record<LicenceStatus, string>;
     pvipStatus: { active: string };
+    /** Badge on the author's own companies' cards. A disclosure, not a ranking. */
+    authorBadge: string;
     /** Added to the PVIP source paragraph: who reported the terminations, when. */
     pvipTerminations: (p: {
       count: number;

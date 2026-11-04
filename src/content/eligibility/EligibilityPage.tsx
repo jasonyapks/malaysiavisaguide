@@ -2,6 +2,7 @@ import { SupersededNotices } from "@/components/SupersededNotice";
 import { programmes } from "@/lib/data/programmes";
 import type { Locale } from "@/lib/i18n";
 import { localiseProgramme } from "@/lib/programme-locale";
+import { QuoteCta } from "@/content/quote/QuoteCta";
 import { EligibilityQuiz } from "./EligibilityQuiz";
 import type { EligibilityCopy } from "./types";
 
@@ -20,6 +21,8 @@ export function EligibilityPage({
       </header>
 
       <EligibilityQuiz locale={locale} />
+
+      <QuoteCta locale={locale} placement="eligibility" />
 
       {/* Below the quiz, not above it. The warning still precedes every figure
           a reader could act on, because the quiz's own verdict renders above

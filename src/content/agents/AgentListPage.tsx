@@ -2,6 +2,7 @@ import Link from "next/link";
 import { type AgentProgramme } from "@/lib/data/agents";
 import { type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
+import { QuoteCta } from "@/content/quote/QuoteCta";
 import { AgentDirectory } from "./AgentDirectory";
 import { VettingChecklist } from "./AgentsHub";
 import type { AgentsCopy } from "./types";
@@ -41,6 +42,15 @@ export function AgentListPage({
             {c.standfirst}
           </p>
         </header>
+
+        {/* Above the register, not inside it: the list stays as Immigration
+            publishes it, and the author's own offer is first on the page in
+            its own disclosed box (Jason's call, 2026-11-04). */}
+        <QuoteCta
+          locale={locale}
+          placement="agents"
+          programme={programme === "mm2h" ? "MM2H" : "PVIP"}
+        />
 
         <AgentDirectory programme={programme} locale={locale} copy={copy} />
 

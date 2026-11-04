@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { localisedNavRoutes, navRoutes } from "@/lib/site";
 import { localeName, localeOrigin, type Locale } from "@/lib/i18n";
+import { LEAD_TOPIC_KEY } from "@/lib/analytics";
 import { linkPath } from "@/lib/translated";
 import { getContactCopy } from "./copy";
 
@@ -57,11 +58,43 @@ function turnstileLanguage(locale: Locale): string {
 
 type Status = "idle" | "submitting" | "success" | "error";
 
+/** The query string does not change while the form is open. */
+const noSubscribe = () => () => {};
+
 export function ContactForm({ locale }: { locale: Locale }) {
   // Resolved here, not passed in: `errorNetwork` is a function. See ./copy.ts.
   const copy = getContactCopy(locale);
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
+  // What the reader picked, once they touch the select; until then the
+  // prefill from the URL shows through.
+  const [picked, setPicked] = useState<string | null>(null);
+
+  /*
+   * Prefill from the quote CTA's link: `?topic=quote&programme=PVIP`.
+   *
+   * Read through useSyncExternalStore rather than useSearchParams or an
+   * effect: this is a static export, so the query string only exists in the
+   * browser, and mirroring it into state from an effect is the cascade
+   * `react-hooks/set-state-in-effect` forbids. The server snapshot is "", so
+   * the prerendered form is the plain one.
+   */
+  const search = useSyncExternalStore(
+    noSubscribe,
+    () => window.location.search,
+    () => "",
+  );
+  const query = new URLSearchParams(search);
+  const quote = query.get("topic") === "quote";
+  const fromUrl = query.get("programme") ?? "";
+  // Accepted only if it is one of the select's own values, so a hand-edited
+  // URL cannot submit an option the reader was never shown.
+  const prefill = [...navRoutes("programmes"), ...navRoutes("work-study")].some(
+    (r) => r.title === fromUrl,
+  )
+    ? fromUrl
+    : "";
+  const programme = picked ?? prefill;
 
   /*
    * Load the Turnstile script once, and only where it is used.
@@ -132,6 +165,12 @@ export function ContactForm({ locale }: { locale: Locale }) {
         setStatus("success");
         setMessage(copy.success);
         form.reset();
+        // Read by the thank-you page so `generate_lead` carries the topic.
+        try {
+          sessionStorage.setItem(LEAD_TOPIC_KEY, quote ? "quote" : "general");
+        } catch {
+          // Private mode: the lead still counts, just without a topic.
+        }
         /*
          * Send the reader to /thank-you/ — the only way to reach that URL, so a
          * page_view on it IS the conversion. See content/thank-you/types.ts.
@@ -200,7 +239,8 @@ export function ContactForm({ locale }: { locale: Locale }) {
       {/* Only on the legacy path. On the proxy path the key lives in the
           Function's environment and must not be in the page at all. */}
       {!SITE_KEY && <input type="hidden" name="access_key" value={ACCESS_KEY} />}
-      <input type="hidden" name="subject" value={subject(locale)} />
+      <input type="hidden" name="subject" value={subject(locale, quote)} />
+      {quote && <input type="hidden" name="topic" value="Cost quote request" />}
       <input type="hidden" name="from_name" value="Malaysia Visa Guide" />
 
       {/* Honeypot — Web3Forms spam protection. Hidden from real users. */}
@@ -251,7 +291,8 @@ export function ContactForm({ locale }: { locale: Locale }) {
         <select
           id="programme"
           name="programme"
-          defaultValue=""
+          value={programme}
+          onChange={(e) => setPicked(e.target.value)}
           className={inputClass}
         >
           <option value="">{copy.fields.programmeAny}</option>
@@ -263,7 +304,10 @@ export function ContactForm({ locale }: { locale: Locale }) {
         </select>
       </Field>
 
-      <Field label={copy.fields.message} htmlFor="message">
+      <Field
+        label={quote ? copy.fields.messageQuote : copy.fields.message}
+        htmlFor="message"
+      >
         <textarea
           id="message"
           name="message"
@@ -348,8 +392,11 @@ function Field({
  * The flag matters operationally: an enquiry written in Chinese needs a reply
  * in Chinese, and that is worth knowing from the subject line.
  */
-function subject(locale: Locale): string {
+function subject(locale: Locale, quote: boolean): string {
   const host = new URL(localeOrigin[locale]).host;
-  if (locale === "en") return `New enquiry — ${host}`;
-  return `New enquiry (${localeName[locale]}) — ${host}`;
+  // A quote request is a sales lead, not a reader question — worth telling
+  // apart before the email is opened.
+  const kind = quote ? "New quote request" : "New enquiry";
+  if (locale === "en") return `${kind} — ${host}`;
+  return `${kind} (${localeName[locale]}) — ${host}`;
 }

@@ -13,6 +13,8 @@ export type ContactCopy = {
     /** The empty option at the top of the programme select. */
     programmeAny: string;
     message: string;
+    /** The message label when the reader arrived from the quote CTA. */
+    messageQuote: string;
   };
 
   submit: string;

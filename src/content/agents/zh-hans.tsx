@@ -168,6 +168,7 @@ export const copy: AgentsCopy = {
     pvipStatus: {
       active: "\u2713 列于移民局名单",
     },
+    authorBadge: "本站作者经营的公司",
     pvipTerminations: ({ count, month, by, on, listDated }) => (
       <>
         名单上有 {count} 家代理机构已于 {month}
