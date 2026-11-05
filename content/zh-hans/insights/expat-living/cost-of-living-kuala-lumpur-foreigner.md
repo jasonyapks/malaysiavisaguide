@@ -116,7 +116,7 @@ translationModel: "claude-sonnet-5"
 
 这份预算是否可行，取决于表中没有列出的一项开支——医疗。年过60岁后，保险变得更贵也更难买到，而外籍人士支付的每一张私人医疗账单都要加收6%的服务税。
 
-Mont Kiara 对你来说也可能超出实际需要。隔壁的 Sri Hartamas，两卧室单位标价在RM3,000至RM3,800之间；再往外，像 Cheras 这样的地区，标价约为RM2,100。
+Mont Kiara 对你来说也可能超出实际需要。隔壁的 Sri Hartamas，两卧室单位标价在RM3,000至RM3,800之间；再往外，像 Cheras 这样的地区，标价约为RM2,100。[外籍人士在吉隆坡住哪里](/insights/expat-living/kl-neighbourhoods-rent-for-expats/)比较了九个地区。
 
 **适合的签证：** MM2H 白银级，没有收入要求。你转而存入{{mm2h-silver:fixedDeposit:money}} 的定期存款，并购买一套房产，该房产在吉隆坡价格须至少为RM1,000,000。一旦拥有房产，租金这一项即会消失，存款与房屋仍归你所有。按五年期准证摊算，各项费用每月约为RM700。 [MM2H 费用知多少](/insights/how-to/how-much-does-mm2h-cost/) 一文列出了完整费用清单。
 

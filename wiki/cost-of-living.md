@@ -6,8 +6,8 @@ AI-maintained. Every figure in the six cost-of-living articles traces to a file 
 
 | # | Path under `content/insights/` | Status |
 |---|---|---|
-| 1 | `expat-living/cost-of-living-kuala-lumpur-foreigner` (hub) | Draft |
-| 2 | `expat-living/kl-neighbourhoods-rent-for-expats` | Draft |
+| 1 | `expat-living/cost-of-living-kuala-lumpur-foreigner` (hub) | Live 23 Oct 2026 (`6b28bd9`), en / zh-hans (locked) / zh-hant |
+| 2 | `expat-living/kl-neighbourhoods-rent-for-expats` | Live 5 Nov 2026, en / zh-hans (locked) / zh-hant. Wolo Mont Kiara paragraph added at Jason's request (source: mypvip.com listing; "over half sold" is Jason's word, Nov 2026). Restore its `relatedGuides` link to the schools article when that publishes. |
 | 3 | `expat-living/healthcare-insurance-costs-kl-expats` | Draft |
 | 4 | `expat-living/international-school-fees-kl` | Draft |
 | 5 | `expat-living/kl-daily-costs-cars-groceries-alcohol` | Draft |

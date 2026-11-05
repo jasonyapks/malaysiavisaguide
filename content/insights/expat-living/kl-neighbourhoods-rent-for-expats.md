@@ -4,12 +4,10 @@ dek: "Every relocation guide sends you to Mont Kiara. Sometimes that's the right
 published: "2026-10-23"
 reviewed: "2026-10-23"
 readingMinutes: 8
-draft: true
+draft: false
 relatedGuides:
   - path: "/insights/expat-living/cost-of-living-kuala-lumpur-foreigner/"
     title: "cost of living in Kuala Lumpur for foreigners"
-  - path: "/insights/expat-living/international-school-fees-kl/"
-    title: "international school fees in KL"
   - path: "/visas/mm2h/"
     title: "the MM2H guide"
 faq:

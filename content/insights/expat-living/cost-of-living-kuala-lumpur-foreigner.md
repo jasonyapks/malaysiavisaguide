@@ -112,7 +112,7 @@ You're in your sixties. You've sold up or let out your house at home, and you wa
 
 Whether this budget works depends on a line that isn't in the table, which is health. Past 60, insurance gets expensive and harder to buy, and every private bill carries the 6% service tax that foreigners pay.
 
-Mont Kiara may also be more than you need. Next door in Sri Hartamas, two-bedrooms list at RM3,000 to RM3,800, and further out, in areas such as Cheras, they list at around RM2,100.
+Mont Kiara may also be more than you need. Next door in Sri Hartamas, two-bedrooms list at RM3,000 to RM3,800, and further out, in areas such as Cheras, they list at around RM2,100. [Where foreigners live in Kuala Lumpur](/insights/expat-living/kl-neighbourhoods-rent-for-expats/) compares nine areas.
 
 **The visa that fits:** MM2H Silver, which has no income requirement. You place a fixed deposit of {{mm2h-silver:fixedDeposit:money}} instead, and you buy a property, which in Kuala Lumpur must cost at least RM1,000,000. Once you own it, the rent line disappears, and both the deposit and the house stay yours. Spread over the five-year pass, the fees come to roughly RM700 a month. [How much MM2H costs](/insights/how-to/how-much-does-mm2h-cost/) has the full bill.
 
