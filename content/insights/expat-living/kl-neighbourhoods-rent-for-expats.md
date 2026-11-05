@@ -97,6 +97,8 @@ As a foreigner you can buy, but not cheaply. **Kuala Lumpur's minimum price for 
 
 The exception is MM2H, where buying is compulsory. Silver requires a purchase of at least {{mm2h-silver:propertyPurchaseMin:money}}, and in Kuala Lumpur the RM1,000,000 state floor applies instead. If you're going to own anyway, choose the neighbourhood the way you'd choose it as a tenant, then buy there. [How much MM2H costs](/insights/how-to/how-much-does-mm2h-cost/) explains how the property rule works.
 
+If that neighbourhood is Mont Kiara, one new option is [Wolo Hotel & Residences](https://mypvip.com/en/property-malaysia/wolo-mont-kiara/) on Persiaran Dutamas, from Bursa-listed Magma Group. It puts a 63-key Wolo hotel, a member of Marriott's Design Hotels, at the top of the tower, with serviced and private residences below that share its lobby, sky bar and restaurants. Homes run from 450 to 1,461 sq ft, all sold fully fitted, with only 12 units per floor. Tenure is 99-year leasehold on a commercial title. The project has launched, and as at November 2026 more than half the units are sold. Publika is 350 metres away, and Mont'Kiara International School and Garden International School are both about 2 km away.
+
 For the rest of the monthly budget, see [the cost of living in Kuala Lumpur for foreigners](/insights/expat-living/cost-of-living-kuala-lumpur-foreigner/).
 
 ((Rents are asking rents from a dated listing sample, read 23 October 2026, not agreed rents or official statistics. Deposit practice is market convention, not law. Verify current terms with the landlord before you commit.))
