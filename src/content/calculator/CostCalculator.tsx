@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
+import { Handoff, handoffProgrammeName } from "@/content/handoff/Handoff";
 import {
   getProgramme,
   type Currency,
@@ -96,6 +98,20 @@ export function CostCalculator({ locale }: { locale: Locale }) {
     { dependants, nationality, dependantTermCounts },
     locale,
   );
+
+  // The calculator shows a result from the first paint, so "complete" means the
+  // reader changed something. Counted once per visit; only the programme is sent.
+  const first = useRef(true);
+  const counted = useRef(false);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    if (counted.current) return;
+    counted.current = true;
+    track("tool_complete", { tool: "cost-calculator", programme: slug });
+  }, [slug, dependants, nationalityLabel]);
 
   const fees = result ? currencyRows(result.feesByCurrency) : [];
   const capital = result ? currencyRows(result.capitalByCurrency) : [];
@@ -291,6 +307,16 @@ export function CostCalculator({ locale }: { locale: Locale }) {
           </p>
         </div>
       </section>
+
+      {/* Hand-off (audit task B4-3): programme name only, no family size or
+          nationality. "Get a written quote" is the QuoteCta under the tool. */}
+      <Handoff
+        locale={locale}
+        campaign="tools-cost-calculator"
+        module="calculator-result"
+        programme={handoffProgrammeName(slug)}
+        variant="confirm"
+      />
 
       {/* Honesty footer */}
       <div className="space-y-2 text-caption text-ink-muted">

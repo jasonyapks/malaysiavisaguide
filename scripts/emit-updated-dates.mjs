@@ -89,6 +89,7 @@ const SOURCES = {
   "/tools/cost-calculator/": ["src/content/calculator"],
   "/about/": ["src/content/about"],
   "/about/jason-yap/": ["src/content/author"],
+  "/events/": ["src/content/events"],
   "/editorial-policy/": ["src/content/editorial-policy"],
   "/privacy/": ["src/content/privacy"],
   "/contact/": ["src/content/contact"],

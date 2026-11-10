@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { track } from "@/lib/analytics";
+import { Handoff, handoffProgrammeName } from "@/content/handoff/Handoff";
 import {
   evaluate,
   INDICATIVE_USD_TO_MYR,
@@ -141,6 +143,16 @@ function Results({
   const { qualified, nearMiss } = evaluate(answers, locale);
   const href = (path: string) => linkPath(path, locale);
 
+  // Counted once per finished run. No answers are sent — only how many
+  // programmes came back.
+  const qualifiedCount = qualified.length;
+  useEffect(() => {
+    track("tool_complete", {
+      tool: "eligibility",
+      qualified_count: String(qualifiedCount),
+    });
+  }, [qualifiedCount]);
+
   return (
     <div className="space-y-10">
       <header className="space-y-3">
@@ -205,6 +217,19 @@ function Results({
           <p className="text-ink">{copy.results.nothingFits}</p>
         </section>
       )}
+
+      {/* Hand-off (audit task B4-3). The programme name is the only thing that
+          travels — never an answer. The "email me this result" option waits on
+          the PDPA notice (B4-5) and is deliberately not here yet. */}
+      <Handoff
+        locale={locale}
+        campaign="tools-eligibility"
+        module="eligibility-result"
+        programme={
+          qualified[0] ? handoffProgrammeName(qualified[0].slug) : undefined
+        }
+        variant="confirm"
+      />
 
       <div className="space-y-3 rounded-xl bg-forest-900 px-6 py-6 text-sand-50">
         <p className="font-serif text-lead font-semibold text-sand-50">

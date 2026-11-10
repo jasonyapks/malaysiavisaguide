@@ -1,4 +1,5 @@
 import { Disclosure } from "@/components/Disclosure";
+import { Handoff } from "@/content/handoff/Handoff";
 import {
   Children,
   Fragment,
@@ -79,6 +80,18 @@ export function GuideLayout({
   cta: { text: string; href: string; label?: string };
   children: React.ReactNode;
 }) {
+  // The hand-off modules. MYPVIP files PVIP and MM2H; for every other pass the
+  // box says so rather than implying a service that may not exist.
+  const guidePath = guideHref[programme.slug];
+  const handoffCampaign = guidePath.replace(/^\/|\/$/g, "").replace(/\//g, "-");
+  const handoffProgramme =
+    programme.slug === "pvip"
+      ? "PVIP"
+      : programme.slug.startsWith("mm2h-")
+        ? "MM2H"
+        : undefined;
+  const handoffVariant = handoffProgramme ? "handles" : "other";
+
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -209,6 +222,16 @@ export function GuideLayout({
             {children}
           </div>
 
+          {/* Hand-off, mid-page (audit task B4-3). Boxed and labelled, outside
+              the guide's own prose. */}
+          <Handoff
+            locale={locale}
+            campaign={handoffCampaign}
+            module="guide-mid"
+            programme={handoffProgramme}
+            variant={handoffVariant}
+          />
+
           {/* 6 — the honest section. This is what makes a page worth citing. */}
           <section id="who-it-suits" className="scroll-mt-24 space-y-8">
             <GuideHead
@@ -232,6 +255,15 @@ export function GuideLayout({
           <div id="questions" className="scroll-mt-24">
             <Faq items={faq} locale={locale} />
           </div>
+
+          {/* Hand-off again at the end, for the reader who read to the end. */}
+          <Handoff
+            locale={locale}
+            campaign={handoffCampaign}
+            module="guide-end"
+            programme={handoffProgramme}
+            variant={handoffVariant}
+          />
 
           {/* 8 */}
           <Byline lastVerified={programme.lastVerified} locale={locale} />

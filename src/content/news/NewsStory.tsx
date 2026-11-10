@@ -191,6 +191,17 @@ export function NewsStory({
 
       {article.cta && <NewsCtaBlock cta={article.cta} />}
 
+      {/* A webinar story — one with a registration button or a recording —
+          points at /events/, where the session stays after this story has
+          scrolled off the news index (audit task B4-6). */}
+      {(article.cta || article.youtubeId) && (
+        <p className="text-body-sm">
+          <Link href="/events/" className="font-semibold text-forest-700 underline">
+            {copy.article.allEvents} →
+          </Link>
+        </p>
+      )}
+
       {/* The publisher's one quote, unmistakably theirs: attributed inline, set
           apart typographically, and followed by a link to the original. */}
       {article.sourceExcerpt && (
@@ -451,7 +462,7 @@ function NewsCtaBlock({ cta }: { cta: NewsCta }) {
 
 /** A YouTube recording, from the no-cookie domain so nothing is set until the
  *  reader presses play. Lazy, because it always sits below the standfirst. */
-function NewsVideo({ id, title }: { id: string; title: string }) {
+export function NewsVideo({ id, title }: { id: string; title: string }) {
   return (
     <div className="aspect-video overflow-clip rounded-2xl bg-forest-900">
       <iframe

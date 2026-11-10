@@ -3,7 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { localisedNavRoutes, navRoutes } from "@/lib/site";
 import { localeName, localeOrigin, type Locale } from "@/lib/i18n";
-import { LEAD_TOPIC_KEY } from "@/lib/analytics";
+import { LEAD_TOPIC_KEY, track } from "@/lib/analytics";
 import { linkPath } from "@/lib/translated";
 import { getContactCopy } from "./copy";
 
@@ -164,6 +164,7 @@ export function ContactForm({ locale }: { locale: Locale }) {
       if (json?.success) {
         setStatus("success");
         setMessage(copy.success);
+        track("form_submit", { form: "contact", topic: quote ? "quote" : "general" });
         form.reset();
         // Read by the thank-you page so `generate_lead` carries the topic.
         try {

@@ -85,6 +85,7 @@ export const routes: Route[] = [
   // labelled "Insights & news" to match.
   { path: "/insights/", title: "Insights", nav: "reading" },
   { path: "/news/", title: "News", nav: "reading" },
+  { path: "/events/", title: "Webinars & events", nav: "reading" },
 
   { path: "/visas/pvip/", title: "PVIP", nav: "programmes" },
   { path: "/visas/mm2h/", title: "MM2H", nav: "programmes" },

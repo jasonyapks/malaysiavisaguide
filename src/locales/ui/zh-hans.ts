@@ -98,6 +98,7 @@ export const ui: UiStrings = {
     "/agents/": "持牌代理名录",
     "/agents/mm2h/": "MM2H 持牌代理",
     "/agents/pvip/": "PVIP 授权代理",
+    "/events/": "讲座与活动",
     "/about/": "关于我们",
     "/about/jason-yap/": "Jason Yap",
     "/editorial-policy/": "编辑方针",
@@ -328,6 +329,7 @@ export const ui: UiStrings = {
       sourceAfter:
         "的报道。我们用自己的话概括并解读这则消息，不转载原文。想看出版方的完整报道，请点击原文链接。",
       lastUpdated: (date) => `最后更新于 ${date}。`,
+      allEvents: "全部讲座与回放",
       ctaLead: "消息只是起点，不构成建议。",
       ctaBefore: "想知道这对你自己的情况意味着什么，已核实的数字都在",
       ctaBetween: "，或者",

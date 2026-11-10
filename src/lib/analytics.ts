@@ -13,6 +13,13 @@
  */
 export type AnalyticsEvent =
   | "quote_cta_click"
+  // Added 10 Nov 2026 (audit task B4-1). `newsletter_signup` is reserved for
+  // B4-4 and nothing fires it yet.
+  | "tool_complete"
+  | "handoff_click"
+  | "whatsapp_click"
+  | "form_submit"
+  | "newsletter_signup"
   | "agency_click"
   | "generate_lead";
 

@@ -311,6 +311,8 @@ export type UiStrings = {
       sourceBefore: string;
       sourceAfter: string;
       lastUpdated: (date: string) => string;
+      /** Shown on a webinar story: the link to /events/. */
+      allEvents: string;
       ctaLead: string;
       ctaBefore: string;
       ctaBetween: string;
@@ -480,6 +482,7 @@ export const ui: UiStrings = {
     "/agents/": "Licensed agents",
     "/agents/mm2h/": "Licensed MM2H agents",
     "/agents/pvip/": "Authorised PVIP agencies",
+    "/events/": "Webinars & events",
     "/about/": "About",
     "/about/jason-yap/": "Jason Yap",
     "/editorial-policy/": "Editorial policy",
@@ -721,6 +724,7 @@ export const ui: UiStrings = {
       sourceAfter:
         ". We summarise and explain the news in our own words; we do not reproduce it. Read the original report for the publisher's full account.",
       lastUpdated: (date) => `Last updated ${date}.`,
+      allEvents: "All webinars and replays",
       ctaLead: "News is a starting point, not advice.",
       ctaBefore: "For what this means in your own case, the verified figures live in ",
       ctaBetween: ", or ",

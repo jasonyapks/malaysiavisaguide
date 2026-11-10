@@ -101,6 +101,7 @@ export const ui: UiStrings = {
     "/agents/": "持牌代理名錄",
     "/agents/mm2h/": "MM2H 持牌代理",
     "/agents/pvip/": "PVIP 授權代理",
+    "/events/": "講座與活動",
     "/about/": "關於我們",
     "/about/jason-yap/": "Jason Yap",
     "/editorial-policy/": "編輯方針",
@@ -331,6 +332,7 @@ export const ui: UiStrings = {
       sourceAfter:
         "的報道。我們用自己的話概括並解讀這則消息，不轉載原文。想看出版方的完整報道，請點擊原文鏈接。",
       lastUpdated: (date) => `最後更新於 ${date}。`,
+      allEvents: "全部講座與回放",
       ctaLead: "消息只是起點，不構成建議。",
       ctaBefore: "想知道這對你自己的情況意味著什麼，已核實的數字都在",
       ctaBetween: "，或者",

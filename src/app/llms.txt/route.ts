@@ -43,6 +43,7 @@ const ABOUT: [path: string, title: string, note: string][] = [
   ["/about/jason-yap/", "Jason Yap", "The author: his roles at MYPVIP, MY Premium MM2H and MPVIPCA, everything he has written here, and his conflicts of interest"],
   ["/editorial-policy/", "Editorial policy", "How pages are sourced, dated, reviewed and corrected"],
   ["/news/", "News", "Dated reports on rule and fee changes"],
+  ["/events/", "Webinars and events", "Upcoming MYPVIP webinars and full replays of past sessions"],
 ];
 
 const CATEGORY: Record<string, string> = {
