@@ -8,8 +8,10 @@ import {
 } from "@/lib/data/programmes";
 import { registers } from "@/lib/data/agents";
 import { money, reviewDate } from "@/lib/format";
+import { pvipOutlay } from "./outlay";
 
 const agentFrom = money(PVIP_AGENT_FEE_FROM);
+const o = pvipOutlay;
 import type { GuideCopy } from "../types";
 
 /** English PVIP guide copy — moved here verbatim from app/visas/pvip/page.tsx.
@@ -300,6 +302,69 @@ export const copy: GuideCopy = {
           A single applicant is therefore looking at a little over RM210,000 in
           government fees genuinely spent, and RM1,000,000 committed but
           retained — before agent fees, which start from around {agentFrom}.
+        </p>
+        <DataTable
+          caption={`PVIP first-year government outlay, on a ${o.years}-year initial approval`}
+          idPrefix="pvip-outlay"
+          head={["", "Single applicant", "Couple", "Family of four"]}
+          rows={[
+            {
+              label: "Participation fee",
+              cells: [
+                { value: o.single.participationLong },
+                { value: `${o.couple.participationLong}, or ${o.couple.participationShort}`, note: 1 },
+                { value: `${o.familyOfFour.participationLong}, or ${o.familyOfFour.participationShort}`, note: 1 },
+              ],
+            },
+            {
+              label: `Pass fee, ${o.years} years`,
+              cells: [
+                { value: o.single.passFee },
+                { value: o.couple.passFee },
+                { value: o.familyOfFour.passFee },
+              ],
+            },
+            {
+              label: "Total of these two",
+              cells: [
+                { value: o.single.totalLong },
+                { value: `${o.couple.totalLong}, or ${o.couple.totalShort}`, note: 1 },
+                { value: `${o.familyOfFour.totalLong}, or ${o.familyOfFour.totalShort}`, note: 1 },
+              ],
+            },
+            {
+              label: "Visa fee and security bond",
+              cells: [
+                { value: "Set by nationality", note: 2 },
+                { value: "Set by nationality", note: 2 },
+                { value: "Set by nationality", note: 2 },
+              ],
+            },
+            {
+              label: "Fixed deposit (stays yours)",
+              cells: [
+                { value: o.fixedDeposit },
+                { value: o.fixedDeposit },
+                { value: o.fixedDeposit },
+              ],
+            },
+          ]}
+          notes={[
+            <>
+              The higher figure is with every dependant on the {o.longYears}-year
+              term, the lower with every dependant on the {o.shortYears}-year
+              term. A couple is the main applicant and one dependant; a family
+              of four is the main applicant and three.
+            </>,
+            <>
+              Priced by passport, so no single figure can be printed. The{" "}
+              <Link href={href("/tools/cost-calculator/")}>cost calculator</Link>{" "}
+              adds them for your nationality.
+            </>,
+          ]}
+        />
+        <p>
+          Agent fees are on top of every column and are not in this table.
         </p>
       </Section>
 

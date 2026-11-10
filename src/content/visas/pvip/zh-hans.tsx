@@ -8,8 +8,10 @@ import {
 } from "@/lib/data/programmes";
 import { registers } from "@/lib/data/agents";
 import { money, reviewDate } from "@/lib/format";
+import { pvipOutlay } from "./outlay";
 
 const agentFrom = money(PVIP_AGENT_FEE_FROM);
+const o = pvipOutlay;
 import type { GuideCopy } from "../types";
 
 /**
@@ -256,6 +258,66 @@ export const copy: GuideCopy = {
         <p>
           所以单人申请的情况是：真正花掉的政府收费略高于 RM210,000，另有 RM1,000,000 被占用但仍属于你 —— 这还没算代理费（约 {agentFrom} 起）。
         </p>
+        <DataTable
+          caption={`PVIP 首年政府收费（按首次批准 ${o.years} 年计）`}
+          idPrefix="pvip-outlay"
+          locale="zh-hans"
+          head={["", "单人申请", "夫妻二人", "一家四口"]}
+          rows={[
+            {
+              label: "参与费",
+              cells: [
+                { value: o.single.participationLong },
+                { value: `${o.couple.participationLong}，或 ${o.couple.participationShort}`, note: 1 },
+                { value: `${o.familyOfFour.participationLong}，或 ${o.familyOfFour.participationShort}`, note: 1 },
+              ],
+            },
+            {
+              label: `准证费（${o.years} 年）`,
+              cells: [
+                { value: o.single.passFee },
+                { value: o.couple.passFee },
+                { value: o.familyOfFour.passFee },
+              ],
+            },
+            {
+              label: "以上两项合计",
+              cells: [
+                { value: o.single.totalLong },
+                { value: `${o.couple.totalLong}，或 ${o.couple.totalShort}`, note: 1 },
+                { value: `${o.familyOfFour.totalLong}，或 ${o.familyOfFour.totalShort}`, note: 1 },
+              ],
+            },
+            {
+              label: "签证费与保证金",
+              cells: [
+                { value: "按国籍订定", note: 2 },
+                { value: "按国籍订定", note: 2 },
+                { value: "按国籍订定", note: 2 },
+              ],
+            },
+            {
+              label: "定期存款（仍属于你）",
+              cells: [
+                { value: o.fixedDeposit },
+                { value: o.fixedDeposit },
+                { value: o.fixedDeposit },
+              ],
+            },
+          ]}
+          notes={[
+            <>
+              较高的数字是所有家属都选 {o.longYears} 年期，较低的是所有家属都选{" "}
+              {o.shortYears} 年期。夫妻二人指主申请人加一名家属；一家四口指主申请人加三名家属。
+            </>,
+            <>
+              这两项按护照定价，所以印不出单一的数字。
+              <Link href={href("/tools/cost-calculator/")}>费用计算器</Link>
+              会按你的国籍把它们加进去。
+            </>,
+          ]}
+        />
+        <p>代理费在每一栏之外另计，不在这张表里。</p>
       </Section>
 
       <Section title="政府收费">

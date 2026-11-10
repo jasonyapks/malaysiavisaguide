@@ -5,6 +5,7 @@ import {
 } from "@/lib/data/insights";
 import { liveInsightCategories, publishedInsights } from "@/lib/insights";
 import { categoryPath, getCategoryIndex, getNewsIndex } from "@/lib/news";
+import { noindexNewsSlugs } from "@/lib/data/noindex";
 import { assertRouteTitles, routes } from "@/lib/site";
 import { htmlLang, locales, localeUrl, type Locale } from "@/lib/i18n";
 import { availableLocales } from "@/lib/translated";
@@ -99,7 +100,11 @@ export async function sitemapEntries(
   // Read for THIS locale: a Chinese host lists the Chinese articles it actually
   // serves. It used to stop above this line and list nothing, which was correct
   // while nothing under /news/ was translated.
-  const articles = await getNewsIndex(locale);
+  // Stories marked noindex are left out: a sitemap must not list a page that
+  // tells crawlers to stay away. See src/lib/data/noindex.ts.
+  const articles = (await getNewsIndex(locale)).filter(
+    (a) => !noindexNewsSlugs.has(a.slug),
+  );
   const news: MetadataRoute.Sitemap = articles.map((a) => ({
     url: localeUrl(`/news/${a.slug}/`, locale),
     lastModified: new Date(a.updatedAt ?? a.publishedAt ?? Date.now()),

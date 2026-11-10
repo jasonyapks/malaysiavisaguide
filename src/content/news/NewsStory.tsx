@@ -22,6 +22,7 @@ import {
 } from "@/lib/news";
 import { outboundRel } from "@/lib/site";
 import { localiseImage } from "@/lib/image-alt";
+import { noindexNewsSlugs } from "@/lib/data/noindex";
 import { getUi } from "@/lib/ui";
 
 /**
@@ -70,6 +71,10 @@ export function newsStoryMetadata(
       locale,
       title: article.headline,
       description: article.dek.slice(0, 300),
+    }),
+    // `follow` stays on: the links out of a hidden story are still good links.
+    ...(noindexNewsSlugs.has(article.slug) && {
+      robots: { index: false, follow: true },
     }),
     openGraph: {
       type: "article",
