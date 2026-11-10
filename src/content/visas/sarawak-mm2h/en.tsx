@@ -52,7 +52,8 @@ const BOND_LABELS: Record<(typeof T.securityBonds)[number]["slug"], string> = {
 export const copy: GuideCopy = {
   meta: {
     title: "Sarawak MM2H (S-MM2H) 2026: requirements, costs and fees",
-    description: `Sarawak runs its own MM2H with its own rules: ${fd} fixed deposit, ${money(s.incomeRequirement!)} monthly income or ${savings} in savings, ${term}, ${stay} a year, and no compulsory property purchase.`,
+    description:
+      `Sarawak MM2H has its own rules: ${fd} fixed deposit, ${money(s.incomeRequirement!)} monthly income or ${savings} in savings, a ${s.tenureYears}-year pass and no compulsory property purchase.`,
   },
 
   title: "Sarawak MM2H (S-MM2H)",

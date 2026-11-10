@@ -347,7 +347,7 @@ const MM2H_COMMON = {
   sponsorShort: null,
   salaryFloor: null,
   source: MM2H_SOURCE,
-  lastVerified: "2026-09-30",
+  lastVerified: "2026-10-18",
   // MOTAC's December 2025 guide still carries the pre-correction wording on
   // both of the fields below, so they rest on named, dated practice rather than
   // on `source`. `lastVerified` stays at the date the guide was checked — it
@@ -744,7 +744,7 @@ export const programmes: Programme[] = [
       defaultTermYears: 5,
     },
     source: "https://imigresen-online.imi.gov.my/eservices/doc/FAQ_PVIP.pdf",
-    lastVerified: "2026-09-30",
+    lastVerified: "2026-10-12",
     // The fields above are now the 2026 terms, supplied by Jason on 2026-07-27.
     // Immigration's FAQ still shows the 2022 launch terms, so they rest on
     // attribution rather than on `source` — which is exactly what the notice
@@ -907,7 +907,7 @@ export const programmes: Programme[] = [
     // linked from MTCP's requirements page — the old download id=2319 serves a
     // 9-page Dec 2024 "Enhancement of S-MM2H requirements" deck instead. The
     // agency fee is in MTCP's agent-licensing rules §1.15, not in the guide.
-    lastVerified: "2026-09-30",
+    lastVerified: "2026-10-01",
   },
 
   {

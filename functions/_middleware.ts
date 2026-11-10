@@ -1,4 +1,5 @@
 import { buildPrefix, localeByHost, localeOrigin } from "../src/lib/i18n";
+import { movedPaths } from "../src/lib/data/moved-paths";
 
 /**
  * Host → locale routing for the Pages deployment.
@@ -201,6 +202,14 @@ export async function onRequest(context: PagesContext): Promise<Response> {
   if (!locale) return withConsentRegion(await next(), request);
 
   const prefix = buildPrefix[locale];
+
+  // A renamed article. Answered here rather than in `_redirects` because the
+  // Chinese hosts never ask the asset server for the public path — they ask for
+  // the prefixed one — so a `_redirects` rule would only ever cover the apex.
+  // Both slash forms: inbound links write it either way.
+  const moved =
+    movedPaths[url.pathname] ?? movedPaths[`${url.pathname}/`];
+  if (moved) return redirect(`${url.origin}${moved}${url.search}`, 301);
 
   // An internal prefix must never be part of a public URL, on any host. On the
   // apex it means "you want the other site"; on a Chinese host it is the same

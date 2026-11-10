@@ -12,7 +12,7 @@ export const copy: ToolsCopy = {
   meta: { title: "Visa tools" },
 
   description:
-    "Two free tools for Malaysia's long-stay visas: a six-question eligibility check that tells you which programmes you qualify for, and an itemised cost calculator that separates the deposit you get back from the fees you don't.",
+    "Two free tools for Malaysia's long-stay visas: a six-question eligibility check and an itemised cost calculator that separates refundable deposits from fees.",
 
   eyebrow: "Tools",
 

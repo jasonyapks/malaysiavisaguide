@@ -11,7 +11,7 @@ import {
   type InsightCategory,
 } from "@/lib/data/insights";
 import { getCmsIndex, getInsightDoc } from "@/lib/insights";
-import { pageMetadata } from "@/lib/metadata";
+import { pageMetadata, seoText } from "@/lib/metadata";
 import { site } from "@/lib/site";
 
 /**
@@ -115,6 +115,13 @@ export async function generateMetadata({
   if (!doc) return {};
   const article = toInsight(doc);
 
+  const seo = seoText({
+    canonicalPath: insightPath(article),
+    locale: "en",
+    title: article.title,
+    description: article.dek,
+  });
+
   return {
     // Through pageMetadata so the article names its Chinese counterparts in
     // hreflang once they exist — an English page that does not name them gets
@@ -128,8 +135,8 @@ export async function generateMetadata({
     robots: article.draft ? { index: false, follow: false } : undefined,
     openGraph: {
       type: "article",
-      title: `${article.title} — ${site.name}`,
-      description: article.dek,
+      title: seo.full,
+      description: seo.description,
       url: insightPath(article),
       ...insightOpenGraphImages(article),
     },

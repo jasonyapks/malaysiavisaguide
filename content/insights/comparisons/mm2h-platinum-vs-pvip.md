@@ -2,7 +2,7 @@
 title: "MM2H Platinum vs. PVIP: Which 20-Year Malaysia Visa Actually Costs Less?"
 dek: "Both run twenty years, both charge RM200,000, and since December 2025 both let you work — so the tiebreaker everyone still quotes is gone. One question separates them: whether you can prove RM40,000 a month. If you can, PVIP locks a fraction of the capital. If you cannot, PVIP is shut at any price."
 published: "2026-07-28"
-reviewed: "2026-07-28"
+reviewed: "2026-08-26"
 readingMinutes: 7
 draft: false
 relatedGuides:

@@ -11,7 +11,7 @@ import {
   newsImageKey,
 } from "@/lib/articleImages";
 import { htmlLang, localeUrl, type Locale } from "@/lib/i18n";
-import { pageMetadata } from "@/lib/metadata";
+import { pageMetadata, seoText } from "@/lib/metadata";
 import {
   CATEGORY_GUIDE,
   categoryPath,
@@ -56,6 +56,13 @@ export function newsStoryMetadata(
   // a shared link, and the fallback keeps a card on every story regardless.
   const og = articleOgImage(newsImageKey(article.slug));
 
+  const seo = seoText({
+    canonicalPath: `/news/${article.slug}/`,
+    locale,
+    title: article.headline,
+    description: article.dek.slice(0, 300),
+  });
+
   return {
     ...pageMetadata({
       canonicalPath: `/news/${article.slug}/`,
@@ -65,8 +72,8 @@ export function newsStoryMetadata(
     }),
     openGraph: {
       type: "article",
-      title: article.headline,
-      description: article.dek,
+      title: seo.full,
+      description: seo.description,
       url: localeUrl(`/news/${article.slug}/`, locale),
       publishedTime: article.publishedAt ?? undefined,
       modifiedTime: article.updatedAt ?? undefined,

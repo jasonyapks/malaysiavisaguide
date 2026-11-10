@@ -2,7 +2,7 @@
 title: "MM2H Federal vs. Sarawak MM2H (S-MM2H): Which One Fits Where You Want to Live?"
 dek: "These are two programmes run by two governments that happen to share a name. Sarawak asks for far less capital and no property purchase, but tests your finances, caps you at 30 days a year in Sarawak and needs a sponsor. Federal MM2H publishes no income test and compels a purchase. Geography decides first."
 published: "2026-09-05"
-reviewed: "2026-09-05"
+reviewed: "2026-10-17"
 readingMinutes: 9
 relatedGuides:
   - path: "/visas/mm2h/"

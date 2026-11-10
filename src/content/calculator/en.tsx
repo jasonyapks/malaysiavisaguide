@@ -10,8 +10,9 @@ const deRantauFee =
 /** English cost-calculator copy — moved here from the page and the component. */
 export const copy: CalculatorCopy = {
   meta: {
-    title: "Malaysia visa cost calculator: what each long-stay visa costs",
-    description: `How much a 1-year or longer Malaysian visa costs${deRantauFee ? ` — DE Rantau from ${deRantauFee}` : ""}, plus Employment Pass, Student Pass, MM2H and PVIP. Itemised by family size and passport, with refundable deposits kept separate from fees.`,
+    title: "Malaysia visa cost calculator: every long-stay visa priced",
+    description:
+      `What a Malaysian visa of a year or longer costs${deRantauFee ? `, from DE Rantau at ${deRantauFee} to MM2H and PVIP` : ""}, itemised by family size with refundable deposits kept separate.`,
   },
 
   heading: "What will it actually cost?",

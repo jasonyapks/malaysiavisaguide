@@ -22,7 +22,8 @@ import type { GuideCopy } from "../types";
 export const copy: GuideCopy = {
   meta: {
     title: "PVIP Malaysia 2026: agent fees, total cost and requirements",
-    description: `PVIP agent fees start from ${agentFrom}, on top of the RM200,000 participation fee and RM1 million fixed deposit. The full cost for a single applicant, a couple or a family, who qualifies, and how PVIP compares with MM2H.`,
+    description:
+      `PVIP in 2026: RM200,000 participation fee, RM1 million fixed deposit and agent fees from ${agentFrom}. Who qualifies, what it costs and how it compares with MM2H.`,
   },
 
   title: "Premium Visa Programme (PVIP)",

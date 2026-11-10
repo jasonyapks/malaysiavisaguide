@@ -14,7 +14,7 @@ export const copy: EligibilityCopy = {
   meta: {
     title: "Which Malaysian visa do you qualify for?",
     description:
-      "A short quiz that reads your age, means and plans and tells you which Malaysian long-stay programmes and work/study passes you actually qualify for — and which you just miss.",
+      "A short quiz that reads your age, means and plans and tells you which Malaysian long-stay programmes and work or study passes you qualify for, or just miss.",
   },
 
   heading: "Which visa do you qualify for?",

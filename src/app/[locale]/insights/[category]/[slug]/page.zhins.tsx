@@ -12,7 +12,7 @@ import {
 } from "@/lib/data/insights";
 import { isPrefixedLocale, localeUrl, type PrefixedLocale } from "@/lib/i18n";
 import { getCmsIndex, getInsightDoc } from "@/lib/insights";
-import { pageMetadata } from "@/lib/metadata";
+import { pageMetadata, seoText } from "@/lib/metadata";
 import { site } from "@/lib/site";
 
 /**
@@ -78,6 +78,13 @@ export async function generateMetadata({
   if (!doc) return {};
   const article = toInsight(doc);
 
+  const seo = seoText({
+    canonicalPath: insightPath(article),
+    locale: locale,
+    title: article.title,
+    description: article.dek,
+  });
+
   return {
     ...pageMetadata({
       canonicalPath: insightPath(article),
@@ -88,8 +95,8 @@ export async function generateMetadata({
     robots: article.draft ? { index: false, follow: false } : undefined,
     openGraph: {
       type: "article",
-      title: `${article.title} — ${site.name}`,
-      description: article.dek,
+      title: seo.full,
+      description: seo.description,
       url: localeUrl(insightPath(article), locale),
       ...insightOpenGraphImages(article),
     },

@@ -102,7 +102,7 @@ It suits less well if you want to choose where in Malaysia you own property, if 
 
 **Renewal is cheap, but the conditions are not.** The pass runs ten years and is renewable. After the full term, MOTAC's guide sets the renewal fee at RM300 for the principal and each dependant, against RM1,500 on Silver, every five years. The property, stay and deposit conditions still have to be met when you renew. [MM2H renewal: requirements, fees and timing](/insights/how-to/mm2h-renewal-requirements-and-fees/) walks through what is checked.
 
-**Scrutiny of the zone is not hypothetical.** In July 2026 the Immigration Department inspected foreign residents at Forest City and found that all 266 it checked held valid documents. We reported it as [Immigration says 266 foreigners in Forest City have valid documents](/news/immigration-says-266-foreigners-in-forest-city-have-valid/). Holders should expect the conditions attached to the pass to be checked, and should keep the evidence that they meet them.
+**Scrutiny of the zone is not hypothetical.** In July 2026 the Immigration Department inspected foreign residents at Forest City and found that all 266 it checked held valid documents. We reported it as [Immigration says 266 foreigners in Forest City have valid documents](/news/immigration-says-266-foreigners-in-forest-city-have-valid-documents/). Holders should expect the conditions attached to the pass to be checked, and should keep the evidence that they meet them.
 
 > On the zone route the deposit is the small number. The purchase you make before approval is the one that decides it.
 

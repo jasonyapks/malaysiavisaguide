@@ -105,7 +105,7 @@ translationModel: "claude-sonnet-5"
 
 **续签费用低廉，但条件并不轻松。** 该准证有效期十年，可续签。满期后，根据MOTAC的指南，主申请人及每名受养人的续签费为RM300，白银级则为RM1,500，每五年续签一次。续签时仍须满足房产、居住和存款方面的条件。 [MM2H续签：条件、费用与时间](/insights/how-to/mm2h-renewal-requirements-and-fees/) 介绍了审查的具体内容。
 
-**该区域受到的审查并非纯属假设。** 2026年7月，马来西亚移民局对Forest City的外籍居民进行了检查，发现所查的266人全部持有有效证件。我们将此事报道为 [移民局称Forest City 266名外籍人士持有有效证件](/news/immigration-says-266-foreigners-in-forest-city-have-valid/)。持证人应预期准证所附带的条件会受到检查，并应保留证明自己符合这些条件的证据。
+**该区域受到的审查并非纯属假设。** 2026年7月，马来西亚移民局对Forest City的外籍居民进行了检查，发现所查的266人全部持有有效证件。我们将此事报道为 [移民局称Forest City 266名外籍人士持有有效证件](/news/immigration-says-266-foreigners-in-forest-city-have-valid-documents/)。持证人应预期准证所附带的条件会受到检查，并应保留证明自己符合这些条件的证据。
 
 > 走园区路线时，存款金额只是小数目；真正起决定作用的，是你在获批之前完成的购房。
 

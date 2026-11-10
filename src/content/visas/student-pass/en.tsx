@@ -7,7 +7,7 @@ export const copy: GuideCopy = {
   meta: {
     title: "Malaysia Student Pass: EMGS, fees and work rights",
     description:
-      "How the Malaysian Student Pass works — EMGS screening, the RM60 pass fee, the 20-hour work limit, and which students may bring dependants.",
+      "How the Malaysian Student Pass works in practice: EMGS screening, the RM60 pass fee, the 20-hour work limit, and which students may bring their dependants.",
   },
 
   title: "Student Pass",

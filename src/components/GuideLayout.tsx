@@ -11,8 +11,7 @@ import type { Programme } from "@/lib/data/programmes";
 import type { Locale } from "@/lib/i18n";
 import { getUi } from "@/lib/ui";
 import type { SiteImage } from "@/lib/images";
-import { guideHref, site } from "@/lib/site";
-import { pageUpdatedISODate } from "@/lib/updated";
+import { site } from "@/lib/site";
 import { Byline } from "@/components/Byline";
 import { Faq, type FaqItem } from "@/components/Faq";
 import { GuideHead, Lozenge } from "@/components/GuideHead";
@@ -83,13 +82,13 @@ export function GuideLayout({
     "@type": "Article",
     headline: title,
     description: answer,
-    // The date the PAGE last changed, not the date its source was last checked.
-    // `lastVerified` answers a different question — it is what the byline shows
-    // the reader, and it moves only after a real review of the official
-    // document. Publishing it as `dateModified` understated every guide that had
-    // been revised since its last review: MM2H declared 28 July while carrying
-    // an update notice dated 3 August. See src/lib/updated.ts.
-    dateModified: pageUpdatedISODate(guideHref[programme.slug], programme),
+    // Equal to the "Last reviewed" date the byline shows, by rule (audit task
+    // B1-4, approved 10 Nov 2026): one date per page, and the schema must not
+    // disagree with what the reader sees. `lastVerified` is moved by hand, only
+    // after a real review, and must never be earlier than any "checked" or
+    // "current as at" date on the same page. The sitemap's <lastmod> still uses
+    // pageUpdated() — when the page text last changed — see src/lib/updated.ts.
+    dateModified: programme.lastVerified,
     author: {
       "@type": "Person",
       "@id": site.author.id,
