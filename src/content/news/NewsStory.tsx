@@ -19,7 +19,8 @@ import {
   type FullNewsArticle,
   type NewsCta,
 } from "@/lib/news";
-import { site } from "@/lib/site";
+import { outboundRel, site } from "@/lib/site";
+import { localiseImage } from "@/lib/image-alt";
 import { getUi } from "@/lib/ui";
 
 /**
@@ -132,7 +133,7 @@ export function NewsStory({
           rather than above the h1 so the headline is still the first thing on
           screen — this reader arrived from a search result and is checking they
           landed on the right story. `priority` because it is then the LCP. */}
-      {hero && <Figure image={hero} aspect="aspect-[16/9]" priority />}
+      {hero && <Figure image={localiseImage(hero, locale)} aspect="aspect-[16/9]" priority />}
 
       {article.cta && <NewsCtaBlock cta={article.cta} />}
 
@@ -416,7 +417,7 @@ function ParagraphText({ text }: { text: string }) {
     parts.push(text.slice(last, m.index));
     parts.push(
       /^https?:/.test(href) ? (
-        <a key={m.index} href={href} className="text-forest-700 underline" rel="nofollow noopener" target="_blank">
+        <a key={m.index} href={href} className="text-forest-700 underline" rel={outboundRel(href)} target="_blank">
           {label}
         </a>
       ) : (
@@ -442,7 +443,7 @@ function NewsCtaBlock({ cta }: { cta: NewsCta }) {
       <a
         href={cta.href}
         target="_blank"
-        rel="nofollow noopener"
+        rel={outboundRel(cta.href)}
         className="accent-fill inline-flex min-h-11 shrink-0 items-center rounded-full px-8 py-3 font-bold transition-transform hover:-translate-y-px focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-gold-500"
       >
         {cta.label}

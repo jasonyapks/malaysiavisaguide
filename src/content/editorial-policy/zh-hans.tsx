@@ -129,7 +129,7 @@ export const copy: EditorialPolicyCopy = {
       <p>
         每份指南的页尾都会注明
         <strong>「最后复核」日期和具名的复核人</strong> —— Jason Yap，
-        <a href="https://mypvip.com" rel="nofollow noopener">
+        <a href="https://mypvip.com" rel="noopener">
           MYPVIP
         </a>{" "}
         董事总经理。这个日期有实际用途，不是装饰：两年前的签证数字，很可能就是错的；读者和

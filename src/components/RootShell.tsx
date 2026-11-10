@@ -153,7 +153,7 @@ export function shellMetadata(locale: Locale): Metadata {
           url: "/og.png",
           width: 1200,
           height: 630,
-          alt: "Malaysia Visa Guide — an independent guide to PVIP, MM2H, Sarawak MM2H, DE Rantau and the Student and Employment passes.",
+          alt: ui.ogImageAlt,
         },
       ],
     },
@@ -334,7 +334,7 @@ export function RootShell({
                 {ui.footer.disclosureBefore}
                 <a
                   href="https://mypvip.com"
-                  rel="nofollow noopener"
+                  rel="noopener"
                   className="font-semibold text-forest-700 underline underline-offset-2"
                 >
                   {ui.footer.disclosureMypvip}

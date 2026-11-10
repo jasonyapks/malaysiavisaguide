@@ -20,6 +20,8 @@ export const ui: UiStrings = {
   siteName: "馬來西亞簽證指南",
   siteDescription:
     "獨立解讀馬來西亞長期居留簽證 —— PVIP、MM2H、砂拉越 MM2H 與 DE Rantau。費用、條件與辦理時程，全部核對官方來源。",
+  ogImageAlt:
+    "Malaysia Visa Guide —— 獨立解讀 PVIP、MM2H、砂拉越 MM2H、DE Rantau 以及學生準證與工作準證。",
   strapline: ["獨立簽證指南", "並非政府機構"],
   askQuestion: "諮詢提問",
   menu: "選單",

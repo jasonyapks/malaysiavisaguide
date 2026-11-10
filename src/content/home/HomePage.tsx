@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { type Locale } from "@/lib/i18n";
+import { htmlLang, localeUrl, type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
-import { localisedNavRoutes } from "@/lib/site";
+import { localisedNavRoutes, site } from "@/lib/site";
 import { programmes } from "@/lib/data/programmes";
 import { insightPath } from "@/lib/data/insights";
 import { publishedInsights } from "@/lib/insights";
 import { reviewDate } from "@/lib/format";
+import { localiseImage } from "@/lib/image-alt";
 import { getUi } from "@/lib/ui";
 import { images } from "@/lib/images";
 import { Figure } from "@/components/Figure";
@@ -73,8 +74,26 @@ export async function HomePage({
 
   const href = (path: string) => linkPath(path, locale);
 
+  // WebSite node, home page only. `publisher` points at the Organization node
+  // RootShell emits on every page, by @id, so the two merge into one entity.
+  const siteName = getUi(locale).siteName;
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${localeUrl("/", locale)}#website`,
+    name: site.name,
+    ...(siteName !== site.name && { alternateName: siteName }),
+    url: localeUrl("/", locale),
+    inLanguage: htmlLang[locale],
+    publisher: { "@id": `${site.url}/#organization` },
+  };
+
   return (
     <div className="space-y-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
       {/* Hero — off-white to mist, two compass arcs, one gold word.
           Branding template §7 and §9. */}
       <section className="full-bleed -mt-14 relative overflow-hidden bg-linear-to-br from-sand-50 via-sand-100 to-[#e9edf4]">
@@ -118,7 +137,7 @@ export async function HomePage({
             candidate, so preloading it is the point. */}
         <div className="relative mx-auto max-w-6xl px-6 pt-6 md:pt-8">
           <Figure
-            image={images.home}
+            image={localiseImage(images.home, locale)}
             aspect="aspect-[1584/672]"
             rounded="rounded-card"
             priority
@@ -303,7 +322,7 @@ export async function HomePage({
           <div className="space-y-4">
             <p className="eyebrow">{copy.freshness.eyebrow}</p>
             <h2 className="text-h2">
-              {copy.freshness.heading(reviewDate(lastReviewed))}
+              {copy.freshness.heading(reviewDate(lastReviewed, locale))}
             </h2>
             <p className="max-w-xl text-ink-muted">{copy.freshness.body}</p>
             <div className="diamond-rule max-w-md pt-2">

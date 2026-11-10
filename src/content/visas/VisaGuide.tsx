@@ -2,6 +2,7 @@ import { GuideLayout } from "@/components/GuideLayout";
 import { TierTable } from "@/components/TierTable";
 import { getProgramme, type ProgrammeSlug } from "@/lib/data/programmes";
 import { localiseProgramme } from "@/lib/programme-locale";
+import { localiseImage } from "@/lib/image-alt";
 import { type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
 import type { SiteImage } from "@/lib/images";
@@ -49,7 +50,7 @@ export function VisaGuide({
     <GuideLayout
       locale={locale}
       programme={programme}
-      hero={hero}
+      hero={hero && localiseImage(hero, locale)}
       title={copy.title}
       answer={copy.answer}
       suits={copy.suits}

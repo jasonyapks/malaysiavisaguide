@@ -209,3 +209,13 @@ export const navGroupKeys = [
   "tools",
   "reading",
 ] as const satisfies readonly NavGroupKey[];
+
+/** `rel` for an outbound link. Everything external is nofollow — except
+ *  mypvip.com, the publisher's own agency: that link is an identity statement
+ *  (who writes this site), and nofollow on it tells crawlers not to connect
+ *  the two entities. */
+export function outboundRel(href: string): string {
+  return /^https?:\/\/(www\.)?mypvip\.com(\/|$|\?|#)/.test(href)
+    ? "noopener"
+    : "nofollow noopener";
+}

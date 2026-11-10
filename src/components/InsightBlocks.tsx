@@ -11,6 +11,8 @@ import { getProgramme, type ProgrammeSlug } from "@/lib/data/programmes";
 import { localiseProgramme } from "@/lib/programme-locale";
 import type { Locale } from "@/lib/i18n";
 import { resolveFigure } from "@/lib/figures";
+import { outboundRel } from "@/lib/site";
+import { localiseImage } from "@/lib/image-alt";
 
 /**
  * The renderer for a stored insight document.
@@ -120,7 +122,7 @@ function InlineNode({
         <a
           href={node.href}
           className={cls}
-          rel="nofollow noopener"
+          rel={outboundRel(node.href)}
           target="_blank"
         >
           <InlineNodes nodes={node.c} where={where} onNavy={onNavy} locale={locale} />
@@ -265,7 +267,7 @@ function BlockNode({
       }
       return (
         <Figure
-          image={image}
+          image={localiseImage(image, locale, block.caption)}
           caption={block.caption}
           aspect={block.aspect ?? "aspect-[16/9]"}
           // An explicit aspect in the block wins; otherwise the photo's own shape.

@@ -54,7 +54,7 @@ export const copy: AboutCopy = {
         <p>
           Jason is Managing Director of{" "}
           <strong>
-            <a href="https://mypvip.com" rel="nofollow noopener">
+            <a href="https://mypvip.com" rel="noopener">
               MYPVIP
             </a>
           </strong>{" "}

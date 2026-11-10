@@ -18,6 +18,8 @@ import type { NewsCategory as NewsCategoryId } from "@/lib/news";
 export type UiStrings = {
   siteName: string;
   siteDescription: string;
+  /** Alt text for the sitewide social card (og:image:alt, twitter:image:alt). */
+  ogImageAlt: string;
   /** Two lines, stacked in the header beside the mark. Kept short — as one
    *  45-character row this set the width of the whole brand block. */
   strapline: [string, string];
@@ -382,6 +384,8 @@ export const ui: UiStrings = {
   siteName: "Malaysia Visa Guide",
   siteDescription:
     "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
+  ogImageAlt:
+    "Malaysia Visa Guide — an independent guide to PVIP, MM2H, Sarawak MM2H, DE Rantau and the Student and Employment passes.",
   strapline: ["Independent visa guide", "not a government body"],
   askQuestion: "Ask a question",
   menu: "Menu",

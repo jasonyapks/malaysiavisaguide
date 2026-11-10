@@ -127,7 +127,7 @@ export const copy: EditorialPolicyCopy = {
         Every guide carries a{" "}
         <strong>&ldquo;last reviewed&rdquo; date and a named reviewer</strong>{" "}
         — Jason Yap, Managing Director of{" "}
-        <a href="https://mypvip.com" rel="nofollow noopener">
+        <a href="https://mypvip.com" rel="noopener">
           MYPVIP
         </a>{" "}
         — at the foot of the page. That date is functional, not decorative: a

@@ -42,7 +42,7 @@ export function Byline({
         {g.bylineMid}
         <a
           href="https://mypvip.com"
-          rel="nofollow noopener"
+          rel="noopener"
           className="font-semibold text-forest-700 underline"
         >
           MYPVIP
