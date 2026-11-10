@@ -77,11 +77,6 @@ export const copy: AuthorCopy = {
     ],
   },
 
-  languages: {
-    heading: "語言",
-    body: "馬來語、英語和華語。",
-  },
-
   work: {
     heading: "他在本站撰寫和複核的內容",
     intro: "本站每一頁都有他的署名和複核日期。這份清單由網站自動生成，所以始終完整。",

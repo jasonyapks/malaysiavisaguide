@@ -74,11 +74,6 @@ export async function AuthorPage({
       </section>
 
       <section className={PROSE}>
-        <h2 className={H2}>{copy.languages.heading}</h2>
-        <p>{copy.languages.body}</p>
-      </section>
-
-      <section className={PROSE}>
         <h2 className={H2}>{copy.work.heading}</h2>
         <p>{copy.work.intro}</p>
         <h3 className="font-semibold text-ink">{copy.work.guides}</h3>

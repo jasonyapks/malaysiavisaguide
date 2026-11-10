@@ -81,11 +81,6 @@ export const copy: AuthorCopy = {
     ],
   },
 
-  languages: {
-    heading: "Languages",
-    body: "Bahasa Malaysia, English and Mandarin.",
-  },
-
   work: {
     heading: "What he has written and reviewed here",
     intro:

@@ -74,11 +74,6 @@ export const copy: AuthorCopy = {
     ],
   },
 
-  languages: {
-    heading: "语言",
-    body: "马来语、英语和华语。",
-  },
-
   work: {
     heading: "他在本站撰写和复核的内容",
     intro: "本站每一页都有他的署名和复核日期。这份清单由网站自动生成，所以始终完整。",

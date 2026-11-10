@@ -10,7 +10,6 @@ export type AuthorCopy = {
   schemaDescription: string;
   bio: ReactNode;
   roles: { heading: string; items: { role: string; where: ReactNode }[] };
-  languages: { heading: string; body: string };
   work: {
     heading: string;
     intro: string;
