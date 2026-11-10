@@ -134,11 +134,13 @@ export type UiStrings = {
     /** Split around the two inline links: "<before>Jason Yap<mid>MYPVIP<after>".
      *  Three segments rather than two because Chinese puts the job title after
      *  the company ("MYPVIP 董事总经理") where English puts it before. */
+    /** The author box. `bylineBefore` precedes the name; the qualifier line is
+     *  `bylineMid` + the linked "MYPVIP" + `bylineAfter`, split that way because
+     *  Chinese puts the title after the company. */
     bylineBefore: string;
     bylineMid: string;
     bylineAfter: string;
-    /** The full stop that ends the byline sentence. Chinese uses 。 */
-    bylineEnd: string;
+    bylinePublished: (date: string) => string;
     bylineLastReviewed: (date: string) => string;
     /** The tier comparison table — components/TierTable.tsx. */
     tiers: {
@@ -475,6 +477,7 @@ export const ui: UiStrings = {
     "/agents/mm2h/": "Licensed MM2H agents",
     "/agents/pvip/": "Authorised PVIP agencies",
     "/about/": "About",
+    "/about/jason-yap/": "Jason Yap",
     "/editorial-policy/": "Editorial policy",
     "/privacy/": "Privacy",
     "/contact/": "Contact",
@@ -513,10 +516,10 @@ export const ui: UiStrings = {
     listSeparator: ", ",
     keyFactsLabel: (programme) => `Key facts: ${programme}`,
     bylineBefore: "Written and reviewed by ",
-    bylineMid: ", Managing Director of ",
+    bylineMid: "President, MPVIPCA · Managing Director, ",
     bylineAfter: "",
-    bylineEnd: ".",
-    bylineLastReviewed: (date) => `Last reviewed ${date}.`,
+    bylinePublished: (date) => `Published ${date}`,
+    bylineLastReviewed: (date) => `Last reviewed ${date}`,
     tiers: {
       fixedDeposit: "Fixed deposit",
       propertyPurchase: "Property purchase",
@@ -762,7 +765,7 @@ export const ui: UiStrings = {
     index: {
       metaTitle: "Insights",
       metaDescription:
-        "Comparisons, decision guides and first-person notes on Malaysia's long-stay visas — written by Jason Yap from 500+ relocation cases, with every figure traced to an official source.",
+        "Comparisons, decision guides and first-person notes on Malaysia's long-stay visas — written by Jason Yap from 300+ successful PVIP and MM2H applications, with every figure traced to an official source.",
       eyebrow: "Insights",
       h1: "Which programme is",
       h1Accent: "actually yours",

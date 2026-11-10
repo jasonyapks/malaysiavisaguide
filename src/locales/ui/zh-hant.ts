@@ -102,6 +102,7 @@ export const ui: UiStrings = {
     "/agents/mm2h/": "MM2H 持牌代理",
     "/agents/pvip/": "PVIP 授權代理",
     "/about/": "關於我們",
+    "/about/jason-yap/": "Jason Yap",
     "/editorial-policy/": "編輯方針",
     "/privacy/": "隱私政策",
     "/contact/": "聯繫我們",
@@ -139,10 +140,10 @@ export const ui: UiStrings = {
     listSeparator: "，",
     keyFactsLabel: (programme) => `${programme} 關鍵數據`,
     bylineBefore: "撰寫與複核：",
-    bylineMid: "，",
+    bylineMid: "MPVIPCA 會長 · ",
     bylineAfter: " 董事總經理",
-    bylineEnd: "。",
-    bylineLastReviewed: (date) => `最後複核於 ${date}。`,
+    bylinePublished: (date) => `發佈於 ${date}`,
+    bylineLastReviewed: (date) => `最後複核於 ${date}`,
     tiers: {
       fixedDeposit: "定期存款",
       propertyPurchase: "房產購置",
@@ -378,7 +379,7 @@ export const ui: UiStrings = {
     index: {
       metaTitle: "深度觀點",
       metaDescription:
-        "關於馬來西亞長期居留簽證的方案對比、選擇指南與第一手觀察——由 Jason Yap 依據 500+ 宗遷居案例寫成，每一個數字都可追溯到官方來源。",
+        "關於馬來西亞長期居留簽證的方案對比、選擇指南與第一手觀察——由 Jason Yap 依據 300+ 宗成功獲批的 PVIP 與 MM2H 申請寫成，每一個數字都可追溯到官方來源。",
       eyebrow: "深度觀點",
       h1: "哪一個方案",
       h1Accent: "才真正屬於你",

@@ -99,6 +99,7 @@ export const ui: UiStrings = {
     "/agents/mm2h/": "MM2H 持牌代理",
     "/agents/pvip/": "PVIP 授权代理",
     "/about/": "关于我们",
+    "/about/jason-yap/": "Jason Yap",
     "/editorial-policy/": "编辑方针",
     "/privacy/": "隐私政策",
     "/contact/": "联系我们",
@@ -136,10 +137,10 @@ export const ui: UiStrings = {
     listSeparator: "，",
     keyFactsLabel: (programme) => `${programme} 关键数据`,
     bylineBefore: "撰写与复核：",
-    bylineMid: "，",
+    bylineMid: "MPVIPCA 会长 · ",
     bylineAfter: " 董事总经理",
-    bylineEnd: "。",
-    bylineLastReviewed: (date) => `最后复核于 ${date}。`,
+    bylinePublished: (date) => `发布于 ${date}`,
+    bylineLastReviewed: (date) => `最后复核于 ${date}`,
     tiers: {
       fixedDeposit: "定期存款",
       propertyPurchase: "房产购置",
@@ -375,7 +376,7 @@ export const ui: UiStrings = {
     index: {
       metaTitle: "深度观点",
       metaDescription:
-        "关于马来西亚长期居留签证的方案对比、选择指南与第一手观察——由 Jason Yap 依据 500+ 宗迁居案例写成，每一个数字都可追溯到官方来源。",
+        "关于马来西亚长期居留签证的方案对比、选择指南与第一手观察——由 Jason Yap 依据 300+ 宗成功获批的 PVIP 与 MM2H 申请写成，每一个数字都可追溯到官方来源。",
       eyebrow: "深度观点",
       h1: "哪一个方案",
       h1Accent: "才真正属于你",

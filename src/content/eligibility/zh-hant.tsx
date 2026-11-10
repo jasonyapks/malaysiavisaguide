@@ -134,7 +134,7 @@ export const copy: EligibilityCopy = {
   },
 
   cta: {
-    title: "想聽聽辦過 500 多宗案子的人怎麼說嗎？",
+    title: "想聽聽成功辦理過 300 多宗申請的團隊怎麼說嗎？",
     body: "Jason 會親自審閱個案 —— 沒有任何義務；如果自己辦對你確實更好，他也會直說。",
     ask: "提出問題",
     compare: "並排對比",

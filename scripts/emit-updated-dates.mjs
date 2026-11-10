@@ -88,6 +88,7 @@ const SOURCES = {
   "/tools/eligibility/": ["src/content/eligibility"],
   "/tools/cost-calculator/": ["src/content/calculator"],
   "/about/": ["src/content/about"],
+  "/about/jason-yap/": ["src/content/author"],
   "/editorial-policy/": ["src/content/editorial-policy"],
   "/privacy/": ["src/content/privacy"],
   "/contact/": ["src/content/contact"],

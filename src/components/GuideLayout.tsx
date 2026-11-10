@@ -5,13 +5,14 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import { authorRef, publisherRef } from "@/lib/schema";
 import Image from "next/image";
 import Link from "next/link";
 import type { Programme } from "@/lib/data/programmes";
-import type { Locale } from "@/lib/i18n";
+import { localeUrl, type Locale } from "@/lib/i18n";
 import { getUi } from "@/lib/ui";
 import type { SiteImage } from "@/lib/images";
-import { site } from "@/lib/site";
+import { guideHref, guidePublished, site } from "@/lib/site";
 import { Byline } from "@/components/Byline";
 import { Faq, type FaqItem } from "@/components/Faq";
 import { GuideHead, Lozenge } from "@/components/GuideHead";
@@ -89,14 +90,17 @@ export function GuideLayout({
     // "current as at" date on the same page. The sitemap's <lastmod> still uses
     // pageUpdated() — when the page text last changed — see src/lib/updated.ts.
     dateModified: programme.lastVerified,
-    author: {
-      "@type": "Person",
-      "@id": site.author.id,
-      name: "Jason Yap",
-      sameAs: site.author.sameAs,
-      jobTitle: "Managing Director, MYPVIP",
+    ...(guidePublished[guideHref[programme.slug]] && {
+      datePublished: guidePublished[guideHref[programme.slug]],
+    }),
+    author: authorRef(locale),
+    // `reviewedBy` is a WebPage property, not an Article one.
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": localeUrl(guideHref[programme.slug], locale),
+      reviewedBy: authorRef(locale),
     },
-    publisher: { "@type": "Organization", name: site.name, url: site.url },
+    publisher: publisherRef,
     citation: programme.source,
   };
 

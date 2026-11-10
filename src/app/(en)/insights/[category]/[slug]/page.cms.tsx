@@ -12,7 +12,6 @@ import {
 } from "@/lib/data/insights";
 import { getCmsIndex, getInsightDoc } from "@/lib/insights";
 import { pageMetadata, seoText } from "@/lib/metadata";
-import { site } from "@/lib/site";
 
 /**
  * /insights/<category>/<slug>/ for every CMS-authored article.

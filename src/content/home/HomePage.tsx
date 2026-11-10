@@ -85,7 +85,7 @@ export async function HomePage({
     ...(siteName !== site.name && { alternateName: siteName }),
     url: localeUrl("/", locale),
     inLanguage: htmlLang[locale],
-    publisher: { "@id": `${site.url}/#organization` },
+    publisher: { "@id": site.organizationId },
   };
 
   return (

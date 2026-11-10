@@ -22,16 +22,19 @@ export const copy: AboutCopy = {
   portraitAlt: "Jason Yap, Managing Director of MYPVIP.",
 
   schemaDescription:
-    "Managing Director of two licensed Malaysian long-stay visa agencies, with 500+ relocation cases handled.",
+    "Managing Director of two licensed Malaysian long-stay visa agencies, with 300+ successful PVIP and MM2H applications since 2022.",
 
   who: {
     heading: "Who writes this",
     beside: (
       <p>
-        <strong>Jason Yap</strong> is Managing Director of two licensed
+        <strong>
+          <Link href="/about/jason-yap/">Jason Yap</Link>
+        </strong>{" "}
+        is Managing Director of two licensed
         Malaysian agencies handling long-stay visa applications — one for the
-        Premium Visa Programme, one for Malaysia My Second Home. Over 500
-        relocation cases have passed across his desk. He researches, writes and
+        Premium Visa Programme, one for Malaysia My Second Home. Since 2022
+        the two have handled more than 300 successful applications. He researches, writes and
         reviews every page on this site, and his name and the date of review sit
         at the foot of each guide.
       </p>

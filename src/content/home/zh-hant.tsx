@@ -203,7 +203,7 @@ export const copy: HomeCopy = {
       <>
         寫自{" "}
         <span className="font-display accent-text font-medium">
-          500+ 個真實案例
+          300+ 宗成功申請
         </span>
       </>
     ),
@@ -232,7 +232,7 @@ export const copy: HomeCopy = {
         </span>
       </>
     ),
-    body: "Jason 經手過 500+ 宗遷居個案。有問題就問 —— 沒有任何義務，也沒有非得用他公司服務的義務。",
+    body: "Jason 的公司自 2022 年以來已辦理 300+ 宗成功獲批的 PVIP 與 MM2H 申請。有問題就問 —— 沒有任何義務，也沒有非得用他公司服務的義務。",
     cta: "諮詢提問",
   },
 };

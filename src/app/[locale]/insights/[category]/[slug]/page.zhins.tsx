@@ -13,7 +13,6 @@ import {
 import { isPrefixedLocale, localeUrl, type PrefixedLocale } from "@/lib/i18n";
 import { getCmsIndex, getInsightDoc } from "@/lib/insights";
 import { pageMetadata, seoText } from "@/lib/metadata";
-import { site } from "@/lib/site";
 
 /**
  * /insights/<category>/<slug>/ on the Chinese hosts.

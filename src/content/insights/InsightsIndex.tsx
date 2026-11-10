@@ -13,7 +13,7 @@ import { getUi } from "@/lib/ui";
  * hostnames.
  *
  * Separate from /news/ on purpose. News is perishable and machine-fed; these
- * are evergreen, written from 500+ cases, and they are the pages meant to be
+ * are evergreen, written from 300+ successful applications, and they are the pages meant to be
  * cited. Mixing the two in one feed would bury an article that stays true for
  * three years under a story that stops mattering in three weeks.
  */

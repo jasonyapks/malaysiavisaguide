@@ -40,6 +40,7 @@ const TOOLS: [path: string, title: string, note: string][] = [
 
 const ABOUT: [path: string, title: string, note: string][] = [
   ["/about/", "About", "Who writes the guide, and the disclosed commercial relationship with MYPVIP and MY Premium MM2H"],
+  ["/about/jason-yap/", "Jason Yap", "The author: his roles at MYPVIP, MY Premium MM2H and MPVIPCA, everything he has written here, and his conflicts of interest"],
   ["/editorial-policy/", "Editorial policy", "How pages are sourced, dated, reviewed and corrected"],
   ["/news/", "News", "Dated reports on rule and fee changes"],
 ];

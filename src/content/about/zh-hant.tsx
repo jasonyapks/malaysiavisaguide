@@ -44,16 +44,18 @@ export const copy: AboutCopy = {
   portraitAlt: "Jason Yap，MYPVIP 董事總經理。",
 
   schemaDescription:
-    "兩家馬來西亞持牌長期居留簽證代理機構的董事總經理，經手遷居個案 500+ 宗。",
+    "兩家馬來西亞持牌長期居留簽證代理機構的董事總經理，自 2022 年以來成功辦理 PVIP 與 MM2H 申請 300+ 宗。",
 
   who: {
     heading: "誰在寫這些內容",
     beside: (
       <p>
-        <strong>Jason Yap</strong> 是兩家馬來西亞持牌代理機構的董事總經理，專辦長期居留簽證申請
+        <strong>
+          <Link href="/about/jason-yap/">Jason Yap</Link>
+        </strong>{" "}
+        是兩家馬來西亞持牌代理機構的董事總經理，專辦長期居留簽證申請
         —— 一家做 Premium Visa Programme（PVIP），一家做 Malaysia My Second
-        Home（MM2H）。經他手的遷居個案超過 500
-        宗。本站每一頁都由他研究、撰寫並複核，他的署名和複核日期就在每篇指南的末尾。
+        Home（MM2H）。自 2022 年以來，兩家公司已成功辦理超過 300 宗申請。本站每一頁都由他研究、撰寫並複核，他的署名和複核日期就在每篇指南的末尾。
       </p>
     ),
     body: (

@@ -8,13 +8,22 @@ export const site = {
   // Feeds canonicals, sitemap and OG tags. Switched to the real domain at the
   // cutover (SPEC.md §10e, 2026-07-25).
   url: localeOrigin.en,
-  /** The one author, as every Person block in the JSON-LD names him. The `@id`
-   *  lets crawlers merge those blocks into one entity; `sameAs` is the profile
-   *  that confirms who he is. */
+  /**
+   * The one author, as every Person block in the JSON-LD names him.
+   *
+   * `id` is the canonical node on the author page; every article, guide and the
+   * Organization point at it rather than restating him, so crawlers merge them
+   * into one entity. mypvip.com uses the same `id` and `sameAs` — change them
+   * here and tell whoever maintains that site (audit task B2-2).
+   */
   author: {
-    id: `${localeOrigin.en}/about/#jason-yap`,
+    id: `${localeOrigin.en}/about/jason-yap/#person`,
+    path: "/about/jason-yap/",
+    name: "Jason Yap",
+    alternateName: "Yap Kian Shen",
     sameAs: ["https://www.linkedin.com/in/jason-yap-mypvip/"],
   },
+  organizationId: `${localeOrigin.en}/#organization`,
   description:
     "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
   // There were `newsApi` and `insightsApi` URLs here, pointing at the news
@@ -106,6 +115,8 @@ export const routes: Route[] = [
   { path: "/tools/", title: "Tools" },
 
   { path: "/about/", title: "About", nav: "site" },
+  // The author page. Sitemap only: it is reached from /about/ and every byline.
+  { path: "/about/jason-yap/", title: "Jason Yap" },
   { path: "/editorial-policy/", title: "Editorial policy", nav: "site" },
   { path: "/privacy/", title: "Privacy", nav: "site" },
   { path: "/contact/", title: "Contact", nav: "site" },
@@ -126,6 +137,19 @@ export const guideHref: Record<ProgrammeSlug, string> = {
   "de-rantau": "/visas/de-rantau/",
   "employment-pass": "/visas/employment-pass/",
   "student-pass": "/visas/student-pass/",
+};
+
+/**
+ * When each programme guide was first published — the date of its first commit
+ * (Jason, 10 Nov 2026). Feeds `datePublished` in the guide's Article schema.
+ */
+export const guidePublished: Record<string, string> = {
+  "/visas/pvip/": "2026-07-22",
+  "/visas/mm2h/": "2026-07-22",
+  "/visas/sarawak-mm2h/": "2026-07-22",
+  "/visas/de-rantau/": "2026-07-22",
+  "/visas/employment-pass/": "2026-07-24",
+  "/visas/student-pass/": "2026-07-24",
 };
 
 export const navRoutes = (group: Route["nav"]) =>

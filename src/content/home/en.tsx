@@ -205,7 +205,7 @@ export const copy: HomeCopy = {
       <>
         Written from{" "}
         <span className="font-display accent-text font-medium italic">
-          500+ real cases
+          300+ successful applications
         </span>
       </>
     ),
@@ -235,7 +235,7 @@ export const copy: HomeCopy = {
         </span>
       </>
     ),
-    body: "Jason has handled 500+ relocations. Ask a question — no obligation, and no obligation to use his agency either.",
+    body: "Jason's agencies have handled 300+ successful PVIP and MM2H applications since 2022. Ask a question — no obligation, and no obligation to use his agency either.",
     cta: "Ask a question",
   },
 };

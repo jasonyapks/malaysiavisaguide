@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { authorRef, publisherRef } from "@/lib/schema";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Byline } from "@/components/Byline";
@@ -19,7 +20,7 @@ import {
   type FullNewsArticle,
   type NewsCta,
 } from "@/lib/news";
-import { outboundRel, site } from "@/lib/site";
+import { outboundRel } from "@/lib/site";
 import { localiseImage } from "@/lib/image-alt";
 import { getUi } from "@/lib/ui";
 
@@ -355,19 +356,8 @@ function Schemas({
       .flatMap((s) => s.paragraphs)
       .join(" ")
       .split(/\s+/).length,
-    author: {
-      "@type": "Person",
-      "@id": site.author.id,
-      name: "Jason Yap",
-      sameAs: site.author.sameAs,
-      jobTitle: copy.article.authorJobTitle,
-      url: localeUrl("/about/", locale),
-    },
-    publisher: {
-      "@type": "Organization",
-      name: site.name,
-      url: site.url,
-    },
+    author: authorRef(locale),
+    publisher: publisherRef,
     isBasedOn: article.sourceUrl,
     citation: {
       "@type": "CreativeWork",

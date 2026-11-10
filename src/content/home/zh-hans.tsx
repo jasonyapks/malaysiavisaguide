@@ -200,7 +200,7 @@ export const copy: HomeCopy = {
       <>
         写自{" "}
         <span className="font-display accent-text font-medium">
-          500+ 个真实案例
+          300+ 宗成功申请
         </span>
       </>
     ),
@@ -229,7 +229,7 @@ export const copy: HomeCopy = {
         </span>
       </>
     ),
-    body: "Jason 经手过 500+ 宗迁居个案。有问题就问 —— 没有任何义务，也没有非得用他公司服务的义务。",
+    body: "Jason 的公司自 2022 年以来已办理 300+ 宗成功获批的 PVIP 与 MM2H 申请。有问题就问 —— 没有任何义务，也没有非得用他公司服务的义务。",
     cta: "咨询提问",
   },
 };

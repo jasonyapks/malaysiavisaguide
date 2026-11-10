@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import markSrc from "@/assets/logo-mark.webp";
 import "@/app/globals.css";
-import { htmlLang, localeOrigin, ogLocale, type Locale } from "@/lib/i18n";
+import { htmlLang, localeOrigin, localeUrl, ogLocale, type Locale } from "@/lib/i18n";
 import { linkPath } from "@/lib/translated";
 import { localisedNavRoutes, navGroupKeys, site } from "@/lib/site";
 import { getUi } from "@/lib/ui";
@@ -176,11 +176,18 @@ export function RootShell({
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": `${site.url}/#organization`,
+    "@id": site.organizationId,
     name: ui.siteName,
     url: site.url,
     logo: `${site.url}/logo-mark.png`,
     description: ui.siteDescription,
+    founder: { "@id": site.author.id },
+    publishingPrinciples: localeUrl("/editorial-policy/", locale),
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "editorial enquiries",
+      url: localeUrl("/contact/", locale),
+    },
   };
 
   return (

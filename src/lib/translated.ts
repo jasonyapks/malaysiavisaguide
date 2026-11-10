@@ -41,6 +41,7 @@ export const translatedRoutes = new Set<string>([
   "/visas/employment-pass/",
   "/visas/student-pass/",
   "/about/",
+  "/about/jason-yap/",
   "/compare/",
   "/tools/",
   "/tools/eligibility/",

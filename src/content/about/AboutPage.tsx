@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { localeUrl, type Locale } from "@/lib/i18n";
-import { site } from "@/lib/site";
+import { type Locale } from "@/lib/i18n";
+import { personSchema } from "@/lib/schema";
 import { linkPath } from "@/lib/translated";
 import { images } from "@/lib/images";
 import { Figure } from "@/components/Figure";
@@ -30,20 +30,7 @@ export function AboutPage({
   // Person + Organization relationship, made explicit for search and AI
   // crawlers. SPEC.md §1 — the editorial authority (E-E-A-T) is Jason, and the
   // commercial relationship is disclosed rather than hidden.
-  const personSchema = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "@id": site.author.id,
-    name: "Jason Yap",
-    url: localeUrl("/about/", locale),
-    sameAs: site.author.sameAs,
-    jobTitle: "Managing Director, MYPVIP",
-    worksFor: [
-      { "@type": "Organization", name: "MYPVIP (MY PR Program Sdn Bhd)" },
-      { "@type": "Organization", name: "MY Premium MM2H (My Premium (MM2H) Sdn Bhd)" },
-    ],
-    description: copy.schemaDescription,
-  };
+  const person = personSchema(locale, copy.schemaDescription);
 
   return (
     <article className="space-y-12">
@@ -106,7 +93,7 @@ export function AboutPage({
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }}
       />
     </article>
   );

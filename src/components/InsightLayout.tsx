@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { authorRef, publisherRef } from "@/lib/schema";
 import { Byline } from "@/components/Byline";
 import { Faq, type FaqItem } from "@/components/Faq";
 import { Figure } from "@/components/Figure";
@@ -11,7 +12,7 @@ import {
 } from "@/lib/data/insights";
 import { reviewDate } from "@/lib/format";
 import { defaultLocale, htmlLang, localeUrl, type Locale } from "@/lib/i18n";
-import { outboundRel, site } from "@/lib/site";
+import { outboundRel } from "@/lib/site";
 import { localiseImage } from "@/lib/image-alt";
 import { getUi } from "@/lib/ui";
 
@@ -86,7 +87,11 @@ export function InsightLayout({
           this article, and the header above reads correctly without it. */}
       <Hero article={article} locale={locale} />
 
-      <Byline lastVerified={article.reviewed} locale={locale} />
+      <Byline
+        published={article.published}
+        lastVerified={article.reviewed}
+        locale={locale}
+      />
 
       {/* The prose. Sizing lives here rather than on each child so an article
           body stays plain semantic markup and inherits the reading measure. */}
@@ -237,15 +242,11 @@ function ArticleSchema({
     inLanguage: htmlLang[locale],
     datePublished: article.published,
     dateModified: article.reviewed,
-    author: {
-      "@type": "Person",
-      "@id": site.author.id,
-      name: "Jason Yap",
-      sameAs: site.author.sameAs,
-      jobTitle: getUi(locale).news.article.authorJobTitle,
-      url: localeUrl("/about/", locale),
-    },
-    publisher: { "@type": "Organization", name: site.name, url: site.url },
+    author: authorRef(locale),
+    // `reviewedBy` is a WebPage property, not an Article one, so it hangs off
+    // the page node rather than failing validation on the article.
+    mainEntityOfPage: { "@type": "WebPage", "@id": url, reviewedBy: authorRef(locale) },
+    publisher: publisherRef,
     // Absolute, and only when it exists — Google's article rich result wants an
     // image and ignores a relative path rather than resolving it.
     ...(articleOgImage(insightImageKey(article.category, article.slug)) && {

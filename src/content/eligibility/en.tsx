@@ -135,7 +135,7 @@ export const copy: EligibilityCopy = {
   },
 
   cta: {
-    title: "Want a second opinion from someone who's done this 500+ times?",
+    title: "Want a second opinion from a team with 300+ successful applications?",
     body: "Jason reviews cases personally — no obligation, and he'll tell you if the DIY route is genuinely better for you.",
     ask: "Ask a question",
     compare: "Compare side by side",
