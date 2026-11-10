@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Section } from "@/components/GuideLayout";
+import { DataTable } from "@/components/DataTable";
 import {
   PVIP_AGENT_FEE_ATTRIBUTION,
   PVIP_AGENT_FEE_FROM,
@@ -308,26 +309,43 @@ export const copy: GuideCopy = {
           There are four, and a quote that shows you the first and stops has
           left money out:
         </p>
-        <ul>
-          <li>
-            <strong>Participation fee</strong> — RM200,000 for the principal,
-            RM100,000 or RM50,000 per dependant depending on the term they take.
-          </li>
-          <li>
-            <strong>Pass fee</strong> — RM2,000 per person per year of the
-            approved term, collected up front and again at each renewal. On a
-            five-year approval that is RM10,000 a head, which makes it much the
-            largest of the other three.
-          </li>
-          <li>
-            <strong>Multiple-entry visa fee</strong> — per person per year, set
-            by your nationality.
-          </li>
-          <li>
-            <strong>Security bond</strong> — one-off, set by your nationality
-            for the main applicant and a flat RM10 per dependant.
-          </li>
-        </ul>
+        {/* A real table (audit task B5-2). The figures are the ones this
+            section has always stated; only the markup changed. */}
+        <DataTable
+          caption="PVIP government fees"
+          idPrefix="pvip-fee"
+          head={["", "Amount", "How it is charged"]}
+          rows={[
+            {
+              label: "Participation fee",
+              cells: [
+                { value: "RM200,000 for the principal; RM100,000 or RM50,000 per dependant" },
+                { value: "A dependant's amount depends on the term they take." },
+              ],
+            },
+            {
+              label: "Pass fee",
+              cells: [
+                { value: "RM2,000 per person per year of the approved term" },
+                { value: "Collected up front and again at each renewal. On a five-year approval that is RM10,000 a head, which makes it much the largest of the other three." },
+              ],
+            },
+            {
+              label: "Multiple-entry visa fee",
+              cells: [
+                { value: "Set by your nationality" },
+                { value: "Per person per year." },
+              ],
+            },
+            {
+              label: "Security bond",
+              cells: [
+                { value: "Set by your nationality for the main applicant; a flat RM10 per dependant" },
+                { value: "One-off." },
+              ],
+            },
+          ]}
+        />
         <p>
           The last two are priced by passport rather than by programme, so no
           single figure can be printed here. The{" "}

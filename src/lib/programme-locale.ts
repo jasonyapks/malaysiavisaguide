@@ -52,6 +52,9 @@ export function localiseProgramme(p: Programme, locale: Locale): Programme {
             ...(overlay.superseded.whatChanged
               ? { whatChanged: overlay.superseded.whatChanged }
               : {}),
+            ...(overlay.superseded.effects
+              ? { effects: overlay.superseded.effects }
+              : {}),
             ...(overlay.superseded.attributionBy
               ? {
                   attribution: {

@@ -82,6 +82,13 @@ type Superseded = {
   /** Publishable, confirmed changes. Qualitative where a figure is not yet known. */
   whatChanged: string[];
   /**
+   * What each change means for someone applying, one line per `whatChanged`
+   * item and in the same order. Shown in the guide's change log (audit task
+   * B5-3). It restates the change from the applicant's side — it must never
+   * introduce a figure or a rule that the matching `whatChanged` item lacks.
+   */
+  effects: string[];
+  /**
    * True while the numeric fields on this Programme are still the superseded
    * ones. Drives the warning; set false only once every field is corrected.
    */
@@ -363,6 +370,10 @@ const MM2H_COMMON = {
     whatChanged: [
       "A partial withdrawal of the fixed deposit can be applied for as soon as the visa is endorsed in the passport, with no waiting period, against proof of a qualifying expense such as a signed Sale and Purchase Agreement for a residence. The guide anchors the window to approval on its category pages and to the second year on its summary page. Only the timing departs from the guide: the permitted uses, the purchase of a residence among them, are published in it. This describes Silver, Gold and Platinum; on SEZ and SFZ the in-zone purchase is a condition of approval, and when the withdrawal opens there is not settled.",
       "Dependent children qualify up to age 34, meaning before the 35th birthday. The guide's \"up to age 35\" reads a year wider than the counter applies.",
+    ],
+    effects: [
+      "On Silver, Gold and Platinum, a holder with a qualifying expense, such as a signed purchase agreement for a home, can apply to release part of the deposit straight after endorsement instead of waiting.",
+      "A child who has already turned 35 does not qualify as a dependant.",
     ],
     figuresPending: false,
   },
@@ -768,6 +779,11 @@ export const programmes: Programme[] = [
         "The fixed deposit becomes withdrawable after six months rather than one year. The ceiling is unchanged at 50% of the amount pledged.",
         "A dependant may now elect a 10-year term at RM50,000, half the price of the unchanged 20-year term at RM100,000. The principal's term is fixed at 20 years and has no such option.",
         "The RM40,000 monthly income requirement is unchanged, but what counts towards it is broader than the 2022 FAQ states. Salary is not required — realised investment gains, rental income and pension drawdown all qualify. Nor must the income be offshore: Malaysian-sourced income now counts, with proof of Malaysian income tax paid on it.",
+      ],
+      effects: [
+        "You can apply to withdraw up to half of the fixed deposit six months sooner than before.",
+        "A dependant who takes the 10-year term pays half the participation fee of the 20-year term.",
+        "Applicants who live on investment gains, rent or a pension, or on Malaysian income with tax paid, can meet the RM40,000 test.",
       ],
       figuresPending: false,
     },

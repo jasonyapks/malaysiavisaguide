@@ -3,6 +3,7 @@
 // Edit that file and run `npm run i18n:hant`; edits here are overwritten.
 import Link from "next/link";
 import { Section } from "@/components/GuideLayout";
+import { DataTable } from "@/components/DataTable";
 import {
   PVIP_AGENT_FEE_ATTRIBUTION,
   PVIP_AGENT_FEE_FROM,
@@ -264,20 +265,42 @@ export const copy: GuideCopy = {
         <p>
           參與費是一項政府收費，但它不是唯一的一項。一共有四項；一份只列出第一項就打住的報價，是漏算了錢的：
         </p>
-        <ul>
-          <li>
-            <strong>參與費</strong> —— 主申請人 RM200,000；每名家屬 RM100,000 或 RM50,000，視其選擇的期限而定。
-          </li>
-          <li>
-            <strong>準證費</strong> —— 每人每年 RM2,000，按批准年限計，先行收取，之後每次續簽再收一次。若批准五年，每人就是 RM10,000，這使它在其餘三項中金額最大。
-          </li>
-          <li>
-            <strong>多次入境簽證費</strong> —— 每人每年，按你的國籍訂定。
-          </li>
-          <li>
-            <strong>保證金</strong> —— 一次性；主申請人按國籍訂定，每名家屬統一為 RM10。
-          </li>
-        </ul>
+        <DataTable
+          caption="PVIP 政府收費"
+          idPrefix="pvip-fee"
+          locale="zh-hant"
+          head={["", "金額", "收取方式"]}
+          rows={[
+            {
+              label: "參與費",
+              cells: [
+                { value: "主申請人 RM200,000；每名家屬 RM100,000 或 RM50,000" },
+                { value: "家屬的金額視其選擇的期限而定。" },
+              ],
+            },
+            {
+              label: "準證費",
+              cells: [
+                { value: "每人每年 RM2,000，按批准年限計" },
+                { value: "先行收取，之後每次續簽再收一次。若批准五年，每人就是 RM10,000，這使它在其餘三項中金額最大。" },
+              ],
+            },
+            {
+              label: "多次入境簽證費",
+              cells: [
+                { value: "按你的國籍訂定" },
+                { value: "每人每年。" },
+              ],
+            },
+            {
+              label: "保證金",
+              cells: [
+                { value: "主申請人按國籍訂定；每名家屬統一為 RM10" },
+                { value: "一次性。" },
+              ],
+            },
+          ]}
+        />
         <p>
           後兩項是按護照而不是按計劃定價的，所以這裡印不出單一的數字。
           <Link href={href("/tools/cost-calculator/")}>費用計算器</Link>

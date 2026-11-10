@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Section } from "@/components/GuideLayout";
+import { DataTable } from "@/components/DataTable";
 import {
   PVIP_AGENT_FEE_ATTRIBUTION,
   PVIP_AGENT_FEE_FROM,
@@ -261,20 +262,42 @@ export const copy: GuideCopy = {
         <p>
           参与费是一项政府收费，但它不是唯一的一项。一共有四项；一份只列出第一项就打住的报价，是漏算了钱的：
         </p>
-        <ul>
-          <li>
-            <strong>参与费</strong> —— 主申请人 RM200,000；每名家属 RM100,000 或 RM50,000，视其选择的期限而定。
-          </li>
-          <li>
-            <strong>准证费</strong> —— 每人每年 RM2,000，按批准年限计，先行收取，之后每次续签再收一次。若批准五年，每人就是 RM10,000，这使它在其余三项中金额最大。
-          </li>
-          <li>
-            <strong>多次入境签证费</strong> —— 每人每年，按你的国籍订定。
-          </li>
-          <li>
-            <strong>保证金</strong> —— 一次性；主申请人按国籍订定，每名家属统一为 RM10。
-          </li>
-        </ul>
+        <DataTable
+          caption="PVIP 政府收费"
+          idPrefix="pvip-fee"
+          locale="zh-hans"
+          head={["", "金额", "收取方式"]}
+          rows={[
+            {
+              label: "参与费",
+              cells: [
+                { value: "主申请人 RM200,000；每名家属 RM100,000 或 RM50,000" },
+                { value: "家属的金额视其选择的期限而定。" },
+              ],
+            },
+            {
+              label: "准证费",
+              cells: [
+                { value: "每人每年 RM2,000，按批准年限计" },
+                { value: "先行收取，之后每次续签再收一次。若批准五年，每人就是 RM10,000，这使它在其余三项中金额最大。" },
+              ],
+            },
+            {
+              label: "多次入境签证费",
+              cells: [
+                { value: "按你的国籍订定" },
+                { value: "每人每年。" },
+              ],
+            },
+            {
+              label: "保证金",
+              cells: [
+                { value: "主申请人按国籍订定；每名家属统一为 RM10" },
+                { value: "一次性。" },
+              ],
+            },
+          ]}
+        />
         <p>
           后两项是按护照而不是按计划定价的，所以这里印不出单一的数字。
           <Link href={href("/tools/cost-calculator/")}>费用计算器</Link>

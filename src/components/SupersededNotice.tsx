@@ -39,7 +39,9 @@ function Notice({
   source,
   authority,
   locale,
+  changeLogHref,
 }: {
+  changeLogHref?: string;
   names: string[];
   superseded: NonNullable<Programme["superseded"]>;
   source: string;
@@ -48,6 +50,33 @@ function Notice({
 }) {
   const sup = getUi(locale).guide.superseded;
   const nameList = joinNames(names, sup.nameSeparator);
+
+  // On a guide the detail lives in the change-log section further down, which
+  // is a real heading with a real anchor. The notice shrinks to the warning and
+  // a link to it, rather than repeating the same list behind a disclosure.
+  if (changeLogHref) {
+    return (
+      <aside
+        aria-label={sup.termsChangedLabel(nameList)}
+        className="flex flex-wrap items-baseline gap-x-2 gap-y-1 rounded-xl border-l-4 border-alert-600 bg-sand-100 px-5 py-4 text-body-sm"
+      >
+        <span aria-hidden className="self-center text-alert-600">
+          ⚠
+        </span>
+        <span className="font-semibold text-forest-900">{nameList}</span>
+        <span className="text-ink-muted">
+          {sup.changedOn(reviewDate(s.changedOn, locale))}
+          {s.figuresPending && sup.figuresArePrevious}
+        </span>
+        <a
+          href={changeLogHref}
+          className="ml-auto shrink-0 font-medium text-forest-700 underline decoration-alert-600 decoration-2 underline-offset-4"
+        >
+          {getUi(locale).guide.changeLog.seeLog}
+        </a>
+      </aside>
+    );
+  }
 
   /*
    * URGENCY decides what shows unprompted — not the viewport.
@@ -154,10 +183,13 @@ function joinNames(names: string[], separator: string): string {
 export function SupersededNotice({
   programme: p,
   locale = "en",
+  changeLogHref,
 }: {
   programme: Programme;
   /** Defaults to English so untranslated call sites read unchanged. */
   locale?: Locale;
+  /** Set on a guide, where the change log section carries the detail. */
+  changeLogHref?: string;
 }) {
   if (!p.superseded) return null;
   return (
@@ -167,6 +199,7 @@ export function SupersededNotice({
       source={p.source}
       authority={p.authority}
       locale={locale}
+      changeLogHref={changeLogHref}
     />
   );
 }

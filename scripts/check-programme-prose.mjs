@@ -61,6 +61,9 @@ for (const p of programmes) {
     }
   }
   if (p.superseded && overlay.superseded) {
+    if (overlay.superseded.effects == null) {
+      gaps.push(`${p.slug}: superseded.effects`);
+    }
     if (overlay.superseded.whatChanged == null) {
       gaps.push(`${p.slug}: superseded.whatChanged`);
     }

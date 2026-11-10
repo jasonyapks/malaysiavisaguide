@@ -20,6 +20,7 @@ import { Faq, type FaqItem } from "@/components/Faq";
 import { GuideHead, Lozenge } from "@/components/GuideHead";
 import { KeyFacts } from "@/components/KeyFacts";
 import { SupersededNotice } from "@/components/SupersededNotice";
+import { ChangeLog } from "@/components/ChangeLog";
 
 /**
  * The guide template — SPEC.md §3. The order is deliberate and every guide
@@ -146,6 +147,7 @@ export function GuideLayout({
       .map((c) => ({ id: sectionId(c.props.title), label: c.props.title })),
     { id: "who-it-suits", label: g.contentsSuits },
     { id: "questions", label: g.contentsQuestions },
+    { id: "change-log", label: g.contentsChangeLog },
   ];
 
   return (
@@ -208,7 +210,11 @@ export function GuideLayout({
               it. Renders nothing unless the programme's source has fallen
               behind — see components/SupersededNotice.tsx. */}
           <div className="max-w-3xl">
-            <SupersededNotice programme={programme} locale={locale} />
+            <SupersededNotice
+              programme={programme}
+              locale={locale}
+              changeLogHref="#change-log"
+            />
           </div>
 
           {/* 2 */}
@@ -255,6 +261,12 @@ export function GuideLayout({
           <div id="questions" className="scroll-mt-24">
             <Faq items={faq} locale={locale} />
           </div>
+
+          <ChangeLog
+            programme={programme}
+            published={guidePublished[guidePath]}
+            locale={locale}
+          />
 
           {/* Hand-off again at the end, for the reader who read to the end. */}
           <Handoff

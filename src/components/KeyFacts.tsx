@@ -97,16 +97,26 @@ export function KeyFacts({
       <h2 className="mt-2 font-serif text-h3 font-bold">
         {getUi(locale).guide.keyFactsHeading}
       </h2>
-      <dl className="mt-5 divide-y divide-sand-200 text-body-sm">
-        {rows.map(([label, value]) => (
-          <div key={label} className="grid gap-1 py-3.5 sm:grid-cols-[12rem_1fr] sm:gap-4">
-            <dt className="text-body-sm font-semibold uppercase tracking-[0.08em] text-ink-muted">
-              {label}
-            </dt>
-            <dd className="font-semibold text-forest-900">{value}</dd>
-          </div>
-        ))}
-      </dl>
+      {/* A real table, not a <dl> in a grid (audit task B5-2): label/value pairs
+          are tabular data, and a table is what search engines and AI crawlers
+          lift cleanly. Cells stack on a phone and sit side by side from `sm`. */}
+      <table className="mt-5 w-full border-collapse text-left text-body-sm">
+        <tbody className="divide-y divide-sand-200">
+          {rows.map(([label, value]) => (
+            <tr key={label}>
+              <th
+                scope="row"
+                className="block pt-3.5 text-body-sm font-semibold uppercase tracking-[0.08em] text-ink-muted sm:table-cell sm:w-48 sm:py-3.5 sm:pr-4 sm:align-top"
+              >
+                {label}
+              </th>
+              <td className="block pb-3.5 pt-1 font-semibold text-forest-900 sm:table-cell sm:py-3.5 sm:align-top">
+                {value}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       <p className="mt-4 border-t border-sand-200 pt-4 text-caption text-ink-muted">
         {getUi(locale).guide.sourceLabel}{" "}
         <a

@@ -116,6 +116,20 @@ export type UiStrings = {
     onThisPage: string;
     contentsSuits: string;
     contentsQuestions: string;
+    contentsChangeLog: string;
+    /** The permanent change log on each guide (audit task B5-3). */
+    changeLog: {
+      heading: string;
+      lead: string;
+      date: string;
+      whatChanged: string;
+      effect: string;
+      source: string;
+      sourceLine: (by: string, date: string) => string;
+      officialNotUpdated: (authority: string) => string;
+      none: (published: string, reviewed: string) => string;
+      seeLog: string;
+    };
     honestFitEyebrow: string;
     honestFitTitleLead: string;
     honestFitTitleAccent: string;
@@ -508,6 +522,21 @@ export const ui: UiStrings = {
     onThisPage: "On this page",
     contentsSuits: "Who it suits",
     contentsQuestions: "Common questions",
+    contentsChangeLog: "Change log",
+    changeLog: {
+      heading: "Change log",
+      lead: "Every change to this programme's terms that this guide has recorded, newest first.",
+      date: "Date",
+      whatChanged: "What changed",
+      effect: "Effect on applicants",
+      source: "Source",
+      sourceLine: (by, date) => `${by}, current as at ${date}.`,
+      officialNotUpdated: (authority) =>
+        `The official ${authority} document has not yet been updated.`,
+      none: (published, reviewed) =>
+        `This guide has recorded no change to the programme's terms since it was first published on ${published}. Last reviewed ${reviewed}.`,
+      seeLog: "See the change log",
+    },
     honestFitEyebrow: "Honest fit",
     honestFitTitleLead: "Who it suits — and",
     honestFitTitleAccent: "who it doesn't",
