@@ -1,6 +1,6 @@
 ---
 title: "MM2H 第二家园计划 与 高端签证计划（PVIP）、DE Rantau 数字游民准证对比：哪种马来西亚签证适合您的收入水平？"
-dek: "三者之中，只有一种仅凭收入即可获得资格；另一种同时考察收入与资本；第三种则完全不考察收入——这一事实决定了大多数人的选择。"
+dek: "三者之中，只有一种仅凭收入即可获得资格；另一种同时考察收入与资本；第三种则完全没有公布收入数字——这一事实决定了大多数人的选择。"
 published: "2026-07-27"
 reviewed: "2026-09-30"
 readingMinutes: 8
@@ -42,7 +42,7 @@ sources:
   - label: "MTCP Sarawak — S-MM2H guidelines"
     url: "https://mtcp.sarawak.gov.my/web/attachment/show/?docid=REt0S0kvVFpidEtubkZUT09mcWFSZz09OjpeOuewhViH0oQ6MBHzQtpV"
     verified: "2026-09-30"
-sourceHash: "sha256:22a4f7540ab6ca488760e3b0cf4a180f"
+sourceHash: "sha256:e67ea2ad2564f0466273d0acc0b3df07"
 translatedAt: "2026-09-15T15:22:13.255Z"
 translationModel: "claude-sonnet-5"
 ---

@@ -53,6 +53,10 @@
  *   node scripts/translate-content.mjs --only <slug>    one article
  *   node scripts/translate-content.mjs --locale zh-hans one target
  *   node scripts/translate-content.mjs --force          ignore the hash, retranslate
+ *   node scripts/translate-content.mjs --adopt --only <slug>
+ *       the translation was corrected by hand to match an English edit: record
+ *       the current source hash without calling a model. For when both
+ *       providers are down and the change is a sentence or two.
  *
  * Run it through the TS resolve hook — it imports shared/ and src/lib:
  * `npm run i18n:translate`.
@@ -120,6 +124,9 @@ const GLOSSARY = {
 const ARGV = process.argv.slice(2);
 const CHECK = ARGV.includes("--check");
 const FORCE = ARGV.includes("--force");
+// Only ever with --only: adopting everything at once would silently mark every
+// stale translation as current.
+const ADOPT = ARGV.includes("--adopt") && Boolean(flag("--only"));
 const ONLY = flag("--only");
 const ONE_LOCALE = flag("--locale");
 
@@ -843,6 +850,15 @@ async function main() {
           continue;
         }
         if (data.sourceHash === hash && !FORCE) {
+          current += 1;
+          continue;
+        }
+        if (ADOPT) {
+          await writeFile(
+            out,
+            existing.replace(/^sourceHash: .*$/m, `sourceHash: "${hash}"`),
+          );
+          console.log(`translate-content: ${locale}/${doc.rel} … adopted by hand`);
           current += 1;
           continue;
         }
