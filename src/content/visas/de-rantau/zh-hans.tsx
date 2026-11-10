@@ -69,7 +69,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="两条收入门槛">
+      <Section
+        id="the-two-income-thresholds"
+        title="申请 DE Rantau 需要多少收入？"
+        answer="科技人才与科技类职业每年 USD 24,000，其他所有人每年 USD 60,000。"
+      >
         <p>
           几乎所有介绍 DE Rantau 的文章都引用 USD 24,000。那个数字只对科技人才与科技类职业成立。对其他所有人来说，最低年收入是{" "}
           <strong>USD 60,000</strong> —— 高出两倍半。
@@ -79,7 +83,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="要花多少钱">
+      <Section
+        id="what-it-costs"
+        title="DE Rantau 要花多少钱？"
+        answer="主申请人手续费 RM1,080，每名家属 RM540，另加每年 RM360 的准证费。"
+      >
         <ul>
           <li>
             主申请人手续费 <strong>RM1,080</strong>，含 8% SST。不予退还，被拒也一样。
@@ -98,7 +106,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="它不是什么">
+      <Section
+        id="what-it-is-not"
+        title="DE Rantau 可以转成 MM2H、PVIP 或永久居留吗？"
+        answer="不能。它在 24 个月时结束，没有转入 MM2H、PVIP 或永久居留的途径。"
+      >
         <p>
           DE Rantau 是一张专业访问准证。它不通往任何地方：24 个月一到就结束，也没有转成 MM2H、PVIP 或永久居留的通道。把它当成一个价格合理的方式，用来验证自己想不想住在马来西亚，而不是一架梯子的第一级。
         </p>

@@ -63,7 +63,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="申請實際上是怎麼走的">
+      <Section
+        id="how-the-application-actually-runs"
+        title="怎麼申請馬來西亞學生準證？"
+        answer="不是由你自己申請：高等教育的申請由就讀院校遞交，再由 EMGS 審核。"
+      >
         <p>
           學生準證不是你自己去申請的。高等教育方面，由你的院校提交，再由{" "}
           <abbr title="Education Malaysia Global Services">EMGS</abbr>{" "}
@@ -74,7 +78,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="打工上限，說清楚">
+      <Section
+        id="the-work-limit-precisely"
+        title="持學生準證可以打工嗎？"
+        answer="可以，每週最多 20 小時，而且只限餐廳、加油站、迷你市場、酒店和大學校區內。"
+      >
         <p>
           每週二十小時，且限於一份明確的場所清單：餐廳、加油站、迷你市場、酒店和大學校園範圍。這項權利適用於公立大學和私立高等院校的學生，
           <strong>不</strong>適用於語言中心或培訓中心的學生。
@@ -85,7 +93,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="畢業之後會怎樣">
+      <Section
+        id="what-happens-after-you-graduate"
+        title="畢業後可以留在馬來西亞嗎？"
+        answer="學生準證不行：它隨課程結束而終止，不會自動轉成工作或居留準證。"
+      >
         <p>
           學生準證隨課程結束而終止，不會自動轉成工作或居留準證。想留下來的畢業生，通常是通過馬來西亞僱主轉到
           <Link href={href("/visas/employment-pass/")}>工作準證</Link>

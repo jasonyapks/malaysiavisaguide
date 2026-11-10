@@ -72,7 +72,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="兩條收入門檻">
+      <Section
+        id="the-two-income-thresholds"
+        title="申請 DE Rantau 需要多少收入？"
+        answer="科技人才與科技類職業每年 USD 24,000，其他所有人每年 USD 60,000。"
+      >
         <p>
           幾乎所有介紹 DE Rantau 的文章都引用 USD 24,000。那個數字只對科技人才與科技類職業成立。對其他所有人來說，最低年收入是{" "}
           <strong>USD 60,000</strong> —— 高出兩倍半。
@@ -82,7 +86,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="要花多少錢">
+      <Section
+        id="what-it-costs"
+        title="DE Rantau 要花多少錢？"
+        answer="主申請人手續費 RM1,080，每名家屬 RM540，另加每年 RM360 的準證費。"
+      >
         <ul>
           <li>
             主申請人手續費 <strong>RM1,080</strong>，含 8% SST。不予退還，被拒也一樣。
@@ -101,7 +109,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="它不是什麼">
+      <Section
+        id="what-it-is-not"
+        title="DE Rantau 可以轉成 MM2H、PVIP 或永久居留嗎？"
+        answer="不能。它在 24 個月時結束，沒有轉入 MM2H、PVIP 或永久居留的途徑。"
+      >
         <p>
           DE Rantau 是一張專業訪問準證。它不通往任何地方：24 個月一到就結束，也沒有轉成 MM2H、PVIP 或永久居留的通道。把它當成一個價格合理的方式，用來驗證自己想不想住在馬來西亞，而不是一架梯子的第一級。
         </p>

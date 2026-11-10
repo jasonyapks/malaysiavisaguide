@@ -19,10 +19,13 @@ import { getUi } from "@/lib/ui";
  */
 export function ChangeLog({
   programme: p,
+  name,
   published,
   locale,
 }: {
   programme: Programme;
+  /** The programme's short name, for the question heading. */
+  name: string;
   /** ISO date the guide was first published. */
   published?: string;
   locale: Locale;
@@ -34,7 +37,7 @@ export function ChangeLog({
   return (
     <section id="change-log" className="scroll-mt-24 space-y-4">
       <h2 className="font-serif text-h3 font-semibold text-forest-900">
-        {c.heading}
+        {c.heading(name)}
       </h2>
       {!s ? (
         <p className="max-w-3xl text-body-sm leading-relaxed text-ink-muted">

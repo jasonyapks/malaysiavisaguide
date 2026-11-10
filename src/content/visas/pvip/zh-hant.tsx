@@ -5,15 +5,12 @@ import Link from "next/link";
 import { Section } from "@/components/GuideLayout";
 import { DataTable } from "@/components/DataTable";
 import {
-  PVIP_AGENT_FEE_ATTRIBUTION,
-  PVIP_AGENT_FEE_FROM,
   PVIP_GOVERNMENT_FEE_ATTRIBUTION,
 } from "@/lib/data/programmes";
 import { registers } from "@/lib/data/agents";
-import { money, reviewDate } from "@/lib/format";
+import { reviewDate } from "@/lib/format";
 import { pvipOutlay } from "./outlay";
 
-const agentFrom = money(PVIP_AGENT_FEE_FROM);
 const o = pvipOutlay;
 import type { GuideCopy } from "../types";
 
@@ -33,8 +30,8 @@ import type { GuideCopy } from "../types";
  */
 export const copy: GuideCopy = {
   meta: {
-    title: "馬來西亞高端簽證計劃（PVIP）2026：代理費、總費用與申請條件",
-    description: `PVIP 到底要花多少錢：RM200,000 參與費、RM1,000,000 定期存款，代理費 ${agentFrom} 起，視家庭人數而定。誰能申請、和 MM2H 怎麼比。`,
+    title: "馬來西亞高端簽證計劃（PVIP）2026：總費用、收費與申請條件",
+    description: "PVIP 到底要花多少錢：RM200,000 參與費、RM1,000,000 定期存款、每月 RM40,000 收入。誰能申請、和 MM2H 怎麼比。",
   },
 
   title: "高端簽證計劃（PVIP）",
@@ -78,11 +75,11 @@ export const copy: GuideCopy = {
     },
     {
       q: "PVIP 的政府收費有哪些？",
-      a: `四項。參與費是其中之一 —— 主申請人 RM200,000，每名家屬 RM100,000 或 RM50,000 —— 這也是所有人都會引用的那一項。另外三項是準證費（每人每年 RM2,000，按批准年限計）、多次入境簽證費，以及一次性的保證金。後兩項按你的國籍而非按計劃訂定，所以要拿到屬於你自己的數字，請用費用計算器。不屬於政府收費的是代理服務費：那一項是商業性質的，由代理訂定，約 ${agentFrom} 起。`,
+      a: `四項。參與費是其中之一 —— 主申請人 RM200,000，每名家屬 RM100,000 或 RM50,000 —— 這也是所有人都會引用的那一項。另外三項是準證費（每人每年 RM2,000，按批准年限計）、多次入境簽證費，以及一次性的保證金。後兩項按你的國籍而非按計劃訂定，所以要拿到屬於你自己的數字，請用費用計算器。不屬於政府收費的是代理服務費：那一項是商業性質的，由代理訂定。`,
     },
     {
       q: "PVIP 代理費要多少？",
-      a: `約 ${agentFrom} 起，往上浮動。PVIP 的代理費不由移民局訂定，所以各家代理報價不同；即使是同一家代理，也會因家庭人數、隨行家屬人數及其所選年限，以及收入與資金來源文件的工作量而不同。在付任何款項之前，請要求對方以書面給出金額，並寫明包含哪些項目：家屬是否已計入、體檢、保險和定期存款手續是否代辦，以及申請被拒時退還多少。報價明顯低於這個範圍的，值得逐項核對漏掉了什麼。（此範圍來自 MYPVIP 對市場上各家代理報價的觀察，${reviewDate(PVIP_AGENT_FEE_ATTRIBUTION.asAt, "zh-hant")}。）`,
+      a: "PVIP 的代理費由各家代理機構自行訂定，不由移民局訂定，也沒有任何官方渠道公佈，所以各家代理報價不同；即使是同一家代理，也會因家庭人數、隨行家屬人數及其所選年限，以及收入與資金來源文件的工作量而不同。在付任何款項之前，請要求對方以書面給出金額，並寫明包含哪些項目：家屬是否已計入、體檢、保險和定期存款手續是否代辦，以及申請被拒時退還多少。在你簽約之前，請向至少兩家授權代理索取書面報價。",
     },
     {
       q: "PVIP 是 20 年，為什麼我的簽證只有五年？",
@@ -138,7 +135,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="誰符合資格">
+      <Section
+        id="who-qualifies"
+        title="誰符合 PVIP 的申請資格？"
+        answer="每月收入 RM40,000、RM1,000,000 定期存款，再加 RM200,000 參與費，就符合資格；沒有年齡限制。"
+      >
         <p>PVIP 有四項要求，而大多數申請栽在收入這一項上：</p>
         <ul>
           <li>
@@ -185,7 +186,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="從申請到取得準證">
+      <Section
+        id="from-application-to-pass"
+        title="PVIP 申請要多久？"
+        answer="代理機構遞交後，委員會最長在 60 個工作日內作出決定；隨後發出的有條件批准信有效期為六個月。"
+      >
         <p>
           這個計劃的先後順序比大多數計劃都更值得留意，因為真正的資金是在後段才投入的：
         </p>
@@ -219,7 +224,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="怎麼確認代理機構獲得授權">
+      <Section
+        id="checking-that-an-agent-is-authorised"
+        title="怎麼確認 PVIP 代理機構獲得授權？"
+        answer="到移民局公佈的 PVIP 委任代理名單上查這家公司：不在名單上的公司，無法為你遞交申請。"
+      >
         <p>
           PVIP 代理機構由移民局自行委任，移民局也公佈了獲授權代理的名單，本指南提供
           <Link href={href("/agents/pvip/")}>可搜索的名單副本</Link>（英文）。先從名單查起：不在名單上的公司無法替你提交申請。但在名單上並不代表核實就此完成，常見問答還列出了以下可以對照的條件：
@@ -243,7 +252,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="費用到底是什麼，老實拆開來看">
+      <Section
+        id="what-it-costs-separated-honestly"
+        title="PVIP 總共要花多少錢？"
+        answer="單人申請實際花掉的政府收費略高於 RM210,000，另需存入仍屬於自己的 RM1,000,000 定期存款；代理費另計。"
+      >
         <p>
           在大多數介紹這個計劃的文章裡，三種性質完全不同的錢被混在一起講。它們不是同一回事：
         </p>
@@ -255,11 +268,11 @@ export const copy: GuideCopy = {
             <strong>仍然屬於你的錢：</strong>RM1,000,000 定期存款。它躺在你自己的賬戶裡並設有質押，不在政府的賬戶裡。
           </li>
           <li>
-            <strong>代理費：</strong>由代理機構訂定，不由移民局訂定，也沒有任何官方渠道公佈。就市場行情而言，約 {agentFrom} 起，隨家庭人數與案件複雜程度而增加。在你簽約之前，請要求對方以書面給出金額。這一點和 MM2H 正好相反 —— MM2H 的代理費由政府固定，根本沒有議價空間。
+            <strong>代理費：</strong>由代理機構訂定，不由移民局訂定，也沒有任何官方渠道公佈。代理費隨家庭人數與案件複雜程度而增加。在你簽約之前，請向至少兩家授權代理索取書面報價。這一點和 MM2H 正好相反 —— MM2H 的代理費由政府固定，根本沒有議價空間。
           </li>
         </ul>
         <p>
-          所以單人申請的情況是：真正花掉的政府收費略高於 RM210,000，另有 RM1,000,000 被佔用但仍屬於你 —— 這還沒算代理費（約 {agentFrom} 起）。
+          所以單人申請的情況是：真正花掉的政府收費略高於 RM210,000，另有 RM1,000,000 被佔用但仍屬於你 —— 這還沒算代理費。
         </p>
         <DataTable
           caption={`PVIP 首年政府收費（按首次批准 ${o.years} 年計）`}
@@ -323,7 +336,11 @@ export const copy: GuideCopy = {
         <p>代理費在每一欄之外另計，不在這張表裡。</p>
       </Section>
 
-      <Section title="政府收費">
+      <Section
+        id="the-government-fees"
+        title="PVIP 有哪些政府收費？"
+        answer="四項：RM200,000 參與費、每人每年 RM2,000 的準證費、多次入境簽證費，以及保證金。"
+      >
         <p>
           參與費是一項政府收費，但它不是唯一的一項。一共有四項；一份只列出第一項就打住的報價，是漏算了錢的：
         </p>
@@ -369,7 +386,7 @@ export const copy: GuideCopy = {
           會按你自己的國籍和家庭人數，就五年的初次批准把這四項全部算出來。
         </p>
         <p>
-          只有代理服務費不在這份清單裡。那一項是商業性質的，由代理機構而非移民局訂定 —— 約 {agentFrom} 起，視家庭人數與案件複雜程度而定 —— 也沒有任何官方渠道公佈。請要求書面報價。
+          只有代理服務費不在這份清單裡。那一項是商業性質的，由代理機構而非移民局訂定，視家庭人數與案件複雜程度而定，也沒有任何官方渠道公佈。在你簽約之前，請向至少兩家授權代理索取書面報價。
         </p>
         <p>
           <em>
@@ -380,7 +397,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="這張簽證讓你能做什麼">
+      <Section
+        id="what-the-visa-lets-you-do"
+        title="PVIP 讓你能做什麼？"
+        answer="PVIP 給予最長 20 年的馬來西亞居留權，沒有最低居住天數要求，並且可以工作、經商、就學和購置房產。"
+      >
         <p>
           和 MM2H 系列相比，PVIP 的寬鬆程度並不尋常。移民局列出以下各項：
         </p>

@@ -1,6 +1,6 @@
 ---
 title: "MM2H vs. PVIP vs. DE Rantau: Which Malaysia Visa Fits Your Income?"
-dek: "Only one of the three qualifies you on income alone. One tests income and capital together. The third does not test income at all — which is the fact that decides this for most people."
+dek: "Only one of the three qualifies you on income alone. One tests income and capital together. The third publishes no income figure at all — which is the fact that decides this for most people."
 published: "2026-07-27"
 reviewed: "2026-09-30"
 readingMinutes: 8

@@ -108,7 +108,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="MM2H 費用：存款數字之外的那些成本">
+      <Section
+        id="mm2h-fees-the-costs-that-don-t-appear-in-the-deposit-figure"
+        title="除了定期存款，MM2H 還要花哪些錢？"
+        answer="三項：政府訂定的代理費 RM40,000 至 RM70,000、強制購房 RM600,000 至 RM2,000,000，以及參與費。"
+      >
         <p>
           人們通常用定期存款來描述 MM2H，而那恰恰是其中最不花錢的一部分 —— 存款仍然是你的。另外幾個數字則不是：
         </p>
@@ -141,7 +145,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="MM2H 代理費由政府固定">
+      <Section
+        id="mm2h-agency-fees-are-fixed-by-the-government"
+        title="MM2H 代理費是多少？"
+        answer="白銀級與 SEZ 為 RM40,000，黃金級 RM55,000，白金級 RM70,000，均已含 8% SST，由政府固定。"
+      >
         <p>
           在你找任何人談 MM2H 之前，這是最值得先知道的一件事，而它和市場上通常的說法正好相反。代理費沒有貨比三家的空間，因為它不由代理機構決定：
         </p>
@@ -177,7 +185,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="MM2H 購房要求：最低價不等於你實際要付的價格">
+      <Section
+        id="mm2h-property-requirement-the-minimum-is-not-the-price-you-will-pay"
+        title="MM2H 持有人必須買多少錢的房產？"
+        answer="計劃的最低購房額從白銀級的 RM600,000 起，但還要疊加各州對外國買家的門檻：吉隆坡 RM1,000,000，雪蘭莪 RM2,000,000。"
+      >
         <p>
           計劃訂出的是全國最低標準，但每個州屬會為外國買家另設自己的門檻，通常更高：雪蘭莪 RM2,000,000，吉隆坡 RM1,000,000。真正會被套用到你這筆交易上的，是州屬的那一個。
         </p>
@@ -199,7 +211,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="MM2H 年齡要求：大多數指南都寫錯了">
+      <Section
+        id="mm2h-age-requirements-the-rule-most-guides-get-wrong"
+        title="MM2H 的最低年齡是幾歲？"
+        answer="主申請人最低 25 歲，不是 30 歲；25 至 49 歲每年須在馬來西亞住滿 90 天，50 歲起沒有最低居住天數要求。"
+      >
         <p>
           MOTAC 的等級表把主申請人的最低年齡定在 <strong>25 歲</strong>，不是 30 歲。居住天數的要求則按年齡分段：
         </p>
@@ -222,14 +238,22 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="MM2H 家屬與家庭">
+      <Section
+        id="mm2h-for-dependants-and-family"
+        title="MM2H 可以帶哪些家屬？"
+        answer="配偶、34 歲及以下的未婚子女，以及父母和配偶的父母。"
+      >
         <p>
           子女最高可納入至 34 歲，前提是未婚，也就是說到 35 歲生日為止但不含當天。以國際標準來看這相當寬鬆；MOTAC 自己的指南寫作「最高至
           35 歲」，比實際執行寬了一年。父母和岳父母／公婆同樣允許納入。
         </p>
       </Section>
 
-      <Section title="MM2H SEZ 與 SFZ 特區路線">
+      <Section
+        id="mm2h-sez-and-sfz-zone-routes"
+        title="MM2H 的 SEZ 與 SFZ 路線是什麼？"
+        answer="兩條門檻較低的特區路線：定期存款 USD 65,000（50 歲起為 USD 32,000），準證 10 年、可續，參與費 RM1,000。"
+      >
         <p>
           MOTAC 另外為經濟特區（SEZ）和金融特區（SFZ）公佈了兩條成本更低的路線。它們並不是白銀／黃金／白金這道階梯上的等級，而是與特定園區綁定、審批順序也不同：21 至 49 歲申請人需 USD 65,000 定期存款，50
           歲及以上則為 USD 32,000。兩者均為 10 年、可續簽，參與費 RM1,000，並須按相關 SEZ 開發項目所訂價格購置房產。代理費收費表把它們與白銀級並列，同為{" "}

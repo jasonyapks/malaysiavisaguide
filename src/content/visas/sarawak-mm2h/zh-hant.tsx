@@ -145,7 +145,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="S-MM2H 申請條件：兩條符合資格的路徑">
+      <Section
+        id="s-mm2h-requirements-two-routes-to-qualifying"
+        title="誰符合砂拉越 MM2H 的申請資格？"
+        answer={<>收入達到{income}，或存款達到 {savings}，再加上在砂拉越的銀行存入 {fd} 定期存款，就符合資格。</>}
+      >
         <p>
           S-MM2H 接受收入流或一筆存款二選一，這在同類計劃裡並不常見，也讓一些被聯邦計劃擋在門外的人夠得著：
         </p>
@@ -168,7 +172,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="S-MM2H 費用一覽：政府收費與開支">
+      <Section
+        id="s-mm2h-fees-and-costs"
+        title="砂拉越 MM2H 要花多少錢？"
+        answer={<>向州政府部門一次性繳交 {processing} 手續費，另有按國籍訂定的保證金；沒有參與費。</>}
+      >
         <p>
           S-MM2H 的收費項目比聯邦 MM2H 少，而且完全沒有參與費。哪些要付、付給誰、替誰付：
         </p>
@@ -232,7 +240,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="如何申請砂拉越第二家園（S-MM2H）">
+      <Section
+        id="how-to-apply-for-s-mm2h"
+        title="怎麼申請砂拉越 MM2H？"
+        answer="通過砂拉越本地擔保人或在砂拉越持牌的代理，向州政府部門（MTCP）申請；沒有自行辦理的途徑。"
+      >
         <p>
           整個申請從頭到尾都是州政府的流程，由 MTCP 負責，而不是 MOTAC 或移民局的聯邦櫃檯。以下是 MTCP 指南所列的申請內容 —— 指南並沒有把每一步都對上日期，所以後面幾步的先後只作參考：
         </p>
@@ -264,7 +276,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="S-MM2H 買房規定：外國人在砂拉越可以買什麼">
+      <Section
+        id="s-mm2h-property-rules-what-a-foreigner-may-buy-in-sarawak"
+        title="申請砂拉越 MM2H 一定要買房嗎？"
+        answer={<>不用。買房是自願的；如果要買，古晉省的門檻是 {kuching}，其他各省是 {otherDiv}。</>}
+      >
         <p>
           在 S-MM2H 下，買房是可選的。定期存款才是取得資格的途徑，不買任何東西也能獲批。但不少參與者還是會買，而適用的規則來自砂拉越自己的土地法，而不是這個計劃。砂拉越實行《砂拉越土地法》，與半島適用的《國家土地法》分開，所以吉隆坡、檳城或柔佛的門檻數字在這裡一概不適用。
         </p>
@@ -295,7 +311,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="S-MM2H 居住要求：每年在砂拉越住滿 30 天">
+      <Section
+        id="the-s-mm2h-stay-requirement-30-days-in-sarawak"
+        title="每年要在砂拉越住多久？"
+        answer="每年 30 天，而且只計算在砂拉越境內的天數；在吉隆坡的時間不算。"
+      >
         <p>
           S-MM2H 是砂拉越的計劃，它的居住要求是：{s.minStayPerYear}這些天數必須是在
           <em>砂拉越</em>度過的 —— 待在吉隆坡的時間不算數。如果你想拿馬來西亞居留權的理由在半島，那麼無論它的數字看起來多誘人，這都是選錯了計劃。
@@ -305,7 +325,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="砂拉越 MM2H 與聯邦 MM2H 怎麼選">
+      <Section
+        id="sarawak-mm2h-vs-federal-mm2h"
+        title="砂拉越 MM2H 和聯邦 MM2H 有什麼不同？"
+        answer={<>這是兩個各自獨立的計劃：砂拉越要求 {fd} 存款、不必買房；聯邦 MM2H 白銀級則要求 {money(silver.fixedDeposit!)} 存款，並強制購置 {money(silver.propertyPurchaseMin!)} 的房產。</>}
+      >
         <p>
           這是兩個政府各自運作、恰好同名的兩個計劃，持有其中一個，對你在另一個計劃下的處境說明不了什麼。單看數字，砂拉越要求的少得多：{fd} 存款、無須買房；相比之下，
           <Link href={href("/visas/mm2h/")}>聯邦 MM2H 白銀級</Link>

@@ -60,7 +60,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="申请实际上是怎么走的">
+      <Section
+        id="how-the-application-actually-runs"
+        title="怎么申请马来西亚学生准证？"
+        answer="不是由你自己申请：高等教育的申请由就读院校递交，再由 EMGS 审核。"
+      >
         <p>
           学生准证不是你自己去申请的。高等教育方面，由你的院校提交，再由{" "}
           <abbr title="Education Malaysia Global Services">EMGS</abbr>{" "}
@@ -71,7 +75,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="打工上限，说清楚">
+      <Section
+        id="the-work-limit-precisely"
+        title="持学生准证可以打工吗？"
+        answer="可以，每周最多 20 小时，而且只限餐厅、加油站、迷你市场、酒店和大学校区内。"
+      >
         <p>
           每周二十小时，且限于一份明确的场所清单：餐厅、加油站、迷你市场、酒店和大学校园范围。这项权利适用于公立大学和私立高等院校的学生，
           <strong>不</strong>适用于语言中心或培训中心的学生。
@@ -82,7 +90,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="毕业之后会怎样">
+      <Section
+        id="what-happens-after-you-graduate"
+        title="毕业后可以留在马来西亚吗？"
+        answer="学生准证不行：它随课程结束而终止，不会自动转成工作或居留准证。"
+      >
         <p>
           学生准证随课程结束而终止，不会自动转成工作或居留准证。想留下来的毕业生，通常是通过马来西亚雇主转到
           <Link href={href("/visas/employment-pass/")}>工作准证</Link>

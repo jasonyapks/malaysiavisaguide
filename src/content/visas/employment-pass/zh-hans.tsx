@@ -69,7 +69,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="三个类别，2026 年 6 月 1 日起生效">
+      <Section
+        id="the-three-categories-effective-1-june-2026"
+        title="申请马来西亚工作准证需要多少薪资？"
+        answer="自 2026 年 6 月 1 日起：第 I 类每月 RM20,000，第 II 类 RM10,000，第 III 类 RM5,000。"
+      >
         <ul>
           <li>
             <strong>第 I 类 —— 每月 RM20,000 及以上。</strong>最长 10 年。政府把这一档描述为涵盖战略性岗位与关键专才。
@@ -86,7 +90,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="改了什么，以及为什么要紧">
+      <Section
+        id="what-changed-and-why-it-matters"
+        title="2026 年 6 月 1 日起，工作准证改了什么？"
+        answer="三件事：薪资门槛提高；聘用年限设了上限，最长 10 年（第 III 类为 5 年）；接班计划成为正式条件。"
+      >
         <p>
           2026 年 6 月 1 日的政策做了三件事：上调薪资门槛、为外籍人士的受雇年限设上限，并把接替规划从一种期待变成一项正式条件。
         </p>

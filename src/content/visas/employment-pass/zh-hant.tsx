@@ -72,7 +72,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="三個類別，2026 年 6 月 1 日起生效">
+      <Section
+        id="the-three-categories-effective-1-june-2026"
+        title="申請馬來西亞工作準證需要多少薪資？"
+        answer="自 2026 年 6 月 1 日起：第 I 類每月 RM20,000，第 II 類 RM10,000，第 III 類 RM5,000。"
+      >
         <ul>
           <li>
             <strong>第 I 類 —— 每月 RM20,000 及以上。</strong>最長 10 年。政府把這一檔描述為涵蓋戰略性崗位與關鍵專才。
@@ -89,7 +93,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="改了什麼，以及為什麼要緊">
+      <Section
+        id="what-changed-and-why-it-matters"
+        title="2026 年 6 月 1 日起，工作準證改了什麼？"
+        answer="三件事：薪資門檻提高；聘用年限設了上限，最長 10 年（第 III 類為 5 年）；接班計劃成為正式條件。"
+      >
         <p>
           2026 年 6 月 1 日的政策做了三件事：上調薪資門檻、為外籍人士的受僱年限設上限，並把接替規劃從一種期待變成一項正式條件。
         </p>

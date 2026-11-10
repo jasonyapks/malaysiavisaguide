@@ -70,7 +70,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="The two income thresholds">
+      <Section
+        id="the-two-income-thresholds"
+        title="How much income do I need for DE Rantau?"
+        answer="USD 24,000 a year for tech talent and tech professions, and USD 60,000 a year for everyone else."
+      >
         <p>
           Almost every write-up of DE Rantau quotes USD 24,000. That figure is
           correct only for tech talent and tech professions. For everyone else
@@ -84,7 +88,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="What it costs">
+      <Section
+        id="what-it-costs"
+        title="How much does DE Rantau cost?"
+        answer="RM1,080 processing fee for the main applicant and RM540 per dependant, plus a pass fee of RM360 a year."
+      >
         <ul>
           <li>
             <strong>RM1,080</strong> processing fee for the main applicant,
@@ -107,7 +115,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="What it is not">
+      <Section
+        id="what-it-is-not"
+        title="Does DE Rantau lead to MM2H, PVIP or permanent residence?"
+        answer="No. It ends at 24 months with no conversion path into MM2H, PVIP or permanent residence."
+      >
         <p>
           DE Rantau is a professional visit pass. It does not lead anywhere: at
           24 months it ends, and there is no conversion path into MM2H, PVIP or

@@ -2,15 +2,12 @@ import Link from "next/link";
 import { Section } from "@/components/GuideLayout";
 import { DataTable } from "@/components/DataTable";
 import {
-  PVIP_AGENT_FEE_ATTRIBUTION,
-  PVIP_AGENT_FEE_FROM,
   PVIP_GOVERNMENT_FEE_ATTRIBUTION,
 } from "@/lib/data/programmes";
 import { registers } from "@/lib/data/agents";
-import { money, reviewDate } from "@/lib/format";
+import { reviewDate } from "@/lib/format";
 import { pvipOutlay } from "./outlay";
 
-const agentFrom = money(PVIP_AGENT_FEE_FROM);
 const o = pvipOutlay;
 import type { GuideCopy } from "../types";
 
@@ -24,9 +21,9 @@ import type { GuideCopy } from "../types";
  * by the one that happens. Do not "fix" it back to the document. */
 export const copy: GuideCopy = {
   meta: {
-    title: "PVIP Malaysia 2026: agent fees, total cost and requirements",
+    title: "PVIP Malaysia 2026: total cost, fees and requirements",
     description:
-      `PVIP in 2026: RM200,000 participation fee, RM1 million fixed deposit and agent fees from ${agentFrom}. Who qualifies, what it costs and how it compares with MM2H.`,
+      "PVIP in 2026: RM200,000 participation fee, RM1 million fixed deposit and RM40,000 monthly income. Who qualifies, what it costs and how it compares with MM2H.",
   },
 
   title: "Premium Visa Programme (PVIP)",
@@ -70,11 +67,11 @@ export const copy: GuideCopy = {
     },
     {
       q: "What are the PVIP government fees?",
-      a: `Four. The participation fee is one of them — RM200,000 for the principal, RM100,000 or RM50,000 per dependant — and it is the one everybody quotes. The other three are the pass fee at RM2,000 per person per year of the approved term, a multiple-entry visa fee, and a one-off security bond. The last two are set by your nationality rather than by the programme, so the cost calculator is the place to get your own figure. What is not a government fee is the agency fee: that one is commercial, set by the agent, and starts from around ${agentFrom}.`,
+      a: `Four. The participation fee is one of them — RM200,000 for the principal, RM100,000 or RM50,000 per dependant — and it is the one everybody quotes. The other three are the pass fee at RM2,000 per person per year of the approved term, a multiple-entry visa fee, and a one-off security bond. The last two are set by your nationality rather than by the programme, so the cost calculator is the place to get your own figure. What is not a government fee is the agency fee: that one is commercial and set by the agent.`,
     },
     {
       q: "How much do PVIP agents charge?",
-      a: `From around ${agentFrom}, and upward from there. Immigration does not set PVIP agent fees, so they vary between agents — and, with any one agent, by family size, how many dependants are included and on which term, and how much work the income and source-of-funds paperwork needs. Get the figure in writing before you pay anything, with what it covers: whether dependants are priced in, whether the medical, insurance and fixed-deposit steps are handled, and what comes back if the application is refused. A quote well under the range is worth reading line by line for what it leaves out. (Range stated by ${PVIP_AGENT_FEE_ATTRIBUTION.by}, ${reviewDate(PVIP_AGENT_FEE_ATTRIBUTION.asAt)}.)`,
+      a: "Agent fees are set by each agency, not by Immigration, and are not published anywhere official. They vary between agents — and, with any one agent, by family size, how many dependants are included and on which term, and how much work the income and source-of-funds paperwork needs. Get the figure in writing before you pay anything, with what it covers: whether dependants are priced in, whether the medical, insurance and fixed-deposit steps are handled, and what comes back if the application is refused. Ask at least two authorised agencies for a written quote before you commit.",
     },
     {
       q: "Why is my visa only five years when PVIP runs twenty?",
@@ -130,7 +127,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="Who qualifies">
+      <Section
+        id="who-qualifies"
+        title="Who qualifies for PVIP?"
+        answer="You qualify with income of RM40,000 a month, a RM1,000,000 fixed deposit and the RM200,000 participation fee; there is no age limit."
+      >
         <p>
           PVIP has four requirements, and the income one is where most
           applications fail:
@@ -204,7 +205,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="From application to pass">
+      <Section
+        id="from-application-to-pass"
+        title="How long does a PVIP application take?"
+        answer="The committee decides within up to 60 working days of your agency filing, and the conditional approval that follows is valid for six months."
+      >
         <p>
           The order of events matters more here than on most programmes, because
           the capital is committed late rather than early:
@@ -248,7 +253,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="Checking that an agent is authorised">
+      <Section
+        id="checking-that-an-agent-is-authorised"
+        title="How do I check a PVIP agent is authorised?"
+        answer={"Look the company up on the Immigration Department's list of appointed PVIP agencies: a company that is not on it cannot lodge your application."}
+      >
         <p>
           Immigration appoints PVIP agencies itself and publishes the list of them. This guide keeps a{" "}
           <Link href={href("/agents/pvip/")}>searchable copy of that list</Link>. Start there: a company that is not on it cannot lodge your application. Being on the list is not the whole check, though, and the PVIP FAQ sets out what else to check:
@@ -272,7 +281,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="What it costs, separated honestly">
+      <Section
+        id="what-it-costs-separated-honestly"
+        title="How much does PVIP cost in total?"
+        answer="A single applicant spends a little over RM210,000 in government fees and commits a RM1,000,000 fixed deposit that stays theirs, before agent fees."
+      >
         <p>
           Three different kinds of money get bundled together in most write-ups
           of this programme. They are not the same thing:
@@ -291,17 +304,16 @@ export const copy: GuideCopy = {
           </li>
           <li>
             <strong>Agent fees:</strong> set by the agency, not by Immigration,
-            and not published anywhere official. Across the market they start
-            from around {agentFrom} and rise with family size and case
-            complexity. Ask for the figure in writing
-            before you commit. This is the opposite of MM2H, where the agency
+            and not published anywhere official. They rise with family size and
+            case complexity. Ask at least two authorised agencies for a written
+            quote before you commit. This is the opposite of MM2H, where the agency
             fee is fixed by the government and there is nothing to negotiate.
           </li>
         </ul>
         <p>
           A single applicant is therefore looking at a little over RM210,000 in
           government fees genuinely spent, and RM1,000,000 committed but
-          retained — before agent fees, which start from around {agentFrom}.
+          retained — before agent fees.
         </p>
         <DataTable
           caption={`PVIP first-year government outlay, on a ${o.years}-year initial approval`}
@@ -368,7 +380,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="The government fees">
+      <Section
+        id="the-government-fees"
+        title="What government fees does PVIP charge?"
+        answer="Four: the RM200,000 participation fee, a pass fee of RM2,000 per person per year, a multiple-entry visa fee and a security bond."
+      >
         <p>
           The participation fee is a government fee, and it is not the only one.
           There are four, and a quote that shows you the first and stops has
@@ -420,9 +436,9 @@ export const copy: GuideCopy = {
         </p>
         <p>
           Only the agency fee sits outside this list. That one is commercial,
-          set by the agency rather than by Immigration — from around{" "}
-          {agentFrom} depending on family size and case complexity — and
-          published nowhere official. Get it in writing.
+          set by the agency rather than by Immigration, varies with family size
+          and case complexity, and is published nowhere official. Ask at least
+          two authorised agencies for a written quote before you commit.
         </p>
         <p>
           <em>
@@ -435,7 +451,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="What the visa lets you do">
+      <Section
+        id="what-the-visa-lets-you-do"
+        title="What does PVIP let you do?"
+        answer="PVIP gives up to 20 years in Malaysia with no minimum stay, and lets you work, run a business, study and buy property."
+      >
         <p>
           PVIP is unusually permissive compared with the MM2H family. The
           Immigration Department lists the following:

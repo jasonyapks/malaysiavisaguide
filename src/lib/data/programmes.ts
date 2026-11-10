@@ -509,20 +509,11 @@ export const PVIP_GOVERNMENT_FEE_ATTRIBUTION: Attribution = {
   asAt: "2026-07-28",
 };
 
-/**
- * Where PVIP agent fees start across the market. Commercial, not government-set,
- * so it is a floor and never a single price: the fee rises with family size,
- * dependants' terms and case complexity. Jason set it on 2026-09-30 as the
- * market range MYPVIP sees quoted.
- *
- * @public Quoted by the PVIP guide in all three languages.
- */
-export const PVIP_AGENT_FEE_FROM: Money = { amount: 60_000, currency: "MYR" };
-
-export const PVIP_AGENT_FEE_ATTRIBUTION: Attribution = {
-  by: "MYPVIP, from agent quotes across the market",
-  asAt: "2026-09-30",
-};
+// There used to be a `PVIP_AGENT_FEE_FROM` here ("from around RM60,000"). Jason
+// had it removed on 10 Nov 2026 (audit task B5-4): PVIP agent fees are
+// commercial and the site no longer publishes a range. The guide now tells the
+// reader to get written quotes from at least two authorised agencies. Do not
+// reinstate a figure without his say-so.
 
 /**
  * Payment terms attached to the government-fixed agency fee.

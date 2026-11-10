@@ -2,15 +2,12 @@ import Link from "next/link";
 import { Section } from "@/components/GuideLayout";
 import { DataTable } from "@/components/DataTable";
 import {
-  PVIP_AGENT_FEE_ATTRIBUTION,
-  PVIP_AGENT_FEE_FROM,
   PVIP_GOVERNMENT_FEE_ATTRIBUTION,
 } from "@/lib/data/programmes";
 import { registers } from "@/lib/data/agents";
-import { money, reviewDate } from "@/lib/format";
+import { reviewDate } from "@/lib/format";
 import { pvipOutlay } from "./outlay";
 
-const agentFrom = money(PVIP_AGENT_FEE_FROM);
 const o = pvipOutlay;
 import type { GuideCopy } from "../types";
 
@@ -30,8 +27,8 @@ import type { GuideCopy } from "../types";
  */
 export const copy: GuideCopy = {
   meta: {
-    title: "马来西亚高端签证计划（PVIP）2026：代理费、总费用与申请条件",
-    description: `PVIP 到底要花多少钱：RM200,000 参与费、RM1,000,000 定期存款，代理费 ${agentFrom} 起，视家庭人数而定。谁能申请、和 MM2H 怎么比。`,
+    title: "马来西亚高端签证计划（PVIP）2026：总费用、收费与申请条件",
+    description: "PVIP 到底要花多少钱：RM200,000 参与费、RM1,000,000 定期存款、每月 RM40,000 收入。谁能申请、和 MM2H 怎么比。",
   },
 
   title: "高端签证计划（PVIP）",
@@ -75,11 +72,11 @@ export const copy: GuideCopy = {
     },
     {
       q: "PVIP 的政府收费有哪些？",
-      a: `四项。参与费是其中之一 —— 主申请人 RM200,000，每名家属 RM100,000 或 RM50,000 —— 这也是所有人都会引用的那一项。另外三项是准证费（每人每年 RM2,000，按批准年限计）、多次入境签证费，以及一次性的保证金。后两项按你的国籍而非按计划订定，所以要拿到属于你自己的数字，请用费用计算器。不属于政府收费的是代理服务费：那一项是商业性质的，由代理订定，约 ${agentFrom} 起。`,
+      a: `四项。参与费是其中之一 —— 主申请人 RM200,000，每名家属 RM100,000 或 RM50,000 —— 这也是所有人都会引用的那一项。另外三项是准证费（每人每年 RM2,000，按批准年限计）、多次入境签证费，以及一次性的保证金。后两项按你的国籍而非按计划订定，所以要拿到属于你自己的数字，请用费用计算器。不属于政府收费的是代理服务费：那一项是商业性质的，由代理订定。`,
     },
     {
       q: "PVIP 代理费要多少？",
-      a: `约 ${agentFrom} 起，往上浮动。PVIP 的代理费不由移民局订定，所以各家代理报价不同；即使是同一家代理，也会因家庭人数、随行家属人数及其所选年限，以及收入与资金来源文件的工作量而不同。在付任何款项之前，请要求对方以书面给出金额，并写明包含哪些项目：家属是否已计入、体检、保险和定期存款手续是否代办，以及申请被拒时退还多少。报价明显低于这个范围的，值得逐项核对漏掉了什么。（此范围来自 MYPVIP 对市场上各家代理报价的观察，${reviewDate(PVIP_AGENT_FEE_ATTRIBUTION.asAt, "zh-hans")}。）`,
+      a: "PVIP 的代理费由各家代理机构自行订定，不由移民局订定，也没有任何官方渠道公布，所以各家代理报价不同；即使是同一家代理，也会因家庭人数、随行家属人数及其所选年限，以及收入与资金来源文件的工作量而不同。在付任何款项之前，请要求对方以书面给出金额，并写明包含哪些项目：家属是否已计入、体检、保险和定期存款手续是否代办，以及申请被拒时退还多少。在你签约之前，请向至少两家授权代理索取书面报价。",
     },
     {
       q: "PVIP 是 20 年，为什么我的签证只有五年？",
@@ -135,7 +132,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="谁符合资格">
+      <Section
+        id="who-qualifies"
+        title="谁符合 PVIP 的申请资格？"
+        answer="每月收入 RM40,000、RM1,000,000 定期存款，再加 RM200,000 参与费，就符合资格；没有年龄限制。"
+      >
         <p>PVIP 有四项要求，而大多数申请栽在收入这一项上：</p>
         <ul>
           <li>
@@ -182,7 +183,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="从申请到取得准证">
+      <Section
+        id="from-application-to-pass"
+        title="PVIP 申请要多久？"
+        answer="代理机构递交后，委员会最长在 60 个工作日内作出决定；随后发出的有条件批准信有效期为六个月。"
+      >
         <p>
           这个计划的先后顺序比大多数计划都更值得留意，因为真正的资金是在后段才投入的：
         </p>
@@ -216,7 +221,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="怎么确认代理机构获得授权">
+      <Section
+        id="checking-that-an-agent-is-authorised"
+        title="怎么确认 PVIP 代理机构获得授权？"
+        answer="到移民局公布的 PVIP 委任代理名单上查这家公司：不在名单上的公司，无法为你递交申请。"
+      >
         <p>
           PVIP 代理机构由移民局自行委任，移民局也公布了获授权代理的名单，本指南提供
           <Link href={href("/agents/pvip/")}>可搜索的名单副本</Link>（英文）。先从名单查起：不在名单上的公司无法替你提交申请。但在名单上并不代表核实就此完成，常见问答还列出了以下可以对照的条件：
@@ -240,7 +249,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="费用到底是什么，老实拆开来看">
+      <Section
+        id="what-it-costs-separated-honestly"
+        title="PVIP 总共要花多少钱？"
+        answer="单人申请实际花掉的政府收费略高于 RM210,000，另需存入仍属于自己的 RM1,000,000 定期存款；代理费另计。"
+      >
         <p>
           在大多数介绍这个计划的文章里，三种性质完全不同的钱被混在一起讲。它们不是同一回事：
         </p>
@@ -252,11 +265,11 @@ export const copy: GuideCopy = {
             <strong>仍然属于你的钱：</strong>RM1,000,000 定期存款。它躺在你自己的账户里并设有质押，不在政府的账户里。
           </li>
           <li>
-            <strong>代理费：</strong>由代理机构订定，不由移民局订定，也没有任何官方渠道公布。就市场行情而言，约 {agentFrom} 起，随家庭人数与案件复杂程度而增加。在你签约之前，请要求对方以书面给出金额。这一点和 MM2H 正好相反 —— MM2H 的代理费由政府固定，根本没有议价空间。
+            <strong>代理费：</strong>由代理机构订定，不由移民局订定，也没有任何官方渠道公布。代理费随家庭人数与案件复杂程度而增加。在你签约之前，请向至少两家授权代理索取书面报价。这一点和 MM2H 正好相反 —— MM2H 的代理费由政府固定，根本没有议价空间。
           </li>
         </ul>
         <p>
-          所以单人申请的情况是：真正花掉的政府收费略高于 RM210,000，另有 RM1,000,000 被占用但仍属于你 —— 这还没算代理费（约 {agentFrom} 起）。
+          所以单人申请的情况是：真正花掉的政府收费略高于 RM210,000，另有 RM1,000,000 被占用但仍属于你 —— 这还没算代理费。
         </p>
         <DataTable
           caption={`PVIP 首年政府收费（按首次批准 ${o.years} 年计）`}
@@ -320,7 +333,11 @@ export const copy: GuideCopy = {
         <p>代理费在每一栏之外另计，不在这张表里。</p>
       </Section>
 
-      <Section title="政府收费">
+      <Section
+        id="the-government-fees"
+        title="PVIP 有哪些政府收费？"
+        answer="四项：RM200,000 参与费、每人每年 RM2,000 的准证费、多次入境签证费，以及保证金。"
+      >
         <p>
           参与费是一项政府收费，但它不是唯一的一项。一共有四项；一份只列出第一项就打住的报价，是漏算了钱的：
         </p>
@@ -366,7 +383,7 @@ export const copy: GuideCopy = {
           会按你自己的国籍和家庭人数，就五年的初次批准把这四项全部算出来。
         </p>
         <p>
-          只有代理服务费不在这份清单里。那一项是商业性质的，由代理机构而非移民局订定 —— 约 {agentFrom} 起，视家庭人数与案件复杂程度而定 —— 也没有任何官方渠道公布。请要求书面报价。
+          只有代理服务费不在这份清单里。那一项是商业性质的，由代理机构而非移民局订定，视家庭人数与案件复杂程度而定，也没有任何官方渠道公布。在你签约之前，请向至少两家授权代理索取书面报价。
         </p>
         <p>
           <em>
@@ -377,7 +394,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="这张签证让你能做什么">
+      <Section
+        id="what-the-visa-lets-you-do"
+        title="PVIP 让你能做什么？"
+        answer="PVIP 给予最长 20 年的马来西亚居留权，没有最低居住天数要求，并且可以工作、经商、就学和购置房产。"
+      >
         <p>
           和 MM2H 系列相比，PVIP 的宽松程度并不寻常。移民局列出以下各项：
         </p>

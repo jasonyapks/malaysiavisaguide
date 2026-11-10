@@ -141,10 +141,13 @@ export function GuideLayout({
   const contents = [
     ...flattenFragments(children)
       .filter(
-        (c): c is ReactElement<{ title: string }> =>
+        (c): c is ReactElement<{ id?: string; title: string }> =>
           isValidElement(c) && c.type === Section,
       )
-      .map((c) => ({ id: sectionId(c.props.title), label: c.props.title })),
+      .map((c) => ({
+        id: c.props.id ?? sectionId(c.props.title),
+        label: c.props.title,
+      })),
     { id: "who-it-suits", label: g.contentsSuits },
     { id: "questions", label: g.contentsQuestions },
     { id: "change-log", label: g.contentsChangeLog },
@@ -244,7 +247,7 @@ export function GuideLayout({
               eyebrow={g.honestFitEyebrow}
               title={
                 <>
-                  {g.honestFitTitleLead}{" "}
+                  {g.honestFitTitleLead(g.shortNames[guidePath] ?? title)}{" "}
                   <span className="font-display accent-text font-medium italic">
                     {g.honestFitTitleAccent}
                   </span>
@@ -264,6 +267,7 @@ export function GuideLayout({
 
           <ChangeLog
             programme={programme}
+            name={g.shortNames[guidePath] ?? title}
             published={guidePublished[guidePath]}
             locale={locale}
           />
@@ -485,14 +489,26 @@ function Contents({
  * without either side holding a second copy of the label.
  */
 export function Section({
+  id,
   title,
+  answer,
   children,
 }: {
+  /**
+   * The anchor. Set explicitly on every guide section since the headings
+   * became questions (audit task B5-6): the ids are the ones the old headings
+   * produced, so existing links still land, and they are the same in every
+   * language — a Chinese heading used to slug to an empty or duplicate id.
+   */
+  id?: string;
+  /** The question a reader would ask. */
   title: string;
+  /** The complete answer, with the number, as the first thing under it. */
+  answer?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <section id={sectionId(title)} className="card-outline scroll-mt-24 p-7 sm:p-9">
+    <section id={id ?? sectionId(title)} className="card-outline scroll-mt-24 p-7 sm:p-9">
       <h2 className="font-serif text-h3 font-bold">
         {title}
       </h2>
@@ -504,6 +520,11 @@ export function Section({
           sequence of application steps is an <ol>, and it used to render as
           four indistinguishable bullets. */}
       <div className="space-y-4 text-ink-muted [&_a]:text-forest-700 [&_a]:underline [&_li]:ml-5 [&_li]:list-disc [&_ol>li]:list-decimal [&_strong]:font-bold [&_strong]:text-forest-900">
+        {answer && (
+          <p className="text-lead font-semibold leading-relaxed text-forest-900">
+            {answer}
+          </p>
+        )}
         {children}
       </div>
     </section>

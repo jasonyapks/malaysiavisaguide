@@ -140,7 +140,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="S-MM2H requirements: two routes to qualifying">
+      <Section
+        id="s-mm2h-requirements-two-routes-to-qualifying"
+        title="Who qualifies for Sarawak MM2H?"
+        answer={<>You qualify on either income of {income} or savings of {savings}, plus a {fd} fixed deposit in a Sarawak bank.</>}
+      >
         <p>
           S-MM2H accepts either an income stream or a pot of savings, which is
           unusual and makes it reachable for people the federal programme turns
@@ -182,7 +186,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="S-MM2H fees and costs">
+      <Section
+        id="s-mm2h-fees-and-costs"
+        title="How much does Sarawak MM2H cost?"
+        answer={<>A one-off {processing} processing fee to the state ministry and a security bond set by nationality; there is no participation fee.</>}
+      >
         <p>
           S-MM2H has fewer charges than federal MM2H and no participation fee at
           all. What is charged, by whom, and for whom:
@@ -262,7 +270,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="How to apply for S-MM2H">
+      <Section
+        id="how-to-apply-for-s-mm2h"
+        title="How do I apply for Sarawak MM2H?"
+        answer="Through a Sarawak sponsor or a Sarawak-licensed agent, to the state ministry (MTCP); there is no self-service route."
+      >
         <p>
           The application is a state process from start to finish, run by
           MTCP rather than by MOTAC or the Immigration Department&apos;s federal
@@ -321,7 +333,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="S-MM2H property rules: what a foreigner may buy in Sarawak">
+      <Section
+        id="s-mm2h-property-rules-what-a-foreigner-may-buy-in-sarawak"
+        title="Do I have to buy property for Sarawak MM2H?"
+        answer={<>No. Property is optional, and if you do buy, the floor is {kuching} in Kuching Division and {otherDiv} in all other divisions.</>}
+      >
         <p>
           Property is optional under S-MM2H. The fixed deposit is the
           qualifying route, and nobody has to buy anything to be approved. But
@@ -381,7 +397,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="The S-MM2H stay requirement: 30 days in Sarawak">
+      <Section
+        id="the-s-mm2h-stay-requirement-30-days-in-sarawak"
+        title="How long must I stay in Sarawak each year?"
+        answer="30 days a year, counted in Sarawak only; time in Kuala Lumpur does not count."
+      >
         <p>
           S-MM2H is a Sarawak programme, and its stay requirement reads:{" "}
           {s.minStayPerYear} Those are days <em>in Sarawak</em>. Time spent in Kuala Lumpur
@@ -400,7 +420,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="Sarawak MM2H vs federal MM2H">
+      <Section
+        id="sarawak-mm2h-vs-federal-mm2h"
+        title="How is Sarawak MM2H different from federal MM2H?"
+        answer={<>They are two separate programmes: Sarawak asks for a {fd} deposit and no property, against federal MM2H Silver&apos;s {money(silver.fixedDeposit!)} deposit and compulsory {money(silver.propertyPurchaseMin!)} purchase.</>}
+      >
         <p>
           These are two programmes run by two governments that share a name,
           and holding one tells you nothing about your position under the other.

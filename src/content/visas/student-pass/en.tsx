@@ -61,7 +61,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="How the application actually runs">
+      <Section
+        id="how-the-application-actually-runs"
+        title="How do I apply for a Malaysian Student Pass?"
+        answer="You do not apply yourself: for higher education your institution submits the application and EMGS screens it."
+      >
         <p>
           You do not apply for a Student Pass yourself. For higher education,
           your institution submits it and{" "}
@@ -75,7 +79,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="The work limit, precisely">
+      <Section
+        id="the-work-limit-precisely"
+        title="Can I work on a Student Pass?"
+        answer="Yes, up to 20 hours a week, in restaurants, petrol stations, mini markets, hotels and university areas only."
+      >
         <p>
           Twenty hours a week, in a defined list of settings: restaurants,
           petrol stations, mini markets, hotels and university areas. The right
@@ -90,7 +98,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="What happens after you graduate">
+      <Section
+        id="what-happens-after-you-graduate"
+        title="Can I stay in Malaysia after I graduate?"
+        answer="Not on the Student Pass: it ends with your course, with no automatic conversion to a work or residence pass."
+      >
         <p>
           The Student Pass ends with your course. There is no automatic
           conversion to a work or residence pass. Graduates who want to stay

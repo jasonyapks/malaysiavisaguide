@@ -119,7 +119,7 @@ export type UiStrings = {
     contentsChangeLog: string;
     /** The permanent change log on each guide (audit task B5-3). */
     changeLog: {
-      heading: string;
+      heading: (name: string) => string;
       lead: string;
       date: string;
       whatChanged: string;
@@ -131,7 +131,10 @@ export type UiStrings = {
       seeLog: string;
     };
     honestFitEyebrow: string;
-    honestFitTitleLead: string;
+    /** Takes the programme's short name — the heading is a question now. */
+    honestFitTitleLead: (name: string) => string;
+    /** Short programme names for question headings, by guide path. */
+    shortNames: Record<string, string>;
     honestFitTitleAccent: string;
     goodFitIf: string;
     lookElsewhereIf: string;
@@ -524,7 +527,7 @@ export const ui: UiStrings = {
     contentsQuestions: "Common questions",
     contentsChangeLog: "Change log",
     changeLog: {
-      heading: "Change log",
+      heading: (name) => `What has changed in ${name}?`,
       lead: "Every change to this programme's terms that this guide has recorded, newest first.",
       date: "Date",
       whatChanged: "What changed",
@@ -538,8 +541,16 @@ export const ui: UiStrings = {
       seeLog: "See the change log",
     },
     honestFitEyebrow: "Honest fit",
-    honestFitTitleLead: "Who it suits — and",
-    honestFitTitleAccent: "who it doesn't",
+    honestFitTitleLead: (name) => `Who does ${name} suit, and`,
+    honestFitTitleAccent: "who should look elsewhere?",
+    shortNames: {
+      "/visas/pvip/": "PVIP",
+      "/visas/mm2h/": "MM2H",
+      "/visas/sarawak-mm2h/": "Sarawak MM2H",
+      "/visas/de-rantau/": "DE Rantau",
+      "/visas/employment-pass/": "the Employment Pass",
+      "/visas/student-pass/": "the Student Pass",
+    },
     goodFitIf: "A good fit if",
     lookElsewhereIf: "Look elsewhere if",
     ctaDefault: "Continue",

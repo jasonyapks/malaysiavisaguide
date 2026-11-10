@@ -99,7 +99,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="MM2H fees: the costs that don't appear in the deposit figure">
+      <Section
+        id="mm2h-fees-the-costs-that-don-t-appear-in-the-deposit-figure"
+        title="What does MM2H cost beyond the fixed deposit?"
+        answer="Three things: a government-set agency fee of RM40,000 to RM70,000, a compulsory property purchase of RM600,000 to RM2,000,000, and the participation fee."
+      >
         <p>
           MM2H is usually described by its fixed deposit, which is the least
           expensive part of it. The deposit stays yours. Three other numbers do
@@ -152,7 +156,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="MM2H agency fees are fixed by the government">
+      <Section
+        id="mm2h-agency-fees-are-fixed-by-the-government"
+        title="How much is the MM2H agency fee?"
+        answer="RM40,000 on Silver and SEZ, RM55,000 on Gold and RM70,000 on Platinum, all inclusive of 8% SST and fixed by the government."
+      >
         <p>
           This is the most useful thing to know before you speak to anyone about
           MM2H, and it is the reverse of how the market is usually described.
@@ -206,7 +214,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="MM2H property requirement: the minimum is not the price you will pay">
+      <Section
+        id="mm2h-property-requirement-the-minimum-is-not-the-price-you-will-pay"
+        title="How much property must an MM2H holder buy?"
+        answer="The programme minimum starts at RM600,000 on Silver, but the state floor for foreign buyers applies on top: RM1,000,000 in Kuala Lumpur and RM2,000,000 in Selangor."
+      >
         <p>{silver.propertyStateFloorNote}</p>
         <p>
           This catches Silver applicants hardest, because the gap is the widest:
@@ -236,7 +248,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="MM2H age requirements: the rule most guides get wrong">
+      <Section
+        id="mm2h-age-requirements-the-rule-most-guides-get-wrong"
+        title="What is the minimum age for MM2H?"
+        answer="25 for the main applicant, not 30; ages 25 to 49 must spend 90 days a year in Malaysia and from 50 there is no minimum stay."
+      >
         <p>
           MOTAC&apos;s category table sets the minimum age for the main
           applicant at <strong>25</strong>, not 30. The stay requirement is then
@@ -266,7 +282,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="MM2H for dependants and family">
+      <Section
+        id="mm2h-for-dependants-and-family"
+        title="Who can I bring on MM2H?"
+        answer="Your spouse, single children up to age 34, and parents and parents-in-law."
+      >
         <p>
           Children may be included up to age 34 provided they are single, which
           is to say up to but not including their thirty-fifth birthday. That is
@@ -276,7 +296,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="MM2H SEZ and SFZ zone routes">
+      <Section
+        id="mm2h-sez-and-sfz-zone-routes"
+        title="What are the MM2H SEZ and SFZ routes?"
+        answer="Two lower-cost zone routes with a USD 65,000 fixed deposit (USD 32,000 from age 50), a 10-year renewable pass and a RM1,000 participation fee."
+      >
         <p>
           MOTAC also publishes two lower-cost routes for the Special Economic
           Zone and Special Financial Zone. They are not tiers in the Silver /

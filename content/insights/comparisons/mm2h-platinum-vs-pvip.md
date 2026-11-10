@@ -18,7 +18,7 @@ faq:
   - q: "Which one needs less money up front?"
     a: "PVIP, and not by a small margin, on capital. PVIP pledges RM1,000,000 on fixed deposit and compels no property purchase. Platinum pledges USD1,000,000 and compels a residence of RM2,000,000 or above that you cannot sell for ten years. The participation fee is RM200,000 on both. Fees run the other way once a family is involved: Platinum's agency fee is a government-fixed RM70,000 and its participation fee is charged per application, while PVIP charges RM100,000 or RM50,000 per dependant plus a RM2,000 per person per year pass fee."
   - q: "Which one is better for a large family?"
-    a: "Platinum, on fees. MM2H charges its participation fee per application, so four dependants add roughly RM27,000 in processing, additional agency and pass fees over a five-year initial approval. PVIP charges per person: the same four cost RM400,000 in participation fees at the twenty-year term, plus RM40,000 of pass fees. Platinum also admits a wider family — children up to 35 while unmarried, and both sets of parents. The capital gap still runs the other way, so run your own numbers rather than treating this as decisive."
+    a: "Platinum, on fees. MM2H charges its participation fee per application, so four dependants add roughly RM27,000 in processing, additional agency and pass fees over a five-year initial approval. PVIP charges per person: the same four cost RM40,000 of pass fees over the same five years, plus RM400,000 in participation fees, which are paid once and cover the full twenty-year term. Platinum also admits a wider family — children up to 35 while unmarried, and both sets of parents. The capital gap still runs the other way, so run your own numbers rather than treating this as decisive."
   - q: "What if I want to rent rather than buy?"
     a: "Then PVIP, clearly. PVIP compels no property purchase on any timescale. Platinum's purchase is compulsory after approval, so you cannot rent for a year, learn the market and then decide. Renting also keeps you out of the state-law thresholds that sit above the programme minimum — RM2,000,000 in Selangor, RM1,000,000 in Kuala Lumpur."
   - q: "What if I cannot show RM40,000 a month?"
@@ -46,7 +46,7 @@ Here is the thing almost nobody has updated. On paper, these two programmes have
 
 Can you evidence {{pvip:incomeRequirement:moneyPer}} of income?
 
-That is the whole fork. PVIP tests income; MM2H Platinum does not test income at all. Everything else follows from which side of that line you fall on, and no amount of capital moves you across it — an applicant with eight figures in assets and no provable monthly income cannot buy their way into PVIP.
+That is the whole fork. PVIP tests income against a published figure; MM2H Platinum publishes no income figure to meet. Everything else follows from which side of that line you fall on, and no amount of capital moves you across it — an applicant with eight figures in assets and no provable monthly income cannot buy their way into PVIP.
 
 The test is broader than most write-ups admit, which matters if you have already ruled yourself out. It does not have to be salary: realised investment gains, rental income and pension drawdown all count. It does not have to be offshore either — Malaysian-sourced income qualifies, with proof of Malaysian income tax paid on it. The catch comes with the breadth: an applicant without a fixed salary, a retiree included, must also show RM5,000,000 in savings on top of the income, with twelve months of bank statements.
 
@@ -59,7 +59,7 @@ One qualification on the Platinum side, because “no income requirement” is e
 {% table caption="MM2H Platinum and PVIP, on current official guidance" %}
 |  | MM2H Platinum | PVIP |
 | --- | --- | --- |
-| **Income requirement** | **None** [^1] | {{pvip:incomeRequirement:moneyPer}} |
+| **Income requirement** | **No published figure** [^1] | {{pvip:incomeRequirement:moneyPer}} |
 | **Fixed deposit** | {{mm2h-platinum:fixedDeposit:money}} | {{pvip:fixedDeposit:money}} [^2] |
 | **Property purchase** | From {{mm2h-platinum:propertyPurchaseMin:money}} [^3] | **Not required** |
 | **Agency fee** | {{mm2h-platinum:agencyFee.principal:money}} [^5] | Set by the agency [^6] |
@@ -84,7 +84,7 @@ Read the deposit row twice. One is a ringgit sum, the other is a US dollar sum o
 
 Platinum, and the reason is arithmetic rather than policy. MM2H charges its {{mm2h-platinum:participationFee.principal:money}} participation fee **per application**, so a dependant adds the {{mm2h-platinum:processingFee.dependant:money}} processing fee, RM2,160 of additional agency fee from the second dependant onwards, and small per-year pass and visa fees. PVIP charges its participation fee **per person**: RM100,000 for a dependant on the twenty-year term, or RM50,000 on the ten.
 
-Take a couple with two children and a parent — four dependants. On Platinum that is RM10,000 of processing fees, RM6,480 of additional agency fee, and RM10,000 of pass fees across a five-year initial approval: under RM27,000 all in. The same four on PVIP cost RM400,000 in participation fees at the twenty-year term, before the pass fee adds RM40,000 more.
+Take a couple with two children and a parent — four dependants — and cost both over the same period, the first five-year approval. On Platinum that is RM10,000 of processing fees, RM6,480 of additional agency fee and RM10,000 of pass fees: under RM27,000. On PVIP the same four pay RM40,000 of pass fees for those five years, plus RM400,000 in participation fees at the twenty-year term. The participation fee is the one figure here that is not a five-year cost: it is paid once and covers the whole term. The pass fees on both programmes are charged again at each renewal.
 
 The capital gap runs the other way and is larger, so this does not overturn the comparison on its own. But past three or four dependants the fee gap stops being a rounding error and starts closing it, and Platinum takes a wider family in the first place: children up to 35 while unmarried, and both sets of parents. Run your own family size through the [cost calculator](/tools/cost-calculator/) rather than taking the couple above as representative.
 
@@ -122,4 +122,4 @@ Both now permit it, so choose on the capital, not the permission. But check the 
 
 If you can prove {{pvip:incomeRequirement:moneyPer}}, take PVIP and keep the capital. If you cannot, PVIP is not a stretch or a maybe — it is closed, and MM2H Platinum is the twenty-year route that remains open to you. Everything else is detail.
 
-One disclosure, because it changes how you should read the above: this site is published by someone who runs a licensed agency for _both_ programmes, and is paid either way. That is the reason the recommendation here is the cheaper one wherever you qualify for it — and the reason every figure above is linked to the government document it came from, so you can check it without taking anyone's word. [More on that](/about/), and the [eligibility checker](/tools/eligibility/) will run your own numbers against both.
+One disclosure, because it changes how you should read the above: this site is published by someone who runs a licensed agency for _both_ programmes, and is paid either way. That is the reason the recommendation here is the cheaper one wherever you qualify for it — and the reason every figure above is either linked to the government document it came from or labelled as MYPVIP practice with a date, so you can see which is which and check the official ones without taking anyone's word. [More on that](/about/), and the [eligibility checker](/tools/eligibility/) will run your own numbers against both.

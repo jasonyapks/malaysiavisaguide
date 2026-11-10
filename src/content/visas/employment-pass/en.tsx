@@ -70,7 +70,11 @@ export const copy: GuideCopy = {
 
   sections: (href) => (
     <>
-      <Section title="The three categories, effective 1 June 2026">
+      <Section
+        id="the-three-categories-effective-1-june-2026"
+        title="What salary do I need for a Malaysian Employment Pass?"
+        answer="From 1 June 2026: RM20,000 a month for Category I, RM10,000 for Category II and RM5,000 for Category III."
+      >
         <ul>
           <li>
             <strong>Category I — RM20,000 a month and above.</strong> Up to 10
@@ -94,7 +98,11 @@ export const copy: GuideCopy = {
         </p>
       </Section>
 
-      <Section title="What changed, and why it matters">
+      <Section
+        id="what-changed-and-why-it-matters"
+        title="What changed for the Employment Pass on 1 June 2026?"
+        answer="Three things: salary thresholds rose, the length of employment was capped at 10 years (5 for Category III), and a succession plan became a formal condition."
+      >
         <p>
           The 1 June 2026 policy did three things: it raised the salary
           thresholds, it capped how long an expatriate may be employed, and it
