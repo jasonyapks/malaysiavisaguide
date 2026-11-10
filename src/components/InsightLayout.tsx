@@ -238,7 +238,9 @@ function ArticleSchema({
     dateModified: article.reviewed,
     author: {
       "@type": "Person",
+      "@id": site.author.id,
       name: "Jason Yap",
+      sameAs: site.author.sameAs,
       jobTitle: getUi(locale).news.article.authorJobTitle,
       url: localeUrl("/about/", locale),
     },

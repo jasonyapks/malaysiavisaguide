@@ -349,7 +349,9 @@ function Schemas({
       .split(/\s+/).length,
     author: {
       "@type": "Person",
+      "@id": site.author.id,
       name: "Jason Yap",
+      sameAs: site.author.sameAs,
       jobTitle: copy.article.authorJobTitle,
       url: localeUrl("/about/", locale),
     },

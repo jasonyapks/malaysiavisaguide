@@ -92,7 +92,9 @@ export function GuideLayout({
     dateModified: pageUpdatedISODate(guideHref[programme.slug], programme),
     author: {
       "@type": "Person",
+      "@id": site.author.id,
       name: "Jason Yap",
+      sameAs: site.author.sameAs,
       jobTitle: "Managing Director, MYPVIP",
     },
     publisher: { "@type": "Organization", name: site.name, url: site.url },

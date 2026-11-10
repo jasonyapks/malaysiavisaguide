@@ -8,6 +8,13 @@ export const site = {
   // Feeds canonicals, sitemap and OG tags. Switched to the real domain at the
   // cutover (SPEC.md §10e, 2026-07-25).
   url: localeOrigin.en,
+  /** The one author, as every Person block in the JSON-LD names him. The `@id`
+   *  lets crawlers merge those blocks into one entity; `sameAs` is the profile
+   *  that confirms who he is. */
+  author: {
+    id: `${localeOrigin.en}/about/#jason-yap`,
+    sameAs: ["https://www.linkedin.com/in/jason-yap-mypvip/"],
+  },
   description:
     "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
   // There were `newsApi` and `insightsApi` URLs here, pointing at the news

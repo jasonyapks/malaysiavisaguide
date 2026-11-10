@@ -176,8 +176,10 @@ export function RootShell({
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${site.url}/#organization`,
     name: ui.siteName,
     url: site.url,
+    logo: `${site.url}/logo-mark.png`,
     description: ui.siteDescription,
   };
 

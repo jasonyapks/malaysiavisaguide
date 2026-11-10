@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { type Locale } from "@/lib/i18n";
+import { localeUrl, type Locale } from "@/lib/i18n";
+import { site } from "@/lib/site";
 import { linkPath } from "@/lib/translated";
 import { images } from "@/lib/images";
 import { Figure } from "@/components/Figure";
@@ -32,7 +33,10 @@ export function AboutPage({
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": site.author.id,
     name: "Jason Yap",
+    url: localeUrl("/about/", locale),
+    sameAs: site.author.sameAs,
     jobTitle: "Managing Director, MYPVIP",
     worksFor: [
       { "@type": "Organization", name: "MYPVIP (MY PR Program Sdn Bhd)" },
