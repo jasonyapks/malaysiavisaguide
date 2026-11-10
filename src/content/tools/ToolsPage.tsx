@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/Disclosure";
 import Link from "next/link";
 import { GuideHead } from "@/components/GuideHead";
 import { localeUrl, type Locale } from "@/lib/i18n";
@@ -28,6 +29,7 @@ export function ToolsPage({
         <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
           {copy.description}
         </p>
+        <Disclosure locale={locale} />
       </header>
 
       <section className="space-y-6">

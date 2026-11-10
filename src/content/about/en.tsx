@@ -12,8 +12,9 @@ export const copy: AboutCopy = {
 
   standfirst: (
     <>
-      This is an independent reference on Malaysia&apos;s long-stay visas,
-      written by someone who files these applications for a living. It is not a
+      This is a reference on Malaysia&apos;s long-stay visas, written and
+      maintained by a licensed PVIP and MM2H agent: someone who files these
+      applications for a living. It is not a
       government site, and it is candid about its commercial relationships —
       both are explained below.
     </>
@@ -82,7 +83,7 @@ export const copy: AboutCopy = {
           to file, because a reference that hides the inconvenient options is
           not a reference at all. The{" "}
           <Link href={href("/editorial-policy/")}>editorial policy</Link> sets
-          out exactly how that independence is kept.
+          out the commitments that go with it.
         </p>
       </>
     ),
@@ -152,7 +153,7 @@ export const copy: AboutCopy = {
         This site is not affiliated with the Immigration Department of Malaysia,
         MOTAC, MDEC, the Sarawak state government, EMGS, or any other public
         authority. Every figure it publishes is traced back to an official
-        source, but the site itself is a private, independently-run guide. For a
+        source, but the site itself is a private guide run by a licensed agent. For a
         formal application you deal with the relevant authority or a licensed
         agent — this guide helps you walk in knowing what to expect.
       </p>

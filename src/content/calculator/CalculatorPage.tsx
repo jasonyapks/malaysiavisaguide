@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/Disclosure";
 import { SupersededNotices } from "@/components/SupersededNotice";
 import { programmes } from "@/lib/data/programmes";
 import type { Locale } from "@/lib/i18n";
@@ -18,6 +19,7 @@ export function CalculatorPage({
       <header className="space-y-4">
         <h1 className="text-h1 font-semibold">{copy.heading}</h1>
         <p className="text-lead leading-relaxed text-ink-muted">{copy.lead}</p>
+        <Disclosure locale={locale} />
       </header>
 
       <CostCalculator locale={locale} />

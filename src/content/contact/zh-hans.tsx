@@ -34,5 +34,5 @@ export const copy: ContactCopy = {
   errorGeneric: "出了点问题，请稍后再试一次。",
   errorNetwork: (email) => `无法发送。请直接发电邮至 ${email}。`,
   privacyNote:
-    "你提供的资料仅用于回复这次查询。本站是独立指南 —— 发送问题并不等于开始办理签证申请。",
+    "你提供的资料仅用于回复这次查询。本站由持牌 PVIP 与 MM2H 代理撰写，但发送问题并不等于开始办理签证申请。",
 };

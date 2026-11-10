@@ -150,7 +150,7 @@ export const copy: EditorialPolicyCopy = {
   },
 
   independence: {
-    heading: "独立性与更正",
+    heading: "商业利益与更正",
     body: (href) => (
       <>
         <p>

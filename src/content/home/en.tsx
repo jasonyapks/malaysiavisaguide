@@ -4,7 +4,7 @@ import type { HomeCopy } from "./types";
 /** English home page copy — moved here verbatim from app/page.tsx. */
 export const copy: HomeCopy = {
   hero: {
-    eyebrow: "Independent · every figure sourced and dated",
+    eyebrow: "By a licensed agent · every figure sourced and dated",
     // Branding template §9, verbatim. "Malaysia" takes the display face and the
     // gold, because the template's brand equation puts the destination — not
     // the paperwork — at the end of the sentence (§14, §16).

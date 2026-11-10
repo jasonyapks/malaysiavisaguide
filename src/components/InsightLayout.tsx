@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/Disclosure";
 import Link from "next/link";
 import { authorRef, publisherRef } from "@/lib/schema";
 import { Byline } from "@/components/Byline";
@@ -75,6 +76,7 @@ export function InsightLayout({
         <p className="border-l-4 border-forest-600 bg-forest-50 py-4 pl-5 pr-4 text-lead leading-relaxed text-forest-900">
           {article.dek}
         </p>
+        <Disclosure locale={locale} />
         <p className="text-body-sm text-ink-muted">
           {copy.article.publishedLine(
             article.readingMinutes,

@@ -35,5 +35,5 @@ export const copy: ContactCopy = {
   errorNetwork: (email) =>
     `Couldn't send that. Please email ${email} directly instead.`,
   privacyNote:
-    "Your details are used only to reply to this enquiry. This is an independent guide — sending a question does not start a visa application.",
+    "Your details are used only to reply to this enquiry. This guide is written by a licensed PVIP and MM2H agent, but sending a question does not start a visa application.",
 };

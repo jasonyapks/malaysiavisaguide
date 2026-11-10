@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/Disclosure";
 import {
   Children,
   Fragment,
@@ -186,6 +187,8 @@ export function GuideLayout({
           <p className="card-flat max-w-3xl border-l-4 border-l-forest-600 px-7 py-6 text-lead leading-relaxed text-forest-900">
             {answer}
           </p>
+
+          <Disclosure locale={locale} />
 
           {/* Between the answer and the figures on purpose: a reader who is
               going to act on a superseded fee has to pass the warning to reach

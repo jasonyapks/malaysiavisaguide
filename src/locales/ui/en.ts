@@ -141,6 +141,10 @@ export type UiStrings = {
     bylineMid: string;
     bylineAfter: string;
     bylinePublished: (date: string) => string;
+    /** The one-line disclosure under the H1 (audit task B3-2); the author's
+     *  name, linked to the author page, sits between the two halves. */
+    disclosureLineBefore: string;
+    disclosureLineAfter: string;
     bylineLastReviewed: (date: string) => string;
     /** The tier comparison table — components/TierTable.tsx. */
     tiers: {
@@ -385,10 +389,10 @@ export type UiStrings = {
 export const ui: UiStrings = {
   siteName: "Malaysia Visa Guide",
   siteDescription:
-    "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
+    "Malaysia's long-stay visas — PVIP, MM2H, Sarawak MM2H and DE Rantau — explained by a licensed PVIP and MM2H agent. Figures checked against official documents.",
   ogImageAlt:
-    "Malaysia Visa Guide — an independent guide to PVIP, MM2H, Sarawak MM2H, DE Rantau and the Student and Employment passes.",
-  strapline: ["Independent visa guide", "not a government body"],
+    "Malaysia Visa Guide — PVIP, MM2H, Sarawak MM2H, DE Rantau and the Student and Employment passes, explained by a licensed PVIP and MM2H agent.",
+  strapline: ["By a licensed visa agent", "not a government body"],
   askQuestion: "Ask a question",
   menu: "Menu",
   ariaPrimaryNav: "Primary",
@@ -488,10 +492,10 @@ export const ui: UiStrings = {
     headingAccent: "no sales pitch",
     disclosureTitle: "Publisher & disclosure",
     disclosureBefore:
-      "An independent guide — not affiliated with the Immigration Department of Malaysia or any government agency. Published by Jason Yap, Managing Director of ",
+      "Written and maintained by a licensed PVIP and MM2H agent. Figures are checked against official documents; where we rely on our own practice, we say so. Not affiliated with the Immigration Department of Malaysia or any government agency. Published by Jason Yap, Managing Director of ",
     disclosureMypvip: "MYPVIP",
     disclosureBetween:
-      ", a licensed agency whose services are described on ",
+      " (MY PR Program Sdn Bhd, which handles Premium Visa Programme applications) and of MY Premium MM2H (My Premium (MM2H) Sdn Bhd, which handles Malaysia My Second Home applications). Both are described on ",
     disclosureAbout: "the about page",
     disclosureAfter: ".",
     rights: "All rights reserved.",
@@ -517,7 +521,10 @@ export const ui: UiStrings = {
     keyFactsLabel: (programme) => `Key facts: ${programme}`,
     bylineBefore: "Written and reviewed by ",
     bylineMid: "President, MPVIPCA · Managing Director, ",
-    bylineAfter: "",
+    bylineAfter: " (Premium Visa Programme) and MY Premium MM2H (Malaysia My Second Home)",
+    disclosureLineBefore: "Disclosure: this guide is published by ",
+    disclosureLineAfter:
+      ", Managing Director of MYPVIP and MY Premium MM2H, which are licensed PVIP and MM2H agencies.",
     bylinePublished: (date) => `Published ${date}`,
     bylineLastReviewed: (date) => `Last reviewed ${date}`,
     tiers: {

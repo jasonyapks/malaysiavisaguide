@@ -155,7 +155,7 @@ export const copy: EditorialPolicyCopy = {
   },
 
   independence: {
-    heading: "Independence and corrections",
+    heading: "Commercial interest and corrections",
     body: (href) => (
       <>
         <p>

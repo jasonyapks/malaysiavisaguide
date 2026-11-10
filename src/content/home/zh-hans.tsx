@@ -18,7 +18,7 @@ import type { HomeCopy } from "./types";
  */
 export const copy: HomeCopy = {
   hero: {
-    eyebrow: "独立运营 · 每个数字都注明出处与日期",
+    eyebrow: "持牌代理撰写 · 每个数字都注明出处与日期",
     // 品牌模板 §9：Your Guide. Your Future. Malaysia.
     // 英文原句是三个短句，中文拆成三行会各只有四个字，在 display 字号下显得
     // 单薄；合并成两行，重音仍落在「马来西亚」——那是这句话真正的落点。
@@ -35,7 +35,7 @@ export const copy: HomeCopy = {
     // 英文用 "Long-Stay Residency"，中文说「长期居留」——这是中文读者
     // 真正会搜的词，不是 "Residency" 的直译。
     subheading: "马来西亚签证与长期居留指南 2026",
-    lead: "独立、清晰、实用的马来西亚签证、居留与长期生活指引。本站的每一个数字，都核对过官方来源。",
+    lead: "清晰、实用的马来西亚签证、居留与长期生活指引。本站的每一个数字，都核对过官方来源。",
     chips: ["六项计划全覆盖", "费用全部列明", "每月复核"],
     ctaPrimary: "查看签证选项",
     ctaSecondary: "咨询专家",

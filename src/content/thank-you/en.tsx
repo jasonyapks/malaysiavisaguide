@@ -22,8 +22,7 @@ export const copy: ThankYouCopy = {
     <>
       <p>
         One thing worth knowing while you wait: sending that message did not
-        start a visa application, and it does not commit you to anything. This
-        is an independent guide. If the answer turns out to be that you are
+        start a visa application, and it does not commit you to anything. If the answer turns out to be that you are
         better off applying yourself, or under a cheaper programme, that is what
         you will be told &mdash; the{" "}
         <Link href={href("/editorial-policy/")}>editorial policy</Link> and the{" "}

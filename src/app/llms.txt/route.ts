@@ -60,7 +60,7 @@ export async function GET() {
   const body = [
     `# ${SITE}`,
     "",
-    "> An independent guide to Malaysia's long-stay visa programmes: PVIP, MM2H, Sarawak MM2H, DE Rantau, the Employment Pass and the Student Pass. Costs, requirements and timelines, each figure dated and sourced to the official document it comes from.",
+    "> A guide to Malaysia's long-stay visa programmes, written and maintained by a licensed PVIP and MM2H agent: PVIP, MM2H, Sarawak MM2H, DE Rantau, the Employment Pass and the Student Pass. Costs, requirements and timelines, each figure dated and sourced to the official document it comes from.",
     "",
     "Written and reviewed by Jason Yap, Managing Director of two licensed Malaysian visa agencies (MYPVIP and MY Premium MM2H); the relationship is disclosed on every page. Each page carries its review date and a source list. Where an official document has not caught up with a rule change, the page says so and names the source it relies on instead.",
     "",

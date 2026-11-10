@@ -16,10 +16,10 @@ import type { UiStrings } from "./en";
 export const ui: UiStrings = {
   siteName: "马来西亚签证指南",
   siteDescription:
-    "独立解读马来西亚长期居留签证 —— PVIP、MM2H、砂拉越 MM2H 与 DE Rantau。费用、条件与办理时程，全部核对官方来源。",
+    "由持牌 PVIP 与 MM2H 代理讲解马来西亚长期居留签证 —— PVIP、MM2H、砂拉越 MM2H 与 DE Rantau。费用、条件与办理时程，全部核对官方文件。",
   ogImageAlt:
-    "Malaysia Visa Guide —— 独立解读 PVIP、MM2H、砂拉越 MM2H、DE Rantau 以及学生准证与工作准证。",
-  strapline: ["独立签证指南", "并非政府机构"],
+    "Malaysia Visa Guide —— 由持牌 PVIP 与 MM2H 代理讲解 PVIP、MM2H、砂拉越 MM2H、DE Rantau 以及学生准证与工作准证。",
+  strapline: ["持牌代理撰写", "并非政府机构"],
   askQuestion: "咨询提问",
   menu: "菜单",
   ariaPrimaryNav: "主导航",
@@ -110,9 +110,9 @@ export const ui: UiStrings = {
     headingAccent: "绝不推销",
     disclosureTitle: "出版方与利益声明",
     disclosureBefore:
-      "本站是独立指南 —— 与马来西亚移民局或任何政府机构均无隶属关系。出版人为 Jason Yap，他同时是 ",
+      "本站由持牌 PVIP 与 MM2H 代理撰写并维护。数字均核对官方文件；凡依据我们自身办理经验之处，都会注明。本站与马来西亚移民局或任何政府机构均无隶属关系。出版人为 Jason Yap，他同时是 ",
     disclosureMypvip: "MYPVIP",
-    disclosureBetween: " 的董事总经理；该持牌代理机构提供的服务，说明见",
+    disclosureBetween: "（MY PR Program Sdn Bhd，办理 Premium Visa Programme 申请）与 MY Premium MM2H（My Premium (MM2H) Sdn Bhd，办理 Malaysia My Second Home 申请）的董事总经理。两家公司的说明见",
     disclosureAbout: "关于我们",
     disclosureAfter: "。",
     rights: "版权所有。",
@@ -138,7 +138,9 @@ export const ui: UiStrings = {
     keyFactsLabel: (programme) => `${programme} 关键数据`,
     bylineBefore: "撰写与复核：",
     bylineMid: "MPVIPCA 会长 · ",
-    bylineAfter: " 董事总经理",
+    bylineAfter: "（Premium Visa Programme）与 MY Premium MM2H（Malaysia My Second Home）董事总经理",
+    disclosureLineBefore: "利益声明：本站出版人 ",
+    disclosureLineAfter: " 是 MYPVIP 与 MY Premium MM2H 的董事总经理，两家公司均为持牌的 PVIP、MM2H 代理机构。",
     bylinePublished: (date) => `发布于 ${date}`,
     bylineLastReviewed: (date) => `最后复核于 ${date}`,
     tiers: {

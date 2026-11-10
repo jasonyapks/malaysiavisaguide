@@ -37,5 +37,5 @@ export const copy: ContactCopy = {
   errorGeneric: "出了點問題，請稍後再試一次。",
   errorNetwork: (email) => `無法發送。請直接發電郵至 ${email}。`,
   privacyNote:
-    "你提供的資料僅用於回覆這次查詢。本站是獨立指南 —— 發送問題並不等於開始辦理簽證申請。",
+    "你提供的資料僅用於回覆這次查詢。本站由持牌 PVIP 與 MM2H 代理撰寫，但發送問題並不等於開始辦理簽證申請。",
 };

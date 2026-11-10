@@ -25,7 +25,7 @@ export const site = {
   },
   organizationId: `${localeOrigin.en}/#organization`,
   description:
-    "An independent guide to Malaysia's long-stay visa programmes — PVIP, MM2H, Sarawak MM2H and DE Rantau. Costs, requirements and timelines, verified against official sources.",
+    "Malaysia's long-stay visas — PVIP, MM2H, Sarawak MM2H and DE Rantau — explained by a licensed PVIP and MM2H agent. Figures checked against official documents.",
   // There were `newsApi` and `insightsApi` URLs here, pointing at the news
   // Worker, and the build fetched both. It does not any more: since 2026-08-25
   // articles are markdown in content/, and src/lib/news.ts and
