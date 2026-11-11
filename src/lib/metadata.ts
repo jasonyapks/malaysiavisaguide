@@ -3,6 +3,14 @@ import { htmlLang, localeUrl, type Locale } from "./i18n";
 import { availableLocales } from "./translated";
 import { getUi } from "./ui";
 import { seoOverrides } from "./data/seo-overrides";
+import { seoOverrides as zhHansOverrides } from "@/locales/seo-overrides/zh-hans";
+import { seoOverrides as zhHantOverrides } from "@/locales/seo-overrides/zh-hant";
+
+const OVERRIDES: Record<Locale, Record<string, { title?: string; description?: string }>> = {
+  en: seoOverrides,
+  "zh-hans": zhHansOverrides,
+  "zh-hant": zhHantOverrides,
+};
 
 /** Google truncates a title at roughly 60 Latin characters; a CJK character is
  *  about twice as wide, so it counts double. */
@@ -18,8 +26,9 @@ function titleWidth(s: string): number {
  *
  * Two rules, both from the November 2026 audit (B1-2, B1-3):
  *
- *  1. An English article may carry a search-specific title and description in
- *     `seo-overrides.ts`, where its headline or dek does not fit a results page.
+ *  1. A page may carry a search-specific title and description where its
+ *     headline or dek does not fit a results page: English in
+ *     `data/seo-overrides.ts`, Chinese in `locales/seo-overrides/` (B2-F7).
  *  2. The " — Malaysia Visa Guide" suffix is kept only when the whole title
  *     still fits the budget. Otherwise the title stands alone — the query-
  *     matching words are worth more than the brand being cut off mid-word.
@@ -37,7 +46,7 @@ export function seoText({
   title?: string;
   description?: string;
 }): { title?: Metadata["title"]; full?: string; description?: string } {
-  const o = locale === "en" ? seoOverrides[canonicalPath] : undefined;
+  const o = OVERRIDES[locale][canonicalPath];
   const t = o?.title ?? title;
   const d = o?.description ?? description;
   if (!t) return { description: d };
