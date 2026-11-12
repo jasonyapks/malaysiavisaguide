@@ -74,5 +74,18 @@ export const copy: EventsCopy = {
         </>
       ),
     },
+    "pvip-vs-mm2h-mandarin-2026-11-25": {
+      title: "看懂大馬尊貴簽證（PVIP）與第二家園（MM2H）分別？",
+      format: "Zoom 線上講座 · 中文 · 免費",
+      speakers: "講者為 PVIP 與 MM2H 專家 Evonne Tan，她是 MYPVIP 的業務夥伴。",
+      summary: (
+        <>
+          <p>
+            比較 PVIP 尊貴簽證與 MM2H
+            第二家園計劃：存款要求、資金流動性及居住限制；工作、創業許可、購房規定及隨行家屬權益；以及按預算、家庭需求與未來規劃選擇方案。最後設有現場問答。
+          </p>
+        </>
+      ),
+    },
   },
 };

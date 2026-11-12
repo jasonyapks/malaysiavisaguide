@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { htmlLang, localeUrl, type Locale } from "./i18n";
-import { availableLocales } from "./translated";
+import { availableLocales, isChineseOnly } from "./translated";
 import { getUi } from "./ui";
 import { seoOverrides } from "./data/seo-overrides";
 import { seoOverrides as zhHansOverrides } from "@/locales/seo-overrides/zh-hans";
@@ -92,7 +92,10 @@ export function pageMetadata({
   for (const l of availableLocales(canonicalPath)) {
     languages[htmlLang[l]] = localeUrl(canonicalPath, l);
   }
-  languages["x-default"] = localeUrl(canonicalPath, "en");
+  languages["x-default"] = localeUrl(
+    canonicalPath,
+    isChineseOnly(canonicalPath) ? "zh-hans" : "en",
+  );
 
   const seo = seoText({ canonicalPath, locale, title, description });
 

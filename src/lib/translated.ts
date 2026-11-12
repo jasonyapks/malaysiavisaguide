@@ -78,6 +78,15 @@ export const translatedRoutes = new Set<string>([
  */
 const translatedContentPaths = new Set<string>(translatedContent.paths);
 
+/** Content written in Chinese with no English page (`chineseOnly: true`). */
+const chineseOnlyPaths = new Set<string>(
+  (translatedContent as { chineseOnly?: string[] }).chineseOnly ?? [],
+);
+
+export function isChineseOnly(canonicalPath: string): boolean {
+  return chineseOnlyPaths.has(canonicalPath);
+}
+
 export function isTranslated(canonicalPath: string): boolean {
   return (
     translatedRoutes.has(canonicalPath) ||
@@ -126,6 +135,7 @@ export function linkPath(canonicalPath: string, locale: Locale): string {
  * and by `pageMetadata()` for hreflang.
  */
 export function availableLocales(canonicalPath: string): Locale[] {
+  if (isChineseOnly(canonicalPath)) return [...prefixedLocales];
   return isTranslated(canonicalPath)
     ? ["en", ...prefixedLocales]
     : ["en"];

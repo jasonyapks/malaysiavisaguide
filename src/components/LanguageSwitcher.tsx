@@ -11,7 +11,7 @@ import {
   publicPath,
   type Locale,
 } from "@/lib/i18n";
-import { isTranslated } from "@/lib/translated";
+import { isChineseOnly, isTranslated } from "@/lib/translated";
 
 /**
  * EN / 简体 / 繁體 — the switch the old header only mimed.
@@ -57,6 +57,10 @@ export function LanguageSwitcher({
   // prefix or every "EN" link points at the internal path on the apex.
   const path = publicPath(usePathname());
   const translated = isTranslated(path);
+  // A Chinese-only article has no English page: its EN link goes to the
+  // English home, marked untranslated, like a missing translation does.
+  const exists = (target: Locale) =>
+    target === "en" ? !isChineseOnly(path) : translated;
 
   return (
     <nav
@@ -84,15 +88,11 @@ export function LanguageSwitcher({
             // that language's home instead of a URL that does not exist.
             // Absolute, always: every target is a different hostname now, so
             // there is no such thing as a relative link to another language.
-            href={
-              translated || target === "en"
-                ? localeUrl(path, target)
-                : localeUrl("/", target)
-            }
+            href={exists(target) ? localeUrl(path, target) : localeUrl("/", target)}
             // The BCP-47 tag, not our internal locale id: `hreflang` is a
             // language tag and "zh-hans" is not one. Only set when the link
             // really does point at that language's copy of this page.
-            {...(translated || target === "en"
+            {...(exists(target)
               ? { hrefLang: htmlLang[target] }
               : { "data-untranslated": true })}
             // The link text is an endonym — 简体, not "Simplified Chinese" —

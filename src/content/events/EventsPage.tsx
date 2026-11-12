@@ -29,8 +29,10 @@ export function EventsPage({
 }) {
   const today = new Date().toISOString().slice(0, 10);
   const byDate = (a: SiteEvent, b: SiteEvent) => a.date.localeCompare(b.date);
-  const upcoming = events.filter((e) => e.date >= today).sort(byDate);
-  const past = events.filter((e) => e.date < today).sort(byDate).reverse();
+  // An event held in one language is listed only on that language's page.
+  const here = events.filter((e) => !e.locales || e.locales.includes(locale));
+  const upcoming = here.filter((e) => e.date >= today).sort(byDate);
+  const past = here.filter((e) => e.date < today).sort(byDate).reverse();
 
   const schema = past
     .filter((e) => e.youtubeId)

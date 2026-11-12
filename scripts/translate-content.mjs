@@ -242,6 +242,10 @@ function newsUnit(raw) {
     whatItMeans: (data.whatItMeans ?? []).map(String),
     sourceExcerpt:
       typeof data.sourceExcerpt === "string" ? data.sourceExcerpt : null,
+    // The Register button on an event story. Appended after sourceExcerpt and
+    // only when present, so an article without one keeps its sourceHash.
+    ctaLabel: typeof data.ctaLabel === "string" ? data.ctaLabel : null,
+    ctaNote: typeof data.ctaNote === "string" ? data.ctaNote : null,
     sections,
   };
 
@@ -250,6 +254,8 @@ function newsUnit(raw) {
   shape.keyPoints.forEach(take);
   shape.whatItMeans.forEach(take);
   if (shape.sourceExcerpt !== null) take(shape.sourceExcerpt);
+  if (shape.ctaLabel !== null) take(shape.ctaLabel);
+  if (shape.ctaNote !== null) take(shape.ctaNote);
   for (const s of shape.sections) {
     if (s.heading) take(s.heading);
     s.paragraphs.forEach(take);
@@ -265,6 +271,8 @@ function newsUnit(raw) {
     out.keyPoints = shape.keyPoints.map(next);
     out.whatItMeans = shape.whatItMeans.map(next);
     if (shape.sourceExcerpt !== null) out.sourceExcerpt = next();
+    if (shape.ctaLabel !== null) out.ctaLabel = next();
+    if (shape.ctaNote !== null) out.ctaNote = next();
 
     const translatedSections = shape.sections.map((s) => ({
       heading: s.heading ? next() : "",
@@ -771,7 +779,12 @@ async function readIfPresent(file) {
   }
 }
 
-/** Translated files that no longer have an English source behind them. */
+/**
+ * Translated files that no longer have an English source behind them.
+ *
+ * A file marked `chineseOnly: true` was written in Chinese and never had one —
+ * a Mandarin-only webinar, say. It is not an orphan and is never removed.
+ */
 async function orphans(locale, expected) {
   const base = path.join(ROOT, "content", locale);
   const found = [];
@@ -787,7 +800,9 @@ async function orphans(locale, expected) {
       if (e.isDirectory()) await walk(full);
       else if (e.name.endsWith(".md")) {
         const rel = path.posix.normalize(path.relative(base, full).split(path.sep).join("/"));
-        if (!expected.has(rel)) found.push(full);
+        if (expected.has(rel)) continue;
+        const { data } = splitContentFile(await readFile(full, "utf8"));
+        if (data.chineseOnly !== true) found.push(full);
       }
     }
   }

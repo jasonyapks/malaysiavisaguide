@@ -76,7 +76,15 @@ for (const locale of prefixedLocales) sets.push(await pathsFor(locale));
 const [first, ...rest] = sets;
 const shared = [...first].filter((p) => rest.every((s) => s.has(p))).sort();
 
-await writeFile(OUT, `${JSON.stringify({ paths: shared }, null, 2)}\n`);
+// Paths that exist in Chinese and NOT in English — articles written in Chinese
+// (frontmatter `chineseOnly: true`), e.g. a Mandarin webinar. Their hreflang
+// group must not name an English URL, and the switcher's EN link must not
+// point at one: both would be a 404.
+const english = await pathsFor("en");
+const chineseOnly = shared.filter((p) => !english.has(p));
+
+await writeFile(OUT, `${JSON.stringify({ paths: shared, chineseOnly }, null, 2)}\n`);
 console.log(
-  `emit-translated-content: ${shared.length} path(s) translated in all ${prefixedLocales.length} locale(s).`,
+  `emit-translated-content: ${shared.length} path(s) translated in all ${prefixedLocales.length} locale(s)` +
+    (chineseOnly.length ? `, ${chineseOnly.length} Chinese-only.` : "."),
 );
