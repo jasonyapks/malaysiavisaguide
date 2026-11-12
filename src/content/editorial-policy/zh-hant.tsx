@@ -11,7 +11,7 @@ import type { EditorialPolicyCopy } from "./types";
  * Translation notes for whoever edits this next:
  *
  * - Programme names follow src/locales/programmes/zh-hant.ts exactly:
- *   高端簽證計劃（PVIP）, MM2H, 砂拉越 MM2H（S-MM2H）, DE Rantau 數字遊民準證,
+ *   PVIP高級簽證計劃, MM2H, 砂拉越 MM2H（S-MM2H）, DE Rantau 數字遊民準證,
  *   學生準證（Student Pass）, 工作準證（Employment Pass）. This page names the
  *   authorities that own each figure, so the reader who goes to check must be
  *   able to match the name here against the guide and against the official
@@ -88,7 +88,7 @@ export const copy: EditorialPolicyCopy = {
         <p>每個數字都對照該項目的主管機關查證：</p>
         <ul className="ml-5 list-disc space-y-2">
           <li>
-            <strong>高端簽證計劃（PVIP）</strong> ——
+            <strong>PVIP高級簽證計劃</strong> ——
             馬來西亞移民局（Immigration Department of Malaysia），該計劃完全由移民局主管。旅遊、藝術及文化部（MOTAC）與它無關，那是
             MM2H。
           </li>

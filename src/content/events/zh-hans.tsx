@@ -36,7 +36,7 @@ export const copy: EventsCopy = {
   events: {
     "pvip-visa-to-business-owner-2026-11": {
       title:
-        "From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities（从 PVIP 签证到企业主：开启马来西亚商机）",
+        "From PVIP Visa to Business Owner: Unlocking Malaysia's Business Opportunities（从 PVIP高级签证计划到企业主：开启马来西亚商机）",
       format: "Zoom 线上讲座 · 英语 · 免费",
       speakers:
         "主持人为 PVIP 顾问 Chee Mee Ho，嘉宾讲者为 JS Partners Chartered Accountant 执行合伙人 Datin Jiniy Seelan。两位均为 MYPVIP 的业务伙伴。",
@@ -72,13 +72,13 @@ export const copy: EventsCopy = {
       ),
     },
     "pvip-vs-mm2h-mandarin-2026-11-25": {
-      title: "看懂大马尊贵签证（PVIP）与第二家园（MM2H）分别？",
+      title: "看懂大马PVIP高级签证计划与第二家园（MM2H）分别？",
       format: "Zoom 线上讲座 · 中文 · 免费",
       speakers: "讲者为 PVIP 与 MM2H 专家 Evonne Tan，她是 MYPVIP 的业务伙伴。",
       summary: (
         <>
           <p>
-            比较 PVIP 尊贵签证与 MM2H
+            比较 PVIP高级签证计划与 MM2H
             第二家园计划：存款要求、资金流动性及居住限制；工作、创业许可、购房规定及随行家属权益；以及按预算、家庭需求与未来规划选择方案。最后设有现场问答。
           </p>
         </>

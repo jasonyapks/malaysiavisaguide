@@ -106,7 +106,8 @@ const TARGETS = {
  */
 const GLOSSARY = {
   "zh-hans": [
-    ["PVIP / Premium Visa Programme", "高端签证计划（PVIP）"],
+    ["PVIP / Premium Visa Programme (full name)", "PVIP高级签证计划"],
+    ["PVIP (short form, after the full name)", "PVIP"],
     ["MM2H / Malaysia My Second Home", "MM2H 第二家园计划"],
     ["MM2H Silver / Gold / Platinum tier", "MM2H 白银级 / 黄金级 / 白金级"],
     ["Sarawak MM2H / S-MM2H", "砂拉越 MM2H（S-MM2H）"],
@@ -751,6 +752,8 @@ const FIXUPS = {
   "zh-hans": [
     [/安瓦尔·易卜拉欣|安华·易卜拉欣|安瓦尔·依布拉欣/g, "安华·依布拉欣"],
     [/槛城/g, "槟城"],
+    // Jason's ruling 2026-11-12: the Chinese name is PVIP高级签证计划, nothing else.
+    [/(?:高端|尊贵|高级|优质)签证计划（PVIP）(?:签证)?|尊贵签证（PVIP）|(?<![A-Za-z])PVIP\s?(?:高端|尊贵)签证(?:计划)?|(?<!PVIP)(?:高端|尊贵)签证计划/g, "PVIP高级签证计划"],
     // Half-width punctuation between Chinese characters → full-width.
     [/(\p{Script=Han})\s*,\s*(?=\p{Script=Han})/gu, "$1，"],
     [/(\p{Script=Han})\s*;\s*(?=\p{Script=Han})/gu, "$1；"],

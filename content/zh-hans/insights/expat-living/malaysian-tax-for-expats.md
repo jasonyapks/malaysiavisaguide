@@ -9,7 +9,7 @@ relatedGuides:
   - path: "/visas/mm2h/"
     title: "MM2H 第二家园计划指南"
   - path: "/visas/pvip/"
-    title: "高端签证计划（PVIP）指南"
+    title: "PVIP高级签证计划指南"
   - path: "/visas/de-rantau/"
     title: "DE Rantau 数字游民准证指南"
 faq:

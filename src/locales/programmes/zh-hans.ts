@@ -108,7 +108,7 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
       "一次性收取。主申请人的保证金按国籍订定，介于 RM200 至 RM2,000；每名家属统一为 RM10。",
     withdrawable:
       "参加计划满六个月后，最多可提取 50% —— 2026 年的新条款把原本的一年缩短为六个月。提取用途仅限医疗、教育或购置房产，并采实报实销制，须凭收据申请。",
-    name: "高端签证计划（PVIP）",
+    name: "PVIP高级签证计划",
     superseded: {
       attributionBy: "移民局的一份指引，由 MYPVIP 提供",
       whatChanged: [

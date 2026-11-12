@@ -88,7 +88,7 @@ export const ui: UiStrings = {
     "/": "首頁",
     "/insights/": "深度觀點",
     "/news/": "最新消息",
-    "/visas/pvip/": "PVIP 高端簽證",
+    "/visas/pvip/": "PVIP高級簽證計劃",
     "/visas/mm2h/": "MM2H 第二家園",
     "/visas/sarawak-mm2h/": "砂拉越 MM2H",
     "/visas/de-rantau/": "DE Rantau 數字遊民",
@@ -285,7 +285,7 @@ export const ui: UiStrings = {
       world: "其他國家",
     },
     categoryBlurb: {
-      pvip: "高端簽證計劃（PVIP）的變化——參與費、定期存款，以及 20 年期限在實務上如何執行。",
+      pvip: "PVIP高級簽證計劃的變化——參與費、定期存款，以及 20 年期限在實務上如何執行。",
       mm2h: "MM2H 第二家園計劃的消息——白銀級、黃金級與白金級的存款與房產門檻，以及必須通過持牌代理的規定。",
       "sarawak-mm2h":
         "砂拉越自己的 MM2H：州屬自行設定存款、自行審批、自成一套規則，因此單獨報道。",

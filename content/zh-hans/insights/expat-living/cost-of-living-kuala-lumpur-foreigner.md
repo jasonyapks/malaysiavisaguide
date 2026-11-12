@@ -10,7 +10,7 @@ relatedGuides:
   - path: "/insights/how-to/how-much-does-mm2h-cost/"
     title: "MM2H 第二家园计划费用是多少"
   - path: "/insights/comparisons/mm2h-vs-pvip-vs-de-rantau/"
-    title: "MM2H 第二家园计划 对比 高端签证计划（PVIP） 对比 DE Rantau 数字游民准证"
+    title: "MM2H 第二家园计划 对比 PVIP高级签证计划 对比 DE Rantau 数字游民准证"
   - path: "/insights/expat-living/malaysian-tax-for-expats/"
     title: "外籍人士在马来西亚的税务"
 faq:
@@ -23,7 +23,7 @@ faq:
   - q: "吉隆坡的租金需要缴纳SST（销售与服务税）吗？"
     a: "不。自2025年7月1日起，服务税适用于商业租赁，但马来西亚皇家关税局（Royal Malaysian Customs Department）的常见问题解答指出，出租住宅物业不征收服务税。"
   - q: "马来西亚有哪种签证会核实我是否有能力负担在当地的生活？"
-    a: "MM2H 第二家园计划完全没有收入要求，只要求定期存款和购置房产。DE Rantau 数字游民准证要求每年USD 24,000，按2026年10月的汇率计算约为每月RM8,170，这几乎正是吉隆坡普通家庭的平均支出。高端签证计划（PVIP）要求每月RM40,000。它们都不会替你核实实际预算。"
+    a: "MM2H 第二家园计划完全没有收入要求，只要求定期存款和购置房产。DE Rantau 数字游民准证要求每年USD 24,000，按2026年10月的汇率计算约为每月RM8,170，这几乎正是吉隆坡普通家庭的平均支出。PVIP高级签证计划要求每月RM40,000。它们都不会替你核实实际预算。"
 sources:
   - label: "Department of Statistics Malaysia — Household Expenditure Survey Report, Malaysia 2024 (Table 1.3 median and mean by state; Table 1.4 per capita; Table 3.1 composition by state)"
     url: "https://storage.dosm.gov.my/hies/household_expenditure_2024.pdf"
@@ -92,7 +92,7 @@ translationModel: "claude-sonnet-5"
 
 这里说的不是诈骗，也不是市场小贩随口报出的“外国人价”。这些收费写入了法律或政策之中，而几乎没有一篇生活成本文章会提到它们。
 
-- **私立医疗征收6%服务税。**自2025年7月1日起，私立医院和诊所对非公民的治疗费用征收服务税，马来西亚公民则获得豁免。海关（Customs Department）的常见问题解答明确指出，非公民中没有任何一类可以获得豁免，因此持有MM2H 第二家园计划或高端签证计划（PVIP）准证都没有区别。
+- **私立医疗征收6%服务税。**自2025年7月1日起，私立医院和诊所对非公民的治疗费用征收服务税，马来西亚公民则获得豁免。海关（Customs Department）的常见问题解答明确指出，非公民中没有任何一类可以获得豁免，因此持有MM2H 第二家园计划或PVIP高级签证计划准证都没有区别。
 - **年学费超过RM60,000的国际学校，学费须缴纳6%服务税。**在吉隆坡，大多数国际学校从一年级（Year 1）左右起就会超过这个门槛。
 - **未获补贴价格的汽油。**在2026年10月22日至28日这一周，马来西亚人在BUDI95补贴下，RON95汽油每升支付RM1.99，而其他所有人则支付RM4.32。如果你拥有一辆车，这意味着价格超过两倍。
 - **价格贵三倍的交通卡。** My50 卡以 RM50 的价格提供30天的火车和巴士无限次搭乘，但只有马来西亚人才能购买。对外籍人士开放的卡——Rapid Bulanan——价格为 RM150。
@@ -135,7 +135,7 @@ Mont Kiara 对你来说也可能超出实际需要。隔壁的 Sri Hartamas，�
 
 看看学校这一行。 **它比表中其他项目加起来还要大。**大多数家庭通常先研究租金，但在这里，租金与学费相比几乎微不足道。换一所学校，这项预算每月上下可浮动RM10,000。槟城的Uplands学校3年级和4年级学费为每年RM46,400。对于同龄孩子，吉隆坡的ISKL收费为每年RM115,600，另加一次性注册费RM59,000。
 
-**适合的签证：**如果是公司雇用你，则是工作准证（Employment Pass）。最低类别起薪为{{employment-pass:salaryFloor:money}}每月，但在指望用它养家之前，请确认你的类别允许携带受养人。如果你是靠自己的资金前来，可以考虑 MM2H 黄金级或高端签证计划（PVIP）。两者都允许更长的期限，并可携带家人，而高端签证计划（PVIP）还允许工作。在做出选择之前，请阅读[哪种马来西亚签证允许你经营企业？](/insights/comparisons/which-visa-lets-you-run-a-business/)
+**适合的签证：**如果是公司雇用你，则是工作准证（Employment Pass）。最低类别起薪为{{employment-pass:salaryFloor:money}}每月，但在指望用它养家之前，请确认你的类别允许携带受养人。如果你是靠自己的资金前来，可以考虑 MM2H 黄金级或PVIP高级签证计划。两者都允许更长的期限，并可携带家人，而PVIP高级签证计划还允许工作。在做出选择之前，请阅读[哪种马来西亚签证允许你经营企业？](/insights/comparisons/which-visa-lets-you-run-a-business/)
 
 ## 预算三：单身远程工作者
 
@@ -151,7 +151,7 @@ Mont Kiara 对你来说也可能超出实际需要。隔壁的 Sri Hartamas，�
 | **不含医疗保障** | **约4,500–7,000** |
 [^4]: 租金数据取自2026年10月23日一卧室求租广告价格的中间一半：Mont Kiara 24个房源，Sri Hartamas 34个，Bangsar 44个。日常开支线是估算值，而非实测值：根据马来西亚统计局（DOSM）的数据，吉隆坡普通家庭的日常开支约为每人RM1,600，而独居者的人均开支则高于这个数字。
 
-**合适的签证：** DE Rantau 数字游民准证。它要求收入达到 {{de-rantau:incomeRequirement:moneyPer}}，按2026年10月的汇率计算，约为每月RM8,170。这几乎正好等同于吉隆坡普通家庭的开支水平。如果是一个人申请，最低门槛绰绰有余；但若带着伴侣，则难以维持Mont Kiara式的生活水平。该准证以一年为期，须逐年续签，也不能带来长期居留权。 [MM2H 第二家园计划 vs 高端签证计划（PVIP） vs DE Rantau 数字游民准证](/insights/comparisons/mm2h-vs-pvip-vs-de-rantau/) 说明了每种签证各自的局限。
+**合适的签证：** DE Rantau 数字游民准证。它要求收入达到 {{de-rantau:incomeRequirement:moneyPer}}，按2026年10月的汇率计算，约为每月RM8,170。这几乎正好等同于吉隆坡普通家庭的开支水平。如果是一个人申请，最低门槛绰绰有余；但若带着伴侣，则难以维持Mont Kiara式的生活水平。该准证以一年为期，须逐年续签，也不能带来长期居留权。 [MM2H 第二家园计划 vs PVIP高级签证计划 vs DE Rantau 数字游民准证](/insights/comparisons/mm2h-vs-pvip-vs-de-rantau/) 说明了每种签证各自的局限。
 
 ## 预算容易出错的地方
 

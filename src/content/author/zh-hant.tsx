@@ -27,7 +27,7 @@ export const copy: AuthorCopy = {
       <p>
         Jason Yap 以辦理馬來西亞長期居留簽證申請為業。他是{" "}
         <strong>MYPVIP</strong>（MY PR Program Sdn Bhd）的董事總經理，這是一家辦理
-        Premium Visa Programme（PVIP）的持牌代理機構；他同時是{" "}
+        PVIP高級簽證計劃的持牌代理機構；他同時是{" "}
         <strong>MY Premium MM2H</strong>（My Premium (MM2H) Sdn Bhd）的董事總經理，這是一家辦理
         Malaysia My Second Home（MM2H）的持牌代理機構。自 2022
         年以來，兩家公司已成功辦理超過 300 宗 PVIP 與 MM2H 申請。

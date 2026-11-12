@@ -9,7 +9,7 @@ relatedGuides:
   - path: "/visas/mm2h/"
     title: "MM2H 指南"
   - path: "/tools/cost-calculator/"
-    title: "MM2H 与高端签证计划（PVIP）费用计算器"
+    title: "MM2H 与PVIP高级签证计划费用计算器"
   - path: "/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/"
     title: "MM2H 白银级、黄金级与白金级对比"
 faq:
@@ -100,8 +100,8 @@ translationLocked: true
 
 **你想要更长远的规划，并打算携带家人同行。** 黄金级换来的是 {{mm2h-gold:tenureYears:years}}，而非 {{mm2h-silver:tenureYears:years}}，费用则多出约 RM17,000。真正的跨越在于定期存款，金额会增至三倍以上。如果到第六年你仍留在当地，不妨比较一下届时续签白银级需要花费多少。
 
-**你想要在本地工作、投资或经营公司。** 只有白金级允许这样做，其参与费本身就高达 {{mm2h-platinum:participationFee.principal:money}}。在支付这笔费用之前，请先阅读 [MM2H 白金级对比高端签证计划（PVIP）](/insights/comparisons/mm2h-platinum-vs-pvip/)以及 [哪种马来西亚签证可以让你经营企业](/insights/comparisons/which-visa-lets-you-run-a-business/)。对一些人来说，走另一条路径能以更低的成本达到同样目的。
+**你想要在本地工作、投资或经营公司。** 只有白金级允许这样做，其参与费本身就高达 {{mm2h-platinum:participationFee.principal:money}}。在支付这笔费用之前，请先阅读 [MM2H 白金级对比PVIP高级签证计划](/insights/comparisons/mm2h-platinum-vs-pvip/)以及 [哪种马来西亚签证可以让你经营企业](/insights/comparisons/which-visa-lets-you-run-a-business/)。对一些人来说，走另一条路径能以更低的成本达到同样目的。
 
-**你根本不确定 MM2H 第二家园计划是否是合适的项目。** 那么，费用就不该是你的起点。[MM2H 第二家园计划、高端签证计划（PVIP）与 DE Rantau 数字游民准证对比](/insights/comparisons/mm2h-vs-pvip-vs-de-rantau/)比较了各项目对申请人的要求，而砂拉越则以不同条件运作自己的版本：请参阅 [联邦 MM2H 对比砂拉越 MM2H（S-MM2H）](/insights/comparisons/federal-mm2h-vs-sarawak-mm2h/)。
+**你根本不确定 MM2H 第二家园计划是否是合适的项目。** 那么，费用就不该是你的起点。[MM2H 第二家园计划、PVIP高级签证计划与 DE Rantau 数字游民准证对比](/insights/comparisons/mm2h-vs-pvip-vs-de-rantau/)比较了各项目对申请人的要求，而砂拉越则以不同条件运作自己的版本：请参阅 [联邦 MM2H 对比砂拉越 MM2H（S-MM2H）](/insights/comparisons/federal-mm2h-vs-sarawak-mm2h/)。
 
 如果你还在几个级别之间犹豫，[MM2H 白银级、黄金级与白金级对比](/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/)讲清了每一级到底改变了什么。确定了你的级别后，[2026年如何申请 MM2H 第二家园计划](/insights/how-to/apply-for-mm2h-2026/)将按顺序为你讲解各项步骤。

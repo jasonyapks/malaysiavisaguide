@@ -51,7 +51,7 @@ export const copy: AboutCopy = {
           <Link href="/about/jason-yap/">Jason Yap</Link>
         </strong>{" "}
         是两家马来西亚持牌代理机构的董事总经理，专办长期居留签证申请
-        —— 一家做 Premium Visa Programme（PVIP），一家做 Malaysia My Second
+        —— 一家做 PVIP高级签证计划，一家做 Malaysia My Second
         Home（MM2H）。自 2022 年以来，两家公司已成功办理超过 300 宗申请。本站每一页都由他研究、撰写并复核，他的署名和复核日期就在每篇指南的末尾。
       </p>
     ),

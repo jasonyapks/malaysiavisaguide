@@ -11,7 +11,7 @@ relatedGuides:
   - path: "/insights/how-to/paid-up-capital-employment-pass-own-company/"
     title: "通过自己的公司申请工作准证所需的实缴资本"
   - path: "/visas/pvip/"
-    title: "高端签证计划（PVIP）指南"
+    title: "PVIP高级签证计划指南"
   - path: "/visas/employment-pass/"
     title: "工作准证（Employment Pass）指南"
 faq:
@@ -91,7 +91,7 @@ translationLocked: true
 
 ## 常驻董事，以及“名义董事”究竟是什么
 
-如果您本人居住在马来西亚，您自己就可以担任常驻董事。标准看的是居住地，而不是国籍。实务中，公司秘书通常认可持有工作准证（Employment Pass）或高端签证计划（PVIP）、在本地居住的外籍人士符合这一条件。
+如果您本人居住在马来西亚，您自己就可以担任常驻董事。标准看的是居住地，而不是国籍。实务中，公司秘书通常认可持有工作准证（Employment Pass）或PVIP高级签证计划、在本地居住的外籍人士符合这一条件。
 
 如果您居住在海外，就需要由他人担任这一职位。可以是您在马来西亚的业务伙伴或员工，也可以是收费的名义董事。名义董事的设立费用一般约为RM3,000，每月费用约为RM600，另需支付约RM5,000的可退还按金。我们在[在马来西亚注册公司的费用](/insights/how-to/company-setup-cost-malaysia-foreigner/)一文中详细拆解了第一年的全部费用，此后每年的费用则见[私人有限公司（Sdn Bhd）每年的维持费用](/insights/how-to/sdn-bhd-annual-running-costs/)。
 
@@ -115,6 +115,6 @@ translationLocked: true
 
 如果您身处**受监管行业**，您首先要找的是监管机构。
 
-如果您的计划是住在马来西亚并亲自经营公司，那么董事身份问题与签证问题其实是同一个问题。公司本身并不赋予您在此居住的权利；准证才可以。请先参考[高端签证计划（PVIP）指南](/visas/pvip/)或[工作准证（Employment Pass）指南](/visas/employment-pass/)，也可以在[哪种马来西亚签证允许您经营企业？](/insights/comparisons/which-visa-lets-you-run-a-business/)中比较所有准证。
+如果您的计划是住在马来西亚并亲自经营公司，那么董事身份问题与签证问题其实是同一个问题。公司本身并不赋予您在此居住的权利；准证才可以。请先参考[PVIP高级签证计划指南](/visas/pvip/)或[工作准证（Employment Pass）指南](/visas/employment-pass/)，也可以在[哪种马来西亚签证允许您经营企业？](/insights/comparisons/which-visa-lets-you-run-a-business/)中比较所有准证。
 
 各行业的规定会不断变化，本文仅为一般性信息，并非法律意见。以下资料来源的核实日期为2026年10月12日。

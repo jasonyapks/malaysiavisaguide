@@ -111,7 +111,7 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
       "一次性收取。主申請人的保證金按國籍訂定，介於 RM200 至 RM2,000；每名家屬統一為 RM10。",
     withdrawable:
       "參加計劃滿六個月後，最多可提取 50% —— 2026 年的新條款把原本的一年縮短為六個月。提取用途僅限醫療、教育或購置房產，並採實報實銷制，須憑收據申請。",
-    name: "高端簽證計劃（PVIP）",
+    name: "PVIP高級簽證計劃",
     superseded: {
       attributionBy: "移民局的一份指引，由 MYPVIP 提供",
       whatChanged: [

@@ -10,7 +10,7 @@ relatedGuides:
   - path: "/insights/expat-living/malaysian-tax-for-expats/"
     title: "外籍人士的马来西亚税务"
   - path: "/visas/pvip/"
-    title: "高端签证计划（PVIP）指南"
+    title: "PVIP高级签证计划指南"
 faq:
   - q: "在马来西亚维持一家私人有限公司（Sdn Bhd）每年需要多少费用？"
     a: "对于休眠公司，每年大约需要RM4,000至RM5,000。对于小型营业公司，大约需要RM4,000至RM12,000，具体主要取决于记账工作量以及是否需要审计。聘有员工并外包薪资处理的公司，费用则更可能达到RM10,000至RM20,000。居住海外的外籍业主，还需为聘请本地名义董事额外支付约RM7,200一年。以上费用均未计入8%的服务税。"

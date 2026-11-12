@@ -35,7 +35,7 @@ export const imageAlt: Record<string, string> = {
   "Timeline graphic titled Beyond the two-year limit: a DE Rantau Nomad Pass runs 3 to 12 months, renews once for a further 12 months, and under Budget 2027 may continue past year two, subject to eligibility criteria, length not yet announced.":
     "時間線圖示，標題為“超過兩年期限”：DE Rantau Nomad Pass（數字遊民準證）為期 3 至 12 個月，可續簽一次、再延 12 個月；根據 2027 年財政預算案，符合資格者可在第二年之後繼續居留，期限尚未公佈。",
   "Immigration Department officers and industry representatives in front of the Malaysia Premium Visa Programme (PVIP) banner at the MIHAS press conference":
-    "MIHAS 新聞發佈會上，移民局官員與業界代表在 Malaysia Premium Visa Programme（PVIP，馬來西亞高端簽證計劃）橫幅前合影",
+    "MIHAS 新聞發佈會上，移民局官員與業界代表在 Malaysia Premium Visa Programme（PVIP高級簽證計劃）橫幅前合影",
   "Portugal Golden Visa Investment": "葡萄牙黃金簽證投資",
   "MYPVIP webinar poster: Unlocking Malaysia's Business Opportunities, a practical guide for PVIP applicants. Sunday 1 November 2026, 8:00 PM (UTC+8). Topics: PVIP, more than a residency; set up your company; launch and grow your business. Speakers: Chee Mee Ho, host and PVIP consultant, and Datin Jiniy Seelan, managing partner of JS Partners Chartered Accountant.":
     "MYPVIP 線上講座海報：Unlocking Malaysia's Business Opportunities（開啟馬來西亞商機），為 PVIP 申請人準備的實用指南。2026年11月1日（星期日）晚上 8:00（UTC+8）。議題：PVIP 不只是居留身份；設立公司；開展並壯大業務。主講人：主持人兼 PVIP 顧問 Chee Mee Ho，以及 JS Partners Chartered Accountant 執行合夥人 Datin Jiniy Seelan。",

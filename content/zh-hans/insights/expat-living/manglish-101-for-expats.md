@@ -12,7 +12,7 @@ relatedGuides:
   - path: "/visas/mm2h/"
     title: "MM2H 第二家园计划指南"
   - path: "/visas/pvip/"
-    title: "高端签证计划（PVIP）指南"
+    title: "PVIP高级签证计划指南"
 sources:
   - label: "The Star — Oxford English Dictionary adds Malaysian and Singaporean words including 'alamak' and 'tapau' (27 March 2025)"
     url: "https://www.thestar.com.my/news/nation/2025/03/27/from-039alamak039-to-039nasi-lemak039-oxford-english-dictionary-welcomes-malaysian-and-singaporean-words"
