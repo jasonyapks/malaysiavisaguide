@@ -9,12 +9,12 @@ updatedAt: "2026-11-12T00:00:00.000Z"
 readingMinutes: 2
 ctaLabel: "Register free on Zoom"
 ctaHref: "https://us06web.zoom.us/webinar/register/WN_z9H4OumMQ0S45XkwBwtc_A"
-ctaNote: "Wednesday 18 November 2026 · 8pm Malaysia time (UTC+8) · Free"
+ctaNote: "Wednesday 18 November 2026 · 8pm Malaysia time (UTC+8) · Free · In English"
 keyPoints:
-  - "A free Zoom webinar on Wednesday 18 November 2026 at 8pm Malaysia time (UTC+8)."
+  - "A free Zoom webinar on Wednesday 18 November 2026 at 8pm Malaysia time (UTC+8), in English."
   - "It re-runs \"Unlocking Malaysia's Business Opportunities\", MYPVIP's practical guide for PVIP applicants, first held on 1 November."
   - "Three parts: PVIP as more than a residency, setting up your company, and launching and growing your business."
-  - "The speakers are PVIP consultant Chee Mee Ho and guest Datin Jiniy Seelan, managing partner of JS Partners Chartered Accountant."
+  - "The speakers are PVIP consultant Chee Mee and guest Datin Jiniy Seelan, managing partner of JS Partners Chartered Accountant."
   - "The session is live, so you can put your own questions to the speakers. Registration is free on Zoom."
 whatItMeans:
   - "If you plan to live in Malaysia and run a company here, this session puts the visa and the business in one conversation."
@@ -27,11 +27,13 @@ sourceExcerpt: "Unlocking Malaysia's Business Opportunities: a practical guide f
 
 MYPVIP is running its 1 November webinar on running a business in Malaysia a second time. If you missed it, or watched the recording and now have questions of your own, this is the time to ask them.
 
-[MYPVIP](https://mypvip.com/) is hosting "Unlocking Malaysia's Business Opportunities: A Practical Guide for PVIP Applicants" on Zoom on Wednesday 18 November at 8pm Malaysia time (UTC+8). It is free to join.
+[MYPVIP](https://mypvip.com/) is hosting "Unlocking Malaysia's Business Opportunities: A Practical Guide for PVIP Applicants" on Zoom on Wednesday 18 November at 8pm Malaysia time (UTC+8). It is in English and free to join.
+
+You'll find it, with the replay of the first session, on our [events page](/events/).
 
 ## Who you'll hear from
 
-The speakers are PVIP consultant Chee Mee Ho and guest speaker Datin Jiniy Seelan, managing partner of JS Partners Chartered Accountant. Both are MYPVIP business associates.
+The speakers are PVIP consultant Chee Mee and guest speaker Datin Jiniy Seelan, managing partner of JS Partners Chartered Accountant. Both are MYPVIP business associates.
 
 ## What it covers
 

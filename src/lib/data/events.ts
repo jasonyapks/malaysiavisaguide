@@ -33,4 +33,12 @@ export const events: SiteEvent[] = [
     ],
     guidePath: "/insights/how-to/pvip-and-company-incorporation-malaysia/",
   },
+  {
+    id: "pvip-business-opportunities-2026-11-18",
+    date: "2026-11-18",
+    time: "20:00",
+    registrationUrl: "https://us06web.zoom.us/webinar/register/WN_z9H4OumMQ0S45XkwBwtc_A",
+    newsPaths: ["/news/mypvip-reruns-webinar-on-running-a-business-in-malaysia/"],
+    guidePath: "/insights/how-to/pvip-and-company-incorporation-malaysia/",
+  },
 ];

@@ -81,6 +81,11 @@ export function EventsPage({
                 {copy.upcoming.register}
               </a>
             )}
+            {e.newsPaths[0] && (
+              <p>
+                <Link href={e.newsPaths[0]}>{copy.past.announcement}</Link>
+              </p>
+            )}
           </div>
         ))}
       </section>

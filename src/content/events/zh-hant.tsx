@@ -59,5 +59,20 @@ export const copy: EventsCopy = {
         </>
       ),
     },
+    "pvip-business-opportunities-2026-11-18": {
+      title:
+        "Unlocking Malaysia's Business Opportunities: A Practical Guide for PVIP Applicants（開啟馬來西亞商機：PVIP 申請人實用指南）",
+      format: "Zoom 線上講座 · 英語 · 免費",
+      speakers:
+        "講者為 PVIP 顧問 Chee Mee，嘉賓講者為 JS Partners Chartered Accountant 執行合夥人 Datin Jiniy Seelan。兩位均為 MYPVIP 的業務夥伴。",
+      summary: (
+        <>
+          <p>
+            11月1日講座的第二場，分三部分：PVIP
+            不只是居留身份、設立公司，以及從 PVIP 到正式營運的業務啟動與發展。講座最後設有現場問答。
+          </p>
+        </>
+      ),
+    },
   },
 };

@@ -62,5 +62,22 @@ export const copy: EventsCopy = {
         </>
       ),
     },
+    "pvip-business-opportunities-2026-11-18": {
+      title:
+        "Unlocking Malaysia's Business Opportunities: A Practical Guide for PVIP Applicants",
+      format: "Zoom webinar · in English · free",
+      speakers:
+        "With PVIP consultant Chee Mee and guest speaker Datin Jiniy Seelan, managing partner of JS Partners Chartered Accountant. Both are MYPVIP business associates.",
+      summary: (
+        <>
+          <p>
+            A second run of the 1 November session, in three parts: PVIP as
+            more than a residency, setting up your company, and launching and
+            growing your business, from PVIP to operations. It ends with a live
+            Q&amp;A.
+          </p>
+        </>
+      ),
+    },
   },
 };
