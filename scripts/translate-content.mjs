@@ -18,10 +18,14 @@
  * It works out for itself what is missing, what has gone stale and what should
  * no longer exist, so it covers both producers and a file edited by hand.
  *
- * It is run by hand (`TRANSLATE_PROVIDER` defaults to `claude`). The GitHub
- * Action that used to run it on every push was removed on 2026-11-12: Workers
- * AI failed on almost every real translation, and Gemini's free tier ran out
- * mid-backfill.
+ * Since 2026-11-12 it is run automatically by a launchd job on Jason's Mac
+ * (`~/Claude/mvg-translate/translate.sh`, every 5 minutes, on its own clone):
+ * when origin/main has English that is missing or stale in Chinese, it runs
+ * this with `TRANSLATE_PROVIDER=claude` and pushes `content/zh-hans/`. It
+ * replaced a GitHub Action, removed the same day: Workers AI failed on almost
+ * every real translation, Gemini's free tier ran out mid-backfill, and the
+ * `claude` CLI cannot run on a GitHub runner. The Mac must be awake; a run
+ * missed while it sleeps happens on wake.
  *
  * ## What "stale" means, exactly
  *
@@ -118,6 +122,10 @@ const GLOSSARY = {
     ["golden visa", "黄金签证"],
     ["digital nomad", "数字游民"],
     ["expat / expatriate", "外籍人士"],
+    ["Anwar Ibrahim", "安华·依布拉欣"],
+    ["Penang", "槟城"],
+    ["Budget speech", "预算案演词"],
+    ["Category I / II / III (Employment Pass)", "第一类 / 第二类 / 第三类"],
   ],
 };
 
@@ -458,8 +466,8 @@ const MODELS = {
     retry: process.env.TRANSLATE_MODEL_RETRY ?? "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
   },
   claude: {
-    first: process.env.TRANSLATE_MODEL ?? "claude-sonnet-5",
-    retry: process.env.TRANSLATE_MODEL_RETRY ?? "claude-sonnet-5",
+    first: process.env.TRANSLATE_MODEL ?? "claude-sonnet-5-5",
+    retry: process.env.TRANSLATE_MODEL_RETRY ?? "claude-sonnet-5-5",
   },
 };
 
@@ -490,6 +498,7 @@ ${glossary}
 6. A string that is only a proper noun or a code may come back unchanged.
 7. A date written as prose takes the ${target} convention — "27 August" becomes 8月27日, "27 August 2026" becomes 2026年8月27日 — keeping the same digits. Never leave an English month name sitting inside a ${target} sentence.
 8. A number written as a word in English stays a word. "ten years" is 十年, never 10年; "five tiers" is 五档, never 5档; "one of the two" is 两者之一, never 2者之一. Arabic digits belong in your reply only where Arabic digits stand in the input. This is rule 1 in the other direction and just as absolute.
+9. Use full-width ${target} punctuation (，。：；“”（）) in every string, from the first to the last. Malaysian people and places take the names the Malaysian Chinese press uses (Penang is 槟城, Anwar Ibrahim is 安华·依布拉欣).
 
 You are given a JSON object {"t": [...]} of strings. You reply with a JSON object {"t": [...]} holding exactly the same number of strings, in the same order, translated. You output only JSON.`;
 }
@@ -718,10 +727,34 @@ async function translate(strings, locale) {
     }
 
     if (!accepted) return { ok: false, problems: log };
-    done.push(...accepted);
+    done.push(...accepted.map((s) => fixup(s, locale)));
   }
 
   return { ok: true, strings: done };
+}
+
+/**
+ * Deterministic repair of the mistakes the model keeps making, applied to every
+ * accepted string. Each entry came out of a hand review of a published
+ * translation (2026-09/10); the glossary asks for the right form, this makes
+ * sure of it. Nothing here touches a digit, so it cannot trip `reject()`.
+ */
+const FIXUPS = {
+  "zh-hans": [
+    [/安瓦尔·易卜拉欣|安华·易卜拉欣|安瓦尔·依布拉欣/g, "安华·依布拉欣"],
+    [/槛城/g, "槟城"],
+    // Half-width punctuation between Chinese characters → full-width.
+    [/(\p{Script=Han})\s*,\s*(?=\p{Script=Han})/gu, "$1，"],
+    [/(\p{Script=Han})\s*;\s*(?=\p{Script=Han})/gu, "$1；"],
+    [/(\p{Script=Han})\s*:\s*(?=\p{Script=Han})/gu, "$1："],
+    [/"([^"\n]*\p{Script=Han}[^"\n]*)"/gu, "“$1”"],
+  ],
+};
+
+function fixup(s, locale) {
+  let out = s;
+  for (const [re, to] of FIXUPS[locale] ?? []) out = out.replace(re, to);
+  return out;
 }
 
 // --- Reconcile --------------------------------------------------------------

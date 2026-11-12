@@ -15,9 +15,10 @@ the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW autho
 1. **`/news/` and `/insights/` are translated, and stay translated by themselves.**
    `scripts/translate-content.mjs` is a reconciler: it compares each English article
    against `content/<locale>/…`, translates what is missing or stale, and deletes what
-   has lost its source. **Since 2026-11-12 it is run by hand** (default provider
-   `claude`); the GitHub Action that ran it on every push, and the Gemini provider,
-   were removed because the automatic path failed on most real articles.
+   has lost its source. **Since 2026-11-12 a launchd job on Jason's Mac runs it**
+   (`~/Claude/mvg-translate/translate.sh`, every 5 minutes, own clone, provider
+   `claude`) and pushes `content/zh-hans/` to main. It replaced the GitHub Action and
+   the Gemini provider, both removed because they failed on most real articles.
 2. **A push is the trigger, not a publish hook, because there are two publishers.** The
    `mvg-news` Worker commits a news article on approval; Sveltia CMS commits an insight.
    The commit is the only thing they have in common — and it catches a hand edit too. The

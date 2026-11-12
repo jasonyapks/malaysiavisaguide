@@ -161,18 +161,19 @@ deletes the file, which removes the page on the next build. Note Cloudflare
 Pages serves a path that has vanished from an export from the edge for up to
 seven days, so it is not instant for a reader who has already been there.
 
-### The Chinese version is translated by hand
+### The Chinese version arrives about 15–20 minutes later — this is not a fault
 
-Approving commits the English file and Pages builds it. Nothing translates it
-automatically: the GitHub Action that used to was removed on 2026-11-12. Until
-`scripts/translate-content.mjs --only <slug> --locale zh-hans` is run locally
-(default provider `claude`) and its output committed, `cn.` and `tw.` do not
-carry the article — the language switcher says so, `hreflang` does not claim it,
-and the Chinese hosts 302 that path to the English article.
+Approving commits the English file and Pages builds it. A launchd job on
+Jason's Mac (`~/Claude/mvg-translate/translate.sh`, every 5 minutes) sees the
+new English on origin/main, translates it with the local `claude` CLI, and
+pushes `content/zh-hans/…`; that commit builds again. Until then `cn.` and `tw.`
+do not carry the article — the language switcher says so, `hreflang` does not
+claim it, and the Chinese hosts 302 that path to the English article.
 
 The Worker has no part in this: retiring an article deletes only the English
-file, and the orphaned translation is removed the next time the reconciler is
-run.
+file, and the job removes the orphaned translation on its next run. If the
+Chinese never appears, the Mac was asleep or offline, or the run failed — see
+`~/Claude/mvg-translate/logs/`.
 
 ### Insight articles are not edited here any more
 
