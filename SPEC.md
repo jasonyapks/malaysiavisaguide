@@ -15,8 +15,9 @@ the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW autho
 1. **`/news/` and `/insights/` are translated, and stay translated by themselves.**
    `scripts/translate-content.mjs` is a reconciler: it compares each English article
    against `content/<locale>/…`, translates what is missing or stale, and deletes what
-   has lost its source. `.github/workflows/translate-content.yml` runs it on every push
-   to `main` that touches `content/news/*.md` or `content/insights/*/*.md`.
+   has lost its source. **Since 2026-11-12 it is run by hand** (default provider
+   `claude`); the GitHub Action that ran it on every push, and the Gemini provider,
+   were removed because the automatic path failed on most real articles.
 2. **A push is the trigger, not a publish hook, because there are two publishers.** The
    `mvg-news` Worker commits a news article on approval; Sveltia CMS commits an insight.
    The commit is the only thing they have in common — and it catches a hand edit too. The
@@ -31,10 +32,8 @@ the blueprint said WordPress (now Next.js) and specced a broad retiree/HNW autho
    `{{programme:field:fmt}}` figures, link hrefs, asset ids and block types are separate
    nodes and never reach it. What comes back is checked for shape, for a lost or invented
    figure, and for actually being Han script — a bad reply writes nothing.
-5. **Provider is Workers AI (`CLOUDFLARE_API_TOKEN`, Workers AI: Read).** Gemini writes
-   better Chinese and is a complete second implementation behind `TRANSLATE_PROVIDER`,
-   but its free tier allows 20 requests per day per model and a full backfill is around
-   fifty.
+5. **Provider is the local `claude` CLI** (superseded 2026-11-12; was Workers AI).
+   Workers AI (`TRANSLATE_PROVIDER=cloudflare`) remains as a fallback. Gemini was removed.
 6. **§2's "Language: English only" row is retired** — see the table below. The site has
    been trilingual on three hosts since 2026-08-15; v1.6 is the point at which the
    article sections joined the static pages.

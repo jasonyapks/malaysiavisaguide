@@ -15,11 +15,13 @@
  * — its insight write endpoints answer 410 now. A translation step bolted to
  * either one would cover half the content.
  *
- * The commit is the one thing both producers have in common, so the trigger is
- * a push: `.github/workflows/translate-content.yml` runs this, and it works out
- * for itself what is missing, what has gone stale and what should no longer
- * exist. That also covers the third producer nobody plans for — a file edited
- * by hand.
+ * It works out for itself what is missing, what has gone stale and what should
+ * no longer exist, so it covers both producers and a file edited by hand.
+ *
+ * It is run by hand (`TRANSLATE_PROVIDER` defaults to `claude`). The GitHub
+ * Action that used to run it on every push was removed on 2026-11-12: Workers
+ * AI failed on almost every real translation, and Gemini's free tier ran out
+ * mid-backfill.
  *
  * ## What "stale" means, exactly
  *
@@ -435,37 +437,18 @@ function reject(before, after, locale) {
 /**
  * Provider and models.
  *
- * ## Why Workers AI and not Gemini, despite Gemini being better at this
- *
- * A frontier flash model writes measurably better Chinese than an open 27B one,
- * and on quality alone Gemini would win. It cannot be the default because the
- * free tier is metered at **20 requests per day, per model** — measured
- * 2026-09-01, `GenerateRequestsPerDayPerProjectPerModel-FreeTier` — and a
- * single backfill of this repo is around fifty. It answers 429 halfway through
- * and the failure is per-article, so half the site translates and half does
- * not. Workers AI is on the account this project already bills to, has no daily
- * cap, and is where the rest of the pipeline's inference already runs.
- *
- * `TRANSLATE_PROVIDER=gemini` remains a complete second implementation, and is
- * the right choice for a handful of articles on a paid Gemini key. Set
- * `TRANSLATE_MODEL` to spread a backfill across models if you are on the free
- * tier — the daily quota is per model, so a second model buys 20 more.
+ * `claude` (the default) is the local Claude Code CLI and is the one that
+ * works. `cloudflare` (Workers AI) is kept as a fallback but has failed on most
+ * real articles. The Gemini provider was removed on 2026-11-12: its free tier
+ * allows 20 requests per day per model, and a backfill needs around fifty.
  *
  * Cloudflare needs `CLOUDFLARE_API_TOKEN` with **Workers AI: Read**. A wrangler
  * OAuth session is NOT enough: api.cloudflare.com answers 10000 Authentication
  * error to it on this endpoint, so the token has to be minted in the dashboard.
  */
-const PROVIDER = process.env.TRANSLATE_PROVIDER ?? "cloudflare";
+const PROVIDER = process.env.TRANSLATE_PROVIDER ?? "claude";
 const CF_ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID ?? "d6bfff8a6a949401fc1ccb437e40a3ea";
 const MODELS = {
-  gemini: {
-    first: process.env.TRANSLATE_MODEL ?? "gemini-3.6-flash",
-    // A different model rather than a bigger one. On the free tier the pro
-    // models' quota is small enough that a retry there answers 429 more often
-    // than it answers at all, turning a recoverable failure into a dead end —
-    // and a second flash model brings its own 20-a-day allowance with it.
-    retry: process.env.TRANSLATE_MODEL_RETRY ?? "gemini-3.7-flash",
-  },
   cloudflare: {
     first: process.env.TRANSLATE_MODEL ?? "@cf/qwen/qwen3.8-27b",
     // NOT deepseek-v4-flash: it is listed in `wrangler ai models` but answers
@@ -482,7 +465,8 @@ const MODELS = {
 
 /** Which model string ends up in the file's `translationModel` field. */
 function modelName(retry) {
-  const m = MODELS[PROVIDER] ?? MODELS.gemini;
+  const m = MODELS[PROVIDER];
+  if (!m) throw new Error(`Unknown TRANSLATE_PROVIDER "${PROVIDER}" — use claude or cloudflare.`);
   return retry ? m.retry : m.first;
 }
 
@@ -579,7 +563,7 @@ async function callCloudflare(system, user, retry) {
   if (!token) {
     throw new Error(
       "CLOUDFLARE_API_TOKEN is not set. Mint a token with Workers AI: Read, " +
-        "or run with TRANSLATE_PROVIDER=gemini.",
+        "or run with TRANSLATE_PROVIDER=claude.",
     );
   }
 
@@ -610,36 +594,6 @@ async function callCloudflare(system, user, retry) {
   return body?.result?.response ?? "";
 }
 
-async function callGemini(system, user, retry) {
-  const key = process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY;
-  if (!key) throw new Error("GEMINI_API_KEY is not set.");
-
-  const res = await fetchRetrying(
-    `https://generativelanguage.googleapis.com/v1beta/models/${modelName(retry)}:generateContent`,
-    {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-goog-api-key": key },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: system }] },
-        contents: [{ role: "user", parts: [{ text: user }] }],
-        generationConfig: {
-          responseMimeType: "application/json",
-          temperature: 0.2,
-          // Translation is not a reasoning task, and the thinking is billed
-          // against the same budget as the answer. Low, not off: the models
-          // spend a few hundred tokens regardless.
-          thinkingConfig: { thinkingLevel: "low" },
-          maxOutputTokens: 32768,
-        },
-      }),
-    },
-    "Gemini",
-  );
-
-  const body = await res.json();
-  return body?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ?? "";
-}
-
 /**
  * Claude, through the locally installed `claude` CLI.
  *
@@ -648,16 +602,14 @@ async function callGemini(system, user, retry) {
  * The SDK wants a credential this machine does not have: no `ANTHROPIC_API_KEY`
  * and no `ant auth login` profile. The `claude` binary is already authenticated
  * — it is what Jason runs every day — so this provider needs nothing minted and
- * nothing stored. The cost is that it is local-only: a GitHub runner has no
- * such session, so **CI still needs `CLOUDFLARE_API_TOKEN`** and this provider
- * cannot stand in for it. It is the right tool for a backfill run by hand.
+ * nothing stored. The cost is that it is local-only: it cannot run on a GitHub
+ * runner, which is one reason translation is now run by hand.
  *
  * `-p` prints one reply and exits, `--output-format text` keeps it plain rather
  * than a stream-json envelope, and `--system-prompt` replaces the CLI's own
  * system prompt with ours rather than appending to it — `--append-system-prompt`
  * would leave Claude Code's agent instructions in front of the translation
- * rules, which is a different and much longer prompt than the other two
- * providers are given.
+ * rules, which is a different and much longer prompt than Workers AI is given.
  *
  * The payload goes as an argv string, which caps at roughly 1MB on macOS. A
  * batch is 5000 characters (`batches()`), so there is three orders of magnitude
@@ -683,9 +635,8 @@ async function callClaude(system, user, retry) {
 }
 
 async function ask(system, user, retry) {
-  if (PROVIDER === "claude") return await callClaude(system, user, retry);
-  return PROVIDER === "gemini"
-    ? await callGemini(system, user, retry)
+  return PROVIDER === "claude"
+    ? await callClaude(system, user, retry)
     : await callCloudflare(system, user, retry);
 }
 
