@@ -21,9 +21,9 @@ import type { GuideCopy } from "../types";
  * by the one that happens. Do not "fix" it back to the document. */
 export const copy: GuideCopy = {
   meta: {
-    title: "PVIP Malaysia 2026: total cost, fees and requirements",
+    title: "Premium Visa Programme (PVIP) Malaysia 2026: cost, fees, requirements",
     description:
-      "PVIP in 2026: RM200,000 participation fee, RM1 million fixed deposit and RM40,000 monthly income. Who qualifies, what it costs and how it compares with MM2H.",
+      "PVIP in 2026: RM200,000 participation fee, RM1 million fixed deposit, RM40,000 monthly income. Who qualifies, the full cost, and what Budget 2027 changed (nothing).",
   },
 
   title: "Premium Visa Programme (PVIP)",
@@ -505,6 +505,51 @@ export const copy: GuideCopy = {
             it never forces you to buy
           </Link>
           .
+        </p>
+      </Section>
+
+      <Section
+        id="did-budget-2027-change-pvip"
+        title="Did Budget 2027 change PVIP?"
+        answer="No. The Budget 2027 speech of 9 October 2026 made no announcement on PVIP, so its deposit, fees and conditions stand as set out above."
+      >
+        <p>
+          The speech, delivered on 9 October 2026, said nothing about PVIP or
+          MM2H. What it did touch is the cost of living here and the position of
+          senior employees: our{" "}
+          <Link
+            href={href(
+              "/news/budget-2027-what-changes-for-foreign-retirees-and-residents/",
+            )}
+          >
+            summary of what Budget 2027 changes for foreign residents
+          </Link>{" "}
+          covers the tax-rate cuts and notes that the exemption for
+          foreign-sourced income received by resident individuals continues
+          under the existing order.
+        </p>
+        <p>
+          The other measure worth knowing about is aimed at the people PVIP is
+          often compared with. From 1 January 2027, spouses of Category I
+          Employment Pass holders who hold a Dependant Pass are due to be
+          allowed to work, subject to conditions that have not yet been
+          published (
+          <Link
+            href={href(
+              "/news/budget-2027-lets-employment-pass-spouses-work-in-malaysia/",
+            )}
+          >
+            read the announcement
+          </Link>
+          ). That narrows one gap between an employer-sponsored pass and a
+          capital route; it does not remove the others, since an Employment Pass
+          still belongs to your employer and PVIP does not. If you are weighing
+          the two, the{" "}
+          <Link href={href("/insights/comparisons/mm2h-vs-pvip-vs-de-rantau/")}>
+            comparison of MM2H, PVIP and DE Rantau
+          </Link>{" "}
+          sets out which of the long-stay routes fits which income. As always,
+          verify current rules with Immigration before you commit.
         </p>
       </Section>
     </>
