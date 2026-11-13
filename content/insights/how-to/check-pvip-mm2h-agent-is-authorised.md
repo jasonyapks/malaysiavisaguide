@@ -4,7 +4,7 @@ dek: "Every agent says they're licensed. A brand name, a polished WhatsApp profi
 published: "2026-11-13"
 reviewed: "2026-11-13"
 readingMinutes: 7
-draft: true
+draft: false
 relatedGuides:
   - path: "/agents/pvip/"
     title: "the authorised PVIP agent list"

@@ -4,7 +4,7 @@ dek: "Read three articles and you'll get three answers: yes, no, and only if you
 published: "2026-11-13"
 reviewed: "2026-11-13"
 readingMinutes: 7
-draft: true
+draft: false
 relatedGuides:
   - path: "/visas/employment-pass/"
     title: "the Employment Pass guide"

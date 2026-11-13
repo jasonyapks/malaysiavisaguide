@@ -12,6 +12,8 @@ relatedGuides:
     title: "the MM2H guide"
   - path: "/visas/pvip/"
     title: "the PVIP guide"
+  - path: "/insights/how-to/check-pvip-mm2h-agent-is-authorised/"
+    title: "how to check an MM2H agent is licensed"
 faq:
   - q: "Do I have to buy property on MM2H, or is it optional?"
     a: "It is compulsory on every tier, including the SEZ and SFZ zone routes. The purchase must complete within one year of your visa being endorsed, and you must hold the property for ten years. Selling before ten years is allowed only if you are moving up to a higher-value property and immigration has authorised it in advance. Stated by MYPVIP practice, as at 3 August 2026."

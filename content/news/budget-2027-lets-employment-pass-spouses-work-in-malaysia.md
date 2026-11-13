@@ -51,3 +51,5 @@ At the top end, the speech said the rate for high-income earners with income abo
 For senior executives weighing a move to Kuala Lumpur, this removes one of the most common objections: that a spouse's career has to stop. Employers recruiting at Category I level now have a stronger offer to make, from January 2027.
 
 The details still matter. Until the Expatriate Services Division publishes the conditions, families should plan around the current rules. Senior professionals who want to work or run a business without being tied to one sponsoring employer can also compare the Employment Pass with a residency route such as the Premium Visa Programme (PVIP).
+
+If your partner is not Category I, or you need an answer before January, our guide on [whether your spouse can work in Malaysia](/insights/how-to/can-my-spouse-work-in-malaysia-dependant-pass/) sets out the routes that exist today.

@@ -10,6 +10,8 @@ relatedGuides:
     title: "工作准证（Employment Pass）"
   - path: "/visas/pvip/"
     title: "PVIP高级签证计划"
+  - path: "/insights/how-to/can-my-spouse-work-in-malaysia-dependant-pass/"
+    title: "配偶能否在马来西亚工作"
 faq:
   - q: "2026年人才居留准证（RP-T）的最低薪资要求是多少？"
     a: "月基本薪资为 RM15,000，不包括所有津贴和奖金，且申报的年基本薪资必须达到至少 RM180,000。基本薪资是关键词：即使总价值超过 RM15,000 但津贴占比较高的薪酬组合仍可能无法通过审核。"
@@ -34,7 +36,7 @@ sources:
   - label: "Residence Pass-Talent fee structure — TalentCorp"
     url: "https://rpt.talentcorp.com.my/fees/"
     verified: "2026-08-23"
-sourceHash: "sha256:b38f2c060eaf7bd16b85a9681c9a5171"
+sourceHash: "sha256:99c6a1b6c2804dada74db585d9617e3c"
 translatedAt: "2026-09-02T09:32:47.041Z"
 translationModel: "gemini-3.6-flash"
 ---

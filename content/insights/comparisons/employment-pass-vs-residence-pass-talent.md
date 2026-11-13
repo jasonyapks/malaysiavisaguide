@@ -10,6 +10,8 @@ relatedGuides:
     title: "Employment Pass"
   - path: "/visas/pvip/"
     title: "Premium Visa Programme (PVIP)"
+  - path: "/insights/how-to/can-my-spouse-work-in-malaysia-dependant-pass/"
+    title: "whether your spouse can work in Malaysia"
 faq:
   - q: "What is the minimum salary for the Residence Pass-Talent in 2026?"
     a: "RM15,000 basic monthly salary, excluding all allowances and bonuses, and the annual basic salary declared must reach at least RM180,000. Basic is the operative word: an allowance-heavy package worth more than RM15,000 in total can still fail the test."

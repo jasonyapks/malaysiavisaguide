@@ -12,6 +12,8 @@ relatedGuides:
     title: "the MM2H guide"
   - path: "/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/"
     title: "MM2H Silver vs Gold vs Platinum"
+  - path: "/insights/how-to/check-pvip-mm2h-agent-is-authorised/"
+    title: "how to check a PVIP or MM2H agent is authorised"
 faq:
   - q: "Can MM2H Platinum holders really work in Malaysia?"
     a: "On the current guidance, yes. MOTAC's December 2025 guide marks both Business/Investment Activities and Career Opportunities as Permissible for Platinum, and Not allowed for Gold and Silver. That is a genuine change from how MM2H is usually described, and it is the one tier it applies to."

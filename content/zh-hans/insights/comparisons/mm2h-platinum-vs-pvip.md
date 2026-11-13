@@ -12,6 +12,8 @@ relatedGuides:
     title: "MM2H 第二家园计划指南"
   - path: "/insights/comparisons/mm2h-silver-vs-gold-vs-platinum/"
     title: "MM2H 白银级、黄金级与白金级对比"
+  - path: "/insights/how-to/check-pvip-mm2h-agent-is-authorised/"
+    title: "如何核实 PVIP 或 MM2H 代理是否获授权"
 faq:
   - q: "MM2H 白金级持有人真的可以在马来西亚工作吗？"
     a: "根据现行指南，答案是肯定的。MOTAC 于2025年12月发布的指南将「商业/投资活动」与「职业机会」两项，对白金级标注为「允许」，对黄金级与白银级则标注为「不允许」。这相较于 MM2H 通常给人的印象是一项真正的改变，而且仅适用于这一个级别。"
@@ -34,7 +36,7 @@ sources:
   - label: "Immigration Department of Malaysia — PVIP FAQ"
     url: "https://imigresen-online.imi.gov.my/eservices/doc/FAQ_PVIP.pdf"
     verified: "2026-07-23"
-sourceHash: "sha256:43da3a89b968e29ea50493db6c5f94e4"
+sourceHash: "sha256:02e7e0b5a8726fcffbbb98b23e61d523"
 translatedAt: "2026-09-15T14:59:59.790Z"
 translationModel: "claude-sonnet-5"
 ---

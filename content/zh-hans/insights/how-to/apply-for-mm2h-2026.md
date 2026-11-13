@@ -12,6 +12,8 @@ relatedGuides:
     title: "MM2H 第二家园计划指南"
   - path: "/visas/pvip/"
     title: "PVIP高级签证计划指南"
+  - path: "/insights/how-to/check-pvip-mm2h-agent-is-authorised/"
+    title: "如何核实 MM2H 代理是否持牌"
 faq:
   - q: "申请 MM2H 第二家园计划是否必须购买房产，还是可以选择不买？"
     a: "每一级别均须购买房产，包括 SEZ 和 SFZ 区域通道。购房须在签证签注后一年内完成，且必须持有该房产满十年。十年期满前出售，仅限于换购价值更高的房产，且须事先获得移民局批准。此为 MYPVIP 实务做法，截至2026年8月3日。"
