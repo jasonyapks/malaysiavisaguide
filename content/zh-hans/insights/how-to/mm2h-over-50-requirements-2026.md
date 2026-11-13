@@ -10,6 +10,8 @@ relatedGuides:
     title: "MM2H 第二家园计划指南"
   - path: "/insights/how-to/apply-for-mm2h-2026/"
     title: "如何在2026年申请MM2H 第二家园计划"
+  - path: "/insights/by-nationality/mm2h-for-taiwanese-over-50/"
+    title: "台湾申请人：50岁以上申请MM2H 第二家园计划"
 faq:
   - q: "如果我年过50岁，申请MM2H 第二家园计划是否仍有最低停留天数要求？"
     a: "没有。旅游、艺术及文化部（MOTAC）的指南将每年最低停留天数的要求仅适用于50岁以下的参与者，因此年满50岁后便无需满足任何天数要求。但申请人仍须亲自在马来西亚办理存入定期存款、体检、准证签注，而在实际操作中，办理续签也需本人到场。"

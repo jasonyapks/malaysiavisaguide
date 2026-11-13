@@ -12,6 +12,8 @@ relatedGuides:
     title: "MM2H 第二家园计划的费用"
   - path: "/insights/how-to/mm2h-fixed-deposit-withdrawal/"
     title: "MM2H 定期存款提取指南"
+  - path: "/insights/by-nationality/mm2h-for-taiwanese-over-50/"
+    title: "台湾申请人：50岁以上申请MM2H 第二家园计划"
 faq:
   - q: "2027年，马来西亚是否适合退休？"
     a: "对于重视便利的城市生活、多元饮食、成熟的私立医疗体系以及便捷通往亚洲其他地区的外籍人士而言，马来西亚可以是一个具有吸引力的退休目的地。其适合程度取决于您的财务状况、医疗需求及个人生活方式偏好。"

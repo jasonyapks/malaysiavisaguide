@@ -10,6 +10,8 @@ relatedGuides:
     title: "the MM2H guide"
   - path: "/insights/how-to/apply-for-mm2h-2026/"
     title: "how to apply for MM2H in 2026"
+  - path: "/insights/by-nationality/mm2h-for-taiwanese-over-50/"
+    title: "MM2H for Taiwanese applicants over 50"
 faq:
   - q: "Is there a minimum stay on MM2H if I am over 50?"
     a: "No. MOTAC's guide applies the annual minimum stay only to participants aged below 50, so from 50 there is no day count to meet. You still have to be in Malaysia in person to place the deposit, sit the medical, have the pass endorsed and, in practice, to submit a renewal."

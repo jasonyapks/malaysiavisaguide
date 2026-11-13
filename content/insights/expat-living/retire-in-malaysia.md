@@ -12,6 +12,8 @@ relatedGuides:
     title: "how much MM2H costs"
   - path: "/insights/how-to/mm2h-fixed-deposit-withdrawal/"
     title: "the MM2H fixed deposit withdrawal guide"
+  - path: "/insights/by-nationality/mm2h-for-taiwanese-over-50/"
+    title: "MM2H for Taiwanese applicants over 50"
 faq:
   - q: "Is Malaysia a good country to retire in 2027?"
     a: "Malaysia can be an attractive retirement destination for foreigners who value convenient urban living, diverse food, established private healthcare and easy access to other parts of Asia. Its suitability will depend on your financial circumstances, healthcare needs and preferred lifestyle."
