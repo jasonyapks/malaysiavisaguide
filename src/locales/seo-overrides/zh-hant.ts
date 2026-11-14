@@ -52,7 +52,7 @@ export const seoOverrides: Record<string, { title?: string; description?: string
   "/insights/how-to/how-much-does-mm2h-cost/": {
     title: "2026 年 MM2H 要花多少錢？逐級拆解每項費用",
     description:
-      "MM2H 白銀、黃金、白金級的費用，拆分為你要支付的、要存入的和要購買的三類錢，並列出大多數報價單都漏掉的受養人費用。逐級算給你看。",
+      "MM2H 白銀、黃金、白金級的費用，拆分為你要支付的、要存入的和要購買的三類錢，並列出大多數報價單都漏掉的眷屬費用。逐級算給你看。",
   },
   "/insights/how-to/mm2h-over-50-requirements-2026/": {
     title: "50 歲以上申請 MM2H：2026 年條件、級別與費用",
@@ -70,7 +70,7 @@ export const seoOverrides: Record<string, { title?: string; description?: string
   "/news/budget-2027-lets-employment-pass-spouses-work-in-malaysia/": {
     title: "2027 年預算案：第一類工作準證持有人的配偶可工作",
     description:
-      "自 2027 年 1 月 1 日起，第一類工作準證持有人中持受養人準證的配偶，可在符合規定條件下在馬來西亞工作。這是 2027 年預算案吸引外籍人才的措施。",
+      "自 2027 年 1 月 1 日起，第一類工作準證持有人中持眷屬準證的配偶，可在符合規定條件下在馬來西亞工作。這是 2027 年預算案吸引外籍人才的措施。",
   },
   "/news/budget-2027-what-changes-for-foreign-retirees-and-residents/": {
     title: "2027 年預算案：外籍退休人士與居民有哪些變化",

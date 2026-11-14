@@ -79,6 +79,10 @@ const TERMINOLOGY = [
   ["列明瞭", "列明了"],
   // OpenCC leaves 伙伴; Taiwan writes 夥伴.
   ["合作伙伴", "合作夥伴"],
+  // "Dependant" is 眷属/眷屬 on every locale (Jason, 2026-11-14); the Simplified
+  // source and translate-content.mjs already use it. This catches the calque
+  // 受养人 if it ever reaches a hand-written Chinese-only article.
+  ["受養人", "眷屬"],
 ];
 
 const converter = OpenCC.ConverterFactory(

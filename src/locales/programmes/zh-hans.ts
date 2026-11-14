@@ -151,7 +151,7 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
       ],
       effects: [
         "白银、黄金和白金级的持有人，只要有合资格支出（例如已签署的住宅买卖协议），在签证签注后即可申请提取部分定期存款，不必等待。",
-        "已满 35 岁的子女不符合受养人资格。",
+        "已满 35 岁的子女不符合眷属资格。",
       ],
     },
     minStayPerYear:
@@ -192,7 +192,7 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
       ],
       effects: [
         "白银、黄金和白金级的持有人，只要有合资格支出（例如已签署的住宅买卖协议），在签证签注后即可申请提取部分定期存款，不必等待。",
-        "已满 35 岁的子女不符合受养人资格。",
+        "已满 35 岁的子女不符合眷属资格。",
       ],
     },
     minStayPerYear:
@@ -233,7 +233,7 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
       ],
       effects: [
         "白银、黄金和白金级的持有人，只要有合资格支出（例如已签署的住宅买卖协议），在签证签注后即可申请提取部分定期存款，不必等待。",
-        "已满 35 岁的子女不符合受养人资格。",
+        "已满 35 岁的子女不符合眷属资格。",
       ],
     },
     minStayPerYear:

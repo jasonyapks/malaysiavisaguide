@@ -135,7 +135,7 @@ Mont Kiara 对你来说也可能超出实际需要。隔壁的 Sri Hartamas，�
 
 看看学校这一行。 **它比表中其他项目加起来还要大。**大多数家庭通常先研究租金，但在这里，租金与学费相比几乎微不足道。换一所学校，这项预算每月上下可浮动RM10,000。槟城的Uplands学校3年级和4年级学费为每年RM46,400。对于同龄孩子，吉隆坡的ISKL收费为每年RM115,600，另加一次性注册费RM59,000。
 
-**适合的签证：**如果是公司雇用你，则是工作准证（Employment Pass）。最低类别起薪为{{employment-pass:salaryFloor:money}}每月，但在指望用它养家之前，请确认你的类别允许携带受养人。如果你是靠自己的资金前来，可以考虑 MM2H 黄金级或PVIP高级签证计划。两者都允许更长的期限，并可携带家人，而PVIP高级签证计划还允许工作。在做出选择之前，请阅读[哪种马来西亚签证允许你经营企业？](/insights/comparisons/which-visa-lets-you-run-a-business/)
+**适合的签证：**如果是公司雇用你，则是工作准证（Employment Pass）。最低类别起薪为{{employment-pass:salaryFloor:money}}每月，但在指望用它养家之前，请确认你的类别允许携带眷属。如果你是靠自己的资金前来，可以考虑 MM2H 黄金级或PVIP高级签证计划。两者都允许更长的期限，并可携带家人，而PVIP高级签证计划还允许工作。在做出选择之前，请阅读[哪种马来西亚签证允许你经营企业？](/insights/comparisons/which-visa-lets-you-run-a-business/)
 
 ## 预算三：单身远程工作者
 
