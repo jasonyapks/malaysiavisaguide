@@ -21,7 +21,9 @@ export type AnalyticsEvent =
   | "form_submit"
   | "newsletter_signup"
   | "agency_click"
-  | "generate_lead";
+  | "generate_lead"
+  // First-visit webinar pop-up: action = shown | register | details | dismiss.
+  | "webinar_popup";
 
 export function track(name: AnalyticsEvent, params: Record<string, string>) {
   window.gtag?.("event", name, params);

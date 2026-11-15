@@ -33,6 +33,25 @@ export const copy: EventsCopy = {
   disclosure:
     "利益声明：这些讲座由 MYPVIP 主办。本站出版人 Jason Yap 是 MYPVIP 的董事总经理。",
 
+  popup: {
+    eyebrow: "免费线上讲座",
+    when: (date, time) => {
+      const day = new Date(`${date}T00:00:00Z`).toLocaleDateString("zh-CN", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        timeZone: "UTC",
+      });
+      const [h, m] = time.split(":").map(Number);
+      const part = h < 12 ? "上午" : h < 18 ? "下午" : "晚上";
+      const clock = `${part}${h % 12 || 12}点${m ? `${m}分` : ""}`;
+      return `${day} · 马来西亚时间${clock}（UTC+8）`;
+    },
+    register: "在 Zoom 免费报名",
+    details: "查看详情",
+    close: "关闭",
+  },
+
   events: {
     "pvip-visa-to-business-owner-2026-11": {
       title:

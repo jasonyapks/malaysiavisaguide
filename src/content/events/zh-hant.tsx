@@ -36,6 +36,25 @@ export const copy: EventsCopy = {
   disclosure:
     "利益聲明：這些講座由 MYPVIP 主辦。本站出版人 Jason Yap 是 MYPVIP 的董事總經理。",
 
+  popup: {
+    eyebrow: "免費線上講座",
+    when: (date, time) => {
+      const day = new Date(`${date}T00:00:00Z`).toLocaleDateString("zh-CN", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        timeZone: "UTC",
+      });
+      const [h, m] = time.split(":").map(Number);
+      const part = h < 12 ? "上午" : h < 18 ? "下午" : "晚上";
+      const clock = `${part}${h % 12 || 12}點${m ? `${m}分` : ""}`;
+      return `${day} · 馬來西亞時間${clock}（UTC+8）`;
+    },
+    register: "在 Zoom 免費報名",
+    details: "查看詳情",
+    close: "關閉",
+  },
+
   events: {
     "pvip-visa-to-business-owner-2026-11": {
       title:

@@ -18,6 +18,11 @@ import { SiteNav } from "@/components/SiteNav";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import CookieConsent from "@/components/CookieConsent";
 import { OutboundLeadTracker } from "@/components/OutboundLeadTracker";
+import { WebinarPopup, type PopupWebinar } from "@/components/WebinarPopup";
+import { events } from "@/lib/data/events";
+import { copy as eventsEn } from "@/content/events/en";
+import { copy as eventsZhHans } from "@/content/events/zh-hans";
+import { copy as eventsZhHant } from "@/content/events/zh-hant";
 
 /**
  * The document shell — `<html>` down to `</body>`, shared by every root layout.
@@ -441,9 +446,61 @@ document.head.appendChild(s);`,
           privacyHref={linkPath("/privacy/", locale)}
         />
         <OutboundLeadTracker />
+        <WebinarPopup
+          webinars={popupWebinars(locale)}
+          strings={popupStrings(locale)}
+        />
       </body>
     </html>
   );
+}
+
+const eventsCopy = { en: eventsEn, "zh-hans": eventsZhHans, "zh-hant": eventsZhHant };
+
+function popupStrings(locale: Locale) {
+  const { eyebrow, register, details, close } = eventsCopy[locale].popup;
+  return { eyebrow, register, details, close };
+}
+
+/**
+ * Webinars the first-visit pop-up may show on this locale: those still upcoming
+ * at build time, soonest first. WebinarPopup re-checks the date in the browser,
+ * so one that starts between deploys still drops out on time. Only events with
+ * copy in this locale's file are offered — a missing entry is skipped, not a
+ * crash.
+ */
+function popupWebinars(locale: Locale): PopupWebinar[] {
+  const copy = eventsCopy[locale];
+  const today = new Date().toISOString().slice(0, 10);
+  return events
+    .filter(
+      (e) =>
+        e.registrationUrl &&
+        e.date >= today &&
+        (!e.locales || e.locales.includes(locale)) &&
+        copy.events[e.id],
+    )
+    // A session held in this locale's language (one with `locales` set) beats
+    // a sooner one in another language: a Chinese reader gets the Mandarin
+    // webinar first. Otherwise soonest first.
+    .sort(
+      (a, b) =>
+        Number(!!b.locales) - Number(!!a.locales) || a.date.localeCompare(b.date),
+    )
+    .map((e) => {
+      const c = copy.events[e.id];
+      return {
+        id: e.id,
+        startsAt: `${e.date}T${e.time}:00+08:00`,
+        title: c.title,
+        format: c.format,
+        when: copy.popup.when(e.date, e.time),
+        speakers: c.speakers,
+        registrationUrl: e.registrationUrl!,
+        detailsHref: linkPath(e.newsPaths[0] ?? "/events/", locale),
+        skipPaths: [...e.newsPaths, "/events/"],
+      };
+    });
 }
 
 /**

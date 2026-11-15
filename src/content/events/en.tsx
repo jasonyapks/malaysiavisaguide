@@ -36,6 +36,24 @@ export const copy: EventsCopy = {
   disclosure:
     "Disclosure: these sessions are hosted by MYPVIP. Jason Yap, who publishes this guide, is its Managing Director.",
 
+  popup: {
+    eyebrow: "Free live webinar",
+    when: (date, time) => {
+      const day = new Date(`${date}T00:00:00Z`).toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        timeZone: "UTC",
+      });
+      const [h, m] = time.split(":").map(Number);
+      const clock = `${h % 12 || 12}${m ? `:${String(m).padStart(2, "0")}` : ""}${h < 12 ? "am" : "pm"}`;
+      return `${day} · ${clock} Malaysia time (UTC+8)`;
+    },
+    register: "Register free on Zoom",
+    details: "Read the details",
+    close: "Close",
+  },
+
   events: {
     "pvip-visa-to-business-owner-2026-11": {
       title:

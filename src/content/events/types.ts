@@ -21,5 +21,14 @@ export type EventsCopy = {
     replayStory: string;
   };
   disclosure: string;
+  /** The first-visit webinar pop-up (WebinarPopup.tsx). Plain strings only. */
+  popup: {
+    eyebrow: string;
+    /** "Wednesday 18 November · 8pm Malaysia time (UTC+8)" from an ISO date and "20:00". */
+    when: (date: string, time: string) => string;
+    register: string;
+    details: string;
+    close: string;
+  };
   events: Record<string, EventCopy>;
 };
