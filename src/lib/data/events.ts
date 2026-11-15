@@ -26,6 +26,12 @@ export type SiteEvent = {
    * Chinese pages alone. Omitted means every locale; then en.tsx needs copy too.
    */
   locales?: Locale[];
+  /**
+   * The organiser's poster, under public/images/events/. When set, the
+   * first-visit pop-up shows it in place of the text summary. Alt text is
+   * `posterAlt` in the locale's events copy. Original in raw/events/.
+   */
+  poster?: { src: string; width: number; height: number };
 };
 
 export const events: SiteEvent[] = [
@@ -56,5 +62,10 @@ export const events: SiteEvent[] = [
     newsPaths: ["/news/mypvip-mandarin-webinar-pvip-vs-mm2h/"],
     guidePath: "/insights/comparisons/mm2h-vs-pvip-vs-de-rantau/",
     locales: ["zh-hans", "zh-hant"],
+    poster: {
+      src: "/images/events/pvip-vs-mm2h-mandarin-2026-11-25.webp",
+      width: 896,
+      height: 1120,
+    },
   },
 ];

@@ -97,6 +97,8 @@ export const copy: EventsCopy = {
       title: "看懂大馬PVIP高級簽證計劃與第二家園（MM2H）分別？",
       format: "Zoom 線上講座 · 中文 · 免費",
       speakers: "講者為 PVIP 與 MM2H 專家 Evonne Tan，她是 MYPVIP 的業務夥伴。",
+      posterAlt:
+        "MYPVIP 中文線上講座海報：看懂大馬高級簽證（PVIP）與第二家園（MM2H）分別？2026年11月25日（星期三）馬來西亞時間晚上8點，Zoom 線上講座，講者 Evonne Tan。",
       summary: (
         <>
           <p>

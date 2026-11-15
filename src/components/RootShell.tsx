@@ -497,6 +497,8 @@ function popupWebinars(locale: Locale): PopupWebinar[] {
         when: copy.popup.when(e.date, e.time),
         speakers: c.speakers,
         registrationUrl: e.registrationUrl!,
+        poster:
+          e.poster && c.posterAlt ? { ...e.poster, alt: c.posterAlt } : undefined,
         detailsHref: linkPath(e.newsPaths[0] ?? "/events/", locale),
         skipPaths: [...e.newsPaths, "/events/"],
       };

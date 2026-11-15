@@ -39,6 +39,8 @@ export type PopupWebinar = {
   when: string;
   speakers: string;
   registrationUrl: string;
+  /** The organiser's poster. When present it replaces the text summary. */
+  poster?: { src: string; width: number; height: number; alt: string };
   detailsHref: string;
   /** Paths on which this pop-up must not open. */
   skipPaths: string[];
@@ -131,31 +133,75 @@ export function WebinarPopup({
       onClick={(e) => {
         if (e.target === e.currentTarget) close("dismiss");
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl border border-sand-200 bg-sand-50 p-0 text-ink shadow-[0_12px_48px_rgba(14,22,34,0.28)] backdrop:bg-forest-900/55 backdrop:backdrop-blur-[2px]"
+      className="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-2xl border border-sand-200 bg-sand-50 p-0 text-ink shadow-[0_12px_48px_rgba(14,22,34,0.28)] backdrop:bg-forest-900/55 backdrop:backdrop-blur-[2px]"
     >
-      <div className="relative space-y-4 p-6 sm:p-8">
-        <button
-          type="button"
-          onClick={() => close("dismiss")}
-          aria-label={strings.close}
-          className="absolute right-3 top-3 grid size-11 place-items-center rounded-full text-ink-muted hover:bg-sand-200 hover:text-ink focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700"
+      <button
+        type="button"
+        onClick={() => close("dismiss")}
+        aria-label={strings.close}
+        // Over a poster it needs its own light disc: the artwork behind it is
+        // dark navy and the plain grey glyph would vanish.
+        className={`absolute right-3 top-3 z-10 grid size-11 place-items-center rounded-full focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-forest-700 ${
+          current.poster
+            ? "bg-sand-50/90 text-ink shadow hover:bg-sand-50"
+            : "text-ink-muted hover:bg-sand-200 hover:text-ink"
+        }`}
+      >
+        <svg aria-hidden viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+
+      {current.poster && (
+        // The poster already carries the title, date, time and speaker, so it
+        // replaces the text summary rather than repeating it. Tapping it
+        // registers, as the QR code on it would.
+        <a
+          href={current.registrationUrl}
+          rel="nofollow noopener"
+          target="_blank"
+          onClick={() => close("register")}
+          className="block"
         >
-          <svg aria-hidden viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M6 6l12 12M18 6L6 18" />
-          </svg>
-        </button>
+          {/* eslint-disable-next-line @next/next/no-img-element -- static export, no image optimiser; the file is already sized. */}
+          <img
+            src={current.poster.src}
+            width={current.poster.width}
+            height={current.poster.height}
+            alt={current.poster.alt}
+            className="block h-auto w-full"
+          />
+        </a>
+      )}
 
-        <p className="eyebrow pr-10">{strings.eyebrow}</p>
-        <h2 id="webinar-popup-title" className="pr-6 text-h3 font-bold leading-snug text-forest-900">
-          {current.title}
-        </h2>
-        <p className="border-l-4 border-forest-600 bg-forest-50 py-2 pl-4 pr-3 text-body-sm font-semibold text-forest-900">
-          {current.when}
-          <span className="block font-normal text-ink-muted">{current.format}</span>
-        </p>
-        <p className="text-caption leading-relaxed text-ink-muted">{current.speakers}</p>
+      <div className={`space-y-4 ${current.poster ? "p-5" : "p-6 sm:p-8"}`}>
+        {current.poster ? (
+          <h2 id="webinar-popup-title" className="sr-only">
+            {current.title}
+          </h2>
+        ) : (
+          <>
+            <p className="eyebrow pr-10">{strings.eyebrow}</p>
+            <h2 id="webinar-popup-title" className="pr-6 text-h3 font-bold leading-snug text-forest-900">
+              {current.title}
+            </h2>
+            <p className="border-l-4 border-forest-600 bg-forest-50 py-2 pl-4 pr-3 text-body-sm font-semibold text-forest-900">
+              {current.when}
+              <span className="block font-normal text-ink-muted">{current.format}</span>
+            </p>
+            <p className="text-caption leading-relaxed text-ink-muted">{current.speakers}</p>
+          </>
+        )}
 
-        <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
+        {/* Side by side under a poster even on phones: the 4:5 poster leaves
+            one row of height on a 390x844 screen, not two. */}
+        <div
+          className={`flex gap-3 ${
+            current.poster
+              ? "flex-row items-center [&>a:first-child]:flex-1"
+              : "flex-col pt-2 sm:flex-row sm:items-center"
+          }`}
+        >
           <a
             href={current.registrationUrl}
             // Zoom, so always nofollow — same as outboundRel() in lib/site.ts,

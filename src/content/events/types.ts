@@ -6,6 +6,8 @@ export type EventCopy = {
   format: string;
   speakers: string;
   summary: ReactNode;
+  /** Alt text for the event's poster; required when events.ts sets `poster`. */
+  posterAlt?: string;
 };
 
 export type EventsCopy = {
