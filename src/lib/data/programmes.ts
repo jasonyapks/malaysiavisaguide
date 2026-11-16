@@ -971,8 +971,9 @@ export const programmes: Programme[] = [
     workRights: "restricted",
     dependants: [
       "Spouse (salary above RM5,000 required)",
-      "Children under 18",
-      "Legally adopted children under 18",
+      // Under 21, not 18: Immigration's EP FAQ, confirmed by Jason 2026-11-16.
+      "Children under 21",
+      "Legally adopted children under 21",
       "Parents and parents-in-law",
     ],
     sponsor: "A Malaysian employer, approved by the Expatriate Committee",

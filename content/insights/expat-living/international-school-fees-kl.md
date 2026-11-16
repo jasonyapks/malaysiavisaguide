@@ -100,7 +100,7 @@ Every pass that lets you bring your children lets them go to school. The differe
 | **MM2H** | Age 34, if unmarried | Apply to MOTAC for Permission to Study (14 working days) |
 | **PVIP** | Under 25 | Ask the school what it needs to see |
 | **Sarawak MM2H** | 21 and under | Ask the school what it needs to see |
-| **Employment Pass** | Under 18 | Ask the school what it needs to see |
+| **Employment Pass** | Under 21 | Ask the school what it needs to see |
 [^2]: Age limits are each programme's dependant rules as published on this site. The MM2H permission is item 6 of MOTAC's MM2H Application Guidelines Booklet, May 2026, which asks for the school's offer letter and proof that the enrolment fee has been paid.
 
 Two things in that table catch families out.
