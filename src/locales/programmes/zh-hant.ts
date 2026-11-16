@@ -154,7 +154,7 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
       ],
       effects: [
         "白銀、黃金和白金級的持有人，只要有合資格支出（例如已簽署的住宅買賣協議），在簽證簽註後即可申請提取部分定期存款，不必等待。",
-        "已滿 35 歲的子女不符合受養人資格。",
+        "已滿 35 歲的子女不符合眷屬資格。",
       ],
     },
     minStayPerYear:
@@ -195,7 +195,7 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
       ],
       effects: [
         "白銀、黃金和白金級的持有人，只要有合資格支出（例如已簽署的住宅買賣協議），在簽證簽註後即可申請提取部分定期存款，不必等待。",
-        "已滿 35 歲的子女不符合受養人資格。",
+        "已滿 35 歲的子女不符合眷屬資格。",
       ],
     },
     minStayPerYear:
@@ -236,7 +236,7 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
       ],
       effects: [
         "白銀、黃金和白金級的持有人，只要有合資格支出（例如已簽署的住宅買賣協議），在簽證簽註後即可申請提取部分定期存款，不必等待。",
-        "已滿 35 歲的子女不符合受養人資格。",
+        "已滿 35 歲的子女不符合眷屬資格。",
       ],
     },
     minStayPerYear:

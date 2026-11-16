@@ -118,7 +118,8 @@ const GLOSSARY = {
     ["participation fee", "参与费"],
     ["Immigration Department of Malaysia", "马来西亚移民局"],
     ["Ministry of Tourism, Arts and Culture (MOTAC)", "旅游、艺术及文化部（MOTAC）"],
-    ["applicant / dependant", "申请人 / 受养人"],
+    ["applicant / dependant", "申请人 / 眷属"],
+    ["Dependant Pass", "眷属准证"],
     ["visa / pass", "签证 / 准证"],
     ["golden visa", "黄金签证"],
     ["digital nomad", "数字游民"],
@@ -752,6 +753,8 @@ const FIXUPS = {
   "zh-hans": [
     [/安瓦尔·易卜拉欣|安华·易卜拉欣|安瓦尔·依布拉欣/g, "安华·依布拉欣"],
     [/槛城/g, "槟城"],
+    // Jason's ruling 2026-11-14: "dependant" is 眷属, never the calque 受养人.
+    [/受养人/g, "眷属"],
     // Jason's ruling 2026-11-12: the Chinese name is PVIP高级签证计划, nothing else.
     [/(?:高端|尊贵|高级|优质)签证计划（PVIP）(?:签证)?|尊贵签证（PVIP）|(?<![A-Za-z])PVIP\s?(?:高端|尊贵)签证(?:计划)?|(?<!PVIP)(?:高端|尊贵)签证计划/g, "PVIP高级签证计划"],
     // Half-width punctuation between Chinese characters → full-width.
