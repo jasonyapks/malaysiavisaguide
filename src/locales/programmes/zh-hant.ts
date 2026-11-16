@@ -286,8 +286,8 @@ export const prose: Partial<Record<ProgrammeSlug, ProgrammeProse>> = {
   "employment-pass": {
     dependants: [
       "配偶（須月薪高於 RM5,000）",
-      "18 歲以下子女",
-      "18 歲以下合法領養子女",
+      "21 歲以下子女",
+      "21 歲以下合法領養子女",
       "父母與配偶父母",
     ],
     name: "工作準證（Employment Pass）",

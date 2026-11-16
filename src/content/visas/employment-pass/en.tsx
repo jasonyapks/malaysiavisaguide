@@ -45,7 +45,7 @@ export const copy: GuideCopy = {
         },
         {
           q: "Can I bring my family on an Employment Pass?",
-          a: "Only if you earn above RM5,000 a month. Dependent passes cover spouse, children under 18, legally adopted children under 18, and parents or parents-in-law.",
+          a: "Only if you earn above RM5,000 a month. Dependent passes cover spouse, children under 21, legally adopted children under 21, and parents or parents-in-law.",
         },
         {
           q: "Can I apply for an Employment Pass myself?",
