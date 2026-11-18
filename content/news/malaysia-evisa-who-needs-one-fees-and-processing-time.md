@@ -2,8 +2,8 @@
 headline: "Malaysia's eVisa: Immigration sets out who needs one, the RM105 fee and a two-to-seven-day wait"
 dek: "Malaysia's Immigration Department published its own guide to the eVisa on 18 November. It lists 30 nationalities, adds a RM105 processing fee to the visa fee, quotes two to seven working days for approval, and limits 20 of the countries to arrival by air. Indian citizens stay visa-exempt until 31 December 2026."
 category: "general"
-sourceName: "Jabatan Imigresen Malaysia (official Facebook page)"
-sourceUrl: "https://www.facebook.com/imigresen/"
+sourceName: "Jabatan Imigresen Malaysia (Facebook post, 18 November 2026)"
+sourceUrl: "https://www.facebook.com/share/p/18uBiGm54E/"
 publishedAt: "2026-11-18T00:00:00.000Z"
 updatedAt: "2026-11-18T00:00:00.000Z"
 readingMinutes: 3
@@ -26,7 +26,7 @@ sourceExcerpt: "eVisa is an online application platform that allows foreign nati
 
 Ask an agent, a travel blog and a forum thread how Malaysia's eVisa works, and you'll likely get three different answers. Each tends to leave something out, and the forum post was often out of date before anyone replied to it.
 
-On 18 November, Malaysia's Immigration Department set the rules out itself, in a series of notices on its [official Facebook page](https://www.facebook.com/imigresen/). They all point to one portal: [malaysiavisa.imi.gov.my](https://malaysiavisa.imi.gov.my). Apply there and nowhere else, and check the address before you pay anything.
+On 18 November, Malaysia's Immigration Department set the rules out itself, in a series of notices on its [official Facebook page](https://www.facebook.com/share/p/18uBiGm54E/). They all point to one portal: [malaysiavisa.imi.gov.my](https://malaysiavisa.imi.gov.my). Apply there and nowhere else, and check the address before you pay anything.
 
 ## Who has to apply
 

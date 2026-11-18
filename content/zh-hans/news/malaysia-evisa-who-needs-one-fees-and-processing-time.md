@@ -2,8 +2,8 @@
 headline: "马来西亚电子签证：移民局列明哪些国家需办理、RM105手续费及两至七天审批期"
 dek: "马来西亚移民局于11月18日发布了电子签证（eVisa）的官方指南。指南列出30个国籍，在签证费之外加收RM105的处理费，称审批需时两至七个工作日，并规定其中20个国家的公民只能搭乘飞机入境。印度公民在2026年12月31日前仍可免签入境。"
 category: "general"
-sourceName: "Jabatan Imigresen Malaysia (official Facebook page)"
-sourceUrl: "https://www.facebook.com/imigresen/"
+sourceName: "Jabatan Imigresen Malaysia (Facebook post, 18 November 2026)"
+sourceUrl: "https://www.facebook.com/share/p/18uBiGm54E/"
 publishedAt: "2026-11-18T00:00:00.000Z"
 updatedAt: "2026-11-18T00:00:00.000Z"
 readingMinutes: 3
@@ -30,7 +30,7 @@ translationModel: "claude-sonnet-5-5"
 
 向中介、旅游博客和论坛帖子分别询问马来西亚 eVisa 如何运作，您很可能会得到三种不同的答案。每一种说法往往都有遗漏，而论坛上的帖子常常在有人回复之前就已经过时。
 
-11月18日，马来西亚移民局在其[官方 Facebook 专页](https://www.facebook.com/imigresen/)上发布了一系列通告，亲自说明了相关规定。这些通告都指向同一个门户网站：[malaysiavisa.imi.gov.my](https://malaysiavisa.imi.gov.my)。请只在该网站申请，不要通过其他渠道，并且在付款前先核对网址。
+11月18日，马来西亚移民局在其[官方 Facebook 专页](https://www.facebook.com/share/p/18uBiGm54E/)上发布了一系列通告，亲自说明了相关规定。这些通告都指向同一个门户网站：[malaysiavisa.imi.gov.my](https://malaysiavisa.imi.gov.my)。请只在该网站申请，不要通过其他渠道，并且在付款前先核对网址。
 
 ## 哪些人必须申请
 
