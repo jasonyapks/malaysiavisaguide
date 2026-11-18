@@ -214,11 +214,6 @@ export const seoOverrides: Record<string, { title?: string; description?: string
     description:
       "A joint inspection confirmed that all 266 foreign residents examined in Forest City hold lawful immigration papers, after allegations about Network School.",
   },
-  "/news/malaysia-requires-evisa-for-citizens-of-31-countries/": {
-    title: "Malaysia requires eVisa for citizens of 31 countries",
-    description:
-      "From 2026, travellers from 31 listed nations must obtain a Single Entry eVisa before they arrive in Malaysia for tourism, family visits or short events.",
-  },
   "/news/malaysia-tightens-enforcement-on-social-visit-passes-for-work/": {
     title: "Malaysia tightens enforcement on social visit pass work",
     description:

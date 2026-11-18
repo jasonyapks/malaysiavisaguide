@@ -15,5 +15,6 @@ export const movedPaths: Record<string, string> = {
   "/news/eb-5-draft-rules-could-curtail-bridge-financing-for/": "/news/eb-5-draft-rules-could-curtail-bridge-financing/",
   "/news/malaysia-tops-digital-nomad-hub-rankings-in-2026-a/": "/news/malaysia-tops-digital-nomad-hub-rankings-in-2026/",
   "/news/singapore-launches-ai-work-pass-under-one-pass-to/": "/news/singapore-launches-ai-work-pass-under-one-pass/",
-  "/news/malaysia-requires-evisa-for-citizens-of-31-countries-for/": "/news/malaysia-requires-evisa-for-citizens-of-31-countries/",
+  "/news/malaysia-requires-evisa-for-citizens-of-31-countries-for/": "/news/malaysia-evisa-who-needs-one-fees-and-processing-time/",
+  "/news/malaysia-requires-evisa-for-citizens-of-31-countries/": "/news/malaysia-evisa-who-needs-one-fees-and-processing-time/",
 };
