@@ -1,16 +1,16 @@
 ---
 headline: "Malaysia's eVisa: Immigration sets out who needs one, the RM105 fee and a two-to-seven-day wait"
-dek: "Malaysia's Immigration Department published its own guide to the eVisa on 18 November. It lists 30 nationalities, adds a RM105 processing fee to the visa fee, quotes two to seven working days for approval, and limits 20 of the countries to arrival by air. Indian citizens stay visa-exempt until 31 December 2026."
+dek: "Malaysia's Immigration Department published its own guide to the eVisa on 18 November. It lists 30 nationalities, adds a RM105 processing fee to the visa fee, quotes two to seven working days for approval, and limits 20 of the countries to arrival by air. Indian citizens stay visa-exempt until 31 December 2026, and the exemption ends on 1 January 2027."
 category: "general"
 sourceName: "Jabatan Imigresen Malaysia (Facebook post, 18 November 2026)"
 sourceUrl: "https://www.facebook.com/share/p/18uBiGm54E/"
 publishedAt: "2026-11-18T00:00:00.000Z"
-updatedAt: "2026-11-18T00:00:00.000Z"
+updatedAt: "2026-11-25T00:00:00.000Z"
 readingMinutes: 3
 keyPoints:
   - "The Immigration Department lists 30 nationalities that apply for a visa online through the official eVisa portal, malaysiavisa.imi.gov.my."
   - "Citizens of 20 of those countries, all in Africa, may enter Malaysia by air only. Land and sea crossings are closed to them."
-  - "Indian citizens are on the list but remain visa-exempt until 31 December 2026."
+  - "Indian citizens are on the list. Their visa exemption ends on 1 January 2027, so it covers only entries on or before 31 December 2026."
   - "Approval comes from the Immigration Attaché or Malaysian representative office abroad, within two to seven working days."
   - "You pay the visa fee for your nationality, a RM105 processing fee, and a 0.8% eCommerce fee, or 1.7% if you pay by AliPay, WeChat Pay or UnionPay."
   - "The visa is valid for six months for social visits, students and expatriates, and three months for foreign workers."
@@ -18,7 +18,7 @@ whatItMeans:
   - "Planning a look-see trip before applying for MM2H or PVIP on one of these passports? Apply at least two weeks before you fly. Seven working days can stretch to nine calendar days or more."
   - "On one of the 20 air-only passports, you can't come in by road from Singapore or Thailand, or by ferry. Fly in."
   - "You need a confirmed return ticket and proof of accommodation before you apply, so book fares and rooms you can change or cancel."
-  - "Indian citizens don't need a visa for now. If your trip runs into 2027, check whether the exemption has been extended before you book."
+  - "Indian citizens: the exemption ends on 1 January 2027. Enter on or before 31 December 2026 and you can still use it. After that, apply for an eVisa before you fly. Applications open on 1 December 2026."
 sourceExcerpt: "eVisa is an online application platform that allows foreign nationals to apply for an Electronic Visa to enter Malaysia at their convenience."
 ---
 
@@ -32,7 +32,7 @@ On 18 November, Malaysia's Immigration Department set the rules out itself, in a
 
 The department lists 30 nationalities: Afghanistan, Angola, Bangladesh, Bhutan, Burkina Faso, Burundi, Cameroon, the Central African Republic, Colombia, the Democratic Republic of the Congo, the Republic of the Congo, Djibouti, Equatorial Guinea, Eritrea, Ethiopia, Ghana, Guinea-Bissau, India, Côte d'Ivoire, Liberia, Mali, Montenegro, Mozambique, Nepal, Niger, Nigeria, Pakistan, Rwanda, Serbia and Sri Lanka.
 
-The footnotes matter as much as the list. Indian citizens appear on it, yet they're visa-exempt until 31 December 2026. Afghan citizens coming on a social visit need a visa approval letter before they can apply at all.
+The footnotes matter as much as the list. Indian citizens appear on it, yet they're visa-exempt until 31 December 2026. That exemption ends on 1 January 2027, under an Immigration Department notice dated 17 November, and Indian travellers can apply on the portal from 1 December. Afghan citizens coming on a social visit need a visa approval letter before they can apply at all.
 
 Myanmar sits under a separate note on ASEAN travellers. Citizens of the other ASEAN countries need no visa for a stay of under a month. Stay longer and they do, unless they hold a Brunei or Singapore passport. Myanmar citizens get no such allowance: they need a visa even for a shorter stay.
 
